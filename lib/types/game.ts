@@ -12,5 +12,6 @@ export interface Game {
   status: GameStatus
   round: string
   venue: string | null
+  espn_id: string | null    // ID do evento na ESPN (ex: "760415")
   created_at: string
 }
