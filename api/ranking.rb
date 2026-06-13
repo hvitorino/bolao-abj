@@ -9,12 +9,12 @@ require 'uri'
 # com aproveitamento calculado no servidor.
 #
 # Variáveis de ambiente:
-#   SUPABASE_URL              — URL base do projeto (ex: https://xyzxyz.supabase.co)
-#   SUPABASE_ANON_KEY         — chave anon pública (para autenticar o usuário)
-#   SUPABASE_SERVICE_ROLE_KEY — chave service_role (para contornar RLS em scores)
+#   NEXT_PUBLIC_SUPABASE_URL              — URL base do projeto
+#   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY  — chave pública (publishable/anon)
+#   SUPABASE_SERVICE_ROLE_KEY             — chave service_role (para contornar RLS)
 
-SUPABASE_URL_RANKING = ENV['SUPABASE_URL'] || ''
-SUPABASE_ANON_KEY_RANKING = ENV['SUPABASE_ANON_KEY'] || ''
+SUPABASE_URL_RANKING = ENV['NEXT_PUBLIC_SUPABASE_URL'] || ''
+SUPABASE_ANON_KEY_RANKING = ENV['NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'] || ''
 SUPABASE_SERVICE_KEY_RANKING = ENV['SUPABASE_SERVICE_ROLE_KEY'] || ''
 
 # Máximo de pontos possíveis por jogo

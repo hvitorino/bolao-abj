@@ -8,12 +8,12 @@ require 'time'
 #
 # Autenticação: JWT Supabase via header Authorization: Bearer <token>
 # Variáveis de ambiente:
-#   SUPABASE_URL             — URL base do projeto (ex: https://xyzxyz.supabase.co)
-#   SUPABASE_ANON_KEY        — chave anon pública
-#   SUPABASE_SERVICE_ROLE_KEY — chave service_role (para operações admin no banco)
+#   NEXT_PUBLIC_SUPABASE_URL          — URL base do projeto
+#   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY — chave pública (publishable/anon)
+#   SUPABASE_SERVICE_ROLE_KEY          — chave service_role (para operações admin)
 
-SUPABASE_URL = ENV['SUPABASE_URL'] || ''
-SUPABASE_ANON_KEY = ENV['SUPABASE_ANON_KEY'] || ''
+SUPABASE_URL = ENV['NEXT_PUBLIC_SUPABASE_URL'] || ''
+SUPABASE_ANON_KEY = ENV['NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'] || ''
 SUPABASE_SERVICE_ROLE_KEY = ENV['SUPABASE_SERVICE_ROLE_KEY'] || ''
 
 # Verifica JWT do Supabase e retorna dados do usuário ou nil
