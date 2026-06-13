@@ -19,7 +19,6 @@ export default async function DashboardLayout({
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
-      {/* Header placeholder — navegação implementada em feature futura */}
       <header
         style={{
           backgroundColor: 'var(--color-surface)',
