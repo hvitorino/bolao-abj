@@ -1,7 +1,13 @@
+'use client'
+
 import { Game } from '@/lib/types/game'
+import { Prediction } from '@/lib/types/prediction'
+import PredictionForm from '@/components/bolao/PredictionForm'
+import PredictionDisplay from '@/components/bolao/PredictionDisplay'
 
 interface GameCardProps {
   game: Game
+  prediction?: Prediction | null
 }
 
 // Formata horário do jogo para exibição em BRT (UTC-3)
@@ -27,7 +33,7 @@ function formatMatchDate(matchDate: string): string {
     .replace(/ DE /g, ' ')
 }
 
-export default function GameCard({ game }: GameCardProps) {
+export default function GameCard({ game, prediction = null }: GameCardProps) {
   const isLive = game.status === 'live'
   const isFinished = game.status === 'finished'
   const isPending = game.status === 'pending'
@@ -251,6 +257,53 @@ export default function GameCard({ game }: GameCardProps) {
           >
             {game.venue}
           </span>
+        )}
+      </div>
+
+      {/* Área de palpite — separada do jogo por borda tracejada */}
+      <div
+        style={{
+          borderTop: '1px dashed var(--color-border)',
+          padding: '0.75rem',
+        }}
+      >
+        {/* Jogo pendente: formulário de palpite ou palpite enviado */}
+        {isPending && (
+          <PredictionForm
+            gameId={game.id}
+            homeTeamCode={game.home_team_code}
+            awayTeamCode={game.away_team_code}
+            matchDate={game.match_date}
+            initialPrediction={prediction}
+          />
+        )}
+
+        {/* Jogo ao vivo ou encerrado: exibe palpite ou "sem palpite" */}
+        {(isLive || isFinished) && (
+          <>
+            {prediction ? (
+              <PredictionDisplay
+                homeScore={prediction.home_score}
+                awayScore={prediction.away_score}
+                homeTeamCode={game.home_team_code}
+                awayTeamCode={game.away_team_code}
+                submittedAt={prediction.submitted_at}
+              />
+            ) : (
+              <div
+                style={{
+                  fontSize: '11px',
+                  color: 'var(--color-muted)',
+                  textAlign: 'center',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  padding: '0.25rem 0',
+                }}
+              >
+                SEM PALPITE
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
