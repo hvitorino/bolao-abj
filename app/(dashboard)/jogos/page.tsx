@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { Game } from '@/lib/types/game'
+import { Prediction } from '@/lib/types/prediction'
 import DayNavigator from '@/components/games/DayNavigator'
 import GameList from '@/components/games/GameList'
 
@@ -46,23 +47,32 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
     .lte('match_date', endOfDay)
     .order('match_date', { ascending: true })
 
-  // Buscar usuário autenticado e contagem de palpites do dia
+  // Buscar usuário autenticado
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  // Buscar palpites do usuário para os jogos do dia
+  let predictionsByGameId: Record<string, Prediction> = {}
   let guessCount = 0
-  if (games && games.length > 0) {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
 
-    if (user) {
-      const gameIds = games.map((g: Game) => g.id)
-      const { count } = await supabase
-        .from('predictions')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .in('game_id', gameIds)
+  if (user && games && games.length > 0) {
+    const gameIds = games.map((g: Game) => g.id)
 
-      guessCount = count ?? 0
-    }
+    const { data: predictions, count } = await supabase
+      .from('predictions')
+      .select('id, game_id, user_id, home_score, away_score, submitted_at', {
+        count: 'exact',
+      })
+      .eq('user_id', user.id)
+      .in('game_id', gameIds)
+
+    guessCount = count ?? 0
+
+    // Mapear predictions por game_id para acesso O(1) no GameCard
+    predictionsByGameId = Object.fromEntries(
+      (predictions ?? []).map((p: Prediction) => [p.game_id, p])
+    )
   }
 
   return (
@@ -134,8 +144,12 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         />
       </div>
 
-      {/* Lista de jogos */}
-      <GameList games={games ?? []} date={currentDate} />
+      {/* Lista de jogos com palpites */}
+      <GameList
+        games={games ?? []}
+        date={currentDate}
+        predictionsByGameId={predictionsByGameId}
+      />
     </div>
   )
 }
