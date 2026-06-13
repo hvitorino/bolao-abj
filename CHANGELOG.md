@@ -6,6 +6,21 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [scoring] — Pontuação por Jogo em Tempo Real — 2026-06-13
+
+- Cálculo automático de pontos via trigger Postgres `on_game_finished`: quando admin muda status para `finished`, todos os palpites do jogo são calculados e persistidos em `scores` via UPSERT (sem chamada manual)
+- Breakdown de bônus exibido no `GameCard` após jogo encerrado: `✓ Acertou o vencedor +3`, `✓ Placar exato +5`, etc. — apenas itens com pontos > 0
+- Pontuação atualiza em tempo real via Supabase Realtime (hook `useScoreRealtime`, tabela `scores`)
+- Página `/meus-palpites` com tabela compacta estilo Elifoot: JOGO | PALPITE | RESULTADO | PONTOS; total de pontos no rodapé
+- Recálculo manual via `POST /api/scores/calculate` (admin-only, `X-Admin-Secret`) para casos de correção de placar pós-encerramento
+- **Migration SQL:** `db/migrations/20260613_create_scores.sql` — tabela `scores`, função `calculate_scores_for_game`, trigger `on_game_finished`, RLS (SELECT próprio usuário)
+- **Lib criada:** `lib/scoring.ts` — `calculateScore(game, prediction)` espelha a lógica Postgres em TypeScript; `BREAKDOWN_LABELS` em português
+- **Tipos criados:** `lib/types/score.ts` — interfaces `Score` e `ScoreBreakdown`
+- **Hook criado:** `lib/hooks/useScoreRealtime.ts` — subscription Realtime para tabela `scores` com filtragem por `userId`
+- **Componente criado:** `components/bolao/ScoreDisplay.tsx` — breakdown visual com borda `color-primary`, pontos em `color-accent`, checks em `color-win`
+- **Endpoint criado:** `POST /api/scores/calculate` (Ruby) — recálculo via RPC Supabase; 401/400/404/422/500 tratados
+- **Componentes modificados:** `GameCard.tsx` (+ props `score`, `userId`; integra `ScoreDisplay`), `GameList.tsx` (+ props `scoresByGameId`, `userId`), `app/(dashboard)/jogos/page.tsx` (busca scores server-side)
+
 ## [live-scores] — Placares em Tempo Real — 2026-06-13
 
 - Placares e status de jogos atualizados em tempo real via Supabase Realtime (WAL replication), sem reload de página

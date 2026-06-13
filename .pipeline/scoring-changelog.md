@@ -3,7 +3,7 @@
 **Slug:** scoring
 **Branch:** feature/scoring
 **Data:** 2026-06-13
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
