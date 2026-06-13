@@ -58,6 +58,12 @@ export default function GameCard({
   const isFinished = liveGame.status === 'finished'
   const isPending = liveGame.status === 'pending'
   const hasScore = liveGame.home_score !== null && liveGame.away_score !== null
+  const matchTime = formatMatchTime(liveGame.match_date)
+  const scoreText = hasScore
+    ? `${liveGame.home_score} × ${liveGame.away_score}`
+    : isLive
+      ? '0 × 0'
+      : '- × -'
 
   const cardBorderColor = isLive ? 'var(--color-live)' : 'var(--color-border)'
 
@@ -139,29 +145,16 @@ export default function GameCard({
 
         {/* Placar central */}
         <div style={{ textAlign: 'center', minWidth: '80px' }}>
-          {hasScore ? (
-            <div
-              style={{
-                fontSize: '28px',
-                fontWeight: 'bold',
-                color: 'var(--color-accent)',
-                letterSpacing: '0.05em',
-              }}
-            >
-              {liveGame.home_score} × {liveGame.away_score}
-            </div>
-          ) : (
-            <div
-              style={{
-                fontSize: '22px',
-                fontWeight: 'bold',
-                color: 'var(--color-muted)',
-                letterSpacing: '0.05em',
-              }}
-            >
-              - × -
-            </div>
-          )}
+          <div
+            style={{
+              fontSize: hasScore ? '28px' : '22px',
+              fontWeight: 'bold',
+              color: hasScore || isLive ? 'var(--color-accent)' : 'var(--color-muted)',
+              letterSpacing: '0.05em',
+            }}
+          >
+            {scoreText}
+          </div>
         </div>
 
         {/* Time visitante */}
@@ -203,18 +196,36 @@ export default function GameCard({
       >
         {/* Badge de status */}
         {isLive && (
-          <span
-            className="blink"
-            style={{
-              color: 'var(--color-live)',
-              fontSize: '12px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            ██ AO VIVO ██
-          </span>
+          <>
+            <span
+              className="blink"
+              style={{
+                color: 'var(--color-live)',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              ██ AO VIVO ██
+            </span>
+            <span
+              style={{
+                color: 'var(--color-muted)',
+                fontSize: '11px',
+              }}
+            >
+              ·
+            </span>
+            <span
+              style={{
+                color: 'var(--color-muted)',
+                fontSize: '11px',
+              }}
+            >
+              {matchTime} BRT
+            </span>
+          </>
         )}
 
         {isPending && (
@@ -243,22 +254,40 @@ export default function GameCard({
                 fontSize: '11px',
               }}
             >
-              {formatMatchTime(liveGame.match_date)} BRT
+              {matchTime} BRT
             </span>
           </>
         )}
 
         {isFinished && (
-          <span
-            style={{
-              color: 'var(--color-muted)',
-              fontSize: '11px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            ENCERRADO
-          </span>
+          <>
+            <span
+              style={{
+                color: 'var(--color-muted)',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              ENCERRADO
+            </span>
+            <span
+              style={{
+                color: 'var(--color-muted)',
+                fontSize: '11px',
+              }}
+            >
+              ·
+            </span>
+            <span
+              style={{
+                color: 'var(--color-muted)',
+                fontSize: '11px',
+              }}
+            >
+              {matchTime} BRT
+            </span>
+          </>
         )}
 
         {/* Sede (se disponível) */}

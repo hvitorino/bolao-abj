@@ -159,4 +159,4 @@ bolao-abj/
 - Formato: 48 seleções, 12 grupos de 4 times (fase de grupos) + mata-mata
 - Início: 11 de junho de 2026
 - Final: 19 de julho de 2026
-- Os dados dos jogos devem ser seedados no Supabase a partir de dados oficiais
+- Os dados dos jogos devem ser seedados no Supabase a partir de dados oficiais apenas quando houver fonte verificável no repositório; sem isso, usar dataset placeholder explicitamente marcado como fictício

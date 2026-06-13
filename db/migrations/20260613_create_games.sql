@@ -29,6 +29,12 @@ CREATE INDEX IF NOT EXISTS games_match_date_idx ON games (match_date);
 CREATE INDEX IF NOT EXISTS games_status_idx ON games (status);
 CREATE INDEX IF NOT EXISTS games_match_date_date_idx ON games ((match_date::date));
 
+-- Garantir idempotência: proibir duplicatas do mesmo confronto na mesma data/hora
+-- O seed usa on_conflict=(home_team_code,away_team_code,match_date) que depende desta constraint
+ALTER TABLE games
+  ADD CONSTRAINT games_unique_match
+  UNIQUE (home_team_code, away_team_code, match_date);
+
 -- Habilitar Row Level Security
 ALTER TABLE games ENABLE ROW LEVEL SECURITY;
 

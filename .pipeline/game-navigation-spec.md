@@ -61,7 +61,7 @@ CREATE POLICY "Autenticados podem ler jogos"
 ### Migrations necessárias
 
 1. `db/migrations/20260613_create_games.sql` — cria tabela `games` com RLS
-2. `db/seeds/seed_games.rb` — popula fase de grupos da Copa 2026 (script Ruby para rodar manualmente)
+2. `db/seeds/seed_games.rb` — popula dataset de jogos da Copa 2026 (script Ruby para rodar manualmente)
 
 ---
 
@@ -244,27 +244,28 @@ export interface Game {
 
 ---
 
-## Seed Data — Copa 2026 Fase de Grupos
+## Seed Data — Dataset de Jogos da Copa 2026
 
-Script Ruby (`db/seeds/seed_games.rb`) para inserir via Supabase REST API usando a service_role key. Cobrir pelo menos os primeiros 15 jogos reais da Copa 2026:
+Script Ruby (`db/seeds/seed_games.rb`) para inserir via Supabase REST API usando a service_role key. Enquanto este repositório não trouxer uma fonte oficial verificável e auditável para a Copa 2026, o seed deve usar um dataset placeholder/fictício explicitamente identificado como tal:
 
-**Jogos reais da Copa do Mundo 2026 (fase de grupos):**
+**Exemplo de dataset placeholder (não oficial):**
 
 | Data | Mandante | Visitante | Grupo | Sede |
 |------|----------|-----------|-------|------|
-| 2026-06-11 | México | ??? | A | Azteca |
-| 2026-06-12 | EUA | ??? | B | MetLife |
-| 2026-06-13 | Canadá | ??? | C | BMO Field |
-| 2026-06-14 | Brasil | ??? | D | ... |
+| 2026-06-11 | México | Japão | A | Azteca |
+| 2026-06-12 | Canadá | Nigéria | B | BC Place |
+| 2026-06-13 | EUA | Coreia do Sul | C | SoFi Stadium |
+| 2026-06-15 | Brasil | Sérvia | F | Rose Bowl |
 | ... | ... | ... | ... | ... |
 
-O seed deve cobrir pelo menos 15 jogos distribuídos em pelo menos 5 dias diferentes, incluindo mandantes México, EUA, Canadá (sede), além de Brasil, Argentina, França, Inglaterra, Espanha, Alemanha, Portugal.
+O seed deve cobrir pelo menos 15 jogos distribuídos em pelo menos 5 dias diferentes, incluindo México, EUA, Canadá (sedes), além de Brasil, Argentina, França, Inglaterra, Espanha, Alemanha e Portugal. Os confrontos precisam ser internamente coerentes entre si e o arquivo deve afirmar de forma inequívoca quando os dados forem fictícios/placeholder.
 
 **Detalhes do script:**
 - Lê `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` de variáveis de ambiente
 - Usa `net/http` + JSON para fazer POST para `/rest/v1/games`
 - Imprime confirmação de cada insert
 - Idempotente: verificar se jogo já existe antes de inserir (ou usar `upsert`)
+- Não pode alegar "dados oficiais", "jogos reais" ou equivalente sem citar fonte verificável no próprio repositório
 
 ---
 

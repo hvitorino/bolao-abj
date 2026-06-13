@@ -1,3 +1,4 @@
+import { dayBoundsInUTC, isValidDateString, todayInBrasilia } from '@/lib/date'
 import { createClient } from '@/lib/supabase/server'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
@@ -9,34 +10,17 @@ interface JogosPageProps {
   searchParams: Promise<{ date?: string }>
 }
 
-// Valida formato YYYY-MM-DD
-function isValidDate(dateStr: string): boolean {
-  const regex = /^\d{4}-\d{2}-\d{2}$/
-  if (!regex.test(dateStr)) return false
-  const date = new Date(dateStr)
-  return !isNaN(date.getTime())
-}
-
-// Retorna data atual no fuso de Brasília em formato YYYY-MM-DD
-function todayInBrasilia(): string {
-  return new Date()
-    .toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })
-    .split('/')
-    .reverse()
-    .map((part, index) => (index === 0 ? part : part.padStart(2, '0')))
-    .join('-')
-}
-
 export default async function JogosPage({ searchParams }: JogosPageProps) {
   const params = await searchParams
   const dateParam = params.date
 
   // Determinar data a exibir
   const currentDate =
-    dateParam && isValidDate(dateParam) ? dateParam : todayInBrasilia()
+    dateParam && isValidDateString(dateParam) ? dateParam : todayInBrasilia()
 
-  const startOfDay = `${currentDate}T00:00:00Z`
-  const endOfDay = `${currentDate}T23:59:59Z`
+  // Calcular limites do dia em BRT convertidos para UTC
+  // Jogos como 2026-06-12T00:00:00Z (21:00 BRT de 11/06) devem aparecer no dia 11/06 BRT
+  const { start: startOfDay, end: endOfDay } = dayBoundsInUTC(currentDate)
 
   const supabase = await createClient()
 

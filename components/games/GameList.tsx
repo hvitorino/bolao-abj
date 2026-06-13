@@ -13,7 +13,7 @@ interface GameListProps {
 
 export default function GameList({
   games,
-  date: _date,
+  date,
   predictionsByGameId = {},
   scoresByGameId = {},
   userId,
@@ -55,7 +55,7 @@ export default function GameList({
   const rounds = Object.keys(gamesByRound)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div data-date={date} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {rounds.map((round) => (
         <div key={round}>
           {/* Separador de rodada quando há mais de um grupo no dia */}
