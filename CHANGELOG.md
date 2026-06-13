@@ -19,8 +19,10 @@ Histórico de implementações aprovadas pelo Revisor.
 - **Endpoints criados:** `GET /api/games?date=YYYY-MM-DD` (autenticado, 401/400/500 tratados)
 - **Componentes criados:** `GameCard.tsx`, `GameList.tsx`, `DayNavigator.tsx`
 - **Tipos:** `lib/types/game.ts` — interface `Game`, type `GameStatus`
-- **Migration SQL:** `db/migrations/20260613_create_games.sql` — tabela `games`, RLS, índices
-- **Seed script:** `db/seeds/seed_games.rb` — 15 jogos placeholder/fictícios da Copa 2026 em 6 dias (11–16 jun), explicitamente não oficiais e usados apenas para desenvolvimento até existir fonte verificável
+- **Migration SQL:** `db/migrations/20260613_create_games.sql` — tabela `games`, RLS, índices, `UNIQUE(home_team_code, away_team_code, match_date)`
+- **Migration adicional:** `db/migrations/20260613_games_unique_match.sql` — adiciona UNIQUE constraint em bancos já existentes
+- **Seed script:** `db/seeds/seed_games.rb` — 15 jogos placeholder/fictícios da Copa 2026 em 6 dias (11–16 jun), explicitamente não oficiais; fail-closed em erros de verificação de duplicata; segunda linha de defesa via `on_conflict + resolution=ignore-duplicates`
+- **Utilitário de data:** `lib/date.ts` — `dayBoundsInUTC()` calcula limites do dia BRT em UTC com suporte a DST (UTC-3/UTC-2) via `Intl.DateTimeFormat`; `isValidDateString()` com rejeição de datas impossíveis; `todayInBrasilia()`
 
 ---
 
