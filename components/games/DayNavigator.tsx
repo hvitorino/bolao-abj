@@ -21,8 +21,8 @@ function formatDateDisplay(dateStr: string): string {
     month: 'short',
     year: 'numeric',
   })
-  // Capitalizar e remover pontos de abreviação
-  return formatted.toUpperCase().replace(/\./g, '').replace(' DE ', ' ')
+  // Capitalizar e remover pontos de abreviação (global replace para todos os "DE" e pontos)
+  return formatted.toUpperCase().replace(/\./g, '').replace(/ DE /g, ' ')
 }
 
 // Soma ou subtrai dias de uma data YYYY-MM-DD

@@ -23,7 +23,8 @@ function formatMatchDate(matchDate: string): string {
       year: 'numeric',
     })
     .toUpperCase()
-    .replace('.', '')
+    .replace(/\./g, '')
+    .replace(/ DE /g, ' ')
 }
 
 export default function GameCard({ game }: GameCardProps) {

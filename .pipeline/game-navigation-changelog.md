@@ -3,7 +3,7 @@
 **Slug:** game-navigation
 **Branch:** feature/game-navigation
 **Data:** 2026-06-13
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
@@ -63,9 +63,16 @@
 
 ---
 
+## Correções Fix 1
+
+**Problema 1 (GameCard):** `.replace('.', '')` substituído por `.replace(/\./g, '')` — regex global para remover todos os pontos em abreviações de meses pt-BR.
+
+**Problema 2 (GameCard + DayNavigator):** `.replace(' DE ', ' ')` substituído por `.replace(/ DE /g, ' ')` — regex global necessária pois o formato "14 de jun. de 2026" gera dois tokens " DE " após uppercase.
+
 ## Commits realizados
 
 ```
+[fix commits] fix(game-navigation): corrige replace não-global em formatadores de data
 cb61131 feat(game-navigation): substitui placeholder de /jogos com implementação real
 2ed58a2 feat(game-navigation): adiciona componentes GameCard, GameList e DayNavigator
 90553e3 feat(game-navigation): adiciona API route GET /api/games com autenticação e filtro por data
