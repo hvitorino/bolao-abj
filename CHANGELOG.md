@@ -20,7 +20,7 @@ Histórico de implementações aprovadas pelo Revisor.
 - **Componentes criados:** `GameCard.tsx`, `GameList.tsx`, `DayNavigator.tsx`
 - **Tipos:** `lib/types/game.ts` — interface `Game`, type `GameStatus`
 - **Migration SQL:** `db/migrations/20260613_create_games.sql` — tabela `games`, RLS, índices
-- **Seed script:** `db/seeds/seed_games.rb` — 15 jogos reais da Copa 2026 em 6 dias (11–17 jun)
+- **Seed script:** `db/seeds/seed_games.rb` — 15 jogos placeholder/fictícios da Copa 2026 em 6 dias (11–16 jun), explicitamente não oficiais e usados apenas para desenvolvimento até existir fonte verificável
 
 ---
 

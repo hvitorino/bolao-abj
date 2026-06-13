@@ -1,23 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isValidDateString, todayInBrasilia } from '@/lib/date'
 import { createClient } from '@/lib/supabase/server'
-
-// Valida formato YYYY-MM-DD
-function isValidDate(dateStr: string): boolean {
-  const regex = /^\d{4}-\d{2}-\d{2}$/
-  if (!regex.test(dateStr)) return false
-  const date = new Date(dateStr)
-  return !isNaN(date.getTime())
-}
-
-// Retorna data atual no fuso de Brasília (UTC-3) em formato YYYY-MM-DD
-function todayInBrasilia(): string {
-  return new Date()
-    .toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })
-    .split('/')
-    .reverse()
-    .map((part, index) => (index === 0 ? part : part.padStart(2, '0')))
-    .join('-')
-}
 
 export async function GET(request: NextRequest) {
   // Verificar autenticação
@@ -38,7 +21,7 @@ export async function GET(request: NextRequest) {
   let date: string
 
   if (dateParam) {
-    if (!isValidDate(dateParam)) {
+    if (!isValidDateString(dateParam)) {
       return NextResponse.json({ error: 'Formato de data inválido. Use YYYY-MM-DD.' }, { status: 400 })
     }
     date = dateParam

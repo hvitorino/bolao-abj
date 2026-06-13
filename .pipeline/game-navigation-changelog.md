@@ -3,7 +3,7 @@
 **Slug:** game-navigation
 **Branch:** feature/game-navigation
 **Data:** 2026-06-13
-**Status:** aprovado
+**Status:** aguardando revisão
 
 ---
 
@@ -27,11 +27,15 @@
 
 - `lib/types/game.ts` — Interface `Game` com todos os campos da tabela, type alias `GameStatus = 'pending' | 'live' | 'finished'`.
 
+### Utilitários
+
+- `lib/date.ts` — Funções compartilhadas `isValidDateString()` e `todayInBrasilia()`, usadas pela página `/jogos` e pela route `/api/games` para validação estrita de datas reais no formato `YYYY-MM-DD`.
+
 ### Banco de Dados
 
 - `db/migrations/20260613_create_games.sql` — Cria tabela `games` com todos os campos definidos no CLAUDE.md. CHECK constraint no campo `status`. Índices em `match_date`, `status` e `match_date::date`. RLS habilitado. Policy de leitura para usuários autenticados.
 
-- `db/seeds/seed_games.rb` — Script Ruby que insere 15 jogos reais da Copa 2026 distribuídos em 6 dias (11–17 jun 2026). Times incluídos: México, Canadá, EUA (sedes), Argentina, Brasil, Espanha, França, Alemanha, Portugal, Inglaterra, Holanda, Itália, Japão, Coreia do Sul. Usa `net/http` + `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`. Idempotente com `Prefer: return=minimal`.
+- `db/seeds/seed_games.rb` — Script Ruby que insere 15 jogos placeholder/fictícios da Copa 2026 distribuídos em 6 dias (11–16 jun 2026), com coerência mínima entre grupos e confrontos. Usa `net/http` + `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`. Não se apresenta como calendário oficial e agora evita duplicatas com verificação prévia via Supabase REST.
 
 ---
 
@@ -55,9 +59,9 @@
 
 1. **Tabela `predictions` pode não existir**: A query de contagem de palpites usa `supabase.from('predictions')`. Se a tabela ainda não foi criada no Supabase (feature futura), o código não quebra — o erro é silencioso e `guessCount` fica 0.
 
-2. **Seed script não é idempotente contra duplicatas**: O script insere sem verificar duplicatas. Se rodar duas vezes, duplica os jogos. Para idempotência real, seria necessário adicionar uma UNIQUE constraint em `(home_team_code, away_team_code, match_date)` e usar `ON CONFLICT DO NOTHING`.
+2. **Seed placeholder, não calendário oficial**: O dataset foi convertido para confrontos fictícios/placeholder porque o repositório não traz uma fonte oficial verificável para a Copa 2026. Isso preserva a honestidade dos dados sem bloquear o desenvolvimento da interface `/jogos`.
 
-3. **Datas dos jogos**: Os horários dos jogos no seed são aproximações baseadas no calendário Copa 2026 publicado. Devem ser conferidos com o calendário oficial FIFA antes de usar em produção.
+3. **Idempotência por verificação prévia**: O script agora consulta a API REST do Supabase antes de inserir cada partida e faz `SKIP` quando encontra o mesmo trio `(home_team_code, away_team_code, match_date)`. Ainda é recomendável adicionar uma UNIQUE constraint no banco para garantir idempotência também no nível do schema.
 
 4. **`searchParams` como Promise**: Next.js 15 tornou `searchParams` uma Promise assíncrona. A página já usa `await searchParams` corretamente.
 
@@ -69,7 +73,23 @@
 
 **Problema 2 (GameCard + DayNavigator):** `.replace(' DE ', ' ')` substituído por `.replace(/ DE /g, ' ')` — regex global necessária pois o formato "14 de jun. de 2026" gera dois tokens " DE " após uppercase.
 
+## Correções Fix 2
+
+**Problema 1 (seed com alegação de oficialidade):** `db/seeds/seed_games.rb` deixou de afirmar que representa jogos reais/oficiais da Copa 2026. O arquivo agora documenta explicitamente que o dataset é fictício/placeholder até existir fonte verificável no repositório.
+
+**Problema 2 (coerência mínima do dataset):** o array `GAMES` foi refeito para eliminar confrontos incompatíveis entre si, mantendo 15 partidas distribuídas em 6 dias com grupos consistentes para uso da UI.
+
+**Problema 3 (idempotência prática):** o seed agora verifica previamente se a partida já existe no Supabase e faz `SKIP` em duplicatas, reduzindo risco de múltiplas inserções acidentais durante desenvolvimento.
+
+**Problema 4 (GameCard ao vivo sem placar):** fallback visual ajustado para mostrar `0 × 0` quando `status === 'live'` e ainda não há placar persistido; `pending` continua exibindo `- × -`.
+
+**Problema 5 (horário ausente em live/finished):** `GameCard` passou a exibir horário em BRT no cabeçalho e também no rodapé dos estados `live` e `finished`, garantindo consistência com a spec.
+
+**Problema 6 (validação frouxa de data):** a validação de `YYYY-MM-DD` em `app/(dashboard)/jogos/page.tsx` e `app/api/games/route.ts` foi centralizada em `lib/date.ts` e agora rejeita datas impossíveis como `2026-02-31`.
+
 ## Commits realizados
+
+> Nota: o log abaixo preserva mensagens históricas verbatim; descrições antigas sobre o seed foram superadas pelo Fix 2.
 
 ```
 [fix commits] fix(game-navigation): corrige replace não-global em formatadores de data
