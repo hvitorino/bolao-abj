@@ -6,6 +6,23 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [ranking] — Ranking em Tempo Real — 2026-06-13
+
+- Página `/ranking` com classificação completa de todos os participantes, ordenada por pontos totais (decrescente)
+- Líder destacado com `►` e cor `color-accent`; usuário atual destacado em `color-primary` com fundo sutil e sufixo `(VOCÊ)`
+- Aproveitamento (%) calculado no backend: `total_points / (games_predicted * 9) * 100`
+- Ranking atualiza automaticamente em tempo real via Supabase Realtime (canal `ranking-scores`, tabela `scores`) — sem reload
+- Indicador `"● AO VIVO"` piscante no cabeçalho da tabela
+- Links de navegação adicionados ao header do dashboard: `JOGOS | RANKING | PALPITES` com destaque de rota ativa
+- **Banco:** `db/migrations/20260613_create_ranking_view.sql` — view `ranking_view`, função `get_ranking()` com `SECURITY DEFINER` para contornar RLS de `scores`
+- **Endpoint criado:** `GET /api/ranking` (Ruby) — chama `get_ranking()` via RPC; aproveitamento calculado no servidor; 401/500 tratados
+- **Tipo criado:** `lib/types/ranking.ts` — interface `RankingEntry`
+- **Hook criado:** `lib/hooks/useRankingRealtime.ts` — fetch inicial + subscription Realtime com cleanup automático
+- **Componentes criados:** `components/bolao/RankingRow.tsx`, `components/bolao/RankingTable.tsx` — tabela densa estilo Elifoot
+- **Página criada:** `app/(dashboard)/ranking/page.tsx` — Server Component, auth via `supabase.auth.getUser()`
+- **Componentes criados:** `app/(dashboard)/nav-links.tsx` — Client Component com `usePathname()` para destaque de nav ativa
+- **Componente modificado:** `app/(dashboard)/layout.tsx` — integra `NavLinks` no header
+
 ## [scoring] — Pontuação por Jogo em Tempo Real — 2026-06-13
 
 - Cálculo automático de pontos via trigger Postgres `on_game_finished`: quando admin muda status para `finished`, todos os palpites do jogo são calculados e persistidos em `scores` via UPSERT (sem chamada manual)
