@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
+import { Score } from '@/lib/types/score'
 import DayNavigator from '@/components/games/DayNavigator'
 import GameList from '@/components/games/GameList'
 
@@ -54,6 +55,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
 
   // Buscar palpites do usuário para os jogos do dia
   let predictionsByGameId: Record<string, Prediction> = {}
+  let scoresByGameId: Record<string, Score> = {}
   let guessCount = 0
 
   if (user && games && games.length > 0) {
@@ -72,6 +74,17 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
     // Mapear predictions por game_id para acesso O(1) no GameCard
     predictionsByGameId = Object.fromEntries(
       (predictions ?? []).map((p: Prediction) => [p.game_id, p])
+    )
+
+    // Buscar scores calculados para os jogos do dia (apenas jogos encerrados terão scores)
+    const { data: scores } = await supabase
+      .from('scores')
+      .select('*')
+      .eq('user_id', user.id)
+      .in('game_id', gameIds)
+
+    scoresByGameId = Object.fromEntries(
+      (scores ?? []).map((s: Score) => [s.game_id, s])
     )
   }
 
@@ -144,11 +157,13 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         />
       </div>
 
-      {/* Lista de jogos com palpites */}
+      {/* Lista de jogos com palpites e pontuações */}
       <GameList
         games={games ?? []}
         date={currentDate}
         predictionsByGameId={predictionsByGameId}
+        scoresByGameId={scoresByGameId}
+        userId={user?.id}
       />
     </div>
   )

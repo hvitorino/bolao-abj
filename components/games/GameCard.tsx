@@ -2,13 +2,18 @@
 
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
+import { Score } from '@/lib/types/score'
 import PredictionForm from '@/components/bolao/PredictionForm'
 import PredictionDisplay from '@/components/bolao/PredictionDisplay'
+import ScoreDisplay from '@/components/bolao/ScoreDisplay'
 import { useGameRealtime } from '@/lib/hooks/useGameRealtime'
+import { useScoreRealtime } from '@/lib/hooks/useScoreRealtime'
 
 interface GameCardProps {
   game: Game
   prediction?: Prediction | null
+  score?: Score | null
+  userId?: string // necessário para filtrar Realtime por usuário
 }
 
 // Formata horário do jogo para exibição em BRT (UTC-3)
@@ -34,11 +39,20 @@ function formatMatchDate(matchDate: string): string {
     .replace(/ DE /g, ' ')
 }
 
-export default function GameCard({ game, prediction = null }: GameCardProps) {
+export default function GameCard({
+  game,
+  prediction = null,
+  score = null,
+  userId,
+}: GameCardProps) {
   // Subscreve ao canal Realtime do Supabase para este jogo específico.
   // liveGame começa com o estado SSR (game) e atualiza automaticamente
   // via WAL replication quando admin faz PATCH no placar ou status.
   const liveGame = useGameRealtime(game.id, game)
+
+  // Subscreve ao score do usuário para este jogo.
+  // liveScore atualiza quando o trigger Postgres calcula pontuação após jogo encerrado.
+  const liveScore = useScoreRealtime(game.id, userId ?? '', score)
 
   const isLive = liveGame.status === 'live'
   const isFinished = liveGame.status === 'finished'
@@ -288,13 +302,30 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
         {(isLive || isFinished) && (
           <>
             {prediction ? (
-              <PredictionDisplay
-                homeScore={prediction.home_score}
-                awayScore={prediction.away_score}
-                homeTeamCode={liveGame.home_team_code}
-                awayTeamCode={liveGame.away_team_code}
-                submittedAt={prediction.submitted_at}
-              />
+              <>
+                <PredictionDisplay
+                  homeScore={prediction.home_score}
+                  awayScore={prediction.away_score}
+                  homeTeamCode={liveGame.home_team_code}
+                  awayTeamCode={liveGame.away_team_code}
+                  submittedAt={prediction.submitted_at}
+                />
+                {/* Breakdown de pontuação — visível quando jogo encerrado e score calculado */}
+                {isFinished && liveScore && liveGame.home_score !== null && liveGame.away_score !== null && (
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <ScoreDisplay
+                      points={liveScore.points}
+                      breakdown={liveScore.breakdown}
+                      predictionHomeScore={prediction.home_score}
+                      predictionAwayScore={prediction.away_score}
+                      gameHomeScore={liveGame.home_score}
+                      gameAwayScore={liveGame.away_score}
+                      homeTeamCode={liveGame.home_team_code}
+                      awayTeamCode={liveGame.away_team_code}
+                    />
+                  </div>
+                )}
+              </>
             ) : (
               <div
                 style={{
