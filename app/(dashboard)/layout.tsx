@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from './logout-button'
+import { NavLinks } from './nav-links'
 
 export default async function DashboardLayout({
   children,
@@ -27,21 +28,37 @@ export default async function DashboardLayout({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.75rem',
         }}
       >
-        <span
+        {/* Logo + navegação principal */}
+        <div
           style={{
-            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--color-accent)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '2rem',
+            flexWrap: 'wrap',
           }}
         >
-          BOLÃO DO CARTOLA ABJ
-        </span>
+          <span
+            style={{
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              fontSize: '14px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              color: 'var(--color-accent)',
+            }}
+          >
+            BOLÃO DO CARTOLA ABJ
+          </span>
 
+          {/* Links de navegação */}
+          <NavLinks />
+        </div>
+
+        {/* Usuário + logout */}
         <div
           style={{
             display: 'flex',
