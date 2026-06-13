@@ -3,7 +3,7 @@
 **Slug:** auth
 **Branch:** feature/auth
 **Data:** 2026-06-13
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
