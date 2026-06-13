@@ -88,6 +88,7 @@ end
 
 # Handler principal (Rack app)
 run lambda { |env|
+  begin
   # CORS headers para o frontend Next.js
   cors_headers = {
     'Access-Control-Allow-Origin' => '*',
@@ -170,17 +171,19 @@ run lambda { |env|
       use_service_role: true
     )
 
-    if res.nil? || res.code.to_i >= 500
+    if res.nil? || !res.code.to_i.between?(200, 299)
       next json_response(500, { error: 'server_error', message: 'Erro ao verificar jogo.' })
     end
 
-    games = JSON.parse(res.body) rescue []
-    game = games.first
+    games = JSON.parse(res.body) rescue nil
+    game = games.is_a?(Array) ? games.first : nil
 
     next json_response(404, { error: 'not_found', message: 'Jogo não encontrado.' }) unless game
 
     # Validação do deadline: 5 minutos antes do início
-    match_date = Time.parse(game['match_date']).utc
+    raw_date = game['match_date']
+    next json_response(500, { error: 'server_error', message: 'Jogo sem data.' }) if raw_date.nil?
+    match_date = Time.parse(raw_date).utc
     deadline   = match_date - (5 * 60) # 5 minutos em segundos
     now        = Time.now.utc
 
@@ -201,8 +204,9 @@ run lambda { |env|
       use_service_role: true
     )
 
-    existing = (JSON.parse(res.body) rescue [])
-    if existing && existing.length > 0
+    existing_parsed = res.nil? ? nil : (JSON.parse(res.body) rescue nil)
+    existing = existing_parsed.is_a?(Array) ? existing_parsed : []
+    if existing.length > 0
       next json_response(422, {
         error: 'already_submitted',
         message: 'Você já enviou um palpite para este jogo.'
@@ -245,5 +249,9 @@ run lambda { |env|
 
   else
     json_response(405, { error: 'method_not_allowed', message: 'Método não permitido.' })
+  end
+  rescue => e
+    $stderr.puts "PREDICTIONS UNHANDLED: #{e.class}: #{e.message}\n#{e.backtrace.first(8).join("\n")}"
+    [500, { 'Content-Type' => 'application/json' }, [{ error: 'critical', klass: e.class.to_s, message: e.message, trace: e.backtrace.first(5) }.to_json]]
   end
 }
