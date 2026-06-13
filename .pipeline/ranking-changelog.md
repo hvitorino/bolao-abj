@@ -3,7 +3,7 @@
 **Slug:** ranking
 **Branch:** feature/ranking
 **Data:** 2026-06-13
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
