@@ -6,6 +6,17 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [live-scores] — Placares em Tempo Real — 2026-06-13
+
+- Placares e status de jogos atualizados em tempo real via Supabase Realtime (WAL replication), sem reload de página
+- Cada `GameCard` subscreve ao canal `game-${gameId}` individualmente; cleanup ao desmontar (sem memory leak)
+- Badge "██ AO VIVO ██" pisca (CSS `blink`) em jogos com `status === 'live'`; placar em `color-accent` para jogos `live` e `finished`
+- Latência alvo de < 2s desde UPDATE no banco até atualização na tela do usuário
+- **Hook criado:** `lib/hooks/useGameRealtime.ts` — `useGameRealtime(gameId, initialGame)` com subscription Realtime e cleanup automático
+- **Componente modificado:** `components/games/GameCard.tsx` — integra o hook; interface de props sem alteração
+- **Endpoint criado:** `PATCH /api/admin/games/[id]` (Ruby) — atualiza `home_score`, `away_score`, `status`; autenticação via `X-Admin-Secret` header (env var `ADMIN_SECRET`); 401/404/422/500 tratados
+- **Banco:** nenhuma migration SQL; configuração manual necessária: `ALTER TABLE games REPLICA IDENTITY FULL` + `ALTER PUBLICATION supabase_realtime ADD TABLE games`
+
 ## [predictions] — Palpites — 2026-06-13
 
 - Sistema de palpites na rota `/jogos`: cada GameCard exibe formulário inline para jogos pendentes
