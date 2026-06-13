@@ -41,7 +41,7 @@ export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) 
           letterSpacing: '0.05em',
         }}
       >
-        {entry.position}
+        {entry.rank_position}
       </td>
 
       {/* Participante */}

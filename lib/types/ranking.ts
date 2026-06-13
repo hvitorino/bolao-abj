@@ -1,5 +1,5 @@
 export interface RankingEntry {
-  position: number
+  rank_position: number
   user_id: string
   participant_name: string
   total_points: number

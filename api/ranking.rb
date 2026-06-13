@@ -125,7 +125,7 @@ run lambda { |env|
   # Adicionar aproveitamento calculado no servidor
   ranking = entries.map do |entry|
     {
-      position: entry['position'],
+      rank_position: entry['rank_position'],
       user_id: entry['user_id'],
       participant_name: entry['participant_name'],
       total_points: entry['total_points'].to_i,
