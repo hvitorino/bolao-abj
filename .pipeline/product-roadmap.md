@@ -1,0 +1,91 @@
+# Product Roadmap — Bolão do Cartola ABJ
+
+Criado em: 2026-06-13
+
+## Status Geral
+- Total: 6 features
+- Concluídas: 0
+- Em progresso: 1
+- Pendentes: 5
+
+## Features Priorizadas
+
+### 1. auth — Autenticação — em progresso
+**Objetivo:** Permitir que participantes se cadastrem e façam login no bolão, criando um perfil associado à conta Supabase Auth. Sem autenticação, nenhuma outra feature pode funcionar.
+**Critérios de sucesso:**
+- Usuário consegue se cadastrar com e-mail e senha e ter um perfil criado na tabela `profiles`
+- Usuário consegue fazer login e ser redirecionado para a área protegida
+- Usuário não autenticado é redirecionado para `/login` ao tentar acessar rotas protegidas
+- Sessão persiste entre recarregamentos de página (Supabase session management)
+- Interface em português, fonte monospace, seguindo paleta de DESIGN.md
+- Formulários exibem mensagens de erro claras (e-mail já cadastrado, senha inválida, etc.)
+**Dependências:** nenhuma
+
+---
+
+### 2. game-navigation — Navegação por Jogos — pendente
+**Objetivo:** Exibir todos os jogos da Copa do Mundo 2026 organizados por dia, permitindo ao usuário navegar entre datas e visualizar status, horário e times de cada partida.
+**Critérios de sucesso:**
+- Jogos exibidos em cards com times, horário, status (`pending` / `live` / `finished`) e rodada
+- Navegação por dia com setas `◀ ▶` funcionando corretamente
+- Dia atual destacado por padrão ao carregar a página
+- Contagem de jogos por dia visível no header da navegação
+- Dados dos jogos da Copa 2026 seedados no Supabase (pelo menos fase de grupos)
+- Layout segue DESIGN.md: componente "Placar de Jogo", fonte monospace, paleta verde/amarelo/azul
+- Rota `/jogos` protegida (requer autenticação)
+**Dependências:** auth
+
+---
+
+### 3. predictions — Palpites — pendente
+**Objetivo:** Permitir que participantes registrem seu palpite de placar para cada jogo, respeitando o deadline de 5 minutos antes do início da partida.
+**Critérios de sucesso:**
+- Usuário consegue submeter palpite (home_score, away_score) para qualquer jogo com status `pending`
+- Palpite é salvo na tabela `predictions` com UNIQUE(user_id, game_id) — edição permitida antes do deadline
+- Inputs bloqueados quando `match_date - now() <= 5 minutos` ou status != `pending`
+- Deadline exibido em `color-error` quando faltam ≤ 30 minutos
+- Palpite registrado fica visível após o deadline
+- Interface segue o componente "Card de Palpite" de DESIGN.md
+- Rota `/meus-palpites` protegida e mostra todos os palpites do usuário logado
+**Dependências:** auth, game-navigation
+
+---
+
+### 4. live-scores — Placares ao Vivo — pendente
+**Objetivo:** Exibir atualizações de placar em tempo real durante os jogos, usando Supabase Realtime para propagar mudanças a todos os clientes conectados sem necessidade de reload.
+**Critérios de sucesso:**
+- Placar de jogos com status `live` atualiza automaticamente via Supabase Realtime (canal `games`)
+- Badge `██ AO VIVO ██` pisca com animação `blink 1s step-end infinite` em `color-live`
+- Timestamp de última atualização visível em `color-muted`
+- Placares de jogos `finished` exibidos de forma estática em `color-muted`
+- Sem necessidade de refresh manual para ver atualizações
+- Endpoint/mecanismo de atualização de placares pelo administrador (pode ser via Supabase dashboard ou endpoint protegido)
+**Dependências:** auth, game-navigation
+
+---
+
+### 5. scoring — Pontuação — pendente
+**Objetivo:** Calcular automaticamente a pontuação de cada palpite ao final de cada jogo, persistindo o resultado na tabela `scores` com o breakdown detalhado dos pontos obtidos.
+**Critérios de sucesso:**
+- Pontuação calculada corretamente para todos os cenários: acerto de vencedor (+3), placar exato (+5), placar do vencedor (+3), diferença de gols (+2), placar do perdedor (+1), goleada (+1)
+- Empate tratado corretamente: acerto de empate = +3 (vencedor); placar exato no empate = +5 adicional
+- Cálculo disparado automaticamente quando `games.status` muda para `finished`
+- Tabela `scores` populada com `breakdown` em JSON detalhando cada componente
+- Pontuação por jogo exibida no estilo "Pontuação por Jogo" de DESIGN.md
+- Lógica de pontuação implementada em Ruby (backend) e espelhada em `lib/scoring.ts` (frontend)
+**Dependências:** auth, game-navigation, predictions, live-scores
+
+---
+
+### 6. ranking — Ranking — pendente
+**Objetivo:** Exibir o ranking geral do bolão com pontuação acumulada de cada participante, atualizado em tempo real via Supabase Realtime.
+**Critérios de sucesso:**
+- Ranking exibe todos os participantes ordenados por pontos totais (soma de `scores`)
+- Percentual de aproveitamento calculado (pontos obtidos / pontos máximos possíveis)
+- Líder destacado com seta `►` em `color-accent`
+- Usuário logado destacado em `color-primary` e sempre visível (fixado em mobile se fora da viewport)
+- Atualização em tempo real via Supabase Realtime (canal `scores`)
+- Posições animadas com transição suave ao atualizar
+- Layout segue componente "Ranking" de DESIGN.md: tabela densa, uppercase, monospace
+- Rota `/ranking` protegida
+**Dependências:** auth, game-navigation, predictions, scoring
