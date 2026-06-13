@@ -6,6 +6,21 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [predictions] — Palpites — 2026-06-13
+
+- Sistema de palpites na rota `/jogos`: cada GameCard exibe formulário inline para jogos pendentes
+- Formulário com dois inputs numéricos estilo LED (borda `color-accent`) para placar casa × visitante
+- Deadline automático de 5 minutos antes do início: inputs bloqueados, mensagem "✗ PRAZO ENCERRADO"
+- Countdown visual "⏱ FECHA EM Xh Ymin" quando faltam < 2h; muda para `color-error` quando < 30min
+- Palpite enviado exibido com "✓ SEU PALPITE" em borda `color-primary`, placar `color-accent`; imutável após envio
+- Jogos ao vivo e encerrados: exibe palpite (se enviado) ou "SEM PALPITE" em `color-muted`
+- Feedback visual imediato: loading durante envio, mensagem de sucesso/erro após resposta da API
+- **Endpoints criados:** `POST /api/predictions` (registra com validação deadline + JWT), `GET /api/predictions?game_id=UUID`
+- **Componentes criados:** `PredictionForm.tsx` (Client), `PredictionDisplay.tsx`
+- **Componentes modificados:** `GameCard.tsx` (Client Component + prop prediction), `GameList.tsx` (prop predictionsByGameId), `app/(dashboard)/jogos/page.tsx` (busca predictions server-side)
+- **Tipos:** `lib/types/prediction.ts` — interface `Prediction`
+- **Migration SQL:** `db/migrations/20260613_create_predictions.sql` — tabela `predictions`, UNIQUE(user_id, game_id), RLS (SELECT + INSERT apenas próprio usuário, sem UPDATE/DELETE)
+
 ## [game-navigation] — Navegação de Jogos — 2026-06-13
 
 - Visualização de jogos da Copa 2026 por dia na rota `/jogos` (substituiu placeholder)
