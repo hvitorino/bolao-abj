@@ -4,13 +4,13 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 6 features
-- Concluídas: 0
-- Em progresso: 1
-- Pendentes: 5
+- Concluídas: 6
+- Em progresso: 0
+- Pendentes: 0
 
 ## Features Priorizadas
 
-### 1. auth — Autenticação — em progresso
+### 1. auth — Autenticação — concluída
 **Objetivo:** Permitir que participantes se cadastrem e façam login no bolão, criando um perfil associado à conta Supabase Auth. Sem autenticação, nenhuma outra feature pode funcionar.
 **Critérios de sucesso:**
 - Usuário consegue se cadastrar com e-mail e senha e ter um perfil criado na tabela `profiles`
@@ -23,7 +23,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 2. game-navigation — Navegação por Jogos — pendente
+### 2. game-navigation — Navegação por Jogos — concluída
 **Objetivo:** Exibir todos os jogos da Copa do Mundo 2026 organizados por dia, permitindo ao usuário navegar entre datas e visualizar status, horário e times de cada partida.
 **Critérios de sucesso:**
 - Jogos exibidos em cards com times, horário, status (`pending` / `live` / `finished`) e rodada
@@ -37,7 +37,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 3. predictions — Palpites — pendente
+### 3. predictions — Palpites — concluída
 **Objetivo:** Permitir que participantes registrem seu palpite de placar para cada jogo, respeitando o deadline de 5 minutos antes do início da partida.
 **Critérios de sucesso:**
 - Usuário consegue submeter palpite (home_score, away_score) para qualquer jogo com status `pending`
@@ -51,7 +51,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 4. live-scores — Placares ao Vivo — pendente
+### 4. live-scores — Placares ao Vivo — concluída
 **Objetivo:** Exibir atualizações de placar em tempo real durante os jogos, usando Supabase Realtime para propagar mudanças a todos os clientes conectados sem necessidade de reload.
 **Critérios de sucesso:**
 - Placar de jogos com status `live` atualiza automaticamente via Supabase Realtime (canal `games`)
@@ -64,7 +64,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 5. scoring — Pontuação — pendente
+### 5. scoring — Pontuação — concluída
 **Objetivo:** Calcular automaticamente a pontuação de cada palpite ao final de cada jogo, persistindo o resultado na tabela `scores` com o breakdown detalhado dos pontos obtidos.
 **Critérios de sucesso:**
 - Pontuação calculada corretamente para todos os cenários: acerto de vencedor (+3), placar exato (+5), placar do vencedor (+3), diferença de gols (+2), placar do perdedor (+1), goleada (+1)
@@ -77,7 +77,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 6. ranking — Ranking — pendente
+### 6. ranking — Ranking — concluída
 **Objetivo:** Exibir o ranking geral do bolão com pontuação acumulada de cada participante, atualizado em tempo real via Supabase Realtime.
 **Critérios de sucesso:**
 - Ranking exibe todos os participantes ordenados por pontos totais (soma de `scores`)
