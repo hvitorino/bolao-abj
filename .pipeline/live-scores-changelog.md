@@ -3,7 +3,7 @@
 **Slug:** live-scores
 **Branch:** feature/live-scores
 **Data:** 2026-06-13
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
