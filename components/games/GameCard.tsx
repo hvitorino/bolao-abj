@@ -4,6 +4,7 @@ import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import PredictionForm from '@/components/bolao/PredictionForm'
 import PredictionDisplay from '@/components/bolao/PredictionDisplay'
+import { useGameRealtime } from '@/lib/hooks/useGameRealtime'
 
 interface GameCardProps {
   game: Game
@@ -34,10 +35,15 @@ function formatMatchDate(matchDate: string): string {
 }
 
 export default function GameCard({ game, prediction = null }: GameCardProps) {
-  const isLive = game.status === 'live'
-  const isFinished = game.status === 'finished'
-  const isPending = game.status === 'pending'
-  const hasScore = game.home_score !== null && game.away_score !== null
+  // Subscreve ao canal Realtime do Supabase para este jogo específico.
+  // liveGame começa com o estado SSR (game) e atualiza automaticamente
+  // via WAL replication quando admin faz PATCH no placar ou status.
+  const liveGame = useGameRealtime(game.id, game)
+
+  const isLive = liveGame.status === 'live'
+  const isFinished = liveGame.status === 'finished'
+  const isPending = liveGame.status === 'pending'
+  const hasScore = liveGame.home_score !== null && liveGame.away_score !== null
 
   const cardBorderColor = isLive ? 'var(--color-live)' : 'var(--color-border)'
 
@@ -68,7 +74,7 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
             letterSpacing: '0.05em',
           }}
         >
-          {game.round}
+          {liveGame.round}
         </span>
         <span
           style={{
@@ -77,7 +83,7 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
             textTransform: 'uppercase',
           }}
         >
-          {formatMatchDate(game.match_date)}
+          {formatMatchDate(liveGame.match_date)}
         </span>
       </div>
 
@@ -102,7 +108,7 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
               textTransform: 'uppercase',
             }}
           >
-            {game.home_team_code}
+            {liveGame.home_team_code}
           </div>
           <div
             style={{
@@ -113,7 +119,7 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
               letterSpacing: '0.05em',
             }}
           >
-            {game.home_team}
+            {liveGame.home_team}
           </div>
         </div>
 
@@ -128,7 +134,7 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
                 letterSpacing: '0.05em',
               }}
             >
-              {game.home_score} × {game.away_score}
+              {liveGame.home_score} × {liveGame.away_score}
             </div>
           ) : (
             <div
@@ -155,7 +161,7 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
               textTransform: 'uppercase',
             }}
           >
-            {game.away_team_code}
+            {liveGame.away_team_code}
           </div>
           <div
             style={{
@@ -166,7 +172,7 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
               letterSpacing: '0.05em',
             }}
           >
-            {game.away_team}
+            {liveGame.away_team}
           </div>
         </div>
       </div>
@@ -223,7 +229,7 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
                 fontSize: '11px',
               }}
             >
-              {formatMatchTime(game.match_date)} BRT
+              {formatMatchTime(liveGame.match_date)} BRT
             </span>
           </>
         )}
@@ -242,7 +248,7 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
         )}
 
         {/* Sede (se disponível) */}
-        {game.venue && (
+        {liveGame.venue && (
           <span
             style={{
               color: 'var(--color-muted)',
@@ -255,7 +261,7 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
               maxWidth: '160px',
             }}
           >
-            {game.venue}
+            {liveGame.venue}
           </span>
         )}
       </div>
@@ -270,10 +276,10 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
         {/* Jogo pendente: formulário de palpite ou palpite enviado */}
         {isPending && (
           <PredictionForm
-            gameId={game.id}
-            homeTeamCode={game.home_team_code}
-            awayTeamCode={game.away_team_code}
-            matchDate={game.match_date}
+            gameId={liveGame.id}
+            homeTeamCode={liveGame.home_team_code}
+            awayTeamCode={liveGame.away_team_code}
+            matchDate={liveGame.match_date}
             initialPrediction={prediction}
           />
         )}
@@ -285,8 +291,8 @@ export default function GameCard({ game, prediction = null }: GameCardProps) {
               <PredictionDisplay
                 homeScore={prediction.home_score}
                 awayScore={prediction.away_score}
-                homeTeamCode={game.home_team_code}
-                awayTeamCode={game.away_team_code}
+                homeTeamCode={liveGame.home_team_code}
+                awayTeamCode={liveGame.away_team_code}
                 submittedAt={prediction.submitted_at}
               />
             ) : (
