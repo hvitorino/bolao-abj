@@ -87,16 +87,16 @@
 
 **Problema 6 (validação frouxa de data):** a validação de `YYYY-MM-DD` em `app/(dashboard)/jogos/page.tsx` e `app/api/games/route.ts` foi centralizada em `lib/date.ts` e agora rejeita datas impossíveis como `2026-02-31`.
 
+## Correções Fix 3
+
+**Problema 1 (filtro de data mistura BRT com limites UTC):** Adicionada função `dayBoundsInUTC(brasiliaDayString)` em `lib/date.ts`. O helper calcula os limites do dia em `America/Sao_Paulo` e os converte para instantes UTC usando `Intl.DateTimeFormat` com amostragem ao meio-dia UTC (evita ambiguidade DST). Substituídas as construções fixas `T00:00:00Z`/`T23:59:59Z` em `app/(dashboard)/jogos/page.tsx` e `app/api/games/route.ts` pelo mesmo helper compartilhado. Validado com os três casos do seed: `Portugal x Camarões` (`2026-06-12T00:00:00Z` → 11/06 BRT ✓), `Inglaterra x Croácia` (`2026-06-13T01:00:00Z` → 12/06 BRT ✓), `Argentina x Equador` (`2026-06-14T00:00:00Z` → 13/06 BRT ✓).
+
+**Problema 2 (seed fail-open e ausência de UNIQUE constraint):** `game_exists?` agora retorna o símbolo `:error` em caso de falha HTTP — o loop principal detecta `:error` e pula o insert com mensagem explícita, sem assumir que o jogo não existe. `insert_game` usa `on_conflict=home_team_code,away_team_code,match_date` com `Prefer: resolution=ignore-duplicates` como segunda linha de defesa (upsert no nível HTTP). Adicionada `UNIQUE(home_team_code, away_team_code, match_date)` em `20260613_create_games.sql` (instalações novas) e criada migration separada `20260613_games_unique_match.sql` para bancos já existentes.
+
 ## Commits realizados
 
-> Nota: o log abaixo preserva mensagens históricas verbatim; descrições antigas sobre o seed foram superadas pelo Fix 2.
-
 ```
-[fix commits] fix(game-navigation): corrige replace não-global em formatadores de data
-cb61131 feat(game-navigation): substitui placeholder de /jogos com implementação real
-2ed58a2 feat(game-navigation): adiciona componentes GameCard, GameList e DayNavigator
-90553e3 feat(game-navigation): adiciona API route GET /api/games com autenticação e filtro por data
-9986d64 feat(game-navigation): adiciona seed script Ruby com 15 jogos reais da Copa 2026
-904d00f feat(game-navigation): adiciona migration SQL para tabela games com RLS
-92e2866 feat(game-navigation): adiciona tipos TypeScript Game e GameStatus
+4a0fd22 fix(game-navigation): seed fail-closed e UNIQUE constraint em games
+96ad0a5 fix(game-navigation): corrige filtro de data BRT→UTC com helper dayBoundsInUTC
+eccfcd6 fix(game-navigation): corrige seed placeholder e documentação
 ```
