@@ -3,7 +3,7 @@
 **Slug:** predictions
 **Branch:** feature/predictions
 **Data:** 2026-06-13
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
@@ -96,9 +96,14 @@
 
 ---
 
+## Correções Fix 1
+
+**Problema 1 (PredictionForm):** Removido `useCallback` do import — estava importado mas não utilizado, causando warning ESLint `@typescript-eslint/no-unused-vars`.
+
 ## Commits realizados
 
 ```
+[fix commit] fix(predictions): remove import useCallback não utilizado em PredictionForm
 b961cd2 feat(predictions): modifica página /jogos e GameList para buscar e repassar palpites aos GameCards
 686bc50 feat(predictions): modifica GameCard para integrar área de palpite com PredictionForm e PredictionDisplay
 efbc62c feat(predictions): adiciona componente PredictionForm com countdown e submissão JWT

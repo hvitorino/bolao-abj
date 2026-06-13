@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Prediction } from '@/lib/types/prediction'
 import PredictionDisplay from './PredictionDisplay'
