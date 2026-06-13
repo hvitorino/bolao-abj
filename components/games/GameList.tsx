@@ -1,12 +1,18 @@
 import { Game } from '@/lib/types/game'
+import { Prediction } from '@/lib/types/prediction'
 import GameCard from './GameCard'
 
 interface GameListProps {
   games: Game[]
   date: string // YYYY-MM-DD — para contexto de exibição
+  predictionsByGameId?: Record<string, Prediction>
 }
 
-export default function GameList({ games, date: _date }: GameListProps) {
+export default function GameList({
+  games,
+  date: _date,
+  predictionsByGameId = {},
+}: GameListProps) {
   if (games.length === 0) {
     return (
       <div
@@ -89,7 +95,11 @@ export default function GameList({ games, date: _date }: GameListProps) {
             }}
           >
             {gamesByRound[round].map((game) => (
-              <GameCard key={game.id} game={game} />
+              <GameCard
+                key={game.id}
+                game={game}
+                prediction={predictionsByGameId[game.id] ?? null}
+              />
             ))}
           </div>
         </div>
