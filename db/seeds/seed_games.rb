@@ -213,17 +213,22 @@ def game_exists?(game)
   unless response.code.to_i.between?(200, 299)
     puts "  ERRO [#{response.code}]: falha ao verificar duplicata para #{game[:home_team]} × #{game[:away_team]}"
     puts "        #{response.body}"
-    return false
+    # Falha fechada: não inferimos ausência de duplicata em caso de erro na verificação
+    return :error
   end
 
   JSON.parse(response.body).any?
 end
 
 def insert_game(game)
+  # Inclui on_conflict no path para que o PostgREST use upsert "ignore-duplicates":
+  # se a UNIQUE constraint (home_team_code, away_team_code, match_date) disparar,
+  # o insert é silenciosamente ignorado — segunda linha de defesa após game_exists?
+  on_conflict_param = URI.encode_www_form(on_conflict: 'home_team_code,away_team_code,match_date')
   http, request = build_request(
-    '/rest/v1/games',
+    "/rest/v1/games?#{on_conflict_param}",
     'Content-Type' => 'application/json',
-    'Prefer' => 'return=minimal'
+    'Prefer' => 'return=minimal,resolution=ignore-duplicates'
   ) do |uri|
     Net::HTTP::Post.new(uri)
   end
@@ -248,7 +253,14 @@ if __FILE__ == $PROGRAM_NAME
   GAMES.each_with_index do |game, index|
     print "#{(index + 1).to_s.rjust(2)}. "
 
-    if game_exists?(game)
+    exists = game_exists?(game)
+
+    if exists == :error
+      puts "  SKIP (erro na verificação): #{game[:home_team]} × #{game[:away_team]} — insert abortado para evitar duplicata silenciosa"
+      next
+    end
+
+    if exists
       puts "  SKIP: #{game[:home_team]} × #{game[:away_team]} já existe"
       next
     end
