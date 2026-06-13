@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { isValidDateString, todayInBrasilia } from '@/lib/date'
+import { dayBoundsInUTC, isValidDateString, todayInBrasilia } from '@/lib/date'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
@@ -29,10 +29,9 @@ export async function GET(request: NextRequest) {
     date = todayInBrasilia()
   }
 
-  // Buscar jogos do dia no Supabase
-  // Filtra por match_date::date = $date (comparando apenas a parte da data)
-  const startOfDay = `${date}T00:00:00Z`
-  const endOfDay = `${date}T23:59:59Z`
+  // Calcular limites do dia em BRT convertidos para UTC (mesmo helper da página /jogos)
+  // Jogos noturnos BRT (ex: 21:00 BRT = T00:00:00Z do dia seguinte em UTC) são tratados corretamente
+  const { start: startOfDay, end: endOfDay } = dayBoundsInUTC(date)
 
   const { data: games, error: dbError } = await supabase
     .from('games')
