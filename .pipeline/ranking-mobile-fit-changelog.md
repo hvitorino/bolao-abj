@@ -3,7 +3,7 @@
 **Slug:** ranking-mobile-fit
 **Branch:** feature/ranking-mobile-fit
 **Data:** 2026-06-14
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

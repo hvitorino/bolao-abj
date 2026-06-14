@@ -6,6 +6,19 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [ranking-mobile-fit] — Ajuste Mobile do Ranking — 2026-06-14
+
+- Página `/ranking` cabe inteiramente em 375x667px sem scroll vertical com até 12 participantes (estimativa: 530px de altura total)
+- Coluna APROVEIT. ocultada em mobile (`hidden md:table-cell` em `<th>` e `<td>`) e visível a partir de 768px
+- Título "RANKING GERAL" e subtítulo removidos de `page.tsx` — redundantes com o cabeçalho interno da `RankingTable`
+- Padding das células reduzido de `0.5rem 0.75rem` para `0.35rem 0.5rem` em todos os `<th>` e `<td>`
+- Font-size do nome do participante: 12px em mobile, 14px a partir de 768px via classe `.ranking-name-cell` em `globals.css`
+- `overflowX: 'auto'` removido do wrapper da `RankingTable` — desnecessário com 3 colunas em mobile
+- Indicador `● AO VIVO`, rodapé com legenda, destaque de líder e usuário atual preservados
+- Sem alterações no banco de dados, endpoints Ruby ou hook `useRankingRealtime`
+- **Componentes modificados:** `app/(dashboard)/ranking/page.tsx`, `components/bolao/RankingTable.tsx`, `components/bolao/RankingRow.tsx`
+- **CSS modificado:** `app/globals.css` (regra `.ranking-name-cell`)
+
 ## [fix-ranking-visibility] — Correção: Visibilidade no Ranking — 2026-06-14
 
 - Corrigida causa raiz do ranking vazio: `get_ranking()` e `ranking_view` usavam INNER JOIN entre `scores` e `profiles`, excluindo todos os usuários sem pontuação calculada (tabela `scores` vazia antes do primeiro jogo encerrado)
