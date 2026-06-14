@@ -6,6 +6,20 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [game-participants-view] — Palpites e Pontuação dos Participantes por Jogo — 2026-06-14
+
+- Seção "PALPITES DOS PARTICIPANTES" adicionada a cada `GameCard` em `/jogos`: lista todos os perfis do bolão com palpite e pontuação
+- Palpite exibido no formato `H × A` em `color-accent`; traço `-` em `color-muted` quando participante sem palpite
+- Coluna PTS exibida apenas para jogos `finished`, no formato `+N`; omitida para jogos `pending` e `live`
+- Usuário logado identificado com prefixo `■` (ASCII) em `color-primary` em sua linha na tabela
+- Dados carregados em `Promise.all` com 4 queries paralelas (games, profiles, all predictions, all scores) — sem N+1
+- Índices em memória `predByUserGame` e `scoreByUserGame` por chave `"userId:gameId"` para montagem O(1) de `participantsByGameId`
+- **Tipo criado:** `lib/types/participant.ts` — interface `ParticipantEntry { userId, name, prediction, points }`
+- **Componente criado:** `components/bolao/GameParticipantsList.tsx` — Server Component (sem `'use client'`), tabela compacta estilo Elifoot
+- **Componentes modificados:** `components/games/GameList.tsx` (prop `participantsByGameId`), `components/games/GameCard.tsx` (prop `participants`, renderiza `GameParticipantsList`)
+- **Página modificada:** `app/(dashboard)/jogos/page.tsx` — estendida para buscar `allProfiles`, `allPredictions` e `allScores` em paralelo e montar `participantsByGameId`
+- **Migration SQL:** `db/migrations/20260614_participants_read_policies.sql` — substitui `predictions_select_own` e `scores_select_own` por políticas abertas a todos os autenticados (`USING (true)`); adiciona `profiles_select_all_authenticated` de forma idempotente
+
 ## [live-scores-realtime] — Placares em Tempo Real (Realtime) — 2026-06-14
 
 - Migration `db/migrations/20260614_enable_realtime_publications.sql` criada: habilita `REPLICA IDENTITY FULL` em `games` e `scores` e as adiciona à publicação `supabase_realtime` de forma idempotente (blocos `DO $$ IF NOT EXISTS $$`); pré-requisito para que `payload.new` contenha o registro completo nos eventos UPDATE

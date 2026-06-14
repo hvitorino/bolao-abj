@@ -3,7 +3,7 @@
 **Slug:** game-participants-view
 **Branch:** feature/game-participants-view
 **Data:** 2026-06-14
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
