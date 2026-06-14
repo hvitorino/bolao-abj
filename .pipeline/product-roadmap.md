@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 11 features
-- Concluídas: 10
+- Concluídas: 11
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -129,7 +129,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 11. game-participants-view — Palpites e Pontuação dos Participantes por Jogo — pendente
+### 11. game-participants-view — Palpites e Pontuação dos Participantes por Jogo — concluída
 **Objetivo:** Em cada card de jogo na tela `/jogos`, exibir para todos os participantes do bolão qual foi o palpite de cada um e quantos pontos ganhou naquele jogo, permitindo que qualquer participante veja o palpite e a pontuação de todos em cada partida.
 **Critérios de sucesso:**
 - Em cada card de jogo, a lista de todos os participantes é exibida com seu palpite (ex: "João: 2×1") e sua pontuação naquele jogo (ex: "+8 pts")
