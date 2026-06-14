@@ -1,6 +1,7 @@
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
+import { ParticipantEntry } from '@/lib/types/participant'
 import GameCard from './GameCard'
 
 interface GameListProps {
@@ -8,6 +9,7 @@ interface GameListProps {
   date: string // YYYY-MM-DD — para contexto de exibição
   predictionsByGameId?: Record<string, Prediction>
   scoresByGameId?: Record<string, Score>
+  participantsByGameId?: Record<string, ParticipantEntry[]>
   userId?: string
 }
 
@@ -16,6 +18,7 @@ export default function GameList({
   date,
   predictionsByGameId = {},
   scoresByGameId = {},
+  participantsByGameId = {},
   userId,
 }: GameListProps) {
   if (games.length === 0) {
@@ -105,6 +108,7 @@ export default function GameList({
                 game={game}
                 prediction={predictionsByGameId[game.id] ?? null}
                 score={scoresByGameId[game.id] ?? null}
+                participants={participantsByGameId[game.id] ?? []}
                 userId={userId}
               />
             ))}
