@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-live-scores-display] — Correção: Exibição e Atualização de Placar em Tempo Real — 2026-06-14
+
+- Guarda defensiva adicionada em `useGameRealtime` para não sobrescrever o estado quando `payload.new` chega incompleto (sem `REPLICA IDENTITY FULL` ativo, o payload pode ser `{}`); cast alterado de `payload.new as Game` para `payload.new as Partial<Game>` com validação de `id` e `status` antes de `setGame`
+- Early return adicionado em `useScoreRealtime` quando `userId` está vazio ou undefined, evitando criação de canal com nome inválido (`score-${gameId}-`) e subscription que nunca corresponderia ao usuário real
+- Migration criada: `db/migrations/20260614_fix_scores_realtime_rls.sql` — política RLS `"users can read own scores"` (`FOR SELECT TO authenticated USING (user_id = auth.uid())`) garantindo que o Realtime do Supabase entregue eventos de scores ao próprio usuário
+- `lib/scoring.ts` verificado: sem falsy checks em `home_score` ou `away_score`; usa `===` e `!==` em parâmetros tipados como `number`
+- `components/bolao/GameParticipantsList.tsx` verificado: Server Component puro sem hooks, sem alterações necessárias
+- `components/games/GameCard.tsx` verificado: lógica `hasScore ? ... : isLive ? '0 × 0' : '- × -'` confirmada correta; sem alterações
+- Cleanup de canais (`supabase.removeChannel`) verificado e correto em ambos os hooks modificados
+
 ## [fix-long-names] — Correção: Nomes Longos nos Cards de Jogo — 2026-06-14
 
 - Nomes de times longos (ex: "COSTA DO MARFIM") truncados com reticências em vez de quebrar para segunda linha, garantindo altura uniforme em todos os `GameCard`

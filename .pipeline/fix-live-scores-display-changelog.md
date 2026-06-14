@@ -3,7 +3,7 @@
 **Slug:** fix-live-scores-display
 **Branch:** feature/fix-live-scores-display
 **Data:** 2026-06-14
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
