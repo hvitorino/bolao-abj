@@ -3,7 +3,7 @@
 **Slug:** predictions-edit
 **Branch:** feature/predictions-edit
 **Data:** 2026-06-14
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
