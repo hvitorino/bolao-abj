@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 16 features
+- Total: 17 features
 - Concluídas: 15
-- Em progresso: 1
+- Em progresso: 2
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -202,3 +202,15 @@ Criado em: 2026-06-13
 - Jogos com status 'live' mostram o placar atual logo no mount
 - O Realtime continua funcionando para atualizações subsequentes após o carregamento inicial
 **Dependências:** live-scores, live-scores-realtime, fix-live-scores-display
+
+---
+
+### 17. fix-prediction-visibility — Correção: Visibilidade Temporal dos Palpites — em progresso
+**Objetivo:** Ajustar a visibilidade dos palpites na tela de jogos para que, antes do início da partida, apenas o próprio usuário autenticado veja seu palpite. Quando o jogo não estiver mais em estado `pending`, os palpites dos demais participantes podem voltar a aparecer normalmente.
+**Critérios de sucesso:**
+- Em jogos ainda não iniciados, a interface e/ou backend não expõem palpites de outros usuários; apenas o palpite do usuário atual fica visível
+- Em jogos iniciados (`live`) ou finalizados (`finished`), a visualização dos palpites dos outros usuários funciona normalmente
+- A regra é aplicada de forma consistente nas superfícies relevantes do produto onde palpites são listados/exibidos
+- Testes e validações adequados da mudança são realizados dentro do pipeline
+- O pipeline só termina após revisão/aprovação e merge, com os artefatos `.pipeline` atualizados
+**Dependências:** auth, game-navigation, predictions, game-participants-view
