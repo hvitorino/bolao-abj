@@ -24,7 +24,7 @@ Os bônus são cumulativos com o acerto do vencedor.
 | Somente placar do vencedor | +3 |
 | Diferença de gols correta (acertou vencedor) | +2 |
 | Somente placar do perdedor | +1 |
-| Goleada — vencedor fez 3+ gols e usuário acertou o vencedor | +1 |
+| Goleada — acertou vencedor, vencedor no palpite fez 4+ gols e diferença real >= 4 gols | +1 |
 
 **Exemplo:** Brasil 3×1 Argentina; palpite Brasil 3×1 Argentina → +3 (vencedor) + 5 (placar exato) = **8 pts**
 

@@ -10,7 +10,7 @@
  *   winner_score_points= +3 se acertou SOMENTE o placar do vencedor (não o exato, não em empate)
  *   diff_points        = +2 se acertou a diferença de gols E acertou o vencedor (não exato, não empate)
  *   loser_score_points = +1 se acertou SOMENTE o placar do perdedor (não acertou vencedor, não empate)
- *   goleada_points     = +1 se vencedor fez >=3 gols E acertou o vencedor
+ *   goleada_points     = +1 se acertou vencedor E vencedor no palpite >=4 gols E diferença real >=4 gols
  *
  * Exclusividades:
  *   - exact_points e winner_score_points são mutuamente exclusivos
@@ -101,12 +101,19 @@ export function calculateScore(
       }
     }
 
-    // Regra 6: goleada (aplica mesmo quando placar exato)
-    if (
-      (realWinner === 'home' && game.home_score >= 3) ||
-      (realWinner === 'away' && game.away_score >= 3)
-    ) {
-      goleada_points = 1
+    // Regra 6: goleada
+    // Condições simultâneas:
+    //   1. acertou vencedor (já garantido por estar dentro do bloco predWinner === realWinner)
+    //   2. vencedor no palpite marcou >= 4 gols
+    //   3. diferença de gols no resultado real >= 4
+    // Não aplica em empate (não há vencedor)
+    if (realWinner !== 'draw') {
+      const predWinnerScore =
+        realWinner === 'home' ? prediction.home_score : prediction.away_score
+      const realGoalDiff = Math.abs(game.home_score - game.away_score)
+      if (predWinnerScore >= 4 && realGoalDiff >= 4) {
+        goleada_points = 1
+      }
     }
   } else {
     // Não acertou vencedor
