@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 9 features
-- Concluídas: 8
-- Em progresso: 1
+- Concluídas: 9
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -117,7 +117,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 9. ranking-mobile-fit — Ajuste Mobile do Ranking — em progresso
+### 9. ranking-mobile-fit — Ajuste Mobile do Ranking — concluída
 **Objetivo:** Ajustar o ranking para caber inteiramente na viewport de um celular padrão (375x667px) sem scroll vertical, preservando as informações essenciais de posição, nome e pontuação.
 **Critérios de sucesso:**
 - Ranking visível inteiramente na viewport de 375x667px sem scroll vertical
