@@ -9,11 +9,14 @@ import PredictionDisplay from '@/components/bolao/PredictionDisplay'
 import ScoreDisplay from '@/components/bolao/ScoreDisplay'
 import { useGameRealtime } from '@/lib/hooks/useGameRealtime'
 import { useScoreRealtime } from '@/lib/hooks/useScoreRealtime'
+import GameParticipantsList from '@/components/bolao/GameParticipantsList'
+import { ParticipantEntry } from '@/lib/types/participant'
 
 interface GameCardProps {
   game: Game
   prediction?: Prediction | null
   score?: Score | null
+  participants?: ParticipantEntry[]
   userId?: string // necessário para filtrar Realtime por usuário
 }
 
@@ -51,6 +54,7 @@ export default function GameCard({
   game,
   prediction = null,
   score = null,
+  participants = [],
   userId,
 }: GameCardProps) {
   // Estado local da prediction — permite atualizar após edição sem reload
@@ -464,6 +468,15 @@ export default function GameCard({
           </>
         )}
       </div>
+
+      {/* Seção de palpites de todos os participantes — sempre visível quando há dados */}
+      {participants.length > 0 && (
+        <GameParticipantsList
+          participants={participants}
+          gameStatus={liveGame.status as 'pending' | 'live' | 'finished'}
+          currentUserId={userId}
+        />
+      )}
     </div>
   )
 }

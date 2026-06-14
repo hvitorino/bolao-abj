@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
+import { ParticipantEntry } from '@/lib/types/participant'
 import DayNavigator from '@/components/games/DayNavigator'
 import GameList from '@/components/games/GameList'
 
@@ -40,36 +41,93 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
   // Buscar palpites do usuário para os jogos do dia
   let predictionsByGameId: Record<string, Prediction> = {}
   let scoresByGameId: Record<string, Score> = {}
+  let participantsByGameId: Record<string, ParticipantEntry[]> = {}
   let guessCount = 0
 
   if (user && games && games.length > 0) {
     const gameIds = games.map((g: Game) => g.id)
 
-    const { data: predictions, count } = await supabase
-      .from('predictions')
-      .select('id, game_id, user_id, home_score, away_score, submitted_at', {
-        count: 'exact',
-      })
-      .eq('user_id', user.id)
-      .in('game_id', gameIds)
+    // Executar todas as queries em paralelo para evitar N+1
+    const [
+      { data: predictions, count },
+      { data: allProfiles },
+      { data: allPredictions },
+      { data: allScores },
+    ] = await Promise.all([
+      // Palpites do usuário logado (com contagem para guessCount)
+      supabase
+        .from('predictions')
+        .select('id, game_id, user_id, home_score, away_score, submitted_at', {
+          count: 'exact',
+        })
+        .eq('user_id', user.id)
+        .in('game_id', gameIds),
+
+      // Todos os perfis do bolão
+      supabase
+        .from('profiles')
+        .select('id, name')
+        .order('name', { ascending: true }),
+
+      // Palpites de todos os usuários nos jogos do dia
+      supabase
+        .from('predictions')
+        .select('id, game_id, user_id, home_score, away_score, submitted_at')
+        .in('game_id', gameIds),
+
+      // Scores de todos os usuários nos jogos do dia
+      supabase
+        .from('scores')
+        .select('*')
+        .in('game_id', gameIds),
+    ])
 
     guessCount = count ?? 0
 
-    // Mapear predictions por game_id para acesso O(1) no GameCard
+    // Mapear predictions do usuário logado por game_id para acesso O(1) no GameCard
     predictionsByGameId = Object.fromEntries(
       (predictions ?? []).map((p: Prediction) => [p.game_id, p])
     )
 
-    // Buscar scores calculados para os jogos do dia (apenas jogos encerrados terão scores)
-    const { data: scores } = await supabase
-      .from('scores')
-      .select('*')
-      .eq('user_id', user.id)
-      .in('game_id', gameIds)
-
+    // Mapear scores do usuário logado por game_id
+    const typedAllScores = (allScores ?? []) as Score[]
+    const myScores = typedAllScores.filter((s) => s.user_id === user.id)
     scoresByGameId = Object.fromEntries(
-      (scores ?? []).map((s: Score) => [s.game_id, s])
+      myScores.map((s) => [s.game_id, s])
     )
+
+    // Montar participantsByGameId: para cada jogo, lista ordenada de ParticipantEntry
+    // Indexar allPredictions e allScores por (user_id, game_id) para acesso O(1)
+    const predByUserGame: Record<string, { home_score: number; away_score: number }> = {}
+    for (const p of allPredictions ?? []) {
+      predByUserGame[`${p.user_id}:${p.game_id}`] = {
+        home_score: p.home_score,
+        away_score: p.away_score,
+      }
+    }
+    const scoreByUserGame: Record<string, number> = {}
+    for (const s of typedAllScores) {
+      scoreByUserGame[`${s.user_id}:${s.game_id}`] = s.points
+    }
+
+    for (const gameId of gameIds) {
+      participantsByGameId[gameId] = (allProfiles ?? []).map(
+        (profile: { id: string; name: string }) => {
+          const key = `${profile.id}:${gameId}`
+          const prediction = predByUserGame[key] ?? null
+          const points =
+            prediction !== null
+              ? (scoreByUserGame[key] ?? null)
+              : null
+          return {
+            userId: profile.id,
+            name: profile.name,
+            prediction,
+            points,
+          } as ParticipantEntry
+        }
+      )
+    }
   }
 
   return (
@@ -147,6 +205,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         date={currentDate}
         predictionsByGameId={predictionsByGameId}
         scoresByGameId={scoresByGameId}
+        participantsByGameId={participantsByGameId}
         userId={user?.id}
       />
     </div>
