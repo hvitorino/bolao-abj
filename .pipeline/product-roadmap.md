@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 13 features
-- Concluídas: 12
-- Em progresso: 1
+- Concluídas: 13
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -151,7 +151,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 13. fix-team-code-display — Correção: Exibição dos Códigos de Times — em progresso
+### 13. fix-team-code-display — Correção: Exibição dos Códigos de Times — concluída
 **Objetivo:** Corrigir a exibição das abreviações (códigos) dos times nos cards de jogos, onde apenas a primeira letra do código está sendo exibida (ex: "G" em vez de "GER") tanto no card principal quanto no resumo de palpite.
 **Critérios de sucesso:**
 - Os códigos dos times exibem 3 letras corretamente (ex: "GER", "CUR", "BRA", "ARG")
