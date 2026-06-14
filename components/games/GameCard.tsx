@@ -367,8 +367,8 @@ export default function GameCard({
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              minWidth: 0,
-              flexShrink: 1,
+              maxWidth: '80px',
+              flexShrink: 0,
             }}
           >
             {liveGame.venue}
