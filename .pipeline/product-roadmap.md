@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 7 features
+- Total: 8 features
 - Concluídas: 7
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -102,3 +102,15 @@ Criado em: 2026-06-13
 - Após edição, novo palpite substituiu o anterior e é exibido corretamente
 - Fluxo revisado em duas rodadas (fix-1 aplicado e reaprovado) e mergeado via --no-ff na main em 2026-06-14
 **Dependências:** auth, game-navigation, predictions
+
+---
+
+### 8. fix-ranking-visibility — Correção: Visibilidade no Ranking — em progresso
+**Objetivo:** Investigar e corrigir o problema que impede o usuário cadastrado de ver sua pontuação no ranking, cobrindo possíveis falhas em RLS do Supabase, cálculo de scores, exibição no frontend ou ausência de dados (predictions/scores).
+**Critérios de sucesso:**
+- Usuário logado consegue ver sua pontuação no ranking
+- Ranking exibe todos os participantes com pontuação calculada corretamente
+- Se não houver palpites feitos, o usuário aparece com 0 pontos (ou mensagem explicativa)
+- Políticas RLS verificadas e corrigidas se necessário
+- Logs/diagnóstico claros sobre a causa raiz documentados no changelog
+**Dependências:** auth, game-navigation, predictions, scoring, ranking
