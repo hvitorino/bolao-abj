@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 8 features
+- Total: 9 features
 - Concluídas: 8
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -114,3 +114,13 @@ Criado em: 2026-06-13
 - Políticas RLS verificadas e corrigidas se necessário
 - Logs/diagnóstico claros sobre a causa raiz documentados no changelog
 **Dependências:** auth, game-navigation, predictions, scoring, ranking
+
+---
+
+### 9. ranking-mobile-fit — Ajuste Mobile do Ranking — em progresso
+**Objetivo:** Ajustar o ranking para caber inteiramente na viewport de um celular padrão (375x667px) sem scroll vertical, preservando as informações essenciais de posição, nome e pontuação.
+**Critérios de sucesso:**
+- Ranking visível inteiramente na viewport de 375x667px sem scroll vertical
+- Informações essenciais preservadas: posicao, nome do participante, pontuacao total
+- Design responsivo seguindo DESIGN.md: dense first, tabular, mobile first, dark only, sem icones decorativos, bordas simples, sem sombras
+**Dependências:** auth, game-navigation, predictions, scoring, ranking, fix-ranking-visibility
