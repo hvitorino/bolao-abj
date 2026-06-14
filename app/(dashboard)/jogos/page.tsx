@@ -41,7 +41,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
   // Buscar palpites do usuário para os jogos do dia
   let predictionsByGameId: Record<string, Prediction> = {}
   let scoresByGameId: Record<string, Score> = {}
-  let participantsByGameId: Record<string, ParticipantEntry[]> = {}
+  const participantsByGameId: Record<string, ParticipantEntry[]> = {}
   let guessCount = 0
 
   if (user && games && games.length > 0) {

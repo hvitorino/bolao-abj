@@ -12,6 +12,7 @@ export default function GameParticipantsList({
   currentUserId,
 }: GameParticipantsListProps) {
   const showPoints = gameStatus === 'finished'
+  const isPending = gameStatus === 'pending'
 
   return (
     <div
@@ -111,6 +112,13 @@ export default function GameParticipantsList({
           <tbody>
             {participants.map((p) => {
               const isCurrentUser = p.userId === currentUserId
+              const shouldHidePrediction = isPending && !isCurrentUser
+              const predictionLabel = shouldHidePrediction
+                ? 'OCULTO'
+                : p.prediction
+                  ? `${p.prediction.home_score} × ${p.prediction.away_score}`
+                  : '-'
+
               return (
                 <tr key={p.userId}>
                   {/* Coluna PARTICIPANTE */}
@@ -150,12 +158,15 @@ export default function GameParticipantsList({
                       textAlign: 'center',
                       fontWeight: 'bold',
                       fontSize: '12px',
-                      color: p.prediction ? 'var(--color-accent)' : 'var(--color-muted)',
+                      color:
+                        shouldHidePrediction || p.prediction
+                          ? 'var(--color-accent)'
+                          : 'var(--color-muted)',
+                      textTransform: shouldHidePrediction ? 'uppercase' : undefined,
+                      letterSpacing: shouldHidePrediction ? '0.05em' : undefined,
                     }}
                   >
-                    {p.prediction
-                      ? `${p.prediction.home_score} × ${p.prediction.away_score}`
-                      : '-'}
+                    {predictionLabel}
                   </td>
 
                   {/* Coluna PTS — somente quando jogo encerrado */}
