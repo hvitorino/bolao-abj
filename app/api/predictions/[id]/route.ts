@@ -108,6 +108,17 @@ export async function PATCH(
     )
   }
 
+  // Jogo live ou finished nunca permite edição, independentemente do deadline calculado
+  if (game.status === 'live' || game.status === 'finished') {
+    return NextResponse.json(
+      {
+        error: 'deadline_expired',
+        message: 'Prazo encerrado. Não é possível editar o palpite.',
+      },
+      { status: 422 }
+    )
+  }
+
   const deadline = new Date(new Date(game.match_date).getTime() - 5 * 60 * 1000)
   if (new Date() >= deadline) {
     return NextResponse.json(

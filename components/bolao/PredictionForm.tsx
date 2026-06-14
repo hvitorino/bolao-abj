@@ -355,8 +355,8 @@ export default function PredictionForm({
           </button>
         )}
 
-        {/* Botão CANCELAR — somente no modo edição */}
-        {isEditMode && onCancelEdit && !isDeadlinePassed && (
+        {/* Botão CANCELAR — somente no modo edição, independente do deadline */}
+        {isEditMode && onCancelEdit && (
           <button
             type="button"
             onClick={onCancelEdit}

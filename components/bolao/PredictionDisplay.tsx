@@ -9,7 +9,6 @@ interface PredictionDisplayProps {
   awayTeamCode: string
   submittedAt?: string // ISO 8601
   // Props para edição
-  predictionId?: string // UUID — necessário para o PATCH
   matchDate?: string // ISO 8601 — para verificar deadline no frontend
   onEditRequest?: () => void // Callback chamado ao clicar em "EDITAR"
 }
