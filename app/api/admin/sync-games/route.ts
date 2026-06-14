@@ -102,8 +102,12 @@ const TEAM_CODE_FALLBACK: Record<string, string> = {
 function getTeamCode(team: { abbreviation: string; displayName: string }): string {
   const code = team.abbreviation.toUpperCase().slice(0, 3).trim()
   if (code.length === 3) return code
-  // Fallback: buscar no mapa ou usar displayName truncado
-  return TEAM_CODE_FALLBACK[team.displayName] ?? team.displayName.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3)
+  // Fallback: buscar no mapa de times conhecidos ou derivar do displayName
+  const fallback =
+    TEAM_CODE_FALLBACK[team.displayName] ??
+    team.displayName.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3)
+  // Garantir sempre 3 chars (pad com 'X' se necessário)
+  return fallback.padEnd(3, 'X')
 }
 
 function mapStatus(espnStatusName: string): GameStatus {
