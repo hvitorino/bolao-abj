@@ -3,8 +3,8 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 6 features
-- Concluídas: 6
+- Total: 7 features
+- Concluídas: 7
 - Em progresso: 0
 - Pendentes: 0
 
@@ -89,3 +89,16 @@ Criado em: 2026-06-13
 - Layout segue componente "Ranking" de DESIGN.md: tabela densa, uppercase, monospace
 - Rota `/ranking` protegida
 **Dependências:** auth, game-navigation, predictions, scoring
+
+---
+
+### 7. predictions-edit — Edição de Palpites — concluída
+**Objetivo:** Permitir que o usuário edite seu palpite para um jogo enquanto o deadline (5 minutos antes do início) não expirou, substituindo a entrada existente via UPSERT.
+**Critérios de sucesso:**
+- Usuário com palpite já enviado consegue alterar os valores antes do deadline
+- Edição bloqueada quando `match_date - now() <= 5 minutos` ou status != `pending`
+- PATCH `/api/predictions` (ou UPSERT no endpoint POST) persiste a atualização com UNIQUE(user_id, game_id)
+- Interface exibe estado "palpite enviado — clique para editar" de forma clara
+- Após edição, novo palpite substituiu o anterior e é exibido corretamente
+- Fluxo revisado em duas rodadas (fix-1 aplicado e reaprovado) e mergeado via --no-ff na main em 2026-06-14
+**Dependências:** auth, game-navigation, predictions

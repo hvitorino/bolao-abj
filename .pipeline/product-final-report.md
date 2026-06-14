@@ -1,6 +1,6 @@
 # Relatório Final — Bolão do Cartola ABJ
 
-Data de conclusão: 2026-06-13
+Data de conclusão: 2026-06-14
 
 ---
 
@@ -12,6 +12,7 @@ Data de conclusão: 2026-06-13
 4. **live-scores** — Placares ao Vivo — 2026-06-13
 5. **scoring** — Pontuação por Jogo — 2026-06-13
 6. **ranking** — Ranking em Tempo Real — 2026-06-13
+7. **predictions-edit** — Edição de Palpites — 2026-06-14
 
 ---
 
@@ -165,9 +166,7 @@ Verificar que a tabela `profiles` tem RLS ativo com políticas adequadas (descri
 
 ### Melhorias funcionais
 
-1. **Edição de palpite antes do deadline:** A tabela `predictions` tem UNIQUE(user_id, game_id) mas sem política UPDATE. Seria valioso permitir que o usuário edite o palpite enquanto o deadline não expirou. Requer: adicionar política UPDATE no RLS, criar endpoint PATCH `/api/predictions/:id` e adaptar o `PredictionForm` para detectar palpite existente e oferecer edição.
-
-2. **Número de jogos com palpites no DayNavigator:** Atualmente exibe todos os palpites do usuário. Seria mais útil mostrar também quantos jogos do dia ainda não têm palpite (urgência visual).
+1. **Número de jogos com palpites no DayNavigator:** Atualmente exibe todos os palpites do usuário. Seria mais útil mostrar também quantos jogos do dia ainda não têm palpite (urgência visual).
 
 3. **Mini-ranking no header do dashboard:** Exibir a posição atual do usuário no ranking diretamente no header (ex: `#3 · 35 pts`) como motivação constante.
 
