@@ -12,20 +12,22 @@ import type { RankingEntry } from '@/lib/types/ranking'
  * é encerrado e o trigger calcula pontuações), o ranking é rebuscado automaticamente
  * via GET /api/ranking.
  *
- * Configuração manual necessária no Supabase (se não feita na feature scoring):
+ * Configuração necessária no Supabase (migration 20260614_enable_realtime_publications.sql):
  *   ALTER TABLE scores REPLICA IDENTITY FULL;
  *   ALTER PUBLICATION supabase_realtime ADD TABLE scores;
  *
- * @returns { ranking, loading, error }
+ * @returns { ranking, loading, error, lastUpdatedAt }
  */
 export function useRankingRealtime(): {
   ranking: RankingEntry[]
   loading: boolean
   error: string | null
+  lastUpdatedAt: Date | null
 } {
   const [ranking, setRanking] = useState<RankingEntry[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null)
 
   const fetchRanking = useCallback(async () => {
     try {
@@ -53,6 +55,7 @@ export function useRankingRealtime(): {
 
       const data: RankingEntry[] = await res.json()
       setRanking(data)
+      setLastUpdatedAt(new Date())
       setError(null)
     } catch {
       setError('Erro de rede ao carregar ranking.')
@@ -88,5 +91,5 @@ export function useRankingRealtime(): {
     }
   }, [fetchRanking])
 
-  return { ranking, loading, error }
+  return { ranking, loading, error, lastUpdatedAt }
 }
