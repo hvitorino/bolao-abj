@@ -104,3 +104,22 @@
 5a5b1d6 feat(predictions-edit): adiciona migration SQL com política RLS UPDATE predictions_update_own
 a6994df chore(predictions-edit): adiciona plano de implementação
 ```
+
+---
+
+## Correções Fix 1
+
+**Data:** 2026-06-14
+**Fix:** `.pipeline/predictions-edit-fix-1.md`
+
+### Problema 1 — Backend valida `game.status` antes do deadline temporal
+- **Arquivo:** `app/api/predictions/[id]/route.ts`
+- **O que foi feito:** Adicionado bloco de verificação logo após a checagem de `!game || !game.match_date`. Se `game.status === 'live' || game.status === 'finished'`, retorna 422 com `error: 'deadline_expired'` — mesmo error code que o frontend já trata com a mensagem PT-BR amigável.
+
+### Problema 2 — `predictionId` removido da interface
+- **Arquivo:** `components/bolao/PredictionDisplay.tsx`
+- **O que foi feito:** Removida a linha `predictionId?: string // UUID — necessário para o PATCH` da interface `PredictionDisplayProps`. A prop era dead code: não era desestruturada no componente e o `PredictionForm` usa `initialPrediction.id` diretamente.
+
+### Problema 3 — Botão CANCELAR sempre visível no modo edição
+- **Arquivo:** `components/bolao/PredictionForm.tsx`
+- **O que foi feito:** Removida a condição `!isDeadlinePassed` da renderização do botão CANCELAR. O botão agora aparece em modo edição independentemente do deadline, pois é uma ação de navegação (voltar ao display), não de modificação de dados. Sem isso, o usuário ficava preso no formulário desabilitado se o deadline expirasse enquanto o form estava aberto.
