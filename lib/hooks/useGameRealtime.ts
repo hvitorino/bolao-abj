@@ -38,8 +38,14 @@ export function useGameRealtime(gameId: string, initialGame: Game): GameRealtime
           filter: `id=eq.${gameId}`,
         },
         (payload) => {
-          setGame(payload.new as Game)
-          setLastUpdatedAt(new Date())
+          const newGame = payload.new as Partial<Game>
+          // Guarda defensiva: só atualiza se os campos essenciais estão presentes.
+          // Sem REPLICA IDENTITY FULL no banco, payload.new pode chegar como {}
+          // e sobrescrever o estado com um objeto vazio, apagando o placar exibido.
+          if (newGame.id && newGame.status !== undefined) {
+            setGame(newGame as Game)
+            setLastUpdatedAt(new Date())
+          }
         }
       )
       .subscribe((status) => {
