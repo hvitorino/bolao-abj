@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 9 features
+- Total: 10 features
 - Concluídas: 9
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -114,6 +114,18 @@ Criado em: 2026-06-13
 - Políticas RLS verificadas e corrigidas se necessário
 - Logs/diagnóstico claros sobre a causa raiz documentados no changelog
 **Dependências:** auth, game-navigation, predictions, scoring, ranking
+
+---
+
+### 10. live-scores-realtime — Placares em Tempo Real (Realtime) — pendente
+**Objetivo:** Implementar atualização automática dos placares na aba de jogos via Supabase Realtime — quando um jogo passa para `live` ou tem `home_score`/`away_score` atualizados, o cliente reflete a mudança sem reload de página; o ranking também se atualiza em tempo real via canal `scores`.
+**Critérios de sucesso:**
+- Quando `games.status` muda para `live` ou `home_score`/`away_score` são atualizados, o componente de jogos reflete a mudança automaticamente sem reload
+- O placar exibido em tempo real usa canal Realtime do Supabase (`supabase.channel`)
+- A UI indica visualmente quais jogos estão ao vivo (badge piscante `██ AO VIVO ██` em `color-live`)
+- A conexão Realtime é encerrada corretamente ao desmontar o componente (sem memory leaks)
+- Os scores/pontuações da tabela `scores` também são atualizados em tempo real no ranking
+**Dependências:** auth, game-navigation, live-scores, scoring, ranking
 
 ---
 
