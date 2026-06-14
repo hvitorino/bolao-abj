@@ -66,7 +66,9 @@ export function useRankingRealtime(): {
 
   useEffect(() => {
     // Busca inicial do ranking
-    fetchRanking()
+    const initialFetchTimer = window.setTimeout(() => {
+      void fetchRanking()
+    }, 0)
 
     // Subscription Supabase Realtime: qualquer mudança em scores refaz o fetch
     const supabase = createClient()
@@ -87,6 +89,7 @@ export function useRankingRealtime(): {
       .subscribe()
 
     return () => {
+      window.clearTimeout(initialFetchTimer)
       supabase.removeChannel(channel)
     }
   }, [fetchRanking])
