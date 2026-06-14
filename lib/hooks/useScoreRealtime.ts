@@ -28,6 +28,11 @@ export function useScoreRealtime(
   const [scoreState, setScoreState] = useState<Score | null>(initialScore)
 
   useEffect(() => {
+    // Early return: não cria subscription sem userId válido.
+    // Sem userId, o filtro user_id === userId nunca corresponderia e a subscription
+    // seria inútil — além de criar um canal com nome inválido `score-${gameId}-`.
+    if (!userId) return
+
     const supabase = createClient()
 
     const channel = supabase
@@ -42,7 +47,7 @@ export function useScoreRealtime(
         },
         (payload) => {
           const newScore = payload.new as Score
-          // Filtra apenas o score do próprio usuário (segurança dupla)
+          // Filtra apenas o score do próprio usuário (segurança dupla além do RLS)
           if (newScore.user_id === userId) {
             setScoreState(newScore)
           }
