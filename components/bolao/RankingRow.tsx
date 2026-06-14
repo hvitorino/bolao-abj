@@ -33,7 +33,7 @@ export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) 
       {/* Posição */}
       <td
         style={{
-          padding: '0.5rem 0.75rem',
+          padding: '0.35rem 0.5rem',
           textAlign: 'right',
           width: '3rem',
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
@@ -46,10 +46,10 @@ export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) 
 
       {/* Participante */}
       <td
+        className="ranking-name-cell"
         style={{
-          padding: '0.5rem 0.75rem',
+          padding: '0.35rem 0.5rem',
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-          fontSize: '14px',
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
           maxWidth: '200px',
@@ -58,7 +58,7 @@ export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) 
           whiteSpace: 'nowrap',
         }}
       >
-        {isLeader ? '► ' : '   '}
+        {isLeader ? '► ' : '   '}
         {entry.participant_name}
         {isCurrentUser && (
           <span
@@ -77,7 +77,7 @@ export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) 
       {/* Pontos */}
       <td
         style={{
-          padding: '0.5rem 0.75rem',
+          padding: '0.35rem 0.5rem',
           textAlign: 'center',
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
           fontSize: '14px',
@@ -90,8 +90,9 @@ export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) 
 
       {/* Aproveitamento */}
       <td
+        className="hidden md:table-cell"
         style={{
-          padding: '0.5rem 0.75rem',
+          padding: '0.35rem 0.5rem',
           textAlign: 'center',
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
           fontSize: '13px',
