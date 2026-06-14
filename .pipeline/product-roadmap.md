@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 8 features
-- Concluídas: 7
-- Em progresso: 1
+- Concluídas: 8
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -105,7 +105,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 8. fix-ranking-visibility — Correção: Visibilidade no Ranking — em progresso
+### 8. fix-ranking-visibility — Correção: Visibilidade no Ranking — concluída
 **Objetivo:** Investigar e corrigir o problema que impede o usuário cadastrado de ver sua pontuação no ranking, cobrindo possíveis falhas em RLS do Supabase, cálculo de scores, exibição no frontend ou ausência de dados (predictions/scores).
 **Critérios de sucesso:**
 - Usuário logado consegue ver sua pontuação no ranking
