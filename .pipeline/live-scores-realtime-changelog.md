@@ -3,7 +3,7 @@
 **Slug:** live-scores-realtime
 **Branch:** feature/live-scores-realtime
 **Data:** 2026-06-14
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

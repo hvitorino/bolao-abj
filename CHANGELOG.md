@@ -6,6 +6,19 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [live-scores-realtime] — Placares em Tempo Real (Realtime) — 2026-06-14
+
+- Migration `db/migrations/20260614_enable_realtime_publications.sql` criada: habilita `REPLICA IDENTITY FULL` em `games` e `scores` e as adiciona à publicação `supabase_realtime` de forma idempotente (blocos `DO $$ IF NOT EXISTS $$`); pré-requisito para que `payload.new` contenha o registro completo nos eventos UPDATE
+- `useGameRealtime` refatorado: retorna `GameRealtimeState { game, lastUpdatedAt, connectionStatus }` em vez de `Game` diretamente; callback de status do canal mapeia `SUBSCRIBED → 'connected'` e `CHANNEL_ERROR`/`TIMED_OUT → 'error'`; interface `GameRealtimeState` exportada
+- `GameCard` atualizado: desestrutura `{ game: liveGame, lastUpdatedAt }` do hook; exibe `· atualizado há Xs` (ou `Xmin`) em `color-muted` (11px) no footer de jogos ao vivo, apenas após receber o primeiro evento Realtime; `setInterval` de 10s criado somente quando `isLive === true` e limpo no cleanup; `flexWrap: 'wrap'` no footer para suporte a mobile
+- `useRankingRealtime` atualizado: adiciona `lastUpdatedAt: Date | null` ao retorno; atualizado após cada `fetchRanking` bem-sucedido (carga inicial e refetches por evento Realtime)
+- `RankingTable` atualizado: exibe `● AO VIVO · HH:MM:SS` no header quando `lastUpdatedAt !== null`, formatado com `toLocaleTimeString('pt-BR')`; helper `formatTime` adicionado
+- Cleanup de canais Realtime (`supabase.removeChannel`) verificado e correto em todos os hooks modificados
+- Build TypeScript e lint passam sem erros novos; único warning pré-existente em `useRankingRealtime.ts` (`react-hooks/set-state-in-effect`) já existia na main antes desta feature
+- **Migration criada:** `db/migrations/20260614_enable_realtime_publications.sql`
+- **Hooks modificados:** `lib/hooks/useGameRealtime.ts`, `lib/hooks/useRankingRealtime.ts`
+- **Componentes modificados:** `components/games/GameCard.tsx`, `components/bolao/RankingTable.tsx`
+
 ## [ranking-mobile-fit] — Ajuste Mobile do Ranking — 2026-06-14
 
 - Página `/ranking` cabe inteiramente em 375x667px sem scroll vertical com até 12 participantes (estimativa: 530px de altura total)
