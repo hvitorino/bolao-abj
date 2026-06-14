@@ -156,7 +156,7 @@ export default function GameCard({
         }}
       >
         {/* Time da casa */}
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', minWidth: 0 }}>
           <div
             style={{
               fontSize: '20px',
@@ -175,6 +175,9 @@ export default function GameCard({
               textTransform: 'uppercase',
               marginTop: '0.25rem',
               letterSpacing: '0.05em',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}
           >
             {liveGame.home_team}
@@ -196,7 +199,7 @@ export default function GameCard({
         </div>
 
         {/* Time visitante */}
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', minWidth: 0 }}>
           <div
             style={{
               fontSize: '20px',
@@ -215,6 +218,9 @@ export default function GameCard({
               textTransform: 'uppercase',
               marginTop: '0.25rem',
               letterSpacing: '0.05em',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}
           >
             {liveGame.away_team}
@@ -362,6 +368,7 @@ export default function GameCard({
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               maxWidth: '160px',
+              minWidth: 0,
             }}
           >
             {liveGame.venue}
