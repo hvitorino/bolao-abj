@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 15 features
+- Total: 16 features
 - Concluídas: 15
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -192,3 +192,13 @@ Criado em: 2026-06-13
 - Nenhum texto no card de jogo quebra para uma segunda linha
 - O layout do card permanece consistente independente do tamanho do nome
 **Dependências:** game-navigation
+
+---
+
+### 16. fix-initial-state-load — Correção: Carregamento do Estado Inicial nos Hooks Realtime — em progresso
+**Objetivo:** Garantir que os hooks de Realtime (useGameRealtime, useScoreRealtime) carreguem o estado inicial via fetch no mount, eliminando a tela vazia que ocorre ao recarregar a página enquanto aguarda o próximo evento Realtime chegar.
+**Critérios de sucesso:**
+- Ao carregar/recarregar a página, os dados dos jogos (placar, status) são exibidos imediatamente, sem esperar por evento Realtime
+- Jogos com status 'live' mostram o placar atual logo no mount
+- O Realtime continua funcionando para atualizações subsequentes após o carregamento inicial
+**Dependências:** live-scores, live-scores-realtime, fix-live-scores-display
