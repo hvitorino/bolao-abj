@@ -3,7 +3,7 @@
 **Slug:** fix-ranking-visibility
 **Branch:** feature/fix-ranking-visibility
 **Data:** 2026-06-14
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

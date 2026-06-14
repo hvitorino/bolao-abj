@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-ranking-visibility] — Correção: Visibilidade no Ranking — 2026-06-14
+
+- Corrigida causa raiz do ranking vazio: `get_ranking()` e `ranking_view` usavam INNER JOIN entre `scores` e `profiles`, excluindo todos os usuários sem pontuação calculada (tabela `scores` vazia antes do primeiro jogo encerrado)
+- Migration `supabase/migrations/20260614000001_fix_ranking_all_profiles.sql` substitui INNER JOIN por `FROM profiles p LEFT JOIN scores s` com `COALESCE(SUM(s.points), 0)` — todos os perfis cadastrados aparecem com 0 pontos quando ainda sem jogos encerrados
+- `RANK()` opera sobre `COALESCE(SUM(s.points), 0)`: participantes com 0 pontos recebem `rank_position = 1` (empate matematicamente correto); desempate estável por `p.name ASC`
+- `COUNT(s.id)` retorna 0 corretamente no LEFT JOIN (sem COALESCE adicional necessário)
+- `SECURITY DEFINER` mantido para contornar RLS `scores_select_own` e permitir agregação de pontos de todos os usuários
+- **Componente modificado:** `components/bolao/RankingTable.tsx` — prop `isLeader` alterada para `entry.rank_position === 1 && entry.total_points > 0`, evitando que todos com 0 pontos sejam destacados simultaneamente como líderes
+- Nenhuma alteração necessária em `route.ts`, `useRankingRealtime.ts`, `RankingRow.tsx` ou na página `/ranking` — todos já estavam alinhados
+
 ## [predictions-edit] — Edição de Palpites — 2026-06-14
 
 - Usuário pode editar palpite existente enquanto faltam mais de 5 minutos para o jogo (deadline idêntico ao de criação)
