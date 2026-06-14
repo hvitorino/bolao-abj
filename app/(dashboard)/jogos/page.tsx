@@ -78,7 +78,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
       // Scores de todos os usuários nos jogos do dia
       supabase
         .from('scores')
-        .select('id, game_id, user_id, points, breakdown')
+        .select('*')
         .in('game_id', gameIds),
     ])
 
@@ -90,11 +90,10 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
     )
 
     // Mapear scores do usuário logado por game_id
-    const myScores = (allScores ?? []).filter(
-      (s: Score) => s.user_id === user.id
-    )
+    const typedAllScores = (allScores ?? []) as Score[]
+    const myScores = typedAllScores.filter((s) => s.user_id === user.id)
     scoresByGameId = Object.fromEntries(
-      myScores.map((s: Score) => [s.game_id, s])
+      myScores.map((s) => [s.game_id, s])
     )
 
     // Montar participantsByGameId: para cada jogo, lista ordenada de ParticipantEntry
@@ -107,7 +106,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
       }
     }
     const scoreByUserGame: Record<string, number> = {}
-    for (const s of allScores ?? []) {
+    for (const s of typedAllScores) {
       scoreByUserGame[`${s.user_id}:${s.game_id}`] = s.points
     }
 
