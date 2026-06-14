@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 12 features
-- Concluídas: 11
-- Em progresso: 1
+- Concluídas: 12
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -151,7 +151,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 12. fix-goleada-scoring — Correção: Regra de Goleada na Pontuação — em progresso
+### 12. fix-goleada-scoring — Correção: Regra de Goleada na Pontuação — concluída
 **Objetivo:** Corrigir a lógica de pontuação por goleada em TypeScript e Ruby para aplicar o +1 somente quando o vencedor no palpite marcou mais de 3 gols (4+) e a diferença de gols no jogo real é também maior que 3 (4+ de diferença), ao invés da regra atual que usa 3+ gols.
 **Critérios de sucesso:**
 - `lib/scoring.ts` aplica goleada somente quando: acertou vencedor E palpite do vencedor >= 4 gols E diferença real >= 4 gols
