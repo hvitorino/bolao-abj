@@ -7,8 +7,17 @@ interface RankingTableProps {
   currentUserId: string
 }
 
+// Formata data/hora local do usuário no formato HH:MM:SS
+function formatTime(date: Date): string {
+  return date.toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  })
+}
+
 export function RankingTable({ currentUserId }: RankingTableProps) {
-  const { ranking, loading, error } = useRankingRealtime()
+  const { ranking, loading, error, lastUpdatedAt } = useRankingRealtime()
 
   if (loading) {
     return (
@@ -95,16 +104,32 @@ export function RankingTable({ currentUserId }: RankingTableProps) {
           RANKING — BOLÃO DO CARTOLA ABJ
         </span>
         <span
-          className="blink"
           style={{
             fontFamily: "'JetBrains Mono', 'Courier New', monospace",
             fontSize: '11px',
-            color: 'var(--color-live)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
+            color: 'var(--color-muted)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
           }}
         >
-          ● AO VIVO
+          <span
+            className="blink"
+            style={{
+              color: 'var(--color-live)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+            }}
+          >
+            ● AO VIVO
+          </span>
+          {/* Timestamp de última atualização — visível somente após o primeiro fetch bem-sucedido */}
+          {lastUpdatedAt !== null && (
+            <>
+              <span>·</span>
+              <span>{formatTime(lastUpdatedAt)}</span>
+            </>
+          )}
         </span>
       </div>
 

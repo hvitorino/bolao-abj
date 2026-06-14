@@ -4,16 +4,25 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Game } from '@/lib/types/game'
 
+export interface GameRealtimeState {
+  game: Game
+  lastUpdatedAt: Date | null
+  connectionStatus: 'connecting' | 'connected' | 'error'
+}
+
 /**
  * Hook que subscreve ao canal Realtime do Supabase para um jogo específico.
- * Retorna o estado atualizado do jogo em tempo real via WAL replication.
+ * Retorna o estado atualizado do jogo em tempo real via WAL replication,
+ * junto com timestamp da última atualização e status da conexão.
  *
  * @param gameId - UUID do jogo a observar
  * @param initialGame - estado inicial do jogo (vindo do Server Component)
- * @returns Game atualizado em tempo real
+ * @returns GameRealtimeState com { game, lastUpdatedAt, connectionStatus }
  */
-export function useGameRealtime(gameId: string, initialGame: Game): Game {
-  const [gameState, setGameState] = useState<Game>(initialGame)
+export function useGameRealtime(gameId: string, initialGame: Game): GameRealtimeState {
+  const [game, setGame] = useState<Game>(initialGame)
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null)
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
 
   useEffect(() => {
     const supabase = createClient()
@@ -29,15 +38,22 @@ export function useGameRealtime(gameId: string, initialGame: Game): Game {
           filter: `id=eq.${gameId}`,
         },
         (payload) => {
-          setGameState(payload.new as Game)
+          setGame(payload.new as Game)
+          setLastUpdatedAt(new Date())
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          setConnectionStatus('connected')
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          setConnectionStatus('error')
+        }
+      })
 
     return () => {
       supabase.removeChannel(channel)
     }
   }, [gameId])
 
-  return gameState
+  return { game, lastUpdatedAt, connectionStatus }
 }
