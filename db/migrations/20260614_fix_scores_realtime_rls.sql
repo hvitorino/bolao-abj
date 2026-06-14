@@ -8,7 +8,15 @@
 -- Idempotente: usa CREATE POLICY IF NOT EXISTS para evitar erro em re-execuções.
 
 -- Política de SELECT: usuário autenticado pode ler seus próprios scores
-CREATE POLICY IF NOT EXISTS "users can read own scores"
-ON scores FOR SELECT
-TO authenticated
-USING (user_id = auth.uid());
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE tablename = 'scores' AND policyname = 'users can read own scores'
+  ) THEN
+    CREATE POLICY "users can read own scores"
+    ON scores FOR SELECT
+    TO authenticated
+    USING (user_id = auth.uid());
+  END IF;
+END $$;
