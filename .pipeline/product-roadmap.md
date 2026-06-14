@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 10 features
-- Concluídas: 9
+- Concluídas: 10
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -117,7 +117,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 10. live-scores-realtime — Placares em Tempo Real (Realtime) — pendente
+### 10. live-scores-realtime — Placares em Tempo Real (Realtime) — concluída
 **Objetivo:** Implementar atualização automática dos placares na aba de jogos via Supabase Realtime — quando um jogo passa para `live` ou tem `home_score`/`away_score` atualizados, o cliente reflete a mudança sem reload de página; o ranking também se atualiza em tempo real via canal `scores`.
 **Critérios de sucesso:**
 - Quando `games.status` muda para `live` ou `home_score`/`away_score` são atualizados, o componente de jogos reflete a mudança automaticamente sem reload
