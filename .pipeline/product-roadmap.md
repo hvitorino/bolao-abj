@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 15 features
-- Concluídas: 14
-- Em progresso: 1
+- Concluídas: 15
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -172,7 +172,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 15. fix-live-scores-display — Correção: Exibição e Atualização de Placar em Tempo Real — em progresso
+### 15. fix-live-scores-display — Correção: Exibição e Atualização de Placar em Tempo Real — concluída
 **Objetivo:** Corrigir a exibição do placar de jogos com status `live` na aba de jogos e garantir que atualizações de placar e pontuação cheguem ao frontend via Supabase Realtime sem necessidade de refresh.
 **Critérios de sucesso:**
 - O placar de jogos com status `live` (ex: Holanda x Japão) é exibido corretamente na aba `/jogos`
