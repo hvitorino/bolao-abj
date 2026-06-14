@@ -27,6 +27,26 @@ export function useScoreRealtime(
 ): Score | null {
   const [scoreState, setScoreState] = useState<Score | null>(initialScore)
 
+  // Fetch inicial: garante que o score calculado aparece imediatamente no mount,
+  // sem depender de um evento Realtime futuro (scores só mudam quando o jogo
+  // encerra, portanto nenhum evento chegaria para jogos já finalizados).
+  useEffect(() => {
+    if (!userId) return
+
+    const supabase = createClient()
+    supabase
+      .from('scores')
+      .select('*')
+      .eq('game_id', gameId)
+      .eq('user_id', userId)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setScoreState(data as Score)
+        }
+      })
+  }, [gameId, userId])
+
   useEffect(() => {
     // Early return: não cria subscription sem userId válido.
     // Sem userId, o filtro user_id === userId nunca corresponderia e a subscription
