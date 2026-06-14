@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-goleada-scoring] — Correção da Regra de Goleada na Pontuação — 2026-06-14
+
+- Regra de goleada corrigida de `>= 3 gols do vencedor real` para três condições simultâneas: acertou vencedor + vencedor no palpite marcou `>= 4 gols` + diferença real `>= 4 gols`
+- Empate nunca concede bônus de goleada (sem vencedor)
+- `lib/scoring.ts` — bloco da Regra 6 reescrito com `predWinnerScore >= 4 && realGoalDiff >= 4`; comentário de cabeçalho atualizado
+- **Migration criada:** `supabase/migrations/20260614000003_fix_goleada_scoring.sql` — `CREATE OR REPLACE FUNCTION calculate_scores_for_game` com nova variável `v_pred_winner_score` e condição `v_pred_winner_score >= 4 AND v_real_diff >= 4`
+- **Documentação:** `CLAUDE.md` — tabela de pontuação atualizada com definição correta da goleada
+- Alinhamento lógico exato entre TypeScript e Postgres verificado em todos os 5 casos de teste da spec
+- `api/scores/calculate.rb` não alterado (faz apenas RPC, sem lógica de pontuação própria)
+
 ## [game-participants-view] — Palpites e Pontuação dos Participantes por Jogo — 2026-06-14
 
 - Seção "PALPITES DOS PARTICIPANTES" adicionada a cada `GameCard` em `/jogos`: lista todos os perfis do bolão com palpite e pontuação
