@@ -193,7 +193,7 @@ export function RankingTable({ currentUserId }: RankingTableProps) {
               key={entry.user_id}
               entry={entry}
               isCurrentUser={entry.user_id === currentUserId}
-              isLeader={entry.rank_position === 1}
+              isLeader={entry.rank_position === 1 && entry.total_points > 0}
             />
           ))}
         </tbody>
