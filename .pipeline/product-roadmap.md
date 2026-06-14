@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 10 features
+- Total: 11 features
 - Concluídas: 10
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -126,6 +126,18 @@ Criado em: 2026-06-13
 - A conexão Realtime é encerrada corretamente ao desmontar o componente (sem memory leaks)
 - Os scores/pontuações da tabela `scores` também são atualizados em tempo real no ranking
 **Dependências:** auth, game-navigation, live-scores, scoring, ranking
+
+---
+
+### 11. game-participants-view — Palpites e Pontuação dos Participantes por Jogo — pendente
+**Objetivo:** Em cada card de jogo na tela `/jogos`, exibir para todos os participantes do bolão qual foi o palpite de cada um e quantos pontos ganhou naquele jogo, permitindo que qualquer participante veja o palpite e a pontuação de todos em cada partida.
+**Critérios de sucesso:**
+- Em cada card de jogo, a lista de todos os participantes é exibida com seu palpite (ex: "João: 2×1") e sua pontuação naquele jogo (ex: "+8 pts")
+- Se o participante não fez palpite, exibe estado adequado (ex: "sem palpite" ou "-")
+- Se o jogo está pendente (sem placar), mostra o palpite mas sem pontuação ainda
+- Os dados são carregados de forma eficiente (sem N+1 queries) — idealmente uma única query com JOIN entre `predictions`, `scores` e `profiles`
+- Layout segue DESIGN.md: fonte monospace, paleta verde/amarelo/azul, sem ícones decorativos
+**Dependências:** auth, game-navigation, predictions, scoring
 
 ---
 
