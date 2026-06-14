@@ -3,7 +3,7 @@
 **Slug:** fix-team-code-display
 **Branch:** feature/fix-team-code-display
 **Data:** 2026-06-14
-**Status:** aguardando revisão
+**Status:** aguardando revisão (pós fix-1)
 
 ---
 
@@ -63,9 +63,29 @@ Semifinal 1 Loser  ('SF ') vs Semifinal 2 Loser   ('SF ')
 
 ---
 
+## Correções Fix 1
+
+### Problema 1 — Comentários enganosos na migration 004 (severidade: menor)
+**Arquivo:** `supabase/migrations/20260614000004_fix_team_code_padding.sql`
+**Correção:** Substituídas as duas ocorrências de "varchar(3)" nos comentários por "varchar(10)", alinhando a documentação interna do arquivo com o `ALTER TABLE` que implementa `varchar(10)`.
+
+### Problema 2 — Ausência de CHECK constraint após mudança para varchar(10) (severidade: importante)
+**Arquivo:** `supabase/migrations/20260614000006_team_code_check_constraints.sql` (nova migration)
+**Correção:** Criada migration 006 que adiciona as seguintes constraints:
+```sql
+ALTER TABLE games
+  ADD CONSTRAINT games_home_team_code_length CHECK (length(trim(home_team_code)) = 3),
+  ADD CONSTRAINT games_away_team_code_length CHECK (length(trim(away_team_code)) = 3);
+```
+Usa `length(trim(...)) = 3` para compatibilidade com dados pós-trim da migration 004 e tolerância a espaços acidentais em ambientes legados.
+
+---
+
 ## Commits realizados
 
 ```
+834925a fix(fix-team-code-display): adiciona CHECK constraints em home_team_code e away_team_code
+3b80991 fix(fix-team-code-display): corrige comentários enganosos na migration 004
 e880c79 fix(fix-team-code-display): adiciona padEnd para garantir sempre 3 chars no getTeamCode
 9b39531 fix(fix-team-code-display): migrations para corrigir padding e placeholders nos codigos de times
 bc40ef4 fix(fix-team-code-display): implementa getTeamCode com fallback para abreviações < 3 chars
