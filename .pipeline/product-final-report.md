@@ -14,6 +14,7 @@ Data de conclusão: 2026-06-14
 6. **ranking** — Ranking em Tempo Real — 2026-06-13
 7. **predictions-edit** — Edição de Palpites — 2026-06-14
 8. **fix-ranking-visibility** — Correção: Visibilidade no Ranking — 2026-06-14
+9. **ranking-mobile-fit** — Ajuste Mobile do Ranking — 2026-06-14
 
 ---
 
