@@ -16,7 +16,12 @@ Transformar os objetivos de uma feature em uma especificação técnica completa
 3. Leia `.pipeline/product-roadmap.md` para entender o contexto da feature no roadmap
 4. Se houver features já implementadas, leia seus changelogs (`.pipeline/<slug>-changelog.md`) para entender o que já existe
 5. Escreva `.pipeline/<feature-slug>-spec.md` (formato abaixo)
-6. Invoque o Programador com o slug da feature
+6. Commit da spec:
+   ```bash
+   git add .pipeline/<feature-slug>-spec.md
+   git commit -m "chore(pipeline): adiciona spec de <feature-slug>"
+   ```
+7. Invoque o Programador com o slug da feature
 
 ## Formato de `.pipeline/<feature>-spec.md`
 

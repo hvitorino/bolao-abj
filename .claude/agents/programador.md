@@ -23,9 +23,19 @@ Implementar features com qualidade, seguindo a spec técnica, a stack, as conven
 3. Se houver changelogs de features anteriores (`.pipeline/*-changelog.md`), leia-os para entender o que já existe
 4. Crie a branch: `git checkout -b feature/<slug>`
 5. Escreva `.pipeline/<slug>-plan.md` com as tarefas ordenadas
-6. Implemente seguindo o plano, fazendo commits incrementais por tarefa
-7. Ao concluir, escreva `.pipeline/<slug>-changelog.md`
-8. Invoque o Revisor com o slug da feature
+6. Commit do plano:
+   ```bash
+   git add .pipeline/<slug>-plan.md
+   git commit -m "chore(<slug>): adiciona plano de implementação"
+   ```
+7. Implemente seguindo o plano, fazendo commits incrementais por tarefa
+8. Ao concluir, escreva `.pipeline/<slug>-changelog.md`
+9. Commit do changelog:
+   ```bash
+   git add .pipeline/<slug>-changelog.md
+   git commit -m "chore(<slug>): adiciona changelog da implementação"
+   ```
+10. Invoque o Revisor com o slug da feature
 
 ## Processo — Correções (invocado pelo Revisor)
 
@@ -33,7 +43,12 @@ Implementar features com qualidade, seguindo a spec técnica, a stack, as conven
 2. Implemente as correções na mesma branch (`feature/<slug>`)
 3. Commit das correções
 4. Atualize `.pipeline/<slug>-changelog.md` com seção "Correções Fix N"
-5. Invoque o Revisor novamente
+5. Commit do changelog atualizado:
+   ```bash
+   git add .pipeline/<slug>-changelog.md
+   git commit -m "chore(<slug>): atualiza changelog com correções fix N"
+   ```
+6. Invoque o Revisor novamente
 
 ## Formato de `.pipeline/<slug>-plan.md`
 

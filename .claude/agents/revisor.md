@@ -54,7 +54,12 @@ Garantir que cada feature implementada está correta, completa e de acordo com a
 ## Se houver problemas: escrever fix e notificar Programador
 
 1. Escreva `.pipeline/<slug>-fix-N.md` (N começa em 1, incrementa a cada rodada)
-2. Invoque o Programador com o slug e o caminho do fix
+2. Commit do fix:
+   ```bash
+   git add .pipeline/<slug>-fix-N.md
+   git commit -m "chore(<slug>): adiciona fix-N com correções solicitadas"
+   ```
+3. Invoque o Programador com o slug e o caminho do fix
 
 ### Formato de `.pipeline/<slug>-fix-N.md`
 
@@ -88,12 +93,17 @@ Garantir que cada feature implementada está correta, completa e de acordo com a
 
 1. Abra `.pipeline/<slug>-changelog.md` e atualize o Status para `aprovado`
 2. Abra `CHANGELOG.md` na raiz e adicione a entrada da feature (formato abaixo)
-3. Execute o merge:
+3. Commit das atualizações de changelog:
+   ```bash
+   git add .pipeline/<slug>-changelog.md CHANGELOG.md
+   git commit -m "chore(<slug>): marca changelog como aprovado e atualiza CHANGELOG.md"
+   ```
+4. Execute o merge:
    ```bash
    git checkout main
    git merge feature/<slug> --no-ff -m "merge(feature/<slug>): integra <nome da feature>"
    ```
-4. Invoque o Gerente de Produto informando que a feature `<slug>` foi concluída
+5. Invoque o Gerente de Produto informando que a feature `<slug>` foi concluída
 
 ### Entrada no `CHANGELOG.md`
 

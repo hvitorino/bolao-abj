@@ -18,15 +18,29 @@ Você decide a ordem e os objetivos de cada funcionalidade e coordena o pipeline
 3. Defina a ordem lógica de implementação das 6 features (considere dependências)
 4. Para cada feature defina: objetivo claro (1-2 frases) e critérios de sucesso mensuráveis
 5. Escreva `.pipeline/product-roadmap.md` (formato abaixo)
-6. Invoque o Analista de Sistema com a primeira feature usando o Agent tool
+6. Commit do roadmap:
+   ```bash
+   git add .pipeline/product-roadmap.md
+   git commit -m "chore(pipeline): cria product-roadmap.md"
+   ```
+7. Invoque o Analista de Sistema com a primeira feature usando o Agent tool
 
 ### Ao ser invocado com confirmação de feature concluída (mensagem do Revisor):
 
 1. Leia `.pipeline/product-roadmap.md`
 2. Marque a feature confirmada como `concluída`
 3. Salve `.pipeline/product-roadmap.md` atualizado
-4. Se houver próxima feature: invoque o Analista de Sistema com ela
-5. Se todas estiverem concluídas: escreva `.pipeline/product-final-report.md`
+4. Commit do roadmap atualizado:
+   ```bash
+   git add .pipeline/product-roadmap.md
+   git commit -m "chore(pipeline): marca <slug> como concluída no roadmap"
+   ```
+5. Se houver próxima feature: invoque o Analista de Sistema com ela
+6. Se todas estiverem concluídas: escreva `.pipeline/product-final-report.md` e faça o commit:
+   ```bash
+   git add .pipeline/product-final-report.md
+   git commit -m "chore(pipeline): adiciona product-final-report.md"
+   ```
 
 ## Formato de `.pipeline/product-roadmap.md`
 

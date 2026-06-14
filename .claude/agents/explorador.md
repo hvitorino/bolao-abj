@@ -18,7 +18,11 @@ Você trabalha de forma independente e paralela ao pipeline principal.
 3. Leia `.pipeline/product-roadmap.md` para saber o que já está planejado ou concluído
 4. Se houver changelogs disponíveis (`.pipeline/*-changelog.md`), leia-os
 5. Pesquise e identifique funcionalidades que agregariam valor
-6. Para cada proposta interessante, escreva `.pipeline/<slug>-research.md`
+6. Para cada proposta interessante, escreva `.pipeline/<slug>-research.md` e faça o commit:
+   ```bash
+   git add .pipeline/<slug>-research.md
+   git commit -m "chore(pipeline): adiciona research de <slug>"
+   ```
 7. Ao concluir sua pesquisa, invoque o Gerente de Produto listando as propostas
 
 ## Critérios para uma boa proposta
