@@ -81,6 +81,35 @@ const ROUND_MAP: Record<string, string> = {
   'Final': 'Final',
 }
 
+// Mapa de fallback: displayName ESPN → código de 3 chars
+// Usado quando a ESPN retorna abreviação com menos de 3 caracteres
+const TEAM_CODE_FALLBACK: Record<string, string> = {
+  'Curacao': 'CUR',
+  'Germany': 'GER',
+  'South Korea': 'KOR',
+  'Saudi Arabia': 'KSA',
+  'Ivory Coast': 'CIV',
+  'Congo DR': 'COD',
+  'Cape Verde': 'CPV',
+  'Bosnia-Herzegovina': 'BIH',
+  'New Zealand': 'NZL',
+  'South Africa': 'RSA',
+  'Costa Rica': 'CRC',
+  'United States': 'USA',
+  'United Arab Emirates': 'UAE',
+}
+
+function getTeamCode(team: { abbreviation: string; displayName: string }): string {
+  const code = team.abbreviation.toUpperCase().slice(0, 3).trim()
+  if (code.length === 3) return code
+  // Fallback: buscar no mapa de times conhecidos ou derivar do displayName
+  const fallback =
+    TEAM_CODE_FALLBACK[team.displayName] ??
+    team.displayName.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 3)
+  // Garantir sempre 3 chars (pad com 'X' se necessário)
+  return fallback.padEnd(3, 'X')
+}
+
 function mapStatus(espnStatusName: string): GameStatus {
   switch (espnStatusName) {
     case 'STATUS_IN_PROGRESS':
@@ -157,8 +186,8 @@ function mapEventToGame(event: EspnEvent): GameRecord {
     espn_id: event.id,
     home_team: translateTeam(homeCompetitor.team.displayName),
     away_team: translateTeam(awayCompetitor.team.displayName),
-    home_team_code: homeCompetitor.team.abbreviation.toUpperCase().slice(0, 3),
-    away_team_code: awayCompetitor.team.abbreviation.toUpperCase().slice(0, 3),
+    home_team_code: getTeamCode(homeCompetitor.team),
+    away_team_code: getTeamCode(awayCompetitor.team),
     match_date: event.date,
     home_score: homeScore,
     away_score: awayScore,
