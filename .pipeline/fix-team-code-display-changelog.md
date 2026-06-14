@@ -3,7 +3,7 @@
 **Slug:** fix-team-code-display
 **Branch:** feature/fix-team-code-display
 **Data:** 2026-06-14
-**Status:** aguardando revisão (pós fix-1)
+**Status:** aprovado
 
 ---
 

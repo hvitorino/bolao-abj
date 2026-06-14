@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-team-code-display] — Correção: Exibição dos Códigos de Times — 2026-06-14
+
+- Causa raiz identificada: 17 jogos de mata-mata tinham códigos placeholder de 2 chars (`"2A"`, `"SF"`) armazenados como `char(3)` com padding de espaço (`"2A "`, `"SF "`), quebrando alinhamento em fonte monospace
+- **Migration 004** (`20260614000004_fix_team_code_padding.sql`): remove espaços trailing via `trim()` e converte colunas `home_team_code`/`away_team_code` de `char(3)` para `varchar(10)` para prevenir recorrência do padding automático
+- **Migration 005** (`20260614000005_fix_team_code_placeholders.sql`): converte 17 códigos de 2 chars para 3 chars com mapeamento semântico — `"2A"` → `"2GA"`, `"SF"` → `"SFX"` — regex `'^[12][A-L]$'` cobre todos os 12 grupos da Copa
+- **Migration 006** (`20260614000006_team_code_check_constraints.sql`): adiciona `CHECK (length(trim(home_team_code)) = 3)` e `CHECK (length(trim(away_team_code)) = 3)` reforçando a regra de negócio (exatamente 3 chars) na camada de banco
+- **`app/api/admin/sync-games/route.ts`**: constante `TEAM_CODE_FALLBACK` (mapa ESPN displayName → código 3 chars) e função `getTeamCode` com fallback e `padEnd(3, 'X')` como salvaguarda final na camada de aplicação
+- Nenhum componente frontend alterado — a correção é exclusivamente na camada de dados e de ingestão
+
 ## [fix-goleada-scoring] — Correção da Regra de Goleada na Pontuação — 2026-06-14
 
 - Regra de goleada corrigida de `>= 3 gols do vencedor real` para três condições simultâneas: acertou vencedor + vencedor no palpite marcou `>= 4 gols` + diferença real `>= 4 gols`
