@@ -24,6 +24,23 @@ export function useGameRealtime(gameId: string, initialGame: Game): GameRealtime
   const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null)
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
 
+  // Fetch inicial: garante dados frescos no mount independente do cache SSR.
+  // Sem este fetch, o estado só seria atualizado quando chegasse o próximo
+  // evento Realtime — que pode nunca chegar se o jogo não estiver em andamento.
+  useEffect(() => {
+    const supabase = createClient()
+    supabase
+      .from('games')
+      .select('*')
+      .eq('id', gameId)
+      .single()
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setGame(data as Game)
+        }
+      })
+  }, [gameId])
+
   useEffect(() => {
     const supabase = createClient()
 
