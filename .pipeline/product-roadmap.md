@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 13 features
+- Total: 14 features
 - Concluídas: 13
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -169,3 +169,14 @@ Criado em: 2026-06-13
 - Testes automatizados (se existirem) cobrem: palpite 3x0 (nao recebe), palpite 4x0 com diferenca real >= 4 (recebe)
 - `CLAUDE.md` atualizado para documentar a regra corrigida com clareza
 **Dependências:** scoring
+
+---
+
+### 14. fix-long-names — Correção: Nomes Longos nos Cards de Jogo — em progresso
+**Objetivo:** Corrigir o layout dos cards de jogo para que nenhum texto quebre para uma segunda linha — nomes de times e de estádios devem ser truncados com "..." quando necessário.
+**Critérios de sucesso:**
+- Nomes de times abaixo dos códigos (ex: "COSTA DO MARFIM") aparecem em uma única linha, truncados com "..." se necessário
+- Nome do estádio aparece em uma única linha, truncado com "..." se necessário
+- Nenhum texto no card de jogo quebra para uma segunda linha
+- O layout do card permanece consistente independente do tamanho do nome
+**Dependências:** game-navigation
