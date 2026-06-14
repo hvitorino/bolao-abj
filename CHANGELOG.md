@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-prediction-visibility] — Correção: Visibilidade Temporal dos Palpites — 2026-06-14
+
+- Migration criada: `supabase/migrations/20260614191000_fix_prediction_visibility_policy.sql` — substitui a política irrestrita de leitura em `predictions` por uma política temporal: usuários autenticados só podem ler palpites de terceiros em jogos que não estão mais em status `pending`.
+- `components/bolao/GameParticipantsList.tsx` atualizado com defesa em profundidade: em jogos `pending`, palpites de outros participantes são renderizados como `OCULTO`, independentemente dos dados recebidos do backend.
+- Próprio usuário continua vendo seu palpite normalmente em qualquer status de jogo.
+- Fix de lint aplicado em `app/(dashboard)/jogos/page.tsx` (uso de `const` para satisfazer `prefer-const`) e em `lib/hooks/useRankingRealtime.ts` (uso de `setTimeout` para evitar `react-hooks/set-state-in-effect`).
+- Verificação técnica completa via `npm run lint` e `npm run build` confirmando integridade do projeto.
+
 ## [fix-live-scores-display] — Correção: Exibição e Atualização de Placar em Tempo Real — 2026-06-14
 
 - Guarda defensiva adicionada em `useGameRealtime` para não sobrescrever o estado quando `payload.new` chega incompleto (sem `REPLICA IDENTITY FULL` ativo, o payload pode ser `{}`); cast alterado de `payload.new as Game` para `payload.new as Partial<Game>` com validação de `id` e `status` antes de `setGame`
