@@ -18,6 +18,7 @@ Data de conclusão: 2026-06-14
 12. [fix-goleada-scoring] — Correção: Regra de Goleada na Pontuação — 2026-06-14
 13. [fix-team-code-display] — Correção: Exibição dos Códigos de Times — 2026-06-14
 14. [fix-long-names] — Correção: Nomes Longos nos Cards de Jogo — 2026-06-14
+15. [fix-live-scores-display] — Correção: Exibição e Atualização de Placar em Tempo Real — 2026-06-14
 
 ## Resumo
 
@@ -25,7 +26,7 @@ O Bolão do Cartola ABJ foi construído do zero em dois dias de desenvolvimento 
 
 A stack escolhida (Next.js 15 + Supabase + Ruby/Sinatra) provou-se adequada: o Supabase Realtime eliminou a necessidade de polling para placares e ranking; o Sinatra como Vercel Function manteve a lógica de pontuação e validações server-side; o App Router do Next.js separou claramente rotas públicas e protegidas via middleware.
 
-O pipeline de cinco agentes (Gerente de Produto, Analista de Sistema, Programador, Revisor, Explorador) entregou 14 features com revisão estruturada, changelogs rastreáveis e branches isoladas mergeadas via --no-ff. As ultimas entregas corrigiram bugs visuais e de regra: a regra de goleada passou a exigir 4+ gols do vencedor tanto no palpite quanto no placar real (ao invés de 3+) para conceder o bônus de +1 ponto; os códigos de times passaram a exibir as 3 letras corretamente (ex: "GER", "BRA") em todos os cards de jogo e resumos de palpite; e nomes longos de times e estádios passaram a ser truncados com reticências ("...") em vez de quebrar o layout do card.
+O pipeline de cinco agentes (Gerente de Produto, Analista de Sistema, Programador, Revisor, Explorador) entregou 15 features com revisão estruturada, changelogs rastreáveis e branches isoladas mergeadas via --no-ff. As últimas entregas corrigiram bugs visuais e de regra: a regra de goleada passou a exigir 4+ gols do vencedor tanto no palpite quanto no placar real (ao invés de 3+) para conceder o bônus de +1 ponto; os códigos de times passaram a exibir as 3 letras corretamente (ex: "GER", "BRA") em todos os cards de jogo e resumos de palpite; nomes longos de times e estádios passaram a ser truncados com reticências ("...") em vez de quebrar o layout do card; e a exibição e atualização de placares em tempo real para jogos com status `live` foi corrigida, garantindo que mudanças em `home_score`/`away_score` cheguem ao frontend via canal Realtime sem necessidade de reload e sem memory leaks na subscription.
 
 ## Próximos passos sugeridos
 
