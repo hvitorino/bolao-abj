@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 12 features
+- Total: 13 features
 - Concluídas: 12
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -148,6 +148,16 @@ Criado em: 2026-06-13
 - Informações essenciais preservadas: posicao, nome do participante, pontuacao total
 - Design responsivo seguindo DESIGN.md: dense first, tabular, mobile first, dark only, sem icones decorativos, bordas simples, sem sombras
 **Dependências:** auth, game-navigation, predictions, scoring, ranking, fix-ranking-visibility
+
+---
+
+### 13. fix-team-code-display — Correção: Exibição dos Códigos de Times — em progresso
+**Objetivo:** Corrigir a exibição das abreviações (códigos) dos times nos cards de jogos, onde apenas a primeira letra do código está sendo exibida (ex: "G" em vez de "GER") tanto no card principal quanto no resumo de palpite.
+**Critérios de sucesso:**
+- Os códigos dos times exibem 3 letras corretamente (ex: "GER", "CUR", "BRA", "ARG")
+- Nenhum outro componente que exibe os nomes dos times é afetado
+- O fix cobre tanto o card principal quanto o resumo de palpite (ambos visíveis no bug reportado)
+**Dependências:** game-navigation, predictions
 
 ---
 
