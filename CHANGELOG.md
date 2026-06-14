@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-long-names] — Correção: Nomes Longos nos Cards de Jogo — 2026-06-14
+
+- Nomes de times longos (ex: "COSTA DO MARFIM") truncados com reticências em vez de quebrar para segunda linha, garantindo altura uniforme em todos os `GameCard`
+- `minWidth: 0` adicionado nas duas divs de container de time (colunas `1fr` do grid `1fr auto 1fr`) — correção padrão para truncamento funcionar dentro de CSS Grid items
+- `overflow: 'hidden'`, `textOverflow: 'ellipsis'`, `whiteSpace: 'nowrap'` adicionados na div do `home_team` e na div do `away_team`
+- `minWidth: 0` adicionado no span do venue no footer (flex item já tinha `overflow/ellipsis/nowrap/maxWidth: 160px`, mas precisava de `minWidth: 0` para respeitar essas propriedades)
+- Códigos de 3 letras (`home_team_code`, `away_team_code`) e placar central (`minWidth: '80px'`, coluna `auto`) não afetados
+- Correção exclusivamente de frontend — nenhuma migration, endpoint ou componente além de `components/games/GameCard.tsx`
+
 ## [fix-team-code-display] — Correção: Exibição dos Códigos de Times — 2026-06-14
 
 - Causa raiz identificada: 17 jogos de mata-mata tinham códigos placeholder de 2 chars (`"2A"`, `"SF"`) armazenados como `char(3)` com padding de espaço (`"2A "`, `"SF "`), quebrando alinhamento em fonte monospace
