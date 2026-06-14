@@ -236,7 +236,7 @@ export default function GameCard({
           display: 'flex',
           alignItems: 'center',
           gap: '0.75rem',
-          flexWrap: 'wrap',
+          overflow: 'hidden',
         }}
       >
         {/* Badge de status */}
@@ -367,8 +367,8 @@ export default function GameCard({
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              maxWidth: '160px',
               minWidth: 0,
+              flexShrink: 1,
             }}
           >
             {liveGame.venue}
