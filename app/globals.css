@@ -35,3 +35,13 @@ body {
 .blink {
   animation: blink 1s step-end infinite;
 }
+
+.ranking-name-cell {
+  font-size: 12px;
+}
+
+@media (min-width: 768px) {
+  .ranking-name-cell {
+    font-size: 14px;
+  }
+}

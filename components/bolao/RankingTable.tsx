@@ -69,7 +69,6 @@ export function RankingTable({ currentUserId }: RankingTableProps) {
       style={{
         border: '1px solid var(--color-border)',
         backgroundColor: 'var(--color-surface)',
-        overflowX: 'auto',
       }}
     >
       {/* Cabeçalho da tabela com título e indicador ao vivo */}
@@ -126,7 +125,7 @@ export function RankingTable({ currentUserId }: RankingTableProps) {
           >
             <th
               style={{
-                padding: '0.5rem 0.75rem',
+                padding: '0.35rem 0.5rem',
                 textAlign: 'right',
                 width: '3rem',
                 fontFamily: "'JetBrains Mono', 'Courier New', monospace",
@@ -141,7 +140,7 @@ export function RankingTable({ currentUserId }: RankingTableProps) {
             </th>
             <th
               style={{
-                padding: '0.5rem 0.75rem',
+                padding: '0.35rem 0.5rem',
                 textAlign: 'left',
                 fontFamily: "'JetBrains Mono', 'Courier New', monospace",
                 fontSize: '11px',
@@ -155,7 +154,7 @@ export function RankingTable({ currentUserId }: RankingTableProps) {
             </th>
             <th
               style={{
-                padding: '0.5rem 0.75rem',
+                padding: '0.35rem 0.5rem',
                 textAlign: 'center',
                 minWidth: '5rem',
                 fontFamily: "'JetBrains Mono', 'Courier New', monospace",
@@ -169,8 +168,9 @@ export function RankingTable({ currentUserId }: RankingTableProps) {
               PONTOS
             </th>
             <th
+              className="hidden md:table-cell"
               style={{
-                padding: '0.5rem 0.75rem',
+                padding: '0.35rem 0.5rem',
                 textAlign: 'center',
                 minWidth: '5rem',
                 fontFamily: "'JetBrains Mono', 'Courier New', monospace",
