@@ -3,7 +3,7 @@
 **Slug:** fix-long-names
 **Branch:** feature/fix-long-names
 **Data:** 2026-06-14
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
