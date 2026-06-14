@@ -6,6 +6,21 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [predictions-edit] — Edição de Palpites — 2026-06-14
+
+- Usuário pode editar palpite existente enquanto faltam mais de 5 minutos para o jogo (deadline idêntico ao de criação)
+- Botão "✎ EDITAR PALPITE" (ghost, borda `color-primary`) exibido em `PredictionDisplay` somente para jogos `pending` antes do deadline
+- Clicar em EDITAR reabre o `PredictionForm` pré-preenchido com os placares anteriores
+- Botão "CANCELAR" sempre visível no modo edição (independente de deadline expirado) — permite retornar ao display sem reload
+- Label do CTA muda para "SALVAR ALTERAÇÃO" no modo edição; título do painel muda para "EDITAR PALPITE"
+- Palpite atualizado exibido imediatamente após PATCH bem-sucedido (sem reload); `submitted_at` reflete horário da edição
+- Jogos `live` ou `finished` nunca exibem botão EDITAR, mesmo que recebam `matchDate` via props
+- Erros mapeados em PT-BR: `deadline_expired` → "Prazo encerrado. Não é possível editar o palpite.", `forbidden` → "Acesso negado."
+- **Endpoint criado:** `PATCH /api/predictions/[id]` (Next.js Route Handler) — validações em cascata: 401 JWT → 400 UUID → 404 not found → 403 ownership → 422 status live/finished → 422 deadline temporal → 422 scores inválidos → 200 updated
+- **Componentes modificados:** `PredictionDisplay.tsx` (+ `matchDate`, `onEditRequest`; `"use client"` para hover state), `PredictionForm.tsx` (+ `onCancelEdit`, `onSuccess`; modo edição com PATCH), `GameCard.tsx` (+ estado `isEditing`, `currentPrediction`; três ramos exclusivos de renderização)
+- **Migration SQL:** `db/migrations/20260614_predictions_update_policy.sql` — política RLS `predictions_update_own` (`FOR UPDATE`, `USING + WITH CHECK auth.uid() = user_id`)
+- **Nota:** mensagem client-side de race condition na linha 109 do `PredictionForm` usa "registrar" em vez de "editar" em modo edição — janela de ocorrência de milissegundos, sem impacto funcional
+
 ## [ranking] — Ranking em Tempo Real — 2026-06-13
 
 - Página `/ranking` com classificação completa de todos os participantes, ordenada por pontos totais (decrescente)

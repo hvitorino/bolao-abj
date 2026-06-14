@@ -11,6 +11,8 @@ interface PredictionFormProps {
   awayTeamCode: string
   matchDate: string // ISO 8601
   initialPrediction?: Prediction | null
+  onCancelEdit?: () => void // Se presente, exibir botão "CANCELAR" no modo edição
+  onSuccess?: (updated: Prediction) => void // Callback chamado após submit bem-sucedido
 }
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'error'
@@ -37,6 +39,8 @@ export default function PredictionForm({
   awayTeamCode,
   matchDate,
   initialPrediction,
+  onCancelEdit,
+  onSuccess,
 }: PredictionFormProps) {
   const [homeScore, setHomeScore] = useState<string>(
     initialPrediction != null ? String(initialPrediction.home_score) : ''
@@ -47,11 +51,17 @@ export default function PredictionForm({
   const [status, setStatus] = useState<FormStatus>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [submittedPrediction, setSubmittedPrediction] = useState<Prediction | null>(
-    initialPrediction ?? null
+    // Só pré-popula submittedPrediction se NÃO estamos no modo edição
+    // (no modo edição, onCancelEdit está definido e queremos mostrar o formulário)
+    initialPrediction != null && onCancelEdit == null ? initialPrediction : null
   )
   const [minutesRemaining, setMinutesRemaining] = useState<number>(() =>
     minutesUntilDeadline(matchDate)
   )
+
+  // Modo edição: initialPrediction está definido e o formulário está sendo exibido
+  // (onCancelEdit sinaliza que fomos abertos pelo botão EDITAR do GameCard)
+  const isEditMode = initialPrediction != null && onCancelEdit != null
 
   // Atualiza countdown a cada segundo
   useEffect(() => {
@@ -65,8 +75,8 @@ export default function PredictionForm({
   const showCountdown = minutesRemaining > 0 && minutesRemaining < 120
   const isCountdownUrgent = minutesRemaining <= 30
 
-  // Se já tem palpite enviado, exibir PredictionDisplay
-  if (submittedPrediction) {
+  // Se já tem palpite enviado e não estamos no modo edição, exibir PredictionDisplay
+  if (submittedPrediction && !isEditMode) {
     return (
       <PredictionDisplay
         homeScore={submittedPrediction.home_score}
@@ -79,10 +89,7 @@ export default function PredictionForm({
   }
 
   // Valida e sanitiza input numérico (apenas inteiros >= 0)
-  function handleScoreInput(
-    value: string,
-    setter: (v: string) => void
-  ) {
+  function handleScoreInput(value: string, setter: (v: string) => void) {
     if (value === '') {
       setter('')
       return
@@ -126,27 +133,51 @@ export default function PredictionForm({
         return
       }
 
-      const res = await fetch('/api/predictions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          game_id: gameId,
-          home_score: home,
-          away_score: away,
-        }),
-      })
+      let res: Response
+
+      if (isEditMode && initialPrediction) {
+        // Modo edição: PATCH /api/predictions/:id
+        res = await fetch(`/api/predictions/${initialPrediction.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            home_score: home,
+            away_score: away,
+          }),
+        })
+      } else {
+        // Modo criação: POST /api/predictions
+        res = await fetch('/api/predictions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            game_id: gameId,
+            home_score: home,
+            away_score: away,
+          }),
+        })
+      }
 
       const data = await res.json()
 
       if (res.ok) {
+        const updatedPrediction = data as Prediction
         setStatus('success')
-        setSubmittedPrediction(data as Prediction)
+        setSubmittedPrediction(updatedPrediction)
+        // Notifica o pai (GameCard) sobre o sucesso
+        onSuccess?.(updatedPrediction)
       } else if (data.error === 'deadline_expired') {
         setStatus('error')
-        setErrorMessage('Prazo encerrado. Não é possível registrar palpite.')
+        setErrorMessage('Prazo encerrado. Não é possível editar o palpite.')
+      } else if (data.error === 'forbidden') {
+        setStatus('error')
+        setErrorMessage('Acesso negado.')
       } else if (data.error === 'already_submitted') {
         setStatus('error')
         setErrorMessage('Você já enviou um palpite para este jogo.')
@@ -201,7 +232,7 @@ export default function PredictionForm({
           marginBottom: '0.5rem',
         }}
       >
-        SEU PALPITE
+        {isEditMode ? 'EDITAR PALPITE' : 'SEU PALPITE'}
       </div>
 
       {/* Formulário de placar */}
@@ -275,9 +306,7 @@ export default function PredictionForm({
               fontSize: '11px',
               textAlign: 'center',
               marginBottom: '0.5rem',
-              color: isCountdownUrgent
-                ? 'var(--color-error)'
-                : 'var(--color-muted)',
+              color: isCountdownUrgent ? 'var(--color-error)' : 'var(--color-muted)',
               fontWeight: isCountdownUrgent ? 'bold' : 'normal',
             }}
           >
@@ -310,9 +339,7 @@ export default function PredictionForm({
             style={{
               width: '100%',
               padding: '0.5rem',
-              backgroundColor: isLoading
-                ? 'var(--color-muted)'
-                : 'var(--color-primary)',
+              backgroundColor: isLoading ? 'var(--color-muted)' : 'var(--color-primary)',
               color: 'var(--color-bg)',
               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
               fontSize: '12px',
@@ -324,7 +351,30 @@ export default function PredictionForm({
               opacity: isDisabled ? 0.5 : 1,
             }}
           >
-            {isLoading ? '...' : 'CONFIRMAR PALPITE'}
+            {isLoading ? '...' : isEditMode ? 'SALVAR ALTERAÇÃO' : 'CONFIRMAR PALPITE'}
+          </button>
+        )}
+
+        {/* Botão CANCELAR — somente no modo edição, independente do deadline */}
+        {isEditMode && onCancelEdit && (
+          <button
+            type="button"
+            onClick={onCancelEdit}
+            style={{
+              marginTop: '0.4rem',
+              width: '100%',
+              padding: '0.25rem',
+              backgroundColor: 'transparent',
+              border: 'none',
+              color: 'var(--color-muted)',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              cursor: 'pointer',
+            }}
+          >
+            CANCELAR
           </button>
         )}
       </form>

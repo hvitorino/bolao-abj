@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
@@ -45,6 +46,13 @@ export default function GameCard({
   score = null,
   userId,
 }: GameCardProps) {
+  // Estado local da prediction — permite atualizar após edição sem reload
+  const [currentPrediction, setCurrentPrediction] = useState<Prediction | null>(
+    prediction ?? null
+  )
+  // Estado de edição — controla se o formulário está aberto no modo edição
+  const [isEditing, setIsEditing] = useState(false)
+
   // Subscreve ao canal Realtime do Supabase para este jogo específico.
   // liveGame começa com o estado SSR (game) e atualiza automaticamente
   // via WAL replication quando admin faz PATCH no placar ou status.
@@ -66,6 +74,12 @@ export default function GameCard({
       : '- × -'
 
   const cardBorderColor = isLive ? 'var(--color-live)' : 'var(--color-border)'
+
+  // Handler chamado pelo PredictionForm ao concluir edição bem-sucedida
+  function handleEditSuccess(updated: Prediction) {
+    setCurrentPrediction(updated)
+    setIsEditing(false)
+  }
 
   return (
     <div
@@ -318,42 +332,78 @@ export default function GameCard({
       >
         {/* Jogo pendente: formulário de palpite ou palpite enviado */}
         {isPending && (
-          <PredictionForm
-            gameId={liveGame.id}
-            homeTeamCode={liveGame.home_team_code}
-            awayTeamCode={liveGame.away_team_code}
-            matchDate={liveGame.match_date}
-            initialPrediction={prediction}
-          />
+          <>
+            {/* Modo edição: formulário pré-preenchido com palpite atual */}
+            {isEditing && currentPrediction && (
+              <PredictionForm
+                gameId={liveGame.id}
+                homeTeamCode={liveGame.home_team_code}
+                awayTeamCode={liveGame.away_team_code}
+                matchDate={liveGame.match_date}
+                initialPrediction={currentPrediction}
+                onCancelEdit={() => setIsEditing(false)}
+                onSuccess={handleEditSuccess}
+              />
+            )}
+
+            {/* Há palpite e não está editando: exibir PredictionDisplay com botão EDITAR */}
+            {currentPrediction && !isEditing && (
+              <PredictionDisplay
+                homeScore={currentPrediction.home_score}
+                awayScore={currentPrediction.away_score}
+                homeTeamCode={liveGame.home_team_code}
+                awayTeamCode={liveGame.away_team_code}
+                submittedAt={currentPrediction.submitted_at}
+                matchDate={liveGame.match_date}
+                onEditRequest={() => setIsEditing(true)}
+              />
+            )}
+
+            {/* Sem palpite ainda: formulário de criação */}
+            {!currentPrediction && !isEditing && (
+              <PredictionForm
+                gameId={liveGame.id}
+                homeTeamCode={liveGame.home_team_code}
+                awayTeamCode={liveGame.away_team_code}
+                matchDate={liveGame.match_date}
+                initialPrediction={null}
+                onSuccess={(created) => setCurrentPrediction(created)}
+              />
+            )}
+          </>
         )}
 
         {/* Jogo ao vivo ou encerrado: exibe palpite ou "sem palpite" */}
         {(isLive || isFinished) && (
           <>
-            {prediction ? (
+            {currentPrediction ? (
               <>
                 <PredictionDisplay
-                  homeScore={prediction.home_score}
-                  awayScore={prediction.away_score}
+                  homeScore={currentPrediction.home_score}
+                  awayScore={currentPrediction.away_score}
                   homeTeamCode={liveGame.home_team_code}
                   awayTeamCode={liveGame.away_team_code}
-                  submittedAt={prediction.submitted_at}
+                  submittedAt={currentPrediction.submitted_at}
+                  // Sem matchDate/onEditRequest — jogos ao vivo/encerrados nunca exibem botão EDITAR
                 />
                 {/* Breakdown de pontuação — visível quando jogo encerrado e score calculado */}
-                {isFinished && liveScore && liveGame.home_score !== null && liveGame.away_score !== null && (
-                  <div style={{ marginTop: '0.5rem' }}>
-                    <ScoreDisplay
-                      points={liveScore.points}
-                      breakdown={liveScore.breakdown}
-                      predictionHomeScore={prediction.home_score}
-                      predictionAwayScore={prediction.away_score}
-                      gameHomeScore={liveGame.home_score}
-                      gameAwayScore={liveGame.away_score}
-                      homeTeamCode={liveGame.home_team_code}
-                      awayTeamCode={liveGame.away_team_code}
-                    />
-                  </div>
-                )}
+                {isFinished &&
+                  liveScore &&
+                  liveGame.home_score !== null &&
+                  liveGame.away_score !== null && (
+                    <div style={{ marginTop: '0.5rem' }}>
+                      <ScoreDisplay
+                        points={liveScore.points}
+                        breakdown={liveScore.breakdown}
+                        predictionHomeScore={currentPrediction.home_score}
+                        predictionAwayScore={currentPrediction.away_score}
+                        gameHomeScore={liveGame.home_score}
+                        gameAwayScore={liveGame.away_score}
+                        homeTeamCode={liveGame.home_team_code}
+                        awayTeamCode={liveGame.away_team_code}
+                      />
+                    </div>
+                  )}
               </>
             ) : (
               <div
