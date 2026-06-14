@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 14 features
+- Total: 15 features
 - Concluídas: 14
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -169,6 +169,18 @@ Criado em: 2026-06-13
 - Testes automatizados (se existirem) cobrem: palpite 3x0 (nao recebe), palpite 4x0 com diferenca real >= 4 (recebe)
 - `CLAUDE.md` atualizado para documentar a regra corrigida com clareza
 **Dependências:** scoring
+
+---
+
+### 15. fix-live-scores-display — Correção: Exibição e Atualização de Placar em Tempo Real — em progresso
+**Objetivo:** Corrigir a exibição do placar de jogos com status `live` na aba de jogos e garantir que atualizações de placar e pontuação cheguem ao frontend via Supabase Realtime sem necessidade de refresh.
+**Critérios de sucesso:**
+- O placar de jogos com status `live` (ex: Holanda x Japão) é exibido corretamente na aba `/jogos`
+- Atualizações de `home_score`/`away_score` em `games` chegam ao frontend via canal Realtime sem reload
+- A pontuação dos participantes na tabela `scores` também é atualizada em tempo real
+- O badge `██ AO VIVO ██` aparece e pisca para jogos com status `live`
+- Nenhum memory leak: subscription encerrada ao desmontar o componente
+**Dependências:** auth, game-navigation, live-scores, live-scores-realtime, scoring, ranking
 
 ---
 
