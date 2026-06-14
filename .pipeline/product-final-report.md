@@ -13,6 +13,7 @@ Data de conclusão: 2026-06-14
 5. **scoring** — Pontuação por Jogo — 2026-06-13
 6. **ranking** — Ranking em Tempo Real — 2026-06-13
 7. **predictions-edit** — Edição de Palpites — 2026-06-14
+8. **fix-ranking-visibility** — Correção: Visibilidade no Ranking — 2026-06-14
 
 ---
 
