@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Prediction } from '@/lib/types/prediction'
 import PredictionDisplay from './PredictionDisplay'
+import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 interface PredictionFormProps {
   gameId: string
@@ -246,15 +247,8 @@ export default function PredictionForm({
             marginBottom: '0.5rem',
           }}
         >
-          <span
-            style={{
-              fontSize: '11px',
-              color: 'var(--color-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {homeTeamCode}
+          <span style={{ fontSize: '18px', lineHeight: 1 }}>
+            {getTeamFlag(homeTeamCode)}
           </span>
           <input
             type="number"
@@ -287,15 +281,8 @@ export default function PredictionForm({
             aria-label={`Placar ${awayTeamCode}`}
             placeholder="0"
           />
-          <span
-            style={{
-              fontSize: '11px',
-              color: 'var(--color-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {awayTeamCode}
+          <span style={{ fontSize: '18px', lineHeight: 1 }}>
+            {getTeamFlag(awayTeamCode)}
           </span>
         </div>
 

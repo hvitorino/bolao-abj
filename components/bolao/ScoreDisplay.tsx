@@ -1,5 +1,6 @@
 import type { ScoreBreakdown } from '@/lib/types/score'
 import { BREAKDOWN_LABELS } from '@/lib/scoring'
+import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 interface ScoreDisplayProps {
   points: number
@@ -64,20 +65,14 @@ export default function ScoreDisplay({
           flexWrap: 'wrap',
         }}
       >
-        <span
-          style={{
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          {homeTeamCode}
+        <span style={{ fontSize: '16px', lineHeight: 1 }}>
+          {getTeamFlag(homeTeamCode)}
         </span>
         <span style={{ color: 'var(--color-accent)', fontWeight: 'bold', fontSize: '14px' }}>
           {gameHomeScore}×{gameAwayScore}
         </span>
-        <span style={{ color: 'var(--color-muted)' }}>
-          {awayTeamCode}
+        <span style={{ fontSize: '16px', lineHeight: 1 }}>
+          {getTeamFlag(awayTeamCode)}
         </span>
         <span style={{ color: 'var(--color-border)', margin: '0 0.25rem' }}>·</span>
         <span style={{ color: 'var(--color-muted)', textTransform: 'uppercase' }}>

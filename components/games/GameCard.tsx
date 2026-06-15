@@ -11,6 +11,7 @@ import { useGameRealtime } from '@/lib/hooks/useGameRealtime'
 import { useScoreRealtime } from '@/lib/hooks/useScoreRealtime'
 import GameParticipantsList from '@/components/bolao/GameParticipantsList'
 import { ParticipantEntry } from '@/lib/types/participant'
+import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 interface GameCardProps {
   game: Game
@@ -160,14 +161,11 @@ export default function GameCard({
         <div style={{ textAlign: 'center', minWidth: 0 }}>
           <div
             style={{
-              fontSize: '20px',
-              fontWeight: 'bold',
-              letterSpacing: '0.1em',
-              color: 'var(--color-text)',
-              textTransform: 'uppercase',
+              fontSize: '28px',
+              lineHeight: 1,
             }}
           >
-            {liveGame.home_team_code}
+            {getTeamFlag(liveGame.home_team_code)}
           </div>
           <div
             style={{
@@ -203,14 +201,11 @@ export default function GameCard({
         <div style={{ textAlign: 'center', minWidth: 0 }}>
           <div
             style={{
-              fontSize: '20px',
-              fontWeight: 'bold',
-              letterSpacing: '0.1em',
-              color: 'var(--color-text)',
-              textTransform: 'uppercase',
+              fontSize: '28px',
+              lineHeight: 1,
             }}
           >
-            {liveGame.away_team_code}
+            {getTeamFlag(liveGame.away_team_code)}
           </div>
           <div
             style={{

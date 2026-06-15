@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
+import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 /**
  * Página /meus-palpites
@@ -249,13 +250,12 @@ export default async function MeusPalpitesPage() {
                   <div
                     style={{
                       fontWeight: 'bold',
-                      fontSize: '12px',
+                      fontSize: '16px',
                       color: 'var(--color-text)',
-                      textTransform: 'uppercase',
                       letterSpacing: '0.05em',
                     }}
                   >
-                    {game.home_team_code} × {game.away_team_code}
+                    {getTeamFlag(game.home_team_code)} × {getTeamFlag(game.away_team_code)}
                   </div>
                   <div
                     style={{

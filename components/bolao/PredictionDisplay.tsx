@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 interface PredictionDisplayProps {
   homeScore: number
@@ -82,15 +83,8 @@ export default function PredictionDisplay({
           gap: '0.5rem',
         }}
       >
-        <span
-          style={{
-            fontSize: '12px',
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          {homeTeamCode}
+        <span style={{ fontSize: '18px', lineHeight: 1 }}>
+          {getTeamFlag(homeTeamCode)}
         </span>
         <span
           style={{
@@ -102,15 +96,8 @@ export default function PredictionDisplay({
         >
           {homeScore} × {awayScore}
         </span>
-        <span
-          style={{
-            fontSize: '12px',
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          {awayTeamCode}
+        <span style={{ fontSize: '18px', lineHeight: 1 }}>
+          {getTeamFlag(awayTeamCode)}
         </span>
       </div>
 
