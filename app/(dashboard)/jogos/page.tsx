@@ -37,7 +37,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
     ? [...rawGames].sort((a, b) => {
         const statusDiff = (STATUS_ORDER[a.status] ?? 3) - (STATUS_ORDER[b.status] ?? 3)
         if (statusDiff !== 0) return statusDiff
-        return new Date(b.match_date).getTime() - new Date(a.match_date).getTime()
+        return new Date(a.match_date).getTime() - new Date(b.match_date).getTime()
       })
     : null
 
