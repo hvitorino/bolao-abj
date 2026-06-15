@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 17 features
+- Total: 18 features
 - Concluídas: 15
 - Em progresso: 2
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -202,6 +202,20 @@ Criado em: 2026-06-13
 - Jogos com status 'live' mostram o placar atual logo no mount
 - O Realtime continua funcionando para atualizações subsequentes após o carregamento inicial
 **Dependências:** live-scores, live-scores-realtime, fix-live-scores-display
+
+---
+
+### 18. como-pontuar — Página "Como Pontuar" — pendente
+**Objetivo:** Criar uma página estática no dashboard explicando de forma clara e visual como as pontuações dos palpites são calculadas, exibindo cada regra com pontos correspondentes e pelo menos um exemplo concreto de cálculo.
+**Critérios de sucesso:**
+- Nova rota `/como-pontuar` acessível no dashboard (grupo protegido)
+- Tabela com todos os eventos de pontuação e pontos correspondentes
+- Pelo menos um exemplo concreto de cálculo (ex: Brasil 3×1 Argentina, palpite correto = +8 pts)
+- Regra de empate documentada explicitamente
+- Regra de cumulatividade dos bônus explicada
+- Link de navegação para a página adicionado no layout do dashboard
+- Visual consistente com DESIGN.md (monospace, paleta verde/amarelo/azul, estilo Elifoot)
+**Dependências:** auth
 
 ---
 
