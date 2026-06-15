@@ -19,6 +19,7 @@ export interface EspnEvent {
         | 'STATUS_FINAL'
         | string
       shortDetail: string
+      state: 'pre' | 'in' | 'post' | string
     }
   }
   competitions: Array<{
