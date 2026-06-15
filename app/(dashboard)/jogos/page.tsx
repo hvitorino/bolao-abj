@@ -26,12 +26,20 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
   const supabase = await createClient()
 
   // Buscar jogos do dia
-  const { data: games, error: gamesError } = await supabase
+  const { data: rawGames, error: gamesError } = await supabase
     .from('games')
     .select('*')
     .gte('match_date', startOfDay)
     .lte('match_date', endOfDay)
-    .order('match_date', { ascending: true })
+
+  const STATUS_ORDER: Record<string, number> = { live: 0, pending: 1, finished: 2 }
+  const games = rawGames
+    ? [...rawGames].sort((a, b) => {
+        const statusDiff = (STATUS_ORDER[a.status] ?? 3) - (STATUS_ORDER[b.status] ?? 3)
+        if (statusDiff !== 0) return statusDiff
+        return new Date(b.match_date).getTime() - new Date(a.match_date).getTime()
+      })
+    : null
 
   // Buscar usuário autenticado
   const {
