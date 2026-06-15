@@ -110,12 +110,11 @@ function getTeamCode(team: { abbreviation: string; displayName: string }): strin
   return fallback.padEnd(3, 'X')
 }
 
-function mapStatus(espnStatusName: string): GameStatus {
-  switch (espnStatusName) {
-    case 'STATUS_IN_PROGRESS':
+function mapStatus(espnState: string): GameStatus {
+  switch (espnState) {
+    case 'in':
       return 'live'
-    case 'STATUS_FULL_TIME':
-    case 'STATUS_FINAL':
+    case 'post':
       return 'finished'
     default:
       return 'pending'
@@ -170,8 +169,8 @@ function mapEventToGame(event: EspnEvent): GameRecord {
     throw new Error('missing home or away competitor')
   }
 
-  const statusName = event.status?.type?.name ?? 'STATUS_SCHEDULED'
-  const gameStatus = mapStatus(statusName)
+  const statusState = event.status?.type?.state ?? 'pre'
+  const gameStatus = mapStatus(statusState)
 
   // Placar: NULL para jogos pendentes, inteiro para live/finished
   const isPending = gameStatus === 'pending'

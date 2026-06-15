@@ -30,9 +30,9 @@ const ROUND_MAP: Record<string, string> = {
   'Third Place': 'Terceiro Lugar', 'Final': 'Final',
 }
 
-function mapStatus(name: string): 'pending' | 'live' | 'finished' {
-  if (name === 'STATUS_IN_PROGRESS') return 'live'
-  if (name === 'STATUS_FULL_TIME' || name === 'STATUS_FINAL') return 'finished'
+function mapStatus(state: string): 'pending' | 'live' | 'finished' {
+  if (state === 'in') return 'live'
+  if (state === 'post') return 'finished'
   return 'pending'
 }
 
@@ -79,8 +79,8 @@ Deno.serve(async (req) => {
         const away = competitors?.find((c) => c.homeAway === 'away')
         if (!home || !away) { errors.push(String(ev.id)); continue }
 
-        const statusName = (ev.status as Record<string, unknown>)?.type as Record<string, string>
-        const status = mapStatus(statusName?.name ?? '')
+        const statusType = (ev.status as Record<string, unknown>)?.type as Record<string, string>
+        const status = mapStatus(statusType?.state ?? 'pre')
         const isPending = status === 'pending'
         const headline = (comp?.notes as Record<string, string>[])?.[0]?.headline
 

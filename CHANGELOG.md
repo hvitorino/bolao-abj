@@ -6,6 +6,12 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-live-sync] — Correção: Status ao Vivo e Polling de Fallback — 2026-06-15
+
+- `mapStatus` corrigido em `app/api/admin/sync-games/route.ts` e `supabase/functions/sync-games/index.ts`: passa a usar `event.status.type.state` (`"pre"` | `"in"` | `"post"`) em vez de `name` (`STATUS_IN_PROGRESS`), cobrindo todos os status ao vivo da ESPN (`STATUS_FIRST_HALF`, `STATUS_SECOND_HALF`, `STATUS_HALF_TIME`, etc.)
+- Edge Function `sync-games` redeployada com `--no-verify-jwt` para compatibilidade com chamadas do `pg_cron` via `pg_net` (sem header de autorização)
+- `useGameRealtime` (`lib/hooks/useGameRealtime.ts`): polling de fallback adicionado — re-fetch direto no Supabase a cada 30s quando o jogo está dentro da janela ativa (10 min antes do início até 3h após); garante atualização de status e placar mesmo se o WebSocket Realtime cair silenciosamente; não roda para jogos encerrados ou fora da janela
+
 ## [como-pontuar] — Página Como Pontuar — 2026-06-15
 
 - Página `/como-pontuar` criada com tabela de pontuação e 3 exemplos pedagógicos de cálculo

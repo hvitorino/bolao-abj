@@ -25,8 +25,6 @@ export function useGameRealtime(gameId: string, initialGame: Game): GameRealtime
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
 
   // Fetch inicial: garante dados frescos no mount independente do cache SSR.
-  // Sem este fetch, o estado só seria atualizado quando chegasse o próximo
-  // evento Realtime — que pode nunca chegar se o jogo não estiver em andamento.
   useEffect(() => {
     const supabase = createClient()
     supabase
@@ -40,6 +38,32 @@ export function useGameRealtime(gameId: string, initialGame: Game): GameRealtime
         }
       })
   }, [gameId])
+
+  // Polling de fallback: re-fetch a cada 30s se o jogo estiver dentro da janela ativa.
+  // Janela: 10 min antes do início até 3h após (cobre 90min de jogo + prorrogação + delay).
+  // Evita polling em jogos distantes no tempo ou já encerrados.
+  useEffect(() => {
+    if (game.status === 'finished') return
+    const matchDate = new Date(game.match_date).getTime()
+    const now = Date.now()
+    const windowStart = matchDate - 10 * 60 * 1000
+    const windowEnd = matchDate + 3 * 60 * 60 * 1000
+    if (now < windowStart || now > windowEnd) return
+    const supabase = createClient()
+    const interval = setInterval(() => {
+      supabase
+        .from('games')
+        .select('*')
+        .eq('id', gameId)
+        .single()
+        .then(({ data, error }) => {
+          if (!error && data) {
+            setGame(data as Game)
+          }
+        })
+    }, 30_000)
+    return () => clearInterval(interval)
+  }, [gameId, game.status, game.match_date])
 
   useEffect(() => {
     const supabase = createClient()
