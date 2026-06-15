@@ -3,7 +3,7 @@
 **Slug:** como-pontuar
 **Branch:** feature/como-pontuar
 **Data:** 2026-06-15
-**Status:** aguardando revisão
+**Status:** aguardando revisão (fix-1 aplicado)
 
 ---
 
@@ -37,7 +37,7 @@ Nenhuma migration necessária. Feature inteiramente estática.
 
 **Nota pedagógica opcional em `ScoringExample`:** A prop `note` foi adicionada (não está na interface da spec) para permitir notas explicativas nos exemplos sem criar um componente separado. É puramente aditivo e não quebra nenhum critério de aceite.
 
-**Exemplo 2 — `loser_score_points`:** O placar do perdedor no Exemplo 2 (BRA 2×0 MEX, palpite BRA 1×0 MEX) está correto: perdedor = MEX, placar real MEX = 0, palpite MEX = 0 → bate (+1). Total: winner(3) + loser_score(1) = **+4 pts**, conforme spec.
+**Exemplo 2 — `loser_score_points` (corrigido no fix-1):** O `loser_score_points` só é calculado dentro do bloco `else` em `scoring.ts`, ou seja, apenas quando `predWinner !== realWinner`. No Exemplo 2, o vencedor foi acertado, portanto `loser_score_points = 0`. Total correto: winner(3) = **+3 pts**.
 
 ---
 
@@ -50,6 +50,19 @@ Nenhuma migration necessária. Feature inteiramente estática.
 3. **Proteção de rota:** A rota `/como-pontuar` está dentro do grupo `(dashboard)` e herda o `DashboardLayout` com verificação de autenticação — sem proteção adicional implementada, conforme spec.
 
 4. **Exemplos de breakdown:** Verificar se os breakdowns dos 3 exemplos refletem fielmente as regras do `scoring.ts` (especialmente o Exemplo 3 — empate — onde `diff_points` não aplica mas foi incluído com `hit: false` para clareza pedagógica).
+
+---
+
+## Correções Fix 1
+
+**Problema:** `EXEMPLO_2` em `app/(dashboard)/como-pontuar/page.tsx` exibia total de +4 pts com `loser_score_points = 1` e `hit: true`. Incorreto porque `loser_score_points` em `lib/scoring.ts` só é calculado no bloco `else` (quando `predWinner !== realWinner`). Como BRA ganhou e o palpite era BRA ganhando, nunca entra no bloco `else`.
+
+**Correção aplicada:**
+- `total` alterado de `4` para `3`
+- `{ label: 'Somente placar do perdedor', points: 1, hit: true }` alterado para `{ points: 0, hit: false }`
+- Adicionado item `{ label: 'Somente placar do vencedor', points: 0, hit: false }` para clareza pedagógica
+- Nota atualizada para explicar por que `loser_score` não se aplica quando o vencedor foi acertado
+- Comentário do bloco corrigido de `→ +4 pts` para `→ +3 pts`
 
 ---
 
