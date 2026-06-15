@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 18 features
-- Concluídas: 15
+- Concluídas: 16
 - Em progresso: 2
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -205,7 +205,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 18. como-pontuar — Página "Como Pontuar" — pendente
+### 18. como-pontuar — Página "Como Pontuar" — concluída
 **Objetivo:** Criar uma página estática no dashboard explicando de forma clara e visual como as pontuações dos palpites são calculadas, exibindo cada regra com pontos correspondentes e pelo menos um exemplo concreto de cálculo.
 **Critérios de sucesso:**
 - Nova rota `/como-pontuar` acessível no dashboard (grupo protegido)
