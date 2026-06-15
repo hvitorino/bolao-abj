@@ -66,10 +66,11 @@ export function useScoreRealtime(
           filter: `game_id=eq.${gameId}`,
         },
         (payload) => {
-          const newScore = payload.new as Score
-          // Filtra apenas o score do próprio usuário (segurança dupla além do RLS)
+          const newScore = payload.new as Partial<Score>
+          // Filtra apenas o score do próprio usuário (segurança dupla além do RLS).
+          // Usamos atualização funcional para fundir as mudanças.
           if (newScore.user_id === userId) {
-            setScoreState(newScore)
+            setScoreState((prev) => (prev ? { ...prev, ...newScore } : (newScore as Score)))
           }
         }
       )

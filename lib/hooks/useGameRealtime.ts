@@ -56,11 +56,11 @@ export function useGameRealtime(gameId: string, initialGame: Game): GameRealtime
         },
         (payload) => {
           const newGame = payload.new as Partial<Game>
-          // Guarda defensiva: só atualiza se os campos essenciais estão presentes.
-          // Sem REPLICA IDENTITY FULL no banco, payload.new pode chegar como {}
-          // e sobrescrever o estado com um objeto vazio, apagando o placar exibido.
-          if (newGame.id && newGame.status !== undefined) {
-            setGame(newGame as Game)
+          // Guarda defensiva mínima: o payload deve ter pelo menos o ID.
+          // Usamos atualização funcional (setGame(prev => ...)) para fundir as mudanças
+          // em vez de sobrescrever tudo, protegendo contra payloads parciais.
+          if (newGame.id) {
+            setGame((prev) => ({ ...prev, ...newGame } as Game))
             setLastUpdatedAt(new Date())
           }
         }

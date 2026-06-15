@@ -7,7 +7,18 @@
 
 ---
 
-## O que foi implementado
+## Correções e Melhorias (Pós-implementação inicial)
+
+### Resiliência de Payload e RLS
+
+- **`lib/hooks/useGameRealtime.ts`** — Alterado para usar atualização funcional `setGame(prev => ({ ...prev, ...payload.new }))`. Isso torna o hook resiliente a payloads parciais do Supabase (caso `REPLICA IDENTITY FULL` falhe ou envie apenas mudanças) e remove a trava de segurança excessiva que exigia o campo `status` em cada update de placar.
+- **`lib/hooks/useRankingRealtime.ts`** — Implementado **debounce de 1000ms** para as chamadas de `fetchRanking`. Evita que o browser dispare dezenas de requisições simultâneas ao encerrar um jogo (quando dezenas de linhas em `scores` são inseridas/atualizadas).
+- **`supabase/migrations/20260614193000_fix_realtime_final.sql`** — Relaxado o RLS da tabela `scores` para permitir `SELECT` a todos os usuários autenticados. Sem isso, usuários que não participaram de um jogo não recebiam os eventos Realtime e o ranking ficava estático para eles.
+- **`lib/hooks/useScoreRealtime.ts`** — Também atualizado para usar merge de estado funcional.
+
+---
+
+## O que foi implementado inicialmente
 
 ### Banco de Dados
 

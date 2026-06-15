@@ -72,6 +72,8 @@ export function useRankingRealtime(): {
 
     // Subscription Supabase Realtime: qualquer mudança em scores refaz o fetch
     const supabase = createClient()
+    let debounceTimer: number | undefined
+
     const channel = supabase
       .channel('ranking-scores')
       .on(
@@ -82,14 +84,19 @@ export function useRankingRealtime(): {
           table: 'scores',
         },
         () => {
-          // Ao detectar qualquer mudança em scores, rebusca o ranking completo
-          fetchRanking()
+          // Ao detectar qualquer mudança em scores, rebusca o ranking completo.
+          // Usamos debounce para evitar avalanche de requests quando muitos usuários pontuam ao mesmo tempo.
+          window.clearTimeout(debounceTimer)
+          debounceTimer = window.setTimeout(() => {
+            void fetchRanking()
+          }, 1000)
         }
       )
       .subscribe()
 
     return () => {
       window.clearTimeout(initialFetchTimer)
+      window.clearTimeout(debounceTimer)
       supabase.removeChannel(channel)
     }
   }, [fetchRanking])

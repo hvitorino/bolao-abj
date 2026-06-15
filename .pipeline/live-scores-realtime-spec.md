@@ -90,78 +90,49 @@ Nenhum endpoint novo. O endpoint `PATCH /api/admin/games/[id]` já existe (featu
 
 **Arquivo:** `lib/hooks/useGameRealtime.ts`
 
-**Mudanças em relação à versão atual:**
-
-1. Adicionar `lastUpdatedAt: Date | null` ao estado retornado — atualizado a cada evento Realtime recebido
-2. Adicionar `connectionStatus: 'connecting' | 'connected' | 'error'` — derivado do status do canal Supabase
-3. Atualizar o tipo de retorno de `Game` para um objeto com os três campos
-
-**Assinatura nova:**
+**Implementação Resiliente:**
 ```typescript
-interface GameRealtimeState {
-  game: Game
-  lastUpdatedAt: Date | null
-  connectionStatus: 'connecting' | 'connected' | 'error'
-}
-
-function useGameRealtime(gameId: string, initialGame: Game): GameRealtimeState
+        (payload) => {
+          const newGame = payload.new as Partial<Game>
+          // Usamos atualização funcional para fundir as mudanças (protege contra payloads parciais)
+          if (newGame.id) {
+            setGame((prev) => ({ ...prev, ...newGame } as Game))
+            setLastUpdatedAt(new Date())
+          }
+        }
 ```
 
-**Implementação:**
+---
+
+### useRankingRealtime (modificado)
+
+**Arquivo:** `lib/hooks/useRankingRealtime.ts`
+
+**Implementação com Debounce:**
 ```typescript
-'use client'
-
-import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { Game } from '@/lib/types/game'
-
-interface GameRealtimeState {
-  game: Game
-  lastUpdatedAt: Date | null
-  connectionStatus: 'connecting' | 'connected' | 'error'
-}
-
-export function useGameRealtime(gameId: string, initialGame: Game): GameRealtimeState {
-  const [game, setGame] = useState<Game>(initialGame)
-  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null)
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
-
-  useEffect(() => {
     const supabase = createClient()
+    let debounceTimer: number | undefined
 
     const channel = supabase
-      .channel(`game-${gameId}`)
+      .channel('ranking-scores')
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*',
           schema: 'public',
-          table: 'games',
-          filter: `id=eq.${gameId}`,
+          table: 'scores',
         },
-        (payload) => {
-          setGame(payload.new as Game)
-          setLastUpdatedAt(new Date())
+        () => {
+          // Debounce de 1s para evitar avalanche de requests ao encerrar jogos
+          window.clearTimeout(debounceTimer)
+          debounceTimer = window.setTimeout(() => {
+            void fetchRanking()
+          }, 1000)
         }
       )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          setConnectionStatus('connected')
-        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-          setConnectionStatus('error')
-        }
-      })
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [gameId])
-
-  return { game, lastUpdatedAt, connectionStatus }
-}
 ```
 
-**Nota sobre retrocompatibilidade:** O `GameCard` usa `useGameRealtime` e precisa ser atualizado para destruturar o retorno `{ game: liveGame, lastUpdatedAt, connectionStatus }` em vez de usar o retorno direto anterior (`const liveGame = useGameRealtime(...)`).
+**Nota sobre RLS:** Para que este hook funcione para todos os usuários (mesmo os que não participaram de um jogo específico), a política de RLS da tabela `scores` deve permitir `SELECT` para todos os usuários autenticados (`USING (true)`).
 
 ---
 
