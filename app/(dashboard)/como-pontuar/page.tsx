@@ -26,7 +26,7 @@ const EXEMPLO_1 = {
   note: 'Placar exato engloba "placar do vencedor" e "diferença de gols" — não são cumulativos.',
 }
 
-// Exemplo 2: Acerto parcial (BRA 2×0 MEX, palpite BRA 1×0 MEX) → +4 pts
+// Exemplo 2: Acerto parcial (BRA 2×0 MEX, palpite BRA 1×0 MEX) → +3 pts
 const EXEMPLO_2 = {
   title: 'EXEMPLO 2 — ACERTO PARCIAL',
   homeTeam: 'BRA',
@@ -38,11 +38,12 @@ const EXEMPLO_2 = {
   breakdown: [
     { label: 'Acertou o vencedor', points: 3, hit: true },
     { label: 'Placar exato', points: 0, hit: false },
+    { label: 'Somente placar do vencedor', points: 0, hit: false },
     { label: 'Diferença de gols correta', points: 0, hit: false },
-    { label: 'Somente placar do perdedor', points: 1, hit: true },
+    { label: 'Somente placar do perdedor', points: 0, hit: false },
   ],
-  total: 4,
-  note: 'Diferença real = 2, palpite = 1 — não bate. Placar do perdedor (MEX 0 no palpite = MEX 0 no jogo real).',
+  total: 3,
+  note: 'Diferença real = 2, palpite = 1 — não bate. Placar do vencedor (BRA): pred=1 ≠ real=2 — não bate. "Somente placar do perdedor" não aplica quando o vencedor foi acertado.',
 }
 
 // Exemplo 3: Empate exato (ALE 1×1 FRA, palpite 1×1) → +8 pts
