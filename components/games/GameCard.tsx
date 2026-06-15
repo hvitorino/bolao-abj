@@ -86,7 +86,8 @@ export default function GameCard({
       ? '0 × 0'
       : '- × -'
 
-  const cardBorderColor = isLive ? 'var(--color-live)' : 'var(--color-border)'
+  const cardBorderColor = isLive ? 'var(--color-primary)' : 'var(--color-border)'
+  const cardBg = isLive ? 'rgba(0, 156, 59, 0.18)' : 'var(--color-surface)'
 
   // Tick de 10s — criado apenas quando o jogo está ao vivo para economizar recursos.
   // Ao atualizar `tick`, causa re-render que recalcula formatElapsed(lastUpdatedAt).
@@ -109,7 +110,7 @@ export default function GameCard({
     <div
       style={{
         border: `1px solid ${cardBorderColor}`,
-        backgroundColor: 'var(--color-surface)',
+        backgroundColor: cardBg,
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
         overflow: 'hidden',
       }}
