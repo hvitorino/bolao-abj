@@ -3,7 +3,7 @@
 **Slug:** como-pontuar
 **Branch:** feature/como-pontuar
 **Data:** 2026-06-15
-**Status:** aguardando revisão (fix-1 aplicado)
+**Status:** aprovado
 
 ---
 
