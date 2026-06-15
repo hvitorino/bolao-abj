@@ -243,16 +243,18 @@ export default function GameCard({
         {isLive && (
           <>
             <span
-              className="blink"
               style={{
-                color: 'var(--color-live)',
-                fontSize: '12px',
+                color: 'var(--color-primary)',
+                fontSize: '11px',
                 fontWeight: 'bold',
                 textTransform: 'uppercase',
-                letterSpacing: '0.05em',
+                letterSpacing: '0.08em',
+                border: '1px solid var(--color-primary)',
+                padding: '0.1rem 0.4rem',
+                flexShrink: 0,
               }}
             >
-              ██ AO VIVO ██
+              ■ AO VIVO
             </span>
             <span
               style={{
@@ -270,7 +272,6 @@ export default function GameCard({
             >
               {matchTime} BRT
             </span>
-            {/* Timestamp de última atualização — visível somente após receber evento Realtime */}
             {lastUpdatedAt !== null && (
               <>
                 <span

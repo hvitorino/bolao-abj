@@ -27,14 +27,6 @@ body {
   font-size: 14px;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-.blink {
-  animation: blink 1s step-end infinite;
-}
 
 .ranking-name-cell {
   font-size: 12px;
