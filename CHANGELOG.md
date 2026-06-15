@@ -6,6 +6,18 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [como-pontuar] — Página Como Pontuar — 2026-06-15
+
+- Página `/como-pontuar` criada com tabela de pontuação e 3 exemplos pedagógicos de cálculo
+- Componente `ScoringRulesTable` com os 6 eventos de pontuação, coluna de pontos em `color-accent`, máximo possível (+9) conforme `scoring.ts`
+- Componente `ScoringExample` com breakdown linha a linha (check/cross), total e nota explicativa opcional
+- Exemplo 1 (BRA 3×1 ARG palpite 3×1): placar exato → +8 pts correto
+- Exemplo 2 (BRA 2×0 MEX palpite 1×0): acerto parcial → +3 pts correto (fix-1: `loser_score` não aplica quando vencedor foi acertado)
+- Exemplo 3 (ALE 1×1 FRA palpite 1×1): empate exato → +8 pts correto
+- Item "REGRAS" adicionado ao array `NAV_ITEMS` em `app/(dashboard)/nav-links.tsx` com comportamento `isActive` automático
+- Feature inteiramente estática — sem endpoints Ruby, sem migrations, sem chamadas de API
+- Proteção de rota via `DashboardLayout` existente (grupo `(dashboard)`)
+
 ## [fix-prediction-visibility] — Correção: Visibilidade Temporal dos Palpites — 2026-06-14
 
 - Migration criada: `supabase/migrations/20260614191000_fix_prediction_visibility_policy.sql` — substitui a política irrestrita de leitura em `predictions` por uma política temporal: usuários autenticados só podem ler palpites de terceiros em jogos que não estão mais em status `pending`.

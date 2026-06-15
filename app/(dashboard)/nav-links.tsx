@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { href: '/jogos', label: 'JOGOS' },
   { href: '/ranking', label: 'RANKING' },
   { href: '/meus-palpites', label: 'PALPITES' },
+  { href: '/como-pontuar', label: 'REGRAS' },
 ]
 
 export function NavLinks() {
