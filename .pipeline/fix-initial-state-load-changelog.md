@@ -3,7 +3,7 @@
 **Slug:** fix-initial-state-load
 **Branch:** feature/fix-initial-state-load
 **Data:** 2026-06-14
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
