@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 18 features
-- Concluídas: 16
-- Em progresso: 2
+- Concluídas: 17
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -219,7 +219,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 17. fix-prediction-visibility — Correção: Visibilidade Temporal dos Palpites — em progresso
+### 17. fix-prediction-visibility — Correção: Visibilidade Temporal dos Palpites — concluída
 **Objetivo:** Ajustar a visibilidade dos palpites na tela de jogos para que, antes do início da partida, apenas o próprio usuário autenticado veja seu palpite. Quando o jogo não estiver mais em estado `pending`, os palpites dos demais participantes podem voltar a aparecer normalmente.
 **Critérios de sucesso:**
 - Em jogos ainda não iniciados, a interface e/ou backend não expõem palpites de outros usuários; apenas o palpite do usuário atual fica visível
