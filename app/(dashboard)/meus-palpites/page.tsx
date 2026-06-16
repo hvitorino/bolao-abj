@@ -241,249 +241,238 @@ export default async function MeusPalpitesPage({ searchParams }: MeusPalpitesPag
             overflow: 'hidden',
           }}
         >
-          {/* Cabeçalho da tabela */}
-          <div
+          <table
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr auto auto auto',
-              gap: '0',
-              borderBottom: '1px solid var(--color-border)',
-              backgroundColor: 'var(--color-bg)',
+              width: '100%',
+              borderCollapse: 'collapse',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
             }}
           >
-            {['JOGO', 'PALPITE', 'RESULTADO', 'PONTOS'].map((col, i) => (
-              <div
-                key={col}
-                style={{
-                  padding: '0.5rem 0.75rem',
-                  fontSize: '10px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                  color: 'var(--color-muted)',
-                  fontWeight: 'bold',
-                  borderLeft: i > 0 ? '1px solid var(--color-border)' : 'none',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {col}
-              </div>
-            ))}
-          </div>
-
-          {/* Linhas da tabela */}
-          {rows.map(({ prediction, game, score }, index) => {
-            const isFinished = game.status === 'finished'
-            const isLive = game.status === 'live'
-            const hasResult = game.home_score !== null && game.away_score !== null
-            const rowBg = index % 2 === 0 ? 'var(--color-surface)' : 'var(--color-bg)'
-
-            return (
-              <div
-                key={prediction.id}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr auto auto auto',
-                  backgroundColor: rowBg,
-                  borderTop: index > 0 ? '1px solid var(--color-border)' : 'none',
-                }}
-              >
-                {/* Coluna: JOGO */}
-                <div
-                  style={{
-                    padding: '0.6rem 0.75rem',
-                  }}
-                >
-                  <div
+            <thead>
+              <tr style={{ backgroundColor: 'var(--color-bg)' }}>
+                {(['JOGO', 'PALPITE', 'RESULTADO', 'PONTOS'] as const).map((col, i) => (
+                  <th
+                    key={col}
                     style={{
-                      fontWeight: 'bold',
-                      fontSize: '16px',
-                      color: 'var(--color-text)',
-                      letterSpacing: '0.05em',
-                    }}
-                  >
-                    {getTeamFlag(game.home_team_code)} × {getTeamFlag(game.away_team_code)}
-                  </div>
-                  <div
-                    style={{
+                      padding: '0.5rem 0.75rem',
                       fontSize: '10px',
-                      color: 'var(--color-muted)',
-                      marginTop: '0.2rem',
                       textTransform: 'uppercase',
-                    }}
-                  >
-                    {game.round} · {formatDate(game.match_date)}
-                  </div>
-                </div>
-
-                {/* Coluna: PALPITE */}
-                <div
-                  style={{
-                    padding: '0.6rem 0.75rem',
-                    borderLeft: '1px solid var(--color-border)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  <span
-                    style={{
-                      fontSize: '14px',
+                      letterSpacing: '0.1em',
+                      color: 'var(--color-muted)',
                       fontWeight: 'bold',
-                      color: 'var(--color-accent)',
-                      letterSpacing: '0.05em',
+                      borderLeft: i > 0 ? '1px solid var(--color-border)' : 'none',
+                      borderBottom: '1px solid var(--color-border)',
+                      textAlign: i === 0 ? 'left' : 'center',
+                      whiteSpace: 'nowrap',
                     }}
                   >
-                    {prediction.home_score} × {prediction.away_score}
-                  </span>
-                </div>
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
 
-                {/* Coluna: RESULTADO */}
-                <div
-                  style={{
-                    padding: '0.6rem 0.75rem',
-                    borderLeft: '1px solid var(--color-border)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    whiteSpace: 'nowrap',
-                    minWidth: '80px',
-                  }}
-                >
-                  {hasResult ? (
-                    <span
-                      style={{
-                        fontSize: '14px',
-                        fontWeight: 'bold',
-                        color: isFinished ? 'var(--color-text)' : 'var(--color-live)',
-                        letterSpacing: '0.05em',
-                      }}
-                    >
-                      {game.home_score} × {game.away_score}
-                    </span>
-                  ) : (
-                    <span
-                      style={{
-                        fontSize: '10px',
-                        color: isLive ? 'var(--color-live)' : 'var(--color-muted)',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                        fontWeight: isLive ? 'bold' : 'normal',
-                      }}
-                    >
-                      {formatStatus(game.status)}
-                    </span>
-                  )}
-                </div>
+            <tbody>
+              {rows.map(({ prediction, game, score }, index) => {
+                const isFinished = game.status === 'finished'
+                const isLive = game.status === 'live'
+                const hasResult = game.home_score !== null && game.away_score !== null
+                const rowBg = index % 2 === 0 ? 'var(--color-surface)' : 'var(--color-bg)'
+                const cellBorder = '1px solid var(--color-border)'
 
-                {/* Coluna: PONTOS */}
-                <div
-                  style={{
-                    padding: '0.6rem 0.75rem',
-                    borderLeft: '1px solid var(--color-border)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    whiteSpace: 'nowrap',
-                    minWidth: '72px',
-                  }}
-                >
-                  {isFinished && score ? (
-                    <>
-                      <span
+                return (
+                  <tr key={prediction.id} style={{ backgroundColor: rowBg }}>
+                    {/* JOGO */}
+                    <td style={{ padding: '0.6rem 0.75rem', borderTop: cellBorder }}>
+                      <div
                         style={{
-                          fontSize: '15px',
                           fontWeight: 'bold',
-                          color: score.points > 0 ? 'var(--color-accent)' : 'var(--color-muted)',
+                          fontSize: '16px',
+                          color: 'var(--color-text)',
                           letterSpacing: '0.05em',
                         }}
                       >
-                        +{score.points}
+                        {getTeamFlag(game.home_team_code)} × {getTeamFlag(game.away_team_code)}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: '10px',
+                          color: 'var(--color-muted)',
+                          marginTop: '0.2rem',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {game.round} · {formatDate(game.match_date)}
+                      </div>
+                    </td>
+
+                    {/* PALPITE */}
+                    <td
+                      style={{
+                        padding: '0.6rem 0.75rem',
+                        borderTop: cellBorder,
+                        borderLeft: cellBorder,
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap',
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: 'bold',
+                          color: 'var(--color-accent)',
+                          letterSpacing: '0.05em',
+                        }}
+                      >
+                        {prediction.home_score} × {prediction.away_score}
                       </span>
-                      {/* Resumo do maior bônus conquistado */}
-                      {score.points > 0 && (
+                    </td>
+
+                    {/* RESULTADO */}
+                    <td
+                      style={{
+                        padding: '0.6rem 0.75rem',
+                        borderTop: cellBorder,
+                        borderLeft: cellBorder,
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap',
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {hasResult ? (
                         <span
                           style={{
-                            fontSize: '9px',
-                            color: 'var(--color-win)',
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.04em',
-                            marginTop: '0.1rem',
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            color: isFinished ? 'var(--color-text)' : 'var(--color-live)',
+                            letterSpacing: '0.05em',
                           }}
                         >
-                          {score.breakdown.exact > 0
-                            ? '✓ exato'
-                            : score.breakdown.winner > 0
-                              ? '✓ venc.'
-                              : '✓ parcial'}
+                          {game.home_score} × {game.away_score}
+                        </span>
+                      ) : (
+                        <span
+                          style={{
+                            fontSize: '10px',
+                            color: isLive ? 'var(--color-live)' : 'var(--color-muted)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            fontWeight: isLive ? 'bold' : 'normal',
+                          }}
+                        >
+                          {formatStatus(game.status)}
                         </span>
                       )}
-                    </>
-                  ) : isFinished && !score ? (
-                    <span
-                      style={{
-                        fontSize: '10px',
-                        color: 'var(--color-muted)',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      —
-                    </span>
-                  ) : (
-                    <span
-                      style={{
-                        fontSize: '10px',
-                        color: 'var(--color-muted)',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                      }}
-                    >
-                      PENDENTE
-                    </span>
-                  )}
-                </div>
-              </div>
-            )
-          })}
+                    </td>
 
-          {/* Rodapé com total */}
-          {totalPoints > 0 && (
-            <div
-              style={{
-                borderTop: '1px solid var(--color-border)',
-                backgroundColor: 'var(--color-bg)',
-                padding: '0.5rem 0.75rem',
-                display: 'flex',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                gap: '0.75rem',
-              }}
-            >
-              <span
-                style={{
-                  fontSize: '10px',
-                  color: 'var(--color-muted)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.1em',
-                }}
-              >
-                TOTAL
-              </span>
-              <span
-                style={{
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  color: 'var(--color-accent)',
-                  letterSpacing: '0.05em',
-                  minWidth: '72px',
-                  textAlign: 'center',
-                }}
-              >
-                {totalPoints} pts
-              </span>
-            </div>
-          )}
+                    {/* PONTOS */}
+                    <td
+                      style={{
+                        padding: '0.6rem 0.75rem',
+                        borderTop: cellBorder,
+                        borderLeft: cellBorder,
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap',
+                        verticalAlign: 'middle',
+                      }}
+                    >
+                      {isFinished && score ? (
+                        <>
+                          <span
+                            style={{
+                              display: 'block',
+                              fontSize: '15px',
+                              fontWeight: 'bold',
+                              color: score.points > 0 ? 'var(--color-accent)' : 'var(--color-muted)',
+                              letterSpacing: '0.05em',
+                            }}
+                          >
+                            +{score.points}
+                          </span>
+                          {score.points > 0 && (
+                            <span
+                              style={{
+                                display: 'block',
+                                fontSize: '9px',
+                                color: 'var(--color-win)',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.04em',
+                                marginTop: '0.1rem',
+                              }}
+                            >
+                              {score.breakdown.exact > 0
+                                ? '✓ exato'
+                                : score.breakdown.winner > 0
+                                  ? '✓ venc.'
+                                  : '✓ parcial'}
+                            </span>
+                          )}
+                        </>
+                      ) : isFinished && !score ? (
+                        <span
+                          style={{
+                            fontSize: '10px',
+                            color: 'var(--color-muted)',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          —
+                        </span>
+                      ) : (
+                        <span
+                          style={{
+                            fontSize: '10px',
+                            color: 'var(--color-muted)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                          }}
+                        >
+                          PENDENTE
+                        </span>
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+
+            {totalPoints > 0 && (
+              <tfoot>
+                <tr style={{ backgroundColor: 'var(--color-bg)' }}>
+                  <td
+                    colSpan={3}
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      borderTop: '1px solid var(--color-border)',
+                      textAlign: 'right',
+                      fontSize: '10px',
+                      color: 'var(--color-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.1em',
+                    }}
+                  >
+                    TOTAL
+                  </td>
+                  <td
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      borderTop: '1px solid var(--color-border)',
+                      borderLeft: '1px solid var(--color-border)',
+                      textAlign: 'center',
+                      fontSize: '16px',
+                      fontWeight: 'bold',
+                      color: 'var(--color-accent)',
+                      letterSpacing: '0.05em',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {totalPoints} pts
+                  </td>
+                </tr>
+              </tfoot>
+            )}
+          </table>
         </div>
       )}
     </div>
