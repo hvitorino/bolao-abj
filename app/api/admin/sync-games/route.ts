@@ -265,7 +265,8 @@ async function syncHandler(request: Request) {
   const today = new Date()
   today.setUTCHours(0, 0, 0, 0)
 
-  for (let i = 0; i < days; i++) {
+  // Começa 1 dia atrás para re-sincronizar jogos que terminaram após meia-noite UTC
+  for (let i = -1; i < days; i++) {
     const date = new Date(today)
     date.setUTCDate(today.getUTCDate() + i)
     const dateStr = formatDateESPN(date)

@@ -58,7 +58,8 @@ Deno.serve(async (req) => {
   let synced = 0
   const errors: string[] = []
 
-  for (let i = 0; i < days; i++) {
+  // Começa 1 dia atrás para re-sincronizar jogos que terminaram após meia-noite UTC
+  for (let i = -1; i < days; i++) {
     const d = new Date(today)
     d.setUTCDate(today.getUTCDate() + i)
     const dateStr = formatDate(d)
