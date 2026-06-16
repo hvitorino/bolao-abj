@@ -9,15 +9,22 @@
  *   exact_points       = +5 se placar exato (home E away corretos)
  *   winner_score_points= +3 se acertou SOMENTE o placar do vencedor (não o exato, não em empate)
  *   diff_points        = +2 se acertou a diferença de gols E acertou o vencedor (não exato, não empate)
- *   loser_score_points = +1 se acertou SOMENTE o placar do perdedor (não acertou vencedor, não empate)
+ *   loser_score_points = +1 se acertou o vencedor E acertou o placar do perdedor (não exato, não empate)
  *   goleada_points     = +1 se acertou vencedor E vencedor no palpite >=4 gols E diferença real >=4 gols
  *
  * Exclusividades:
  *   - exact_points e winner_score_points são mutuamente exclusivos
  *   - exact_points e diff_points são mutuamente exclusivos
- *   - loser_score_points só aplica se NÃO acertou o vencedor
- *   - Em empate sem acerto: loser_score_points NÃO aplica (não há "perdedor")
- *   - winner_score_points e diff_points NÃO se excluem mutuamente
+ *   - exact_points e loser_score_points são mutuamente exclusivos
+ *   - loser_score_points SÓ aplica se TAMBÉM acertou o vencedor (pré-requisito,
+ *     mesmo padrão de diff_points e winner_score_points)
+ *   - Em empate: loser_score_points NÃO aplica (não há "perdedor")
+ *   - winner_score_points, diff_points e loser_score_points são, dentro do
+ *     branch "acertou vencedor e não é exact", mutuamente exclusivos ENTRE SI
+ *     por construção matemática (não por uma regra de prioridade explícita):
+ *     se dois desses três batessem ao mesmo tempo, isso forçaria o placar a
+ *     ser exato, o que contradiz a premissa de não ser exact. Logo, no máximo
+ *     um dos três é positivo por palpite.
  */
 
 import type { ScoreBreakdown } from '@/lib/types/score'
@@ -99,6 +106,19 @@ export function calculateScore(
           diff_points = 2
         }
       }
+
+      // Regra 5 (CORRIGIDA): somente placar do perdedor — agora exige
+      // acerto do vencedor (garantido por estarmos dentro deste branch) e
+      // não ser placar exato (garantido pelo else acima). Não aplica em
+      // empate (não há "perdedor" definido).
+      if (realWinner === 'home' && prediction.away_score === game.away_score) {
+        loser_score_points = 1
+      } else if (
+        realWinner === 'away' &&
+        prediction.home_score === game.home_score
+      ) {
+        loser_score_points = 1
+      }
     }
 
     // Regra 6: goleada
@@ -116,21 +136,9 @@ export function calculateScore(
       }
     }
   } else {
-    // Não acertou vencedor
-    // Regra 5: somente placar do perdedor
-    // "Perdedor" em empate não existe → não aplica quando realWinner = 'draw'
-    if (realWinner === 'home') {
-      // Vencedor foi home; perdedor foi away
-      if (prediction.away_score === game.away_score) {
-        loser_score_points = 1
-      }
-    } else if (realWinner === 'away') {
-      // Vencedor foi away; perdedor foi home
-      if (prediction.home_score === game.home_score) {
-        loser_score_points = 1
-      }
-    }
-    // realWinner = 'draw' e predWinner != 'draw': zero pontos
+    // Não acertou vencedor: nenhum bônus se aplica (winner_points,
+    // exact_points, winner_score_points, diff_points, loser_score_points e
+    // goleada_points permanecem 0, conforme inicializados).
   }
 
   const points =
