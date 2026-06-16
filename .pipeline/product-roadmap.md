@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 19 features
+- Total: 20 features
 - Concluídas: 19
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -241,3 +241,18 @@ Criado em: 2026-06-13
 - O cálculo parcial é client-side (reutilizando `calculateScore()` de `lib/scoring.ts` sobre os dados já recebidos via `useGameRealtime`/predictions), sem necessidade de nova tabela ou de persistir parcial em `scores` — `scores` continua reservada à pontuação oficial pós-jogo
 - O ranking (`/ranking`) também reflete a pontuação parcial de jogos `live` somada à pontuação oficial de jogos `finished`, e não apenas a pontuação oficial
 **Dependências:** auth, game-navigation, predictions, live-scores, live-scores-realtime, scoring, ranking, game-participants-view
+
+---
+
+### 20. grupos — Grupos Privados (Bolões Isolados) — pendente
+**Objetivo:** Permitir que usuários criem grupos (bolões) privados e convidem participantes via link reutilizável; cada grupo é totalmente isolado em participantes, palpites, pontuação e ranking, e um mesmo usuário pode participar de múltiplos grupos com palpites independentes por grupo para o mesmo jogo.
+**Critérios de sucesso:**
+- Usuário autenticado consegue criar um novo grupo e se torna automaticamente seu admin
+- Admin consegue obter/copiar um link de convite reutilizável (não é de uso único) para o grupo
+- Um usuário (novo ou já existente no sistema) consegue entrar em um grupo através do link de convite e passa a ser participante daquele grupo
+- Usuário só visualiza ranking, participantes e palpites de grupos dos quais é membro; nenhum dado de outros grupos fica acessível (via UI ou API/RLS)
+- `predictions` passa a ter constraint `UNIQUE(user_id, game_id, group_id)` em vez de `UNIQUE(user_id, game_id)`, permitindo palpites diferentes do mesmo usuário para o mesmo jogo em grupos diferentes
+- `scores` passa a ter `group_id`, e todo o cálculo de pontuação/ranking (trigger Postgres + `lib/scoring.ts` + agregação de ranking/live-scoring) é escopado por grupo, sem regressão nas regras de pontuação de `CLAUDE.md`
+- Script de migração move todos os usuários e palpites/scores existentes para um novo grupo "Bolão da Ingrisia ABJ", com o usuário "Hamon" definido como admin desse grupo
+- Usuário pertencente a múltiplos grupos consegue dar palpites diferentes para o mesmo jogo em grupos diferentes, e cada grupo calcula pontuação/ranking de forma independente e correta
+**Dependências:** auth, game-navigation, predictions, live-scores, scoring, ranking, live-scoring
