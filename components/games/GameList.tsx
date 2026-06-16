@@ -97,11 +97,15 @@ export default function GameList({
           )}
 
           {/* Grid de GameCards para este round */}
+          {/* alignItems: 'start' evita que o grid estique os cards mais curtos até a
+              altura da linha (definida pelo card mais alto), o que faria a área de
+              cards vizinhos crescer quando um deles expande os palpites */}
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               gap: '1rem',
+              alignItems: 'start',
             }}
           >
             {gamesByRound[round].map((game) => (
