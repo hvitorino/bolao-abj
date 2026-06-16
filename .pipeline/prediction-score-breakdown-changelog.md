@@ -3,7 +3,7 @@
 **Slug:** prediction-score-breakdown
 **Branch:** feature/prediction-score-breakdown
 **Data:** 2026-06-16
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [prediction-score-breakdown] — Detalhamento da Pontuação no Palpite — 2026-06-16
+
+- Dentro de `GameParticipantsList` (jogo expandido), clicar na linha de um participante com palpite e score já calculado (`breakdown !== null`) revela o detalhamento da pontuação daquele palpite (accordion exclusivo por jogo)
+- Linha clicável acessível via teclado (`role="button"`, `tabIndex`, `Enter`/`Espaço`, `aria-expanded`); indicador visual `▾`/`▴` apenas em linhas elegíveis
+- Linhas sem palpite ou sem score calculado (jogos `pending`/`live`) permanecem inalteradas — sem indicador, sem cursor de clique
+- **Componente criado:** `components/bolao/PredictionBreakdown.tsx` — apresentação pura do `breakdown jsonb`, reaproveita `BREAKDOWN_LABELS` de `lib/scoring.ts`, sem reimplementar cálculo
+- **Tipo estendido:** `ParticipantEntry` (`lib/types/participant.ts`) ganha o campo `breakdown: ScoreBreakdown | null`
+- `app/(dashboard)/jogos/page.tsx` passa a propagar `breakdown` junto de `points` a partir da mesma query `scores.select('*')` já existente (nenhuma query nova)
+- Nenhum endpoint, migration ou RLS policy criados/alterados; nenhuma mudança em `lib/scoring.ts` ou na função Postgres `calculate_scores_for_game`
+
 ## [collapse-game-card] — Colapsar/Expandir Card de Jogo com Palpites dos Participantes — 2026-06-16
 
 - Cada `GameCard` em `/jogos` passa a carregar **colapsado** por padrão, ocultando a seção "PALPITES DOS PARTICIPANTES" (`GameParticipantsList`); novo estado local `isParticipantsExpanded` (`useState(false)`) em `components/games/GameCard.tsx`
