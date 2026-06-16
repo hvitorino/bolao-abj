@@ -176,22 +176,18 @@ export default async function GruposPage() {
                   flexWrap: 'wrap',
                   padding: '0.75rem 1rem',
                   borderTop: index > 0 ? '1px solid var(--color-border)' : 'none',
+                  backgroundColor: isActive ? 'rgba(0, 156, 59, 0.08)' : undefined,
+                  borderLeft: isActive ? '2px solid var(--color-primary)' : '2px solid transparent',
                 }}
               >
                 <Link
                   href={`/grupos/${group.id}`}
                   style={{
                     textDecoration: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
                     color: 'var(--color-text)',
                     minWidth: 0,
                   }}
                 >
-                  {isActive && (
-                    <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>►</span>
-                  )}
                   <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{group.name}</span>
                 </Link>
 
@@ -211,7 +207,7 @@ export default async function GruposPage() {
                       letterSpacing: '0.05em',
                       border: '1px solid',
                       borderColor: group.role === 'admin' ? 'var(--color-accent)' : 'var(--color-muted)',
-                      padding: '0.1rem 0.4rem',
+                      padding: '0.3rem 0.75rem',
                     }}
                   >
                     {group.role === 'admin' ? 'ADMIN' : 'MEMBRO'}
@@ -221,10 +217,11 @@ export default async function GruposPage() {
                     <span
                       style={{
                         fontSize: '11px',
-                        color: 'var(--color-accent)',
+                        color: 'var(--color-primary)',
                         textTransform: 'uppercase',
                         letterSpacing: '0.05em',
-                        fontWeight: 'bold',
+                        border: '1px solid var(--color-primary)',
+                        padding: '0.3rem 0.75rem',
                       }}
                     >
                       ATIVO
