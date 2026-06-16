@@ -1,0 +1,4 @@
+project_id = "dyulqyuyjkjmtrgrdkgf"
+
+[functions.sync-games]
+verify_jwt = false
