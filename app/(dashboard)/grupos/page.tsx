@@ -218,7 +218,7 @@ export default async function GruposPage() {
                       type="button"
                       variant="secondary"
                       disabled
-                      style={{ padding: '0.3rem 0.75rem', fontSize: '11px', cursor: 'default', opacity: 1 }}
+                      style={{ padding: '0.3rem 0.75rem', fontSize: '11px', cursor: 'default', opacity: 1, minWidth: '72px' }}
                     >
                       ATIVO
                     </Button>

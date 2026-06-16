@@ -69,7 +69,7 @@ export function AtivarGrupoButton({ groupId, groupName }: AtivarGrupoButtonProps
       onClick={handleClick}
       aria-label={`Ativar grupo ${groupName}`}
       title={estado === 'error' ? '✗ Não foi possível ativar — tente novamente.' : undefined}
-      style={{ padding: '0.3rem 0.75rem', fontSize: '11px' }}
+      style={{ padding: '0.3rem 0.75rem', fontSize: '11px', minWidth: '72px' }}
     >
       {estado === 'error' ? '✗ ERRO' : isLoading ? 'ATIVANDO...' : 'ATIVAR'}
     </Button>
