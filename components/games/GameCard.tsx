@@ -85,16 +85,18 @@ export default function GameCard({
   const liveHomeScore = isLive ? (liveGame.home_score ?? 0) : liveGame.home_score
   const liveAwayScore = isLive ? (liveGame.away_score ?? 0) : liveGame.away_score
 
-  // Score provisório calculado no cliente para jogos ao vivo, antes do trigger
-  // do Postgres gravar na tabela `scores` (que só ocorre ao encerrar o jogo).
+  // Para jogos ao vivo: sempre calcular no cliente com o placar atual do Realtime.
+  // O registro em `scores` (liveScore) só é gravado pelo trigger ao encerrar —
+  // se existir durante o jogo, pode ter breakdown nulo ou desatualizado.
+  // Para jogos encerrados: usar liveScore do banco (calculado pelo trigger).
   const provisionalScore =
-    isLive && currentPrediction && !liveScore
+    isLive && currentPrediction
       ? calculateLiveScore(
           { home_score: liveHomeScore, away_score: liveAwayScore },
           currentPrediction
         )
       : null
-  const displayScore = liveScore ?? provisionalScore
+  const displayScore = isLive ? provisionalScore : liveScore
   const hasScore = liveGame.home_score !== null && liveGame.away_score !== null
   const matchTime = formatMatchTime(liveGame.match_date)
   const scoreText = hasScore
