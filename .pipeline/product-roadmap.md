@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 24 features
-- Concluídas: 23
-- Em progresso: 1
+- Concluídas: 24
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -311,7 +311,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 24. exemplos-por-regra — Exemplo Dedicado por Regra de Pontuação — em progresso
+### 24. exemplos-por-regra — Exemplo Dedicado por Regra de Pontuação — concluída
 **Objetivo:** Na página `/como-pontuar`, garantir que cada uma das 6 regras listadas em `ScoringRulesTable` tenha um exemplo de cálculo concreto e isolado demonstrando especificamente aquela regra, em vez de depender apenas de exemplos compostos genéricos.
 **Critérios de sucesso:**
 - Cada uma das 6 regras da tabela (acerto do vencedor, placar exato, somente placar do vencedor, diferença de gols correta, somente placar do perdedor, goleada) tem um exemplo de cálculo visível na página demonstrando especificamente aquela regra isolada (ou o mínimo de regras combinadas necessário para isolá-la sem confundir com outra)
@@ -320,3 +320,4 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Cálculos exibidos são matematicamente corretos conforme `lib/scoring.ts`, idealmente validados contra a função real
 - Layout responsivo e visual seguem DESIGN.md, consistente com `ScoringExample`/`ScoringRulesTable` já existentes
 **Dependências:** como-pontuar
+**Observação de conclusão:** aprovada e mergeada em 2026-06-16 (commit `2f7e9f7`, `merge(feature/exemplos-por-regra)`). Seis exemplos isolados criados, um por regra, na mesma ordem de `SCORING_RULES`/`ScoringRulesTable`, mais um exemplo complementar de empate em subseção própria. Nova prop opcional `ruleLabel` em `ScoringExample.tsx` faz o vínculo visual exemplo↔regra. Grid responsivo ajustado para breakpoint intermediário (640px/1024px) evitando cards apertados em tablet. Valores validados contra `calculateScore()` real via script ad-hoc (não commitado). `npm run lint` e `npm run build` limpos.
