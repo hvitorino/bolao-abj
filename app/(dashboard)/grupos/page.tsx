@@ -208,6 +208,9 @@ export default async function GruposPage() {
                       border: '1px solid',
                       borderColor: group.role === 'admin' ? 'var(--color-accent)' : 'var(--color-muted)',
                       padding: '0.3rem 0.75rem',
+                      minWidth: '72px',
+                      textAlign: 'center',
+                      display: 'inline-block',
                     }}
                   >
                     {group.role === 'admin' ? 'ADMIN' : 'MEMBRO'}
