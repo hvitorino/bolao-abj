@@ -214,18 +214,14 @@ export default async function GruposPage() {
                   </span>
 
                   {isActive ? (
-                    <span
-                      style={{
-                        fontSize: '11px',
-                        color: 'var(--color-primary)',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
-                        border: '1px solid var(--color-primary)',
-                        padding: '0.3rem 0.75rem',
-                      }}
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      disabled
+                      style={{ padding: '0.3rem 0.75rem', fontSize: '11px', cursor: 'default', opacity: 1 }}
                     >
                       ATIVO
-                    </span>
+                    </Button>
                   ) : (
                     <AtivarGrupoButton groupId={group.id} groupName={group.name} />
                   )}

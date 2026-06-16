@@ -62,30 +62,16 @@ export function AtivarGrupoButton({ groupId, groupName }: AtivarGrupoButtonProps
   const isLoading = estado === 'loading'
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', alignItems: 'flex-end' }}>
-      <Button
-        type="button"
-        variant="secondary"
-        disabled={isLoading}
-        onClick={handleClick}
-        aria-label={`Ativar grupo ${groupName}`}
-        style={{ padding: '0.3rem 0.75rem', fontSize: '11px' }}
-      >
-        {isLoading ? 'ATIVANDO...' : 'ATIVAR'}
-      </Button>
-      {estado === 'error' && (
-        <span
-          style={{
-            fontSize: '10px',
-            color: 'var(--color-error)',
-            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            textTransform: 'uppercase',
-            textAlign: 'right',
-          }}
-        >
-          ✗ Não foi possível ativar este grupo — tente novamente.
-        </span>
-      )}
-    </div>
+    <Button
+      type="button"
+      variant="secondary"
+      disabled={isLoading}
+      onClick={handleClick}
+      aria-label={`Ativar grupo ${groupName}`}
+      title={estado === 'error' ? '✗ Não foi possível ativar — tente novamente.' : undefined}
+      style={{ padding: '0.3rem 0.75rem', fontSize: '11px' }}
+    >
+      {estado === 'error' ? '✗ ERRO' : isLoading ? 'ATIVANDO...' : 'ATIVAR'}
+    </Button>
   )
 }
