@@ -61,6 +61,8 @@ export default function GameCard({
   const [isEditing, setIsEditing] = useState(false)
   // Estado de expansão da seção de palpites dos participantes — colapsado por padrão
   const [isParticipantsExpanded, setIsParticipantsExpanded] = useState(false)
+  // Estado de hover do toggle — inverte cores para reforçar que é clicável
+  const [isHoveringToggle, setIsHoveringToggle] = useState(false)
 
   // Subscreve ao canal Realtime do Supabase para este jogo específico.
   const { game: liveGame } = useGameRealtime(game.id, game)
@@ -442,15 +444,17 @@ export default function GameCard({
         <button
           type="button"
           onClick={() => setIsParticipantsExpanded((prev) => !prev)}
+          onMouseEnter={() => setIsHoveringToggle(true)}
+          onMouseLeave={() => setIsHoveringToggle(false)}
           aria-expanded={isParticipantsExpanded}
           aria-controls={`participants-${liveGame.id}`}
           style={{
             width: '100%',
-            background: 'none',
             border: 'none',
-            borderTopStyle: 'dashed',
-            borderTopWidth: '1px',
-            borderTopColor: 'var(--color-border)',
+            borderTop: '1px solid var(--color-accent)',
+            backgroundColor: isHoveringToggle
+              ? 'var(--color-accent)'
+              : 'rgba(255, 223, 0, 0.1)',
             padding: '0.5rem 0.75rem',
             display: 'flex',
             justifyContent: 'center',
@@ -458,8 +462,9 @@ export default function GameCard({
             gap: '0.4rem',
             cursor: 'pointer',
             fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '10px',
-            color: 'var(--color-muted)',
+            fontSize: '11px',
+            fontWeight: 'bold',
+            color: isHoveringToggle ? 'var(--color-bg)' : 'var(--color-accent)',
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
           }}
