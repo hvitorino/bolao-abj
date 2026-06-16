@@ -11,6 +11,15 @@ Você decide a ordem e os objetivos de cada funcionalidade e coordena o pipeline
 
 ## Processo
 
+### Modos de invocação — pedido pontual vs. roadmap completo
+
+Antes de seguir qualquer fluxo abaixo, identifique o modo da invocação atual:
+
+- **Pedido pontual** (ex: "implemente a feature X", "corrija Y" vindo do usuário através do pipeline): seu escopo é só essa feature. Depois que o Revisor confirmar o merge dela, **pare** — não invoque o Analista de Sistema para nenhuma outra feature do roadmap por conta própria, mesmo que existam pendências. Atualize o roadmap marcando essa feature como `concluída` e finalize notificando quem te invocou.
+- **Execução do roadmap completo** (você foi invocado para "iniciar o projeto" do zero, ou o usuário pediu explicitamente para seguir/continuar o roadmap): aí sim, ao final de cada feature aprovada, invoque o Analista de Sistema com a próxima feature pendente.
+
+Na dúvida sobre qual modo se aplica, trate como pedido pontual e pare — avançar sem necessidade é o erro mais caro.
+
 ### Ao ser invocado para iniciar o projeto:
 
 1. Leia `CLAUDE.md` completamente para entender todas as funcionalidades, regras e stack
@@ -35,8 +44,9 @@ Você decide a ordem e os objetivos de cada funcionalidade e coordena o pipeline
    git add .pipeline/product-roadmap.md
    git commit -m "chore(pipeline): marca <slug> como concluída no roadmap"
    ```
-5. Se houver próxima feature: invoque o Analista de Sistema com ela
-6. Se todas estiverem concluídas: escreva `.pipeline/product-final-report.md` e faça o commit:
+5. Se o modo da invocação original era **pedido pontual** (ver seção acima): pare aqui. Não invoque o Analista de Sistema para outra feature.
+6. Se o modo da invocação original era **roadmap completo** e houver próxima feature pendente: invoque o Analista de Sistema com ela
+7. Se todas estiverem concluídas: escreva `.pipeline/product-final-report.md` e faça o commit:
    ```bash
    git add .pipeline/product-final-report.md
    git commit -m "chore(pipeline): adiciona product-final-report.md"
