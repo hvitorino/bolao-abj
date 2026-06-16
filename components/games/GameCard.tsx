@@ -90,7 +90,7 @@ export default function GameCard({
   const cardBg = isLive
     ? 'rgba(0, 156, 59, 0.18)'
     : isFinished
-      ? 'rgba(90, 122, 106, 0.08)'
+      ? 'rgba(90, 122, 106, 0.2)'
       : 'var(--color-surface)'
 
   // Handler chamado pelo PredictionForm ao concluir edição bem-sucedida
@@ -106,6 +106,7 @@ export default function GameCard({
         backgroundColor: cardBg,
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
         overflow: 'hidden',
+        opacity: isFinished ? 0.72 : 1,
       }}
     >
       {/* Header do card: rodada · data · horário */}
