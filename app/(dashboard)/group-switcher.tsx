@@ -3,8 +3,16 @@
 import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
+
+const MONO: React.CSSProperties = {
+  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+  fontSize: '11px',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+}
 
 interface Group {
   id: string
@@ -12,13 +20,13 @@ interface Group {
   role: 'admin' | 'member'
 }
 
-interface GroupSwitcherProps {
+interface GroupMenuProps {
   groups: Group[]
   activeGroupId: string | undefined
   pendingInvitesCount: number
 }
 
-export function GroupSwitcher({ groups, activeGroupId, pendingInvitesCount }: GroupSwitcherProps) {
+export function GroupMenu({ groups, activeGroupId, pendingInvitesCount }: GroupMenuProps) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const ref = useRef<HTMLDivElement>(null)
@@ -41,62 +49,21 @@ export function GroupSwitcher({ groups, activeGroupId, pendingInvitesCount }: Gr
     router.refresh()
   }
 
-  if (groups.length === 0) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}>
-        {pendingInvitesCount > 0 && (
-          <Link
-            href="/grupos"
-            style={{
-              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-              fontSize: '11px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              color: 'var(--color-accent)',
-              textDecoration: 'none',
-              fontWeight: 'bold',
-              border: '1px solid var(--color-accent)',
-              padding: '0.2rem 0.5rem',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            ✉ {pendingInvitesCount} {pendingInvitesCount === 1 ? 'CONVITE' : 'CONVITES'}
-          </Link>
-        )}
-        <Link
-          href="/grupos"
-          style={{
-            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '11px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            color: 'var(--color-primary)',
-            textDecoration: 'none',
-            fontWeight: 'bold',
-            border: '1px solid var(--color-primary)',
-            padding: '0.2rem 0.5rem',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          CRIAR/ENTRAR EM UM GRUPO
-        </Link>
-      </div>
-    )
+  async function handleLogout() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/login')
   }
 
+  const triggerLabel = activeGroup ? activeGroup.name.toUpperCase() : 'MENU'
+
   return (
-    <div
-      ref={ref}
-      style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'center' }}
-    >
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
       {pendingInvitesCount > 0 && (
         <Link
           href="/grupos"
           style={{
-            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '11px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
+            ...MONO,
             color: 'var(--color-accent)',
             textDecoration: 'none',
             fontWeight: 'bold',
@@ -109,70 +76,95 @@ export function GroupSwitcher({ groups, activeGroupId, pendingInvitesCount }: Gr
         </Link>
       )}
 
-      <button
-        onClick={() => groups.length > 1 && setOpen((o) => !o)}
-        style={{
-          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-          fontSize: '11px',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-          color: 'var(--color-muted)',
-          background: 'transparent',
-          border: '1px solid var(--color-border)',
-          padding: '0.2rem 0.5rem',
-          cursor: groups.length > 1 ? 'pointer' : 'default',
-          whiteSpace: 'nowrap',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.375rem',
-        }}
-      >
-        GRUPO: {activeGroup.name.toUpperCase()}
-        {groups.length > 1 && (
-          <span style={{ fontSize: '10px', color: 'var(--color-muted)', lineHeight: 1 }}>
-            {open ? '▲' : '▼'}
-          </span>
-        )}
-      </button>
-
-      {open && groups.length > 1 && (
-        <div
+      {groups.length === 0 ? (
+        <Link
+          href="/grupos"
           style={{
-            position: 'absolute',
-            top: 'calc(100% + 4px)',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            backgroundColor: 'var(--color-surface)',
-            border: '1px solid var(--color-border)',
-            zIndex: 100,
-            minWidth: '100%',
+            ...MONO,
+            color: 'var(--color-primary)',
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            border: '1px solid var(--color-primary)',
+            padding: '0.2rem 0.5rem',
+            whiteSpace: 'nowrap',
           }}
         >
-          {groups.map((group, i) => (
-            <button
-              key={group.id}
-              onClick={() => switchGroup(group.id)}
+          CRIAR/ENTRAR EM UM GRUPO
+        </Link>
+      ) : (
+        <div ref={ref} style={{ position: 'relative' }}>
+          <button
+            onClick={() => setOpen((o) => !o)}
+            style={{
+              ...MONO,
+              color: 'var(--color-muted)',
+              background: 'transparent',
+              border: '1px solid var(--color-border)',
+              padding: '0.2rem 0.5rem',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.375rem',
+            }}
+          >
+            {triggerLabel}
+            <span style={{ fontSize: '10px', lineHeight: 1 }}>{open ? '▲' : '▼'}</span>
+          </button>
+
+          {open && (
+            <div
               style={{
-                display: 'block',
-                width: '100%',
-                padding: '0.375rem 0.75rem',
-                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                color: group.id === activeGroup?.id ? 'var(--color-primary)' : 'var(--color-text)',
-                background: 'transparent',
-                border: 'none',
-                borderBottom: i < groups.length - 1 ? '1px solid var(--color-border)' : 'none',
-                cursor: 'pointer',
-                textAlign: 'left',
+                position: 'absolute',
+                top: 'calc(100% + 4px)',
+                right: 0,
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                zIndex: 100,
+                minWidth: '100%',
                 whiteSpace: 'nowrap',
               }}
             >
-              {group.id === activeGroup?.id ? '► ' : '  '}
-              {group.name.toUpperCase()}
-            </button>
-          ))}
+              {groups.map((group) => (
+                <button
+                  key={group.id}
+                  onClick={() => switchGroup(group.id)}
+                  style={{
+                    ...MONO,
+                    display: 'block',
+                    width: '100%',
+                    padding: '0.375rem 0.75rem',
+                    color: group.id === activeGroup?.id ? 'var(--color-primary)' : 'var(--color-text)',
+                    background: 'transparent',
+                    border: 'none',
+                    borderBottom: '1px solid var(--color-border)',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  {group.id === activeGroup?.id ? '► ' : '  '}
+                  {group.name.toUpperCase()}
+                </button>
+              ))}
+
+              <button
+                onClick={handleLogout}
+                style={{
+                  ...MONO,
+                  display: 'block',
+                  width: '100%',
+                  padding: '0.375rem 0.75rem',
+                  color: 'var(--color-muted)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+              >
+                {'  '}SAIR
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

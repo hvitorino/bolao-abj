@@ -1,9 +1,8 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import LogoutButton from './logout-button'
 import { NavLinks } from './nav-links'
-import { GroupSwitcher } from './group-switcher'
+import { GroupMenu } from './group-switcher'
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
@@ -26,8 +25,6 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  // Grupos do usuário — usado para decidir se exibe o indicador de grupo
-  // ativo (somente leitura) ou o CTA de lista vazia no header.
   const { data: groupRows } = await supabase
     .from('group_members')
     .select('role, joined_at, groups(id, name)')
@@ -39,16 +36,10 @@ export default async function DashboardLayout({
     return { id: g?.id ?? '', name: g?.name ?? '', role: row.role }
   })
 
-  // Nome do grupo ativo, apenas para exibição estática no header (espelho de
-  // leitura). cookie válido > primeiro grupo (melhor esforço) — não grava
-  // cookie nem redireciona; resolveActiveGroup() em cada página é a única
-  // fonte de verdade real do grupo ativo.
   const cookieStore = await cookies()
   const cookieGroupId = cookieStore.get(ACTIVE_GROUP_COOKIE)?.value
   const activeGroup = groups.find((g) => g.id === cookieGroupId) ?? groups[0]
 
-  // Contagem de convites nominais pendentes endereçados ao usuário, exibida
-  // como badge no header em qualquer página do dashboard.
   const { count: pendingInvitesCount } = await supabase
     .from('group_invites')
     .select('id', { count: 'exact', head: true })
@@ -64,16 +55,15 @@ export default async function DashboardLayout({
           padding: '0.625rem 1.5rem 0',
         }}
       >
-        {/* Linha 1: grid 3 colunas */}
+        {/* Linha 1: logo à esquerda, menu de grupo à direita */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr auto 1fr',
+            display: 'flex',
             alignItems: 'center',
+            justifyContent: 'space-between',
             paddingBottom: '0.5rem',
           }}
         >
-          {/* Col 1: logo à esquerda */}
           <span
             style={{
               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
@@ -87,39 +77,20 @@ export default async function DashboardLayout({
             BOLÃO DA COPA
           </span>
 
-          {/* Col 2: grupo ativo + convites (centralizado) */}
-          <GroupSwitcher
+          <GroupMenu
             groups={groups}
             activeGroupId={activeGroup?.id}
             pendingInvitesCount={pendingInvitesCount ?? 0}
           />
-
-          {/* Col 3: email + logout à direita */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <LogoutButton />
-          </div>
         </div>
 
-        {/* Linha 2: navegação */}
+        {/* Linha 2: navegação centralizada */}
         <div style={{ borderTop: '1px solid var(--color-border)' }}>
           <NavLinks />
         </div>
       </header>
 
-      {/* Conteúdo principal */}
-      <main
-        style={{
-          padding: '1.5rem',
-        }}
-      >
-        {children}
-      </main>
+      <main style={{ padding: '1.5rem' }}>{children}</main>
     </div>
   )
 }
