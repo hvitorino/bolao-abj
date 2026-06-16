@@ -6,6 +6,7 @@ interface BreakdownItem {
 
 interface ScoringExampleProps {
   title: string
+  ruleLabel?: string
   homeTeam: string
   awayTeam: string
   homeScore: number
@@ -19,6 +20,7 @@ interface ScoringExampleProps {
 
 export function ScoringExample({
   title,
+  ruleLabel,
   homeTeam,
   awayTeam,
   homeScore,
@@ -51,6 +53,21 @@ export function ScoringExample({
       >
         {title}
       </div>
+
+      {/* Rótulo de vínculo com a regra da tabela (opcional) */}
+      {ruleLabel && (
+        <div
+          style={{
+            padding: '0.25rem 1rem 0',
+            fontSize: '10px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            color: 'var(--color-muted)',
+          }}
+        >
+          REGRA: {ruleLabel}
+        </div>
+      )}
 
       {/* Linha de placares */}
       <div
