@@ -26,7 +26,7 @@ const SCORING_RULES = [
   {
     event: 'Somente placar do perdedor',
     points: 1,
-    note: 'independente de acertar o vencedor',
+    note: 'requer acerto do vencedor',
     highlight: false,
   },
   {
