@@ -1,5 +1,9 @@
+'use client'
+
+import { Fragment, useState } from 'react'
 import { ParticipantEntry } from '@/lib/types/participant'
 import { calculateLiveScore } from '@/lib/scoring'
+import PredictionBreakdown from '@/components/bolao/PredictionBreakdown'
 
 interface GameParticipantsListProps {
   participants: ParticipantEntry[]
@@ -17,6 +21,12 @@ export default function GameParticipantsList({
   const showPoints = gameStatus === 'finished'
   const showLivePoints = gameStatus === 'live'
   const isPending = gameStatus === 'pending'
+  const columnCount = showPoints || showLivePoints ? 3 : 2
+
+  // Accordion exclusivo: no máximo uma linha com o detalhamento de
+  // breakdown expandido por vez, dentro desta instância de lista
+  // (um jogo). Reinicia a cada montagem (ex: ao expandir o card pai).
+  const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
 
   return (
     <div
@@ -152,104 +162,168 @@ export default function GameParticipantsList({
                   ? calculateLiveScore(liveGame, p.prediction)?.points ?? null
                   : null
 
+              // Linha clicável (oferece breakdown) somente quando há palpite
+              // E score oficial já calculado (registro em `scores` existente).
+              const isExpandable = p.prediction !== null && p.breakdown !== null
+              const isExpanded = expandedUserId === p.userId
+
+              function handleToggle() {
+                if (!isExpandable) return
+                setExpandedUserId((prev) => (prev === p.userId ? null : p.userId))
+              }
+
               return (
-                <tr key={p.userId}>
-                  {/* Coluna PARTICIPANTE */}
-                  <td
-                    style={{
-                      padding: '0.35rem 0',
-                      borderBottom: '1px solid var(--color-border)',
-                      color: 'var(--color-text)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.03em',
-                      maxWidth: '120px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
+                <Fragment key={p.userId}>
+                  <tr
+                    onClick={isExpandable ? handleToggle : undefined}
+                    onKeyDown={
+                      isExpandable
+                        ? (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              handleToggle()
+                            }
+                          }
+                        : undefined
+                    }
+                    role={isExpandable ? 'button' : undefined}
+                    tabIndex={isExpandable ? 0 : undefined}
+                    aria-expanded={isExpandable ? isExpanded : undefined}
+                    style={isExpandable ? { cursor: 'pointer' } : undefined}
                   >
-                    {isCurrentUser && (
-                      <span
+                    {/* Coluna PARTICIPANTE */}
+                    <td
+                      style={{
+                        padding: '0.35rem 0',
+                        borderBottom: '1px solid var(--color-border)',
+                        color: 'var(--color-text)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.03em',
+                        maxWidth: '120px',
+                      }}
+                    >
+                      <div
                         style={{
-                          color: 'var(--color-primary)',
-                          marginRight: '0.35rem',
-                          fontWeight: 'bold',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          overflow: 'hidden',
                         }}
                       >
-                        &#9632;
-                      </span>
+                        <span
+                          style={{
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {isCurrentUser && (
+                            <span
+                              style={{
+                                color: 'var(--color-primary)',
+                                marginRight: '0.35rem',
+                                fontWeight: 'bold',
+                              }}
+                            >
+                              &#9632;
+                            </span>
+                          )}
+                          {p.name}
+                        </span>
+                        {isExpandable && (
+                          <span
+                            style={{
+                              color: 'var(--color-muted)',
+                              fontSize: '9px',
+                              flexShrink: 0,
+                            }}
+                          >
+                            {isExpanded ? '▴' : '▾'}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* Coluna PALPITE */}
+                    <td
+                      style={{
+                        padding: '0.35rem 0',
+                        paddingLeft: '0.75rem',
+                        borderBottom: '1px solid var(--color-border)',
+                        textAlign: 'center',
+                        fontWeight: 'bold',
+                        fontSize: '12px',
+                        color:
+                          shouldHidePrediction || p.prediction
+                            ? 'var(--color-accent)'
+                            : 'var(--color-muted)',
+                        textTransform: shouldHidePrediction ? 'uppercase' : undefined,
+                        letterSpacing: shouldHidePrediction ? '0.05em' : undefined,
+                      }}
+                    >
+                      {predictionLabel}
+                    </td>
+
+                    {/* Coluna PTS — pontuação oficial (finished) ou provisória (live) */}
+                    {showPoints && (
+                      <td
+                        style={{
+                          padding: '0.35rem 0',
+                          paddingLeft: '0.75rem',
+                          borderBottom: '1px solid var(--color-border)',
+                          textAlign: 'right',
+                          fontWeight: 'bold',
+                          color:
+                            p.prediction === null
+                              ? 'var(--color-muted)'
+                              : p.points !== null && p.points > 0
+                                ? 'var(--color-accent)'
+                                : 'var(--color-muted)',
+                        }}
+                      >
+                        {p.prediction === null
+                          ? '-'
+                          : p.points !== null
+                            ? `+${p.points}`
+                            : '-'}
+                      </td>
                     )}
-                    {p.name}
-                  </td>
-
-                  {/* Coluna PALPITE */}
-                  <td
-                    style={{
-                      padding: '0.35rem 0',
-                      paddingLeft: '0.75rem',
-                      borderBottom: '1px solid var(--color-border)',
-                      textAlign: 'center',
-                      fontWeight: 'bold',
-                      fontSize: '12px',
-                      color:
-                        shouldHidePrediction || p.prediction
-                          ? 'var(--color-accent)'
-                          : 'var(--color-muted)',
-                      textTransform: shouldHidePrediction ? 'uppercase' : undefined,
-                      letterSpacing: shouldHidePrediction ? '0.05em' : undefined,
-                    }}
-                  >
-                    {predictionLabel}
-                  </td>
-
-                  {/* Coluna PTS — pontuação oficial (finished) ou provisória (live) */}
-                  {showPoints && (
-                    <td
-                      style={{
-                        padding: '0.35rem 0',
-                        paddingLeft: '0.75rem',
-                        borderBottom: '1px solid var(--color-border)',
-                        textAlign: 'right',
-                        fontWeight: 'bold',
-                        color:
-                          p.prediction === null
-                            ? 'var(--color-muted)'
-                            : p.points !== null && p.points > 0
-                              ? 'var(--color-accent)'
-                              : 'var(--color-muted)',
-                      }}
-                    >
-                      {p.prediction === null
-                        ? '-'
-                        : p.points !== null
-                          ? `+${p.points}`
-                          : '-'}
-                    </td>
+                    {showLivePoints && (
+                      <td
+                        style={{
+                          padding: '0.35rem 0',
+                          paddingLeft: '0.75rem',
+                          borderBottom: '1px solid var(--color-border)',
+                          textAlign: 'right',
+                          fontWeight: 'bold',
+                          color:
+                            p.prediction === null
+                              ? 'var(--color-muted)'
+                              : livePoints !== null && livePoints > 0
+                                ? 'var(--color-live)'
+                                : 'var(--color-muted)',
+                        }}
+                      >
+                        {p.prediction === null
+                          ? '-'
+                          : livePoints !== null
+                            ? `+${livePoints}`
+                            : '-'}
+                      </td>
+                    )}
+                  </tr>
+                  {isExpanded && p.breakdown && p.points !== null && (
+                    <tr>
+                      <td
+                        colSpan={columnCount}
+                        style={{ padding: 0, borderBottom: '1px solid var(--color-border)' }}
+                      >
+                        <PredictionBreakdown points={p.points} breakdown={p.breakdown} />
+                      </td>
+                    </tr>
                   )}
-                  {showLivePoints && (
-                    <td
-                      style={{
-                        padding: '0.35rem 0',
-                        paddingLeft: '0.75rem',
-                        borderBottom: '1px solid var(--color-border)',
-                        textAlign: 'right',
-                        fontWeight: 'bold',
-                        color:
-                          p.prediction === null
-                            ? 'var(--color-muted)'
-                            : livePoints !== null && livePoints > 0
-                              ? 'var(--color-live)'
-                              : 'var(--color-muted)',
-                      }}
-                    >
-                      {p.prediction === null
-                        ? '-'
-                        : livePoints !== null
-                          ? `+${livePoints}`
-                          : '-'}
-                    </td>
-                  )}
-                </tr>
+                </Fragment>
               )
             })}
           </tbody>
