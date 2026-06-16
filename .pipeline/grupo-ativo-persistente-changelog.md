@@ -3,7 +3,7 @@
 **Slug:** grupo-ativo-persistente
 **Branch:** feature/grupo-ativo-persistente
 **Data:** 2026-06-16
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

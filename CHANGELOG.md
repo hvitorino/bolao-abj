@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [grupo-ativo-persistente] — Seleção Persistente de Grupo Ativo — 2026-06-16
+
+- A seleção de "grupo ativo" passa a persistir via cookie HTTP `bolao_active_group` (`Path=/`, `SameSite=Lax`, `Secure` em produção, `Max-Age` de 1 ano, sem `HttpOnly`), eliminando a regressão em que navegar pelo menu perdia o `?group=` da URL e recalculava o primeiro grupo por `joined_at`
+- **Endpoint criado:** `POST /api/groups/active` (Next.js Route Handler) — autentica via Bearer JWT, valida `group_id` (UUID + membership via `service_client`, 403 se não-membro) e grava o cookie de grupo ativo em caso de sucesso (200); único endpoint do produto autorizado a escrever esse cookie
+- `lib/active-group.ts` (`resolveActiveGroup`) ganha 6º parâmetro `cookieGroupId` e nova ordem de prioridade: `?group=` (deep link, nunca grava cookie) > cookie válido (sem redirect) > primeiro grupo por `joined_at ASC` (fallback com gravação best-effort/auto-cura de cookie órfão)
+- **Componente criado:** `components/bolao/AtivarGrupoButton.tsx` (client component) — único gatilho de troca de grupo ativo, presente em `/grupos` (lista, com seta `►`/badge `ATIVO`) e `/grupos/[id]` (badge `GRUPO ATIVO` ou botão conforme o caso)
+- `app/(dashboard)/group-switcher.tsx` (`GroupSwitcher`, dropdown no header) removido por completo; `app/(dashboard)/layout.tsx` passa a exibir um indicador estático somente-leitura (`GRUPO: <NOME>`) linkando para `/grupos`
+- `app/(dashboard)/jogos/page.tsx`, `app/(dashboard)/ranking/page.tsx`, `app/(dashboard)/meus-palpites/page.tsx` passam a ler o cookie e propagá-lo para `resolveActiveGroup`, sem nenhuma outra mudança de lógica/layout
+- Sem migrations — nenhuma tabela do Supabase introduzida ou alterada; nenhuma mudança em RLS, regras de pontuação ou Realtime herdadas da feature `grupos`
+
 ## [convites-nominais] — Convites Nominais para Grupos — 2026-06-16
 
 - **Banco de dados** (`create_group_invites`, espelhada em `supabase/migrations/` e `db/migrations/`): tabela `group_invites` (`group_id`, `invited_user_id`, `invited_by`, `status` `pending`/`accepted`/`declined`, `created_at`, `responded_at`), índices auxiliares e índice único parcial `group_invites_unique_pending` (nunca dois convites `pending` simultâneos para o mesmo par grupo/usuário); RLS habilitado com policy `group_invites_select_admin_or_invitee` (admin do grupo vê tudo do grupo, convidado vê o que é endereçado a ele); função `is_group_admin()` (`SECURITY DEFINER`, mesmo padrão de `is_group_member` de `grupos`); função `search_users_to_invite()` (`SECURITY DEFINER`) busca por nome/e-mail em `profiles`/`auth.users` sem nunca expor e-mail de terceiros no retorno
