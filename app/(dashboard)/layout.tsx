@@ -36,6 +36,14 @@ export default async function DashboardLayout({
     return { id: g?.id ?? '', name: g?.name ?? '', role: row.role }
   })
 
+  // Contagem de convites nominais pendentes endereçados ao usuário, exibida
+  // como badge no header em qualquer página do dashboard.
+  const { count: pendingInvitesCount } = await supabase
+    .from('group_invites')
+    .select('id', { count: 'exact', head: true })
+    .eq('invited_user_id', user.id)
+    .eq('status', 'pending')
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
       <header
@@ -104,6 +112,26 @@ export default async function DashboardLayout({
               }}
             >
               CRIAR/ENTRAR EM UM GRUPO
+            </Link>
+          )}
+
+          {(pendingInvitesCount ?? 0) > 0 && (
+            <Link
+              href="/grupos"
+              style={{
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '12px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: 'var(--color-accent)',
+                textDecoration: 'none',
+                fontWeight: 'bold',
+                border: '1px solid var(--color-accent)',
+                padding: '0.3rem 0.5rem',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              ✉ {pendingInvitesCount} {pendingInvitesCount === 1 ? 'CONVITE' : 'CONVITES'}
             </Link>
           )}
           <span
