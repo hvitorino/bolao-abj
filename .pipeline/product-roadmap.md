@@ -3,8 +3,8 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 25 features
-- Concluídas: 25
+- Total: 26 features
+- Concluídas: 26
 - Em progresso: 0
 - Pendentes: 0
 
@@ -334,3 +334,16 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Validação exaustiva (simulação de todos os placares possíveis) confirma exclusividade mútua entre `winner_score`, `diff` e `loser_score`, sem dupla contagem
 **Dependências:** scoring
 **Observação:** correção pontual de regra de negócio (branch `fix/fix-loser-score-rule`, fora do fluxo `feature/`), análoga a `fix-goleada-scoring` (item 12). Aprovada sem rodada de fix em 2026-06-16. Migration `supabase/migrations/20260616130000_fix_loser_score_rule.sql` criada mas **não aplicada** ao banco de produção — aplicação pendente, a ser feita via skill `supabase-migration` quando solicitada explicitamente. `npm run lint` e `npm run build` limpos.
+
+---
+
+### 26. collapse-game-card — Colapsar/Expandir Card de Jogo com Palpites dos Participantes — concluída
+**Objetivo:** Na tela `/jogos`, cada `GameCard` deve carregar colapsado por padrão, ocultando a seção "PALPITES DOS PARTICIPANTES" (`GameParticipantsList`); um controle clicável e acessível via teclado alterna a exibição, com estado de expansão independente por card e sem interromper as subscriptions Realtime já existentes.
+**Critérios de sucesso:**
+- Card de jogo carrega colapsado por padrão, ocultando `GameParticipantsList`
+- Controle (`<button>`) com `aria-expanded`/`aria-controls` alterna expandir/recolher, acessível via teclado (foco nativo, ativação por Enter/Espaço)
+- Estado de expansão é local a cada `GameCard` — múltiplos cards podem ficar expandidos simultaneamente sem interferência
+- `useGameRealtime`/`useScoreRealtime` permanecem incondicionais e ativos independentemente do estado de colapso (sem regressão de Realtime)
+- Nenhuma mudança de schema, migration ou endpoint — feature puramente client-side
+**Dependências:** game-navigation, game-participants-view
+**Observação de conclusão:** aprovada sem rodada de fix em 2026-06-16; merge `feature/collapse-game-card` na main confirmado (commit `a3fcfa5`). Diff isolado a `components/games/GameCard.tsx`. `npm run lint` e `npm run build` limpos. Pendência não-bloqueante registrada no changelog: validação visual em navegador (toggle em `/jogos`, mobile, e cenário `live` com card expandido) não foi possível no ambiente do pipeline — recomendada verificação manual.
