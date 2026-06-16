@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-loser-score-rule] — Correção da Regra "Somente Placar do Perdedor" — 2026-06-16
+
+- Inverte a condição do bônus "Somente placar do perdedor" (+1 pt) em `lib/scoring.ts` e na função Postgres `calculate_scores_for_game`: antes era concedido quando o usuário ERRAVA o vencedor mas acertava o placar de quem perdeu; agora exige que o usuário TAMBÉM tenha acertado o vencedor (mesmo pré-requisito já usado por "diferença de gols correta" e "somente placar do vencedor"), permanecendo mutuamente exclusivo com placar exato
+- Nova migration `supabase/migrations/20260616130000_fix_loser_score_rule.sql` (`CREATE OR REPLACE FUNCTION calculate_scores_for_game`, preservando 100% das demais regras e o scoping por `group_id`), incluindo bloco de recálculo retroativo (`PERFORM calculate_scores_for_game(g.id)`) para todos os jogos `finished`, corrigindo scores já gravados pela regra antiga; migration criada mas não aplicada ao banco como parte desta correção
+- `CLAUDE.md` e `components/bolao/ScoringRulesTable.tsx` atualizados para refletir o novo pré-requisito ("Somente placar do perdedor (acertou vencedor)" / nota `requer acerto do vencedor`)
+- Página `/como-pontuar`: `EXEMPLO_5` reescrito para ilustrar a regra corrigida (BRA 3×1 ARG, palpite 2×1 → +4 pts); `EXEMPLO_1` e `EXEMPLO_6` ajustados porque, com a regra nova, seus cenários originais passavam a acionar `loser_score` incidentalmente (totais recalculados e validados via `calculateScore()` real)
+- Sem mudança de schema, RLS, endpoints Ruby ou mecanismo de Realtime — correção isolada à lógica de pontuação
+
 ## [exemplos-por-regra] — Exemplo Dedicado por Regra de Pontuação — 2026-06-16
 
 - Página `/como-pontuar`: os antigos 3 exemplos (cobrindo só 2 das 6 regras isoladamente) foram substituídos por 7 exemplos — 6 numerados (`EXEMPLO_1` a `EXEMPLO_6`), alinhados 1:1 e na mesma ordem das linhas de `SCORING_RULES` em `ScoringRulesTable.tsx`, mais 1 exemplo bônus de empate exato em subseção própria ("EXEMPLO COMPLEMENTAR")

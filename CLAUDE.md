@@ -23,7 +23,7 @@ Os bônus são cumulativos com o acerto do vencedor.
 | Placar exato | +5 |
 | Somente placar do vencedor | +3 |
 | Diferença de gols correta (acertou vencedor) | +2 |
-| Somente placar do perdedor | +1 |
+| Somente placar do perdedor (acertou vencedor) | +1 |
 | Goleada — acertou vencedor, vencedor no palpite fez 4+ gols e diferença real >= 4 gols | +1 |
 
 **Exemplo:** Brasil 3×1 Argentina; palpite Brasil 3×1 Argentina → +3 (vencedor) + 5 (placar exato) = **8 pts**
@@ -151,6 +151,7 @@ bolao-abj/
 - **Commits**: português — ex: `feat(auth): adiciona cadastro de usuário`
 - **Branches**: `feature/<slug>` — ex: `feature/auth`
 - **Merge**: somente após aprovação do Revisor, via `git merge feature/<slug>` na main
+- **Push**: nenhum agente do pipeline deve executar `git push` para o remoto (`origin`) — todo trabalho fica local até o usuário pedir explicitamente o push
 - **Design**: seguir DESIGN.md rigorosamente em todos os componentes frontend
 
 ## Copa do Mundo FIFA 2026
