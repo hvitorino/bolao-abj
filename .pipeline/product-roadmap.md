@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 20 features
-- Concluídas: 19
+- Total: 21 features
+- Concluídas: 21
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -244,7 +244,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 20. grupos — Grupos Privados (Bolões Isolados) — pendente
+### 20. grupos — Grupos Privados (Bolões Isolados) — concluída
 **Objetivo:** Permitir que usuários criem grupos (bolões) privados e convidem participantes via link reutilizável; cada grupo é totalmente isolado em participantes, palpites, pontuação e ranking, e um mesmo usuário pode participar de múltiplos grupos com palpites independentes por grupo para o mesmo jogo.
 **Critérios de sucesso:**
 - Usuário autenticado consegue criar um novo grupo e se torna automaticamente seu admin
@@ -256,3 +256,17 @@ Criado em: 2026-06-13
 - Script de migração move todos os usuários e palpites/scores existentes para um novo grupo "Bolão da Ingrisia ABJ", com o usuário "Hamon" definido como admin desse grupo
 - Usuário pertencente a múltiplos grupos consegue dar palpites diferentes para o mesmo jogo em grupos diferentes, e cada grupo calcula pontuação/ranking de forma independente e correta
 **Dependências:** auth, game-navigation, predictions, live-scores, scoring, ranking, live-scoring
+
+---
+
+### 21. espn-sync — Sincronização Automática de Jogos via ESPN API — concluída
+**Objetivo:** Substituir o dataset placeholder de jogos por dados reais sincronizados periodicamente da ESPN Scoreboard API, mantendo `games` (placar, status, rodada, estádio) atualizado automaticamente sem intervenção manual do admin.
+**Critérios de sucesso:**
+- Endpoint `POST /api/admin/sync-games` busca jogos da ESPN Scoreboard API por intervalo de dias e faz UPSERT idempotente em `games` por `espn_id`
+- Autenticação dupla (admin via `X-Admin-Secret` e cron via `Authorization: Bearer <CRON_SECRET>`) com `401` para credenciais inválidas
+- Status ESPN mapeado corretamente para `pending`/`live`/`finished`; placar `NULL` enquanto `pending`
+- Sincronização periódica automatizada (cron) sem necessidade de acionamento manual
+- Falha em evento individual não aborta o sync inteiro (erros parciais reportados, não bloqueantes)
+- Times e rodadas traduzidos para português com fallback seguro quando a tradução não existe
+**Dependências:** game-navigation
+**Observação:** feature implementada fora do fluxo padrão do pipeline (sem spec formal do Analista nem branch `feature/espn-sync` com merge via Revisor) — registrada aqui retroativamente para manter o roadmap fiel ao estado real do sistema em produção. Especificação técnica e changelog ficaram registrados em `.pipeline/espn-sync-spec.md`, `.pipeline/espn-sync-plan.md` e `.pipeline/espn-sync-changelog.md`, e passou por correções subsequentes (commits `1a0bd3c`, `78c68d8`, `2fc8ba5`, `853e927`) já incorporadas à main.
