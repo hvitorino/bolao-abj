@@ -1,9 +1,13 @@
 import Link from 'next/link'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/Button'
+import { AtivarGrupoButton } from '@/components/bolao/AtivarGrupoButton'
 import { PendingInvitesList, type PendingInvite } from '@/components/bolao/PendingInvitesList'
 import type { GroupMembership } from '@/lib/types/group'
+
+const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
 export const metadata = {
   title: 'Meus Grupos — Bolão da Copa',
@@ -57,6 +61,16 @@ export default async function GruposPage() {
     .order('created_at', { ascending: false })
 
   const pendingRows = (pendingInviteRows ?? []) as PendingInviteRow[]
+
+  // Grupo ativo (somente leitura aqui) — cookie válido > primeiro grupo por
+  // joined_at (melhor esforço, mesma lógica de fallback de resolveActiveGroup).
+  // Esta página é a fonte de verdade da TROCA (via AtivarGrupoButton), mas a
+  // leitura para destacar o item ativo na lista não grava nem redireciona.
+  const cookieStore = await cookies()
+  const cookieGroupId = cookieStore.get(ACTIVE_GROUP_COOKIE)?.value
+  const activeGroupId =
+    (cookieGroupId && groups.some((g) => g.id === cookieGroupId) ? cookieGroupId : undefined) ??
+    groups[0]?.id
 
   let pendingInvites: PendingInvite[] = []
   if (pendingRows.length > 0) {
@@ -178,36 +192,79 @@ export default async function GruposPage() {
             backgroundColor: 'var(--color-surface)',
           }}
         >
-          {groups.map((group, index) => (
-            <Link
-              key={group.id}
-              href={`/grupos/${group.id}`}
-              style={{
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0.75rem 1rem',
-                borderTop: index > 0 ? '1px solid var(--color-border)' : 'none',
-                color: 'var(--color-text)',
-              }}
-            >
-              <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{group.name}</span>
-              <span
+          {groups.map((group, index) => {
+            const isActive = group.id === activeGroupId
+            return (
+              <div
+                key={group.id}
                 style={{
-                  fontSize: '11px',
-                  color: group.role === 'admin' ? 'var(--color-accent)' : 'var(--color-muted)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  border: '1px solid',
-                  borderColor: group.role === 'admin' ? 'var(--color-accent)' : 'var(--color-muted)',
-                  padding: '0.1rem 0.4rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.75rem',
+                  flexWrap: 'wrap',
+                  padding: '0.75rem 1rem',
+                  borderTop: index > 0 ? '1px solid var(--color-border)' : 'none',
                 }}
               >
-                {group.role === 'admin' ? 'ADMIN' : 'MEMBRO'}
-              </span>
-            </Link>
-          ))}
+                <Link
+                  href={`/grupos/${group.id}`}
+                  style={{
+                    textDecoration: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    color: 'var(--color-text)',
+                    minWidth: 0,
+                  }}
+                >
+                  {isActive && (
+                    <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>►</span>
+                  )}
+                  <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{group.name}</span>
+                </Link>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      color: group.role === 'admin' ? 'var(--color-accent)' : 'var(--color-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      border: '1px solid',
+                      borderColor: group.role === 'admin' ? 'var(--color-accent)' : 'var(--color-muted)',
+                      padding: '0.1rem 0.4rem',
+                    }}
+                  >
+                    {group.role === 'admin' ? 'ADMIN' : 'MEMBRO'}
+                  </span>
+
+                  {isActive ? (
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        color: 'var(--color-accent)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      ATIVO
+                    </span>
+                  ) : (
+                    <AtivarGrupoButton groupId={group.id} groupName={group.name} />
+                  )}
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
     </div>
