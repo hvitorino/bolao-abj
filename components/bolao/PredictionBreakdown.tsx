@@ -25,14 +25,17 @@ interface PredictionBreakdownProps {
  * └──────────────────────────────────────────────────────┘
  */
 export default function PredictionBreakdown({ points, breakdown }: PredictionBreakdownProps) {
-  const breakdownItems: Array<{ key: keyof ScoreBreakdown; label: string; pts: number }> = [
+  type BreakdownItem = { key: keyof ScoreBreakdown; label: string; pts: number }
+
+  const allItems: BreakdownItem[] = [
     { key: 'winner', label: BREAKDOWN_LABELS.winner, pts: breakdown.winner },
     { key: 'exact', label: BREAKDOWN_LABELS.exact, pts: breakdown.exact },
     { key: 'winner_score', label: BREAKDOWN_LABELS.winner_score, pts: breakdown.winner_score },
     { key: 'diff', label: BREAKDOWN_LABELS.diff, pts: breakdown.diff },
     { key: 'loser_score', label: BREAKDOWN_LABELS.loser_score, pts: breakdown.loser_score },
     { key: 'goleada', label: BREAKDOWN_LABELS.goleada, pts: breakdown.goleada },
-  ].filter((item) => item.pts > 0)
+  ]
+  const breakdownItems = allItems.filter((item) => item.pts > 0)
 
   return (
     <div
