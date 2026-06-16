@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 22 features
+- Total: 23 features
 - Concluídas: 22
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -292,3 +292,18 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 **Dependências:** grupos
 **Observação de conclusão:** aprovada sem rodada de fix em 2026-06-16; merge `feature/convites-nominais` na main confirmado (commit `39275f2`). Migration `group_invites` com RLS, índice único parcial para idempotência, funções `is_group_admin`/`search_users_to_invite` (SECURITY DEFINER, sem expor e-mail de terceiros). Endpoints novos com autenticação Bearer JWT + autorização explícita. Zero diff nos arquivos do fluxo de link reutilizável (`groups.invite_token`, `/convite/[token]`, `resolve-invite`, `join`). `npm run lint` e `npm run build` limpos. Polimento futuro não-bloqueante identificado: `PendingInvitesList` não refaz fetch automático ao receber `409` (convite já respondido em outra aba) — apenas exibe erro inline.
+
+---
+
+### 23. grupo-ativo-persistente — Seleção Persistente de Grupo Ativo — em progresso
+**Objetivo:** Fazer a seleção do "grupo ativo" ocorrer exclusivamente na área/aba "Grupos" e persistir em todas as páginas do dashboard (Jogos, Ranking, Palpites) até que o usuário a altere ativamente de novo, ali na área de Grupos — corrigindo a perda de seleção hoje causada por `NavLinks` apontar para paths "nus" sem preservar `?group=`.
+
+**Contexto do problema (levantamento do PM):** hoje o grupo ativo é resolvido só via query param `?group=<id>` (`lib/active-group.ts`/`resolveActiveGroup()`); sem o param, o sistema sempre cai no primeiro grupo por `joined_at ASC`. Não há persistência em cookie/localStorage/sessão. O `GroupSwitcher` (`app/(dashboard)/group-switcher.tsx`) aparece no header em todas as páginas do dashboard (renderizado em `app/(dashboard)/layout.tsx`), não só em Grupos, e ao trocar grupo só atualiza o `?group=` da página atual. `NavLinks` (`app/(dashboard)/nav-links.tsx`) linka para `/jogos`, `/ranking`, `/meus-palpites`, `/grupos`, `/como-pontuar` sem preservar `?group=` — ao clicar em outra aba, a seleção se perde e a página recalcula para o primeiro grupo. A página `/grupos` hoje não tem nenhum seletor de grupo ativo.
+
+**Critérios de sucesso:**
+- O usuário escolhe/troca o grupo ativo na área "Grupos" (não mais a única forma de troca ser um dropdown solto no header desconectado da navegação — cabe ao Analista decidir se o `GroupSwitcher` do header é removido, mantido como atalho secundário, ou redirecionado para a lógica central, desde que a fonte de verdade da troca seja a área de Grupos)
+- A seleção persiste ao navegar entre Jogos, Ranking e Palpites (e demais páginas do dashboard) sem regressão para o primeiro grupo por `joined_at ASC` e sem depender de o usuário manter `?group=` manualmente na URL
+- A seleção só muda quando o usuário a altera ativamente na área de Grupos
+- A persistência sobrevive a reload de página (mecanismo — cookie, localStorage, ou estado server-side — a critério do Analista, desde que atenda ao requisito)
+- Mantém compatibilidade com o fluxo existente para usuários sem grupo (redirect para `/grupos`) e com o membership check (`error: 'forbidden'`) de `resolveActiveGroup()`
+**Dependências:** grupos
