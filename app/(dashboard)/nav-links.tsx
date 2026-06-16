@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { href: '/jogos', label: 'JOGOS' },
   { href: '/ranking', label: 'RANKING' },
   { href: '/meus-palpites', label: 'PALPITES' },
+  { href: '/grupos', label: 'GRUPOS' },
   { href: '/como-pontuar', label: 'REGRAS' },
 ]
 
@@ -22,7 +23,10 @@ export function NavLinks() {
       }}
     >
       {NAV_ITEMS.map(({ href, label }) => {
-        const isActive = pathname === href || pathname.startsWith(href + '?')
+        const isActive =
+          pathname === href ||
+          pathname.startsWith(href + '?') ||
+          pathname.startsWith(href + '/')
         return (
           <Link
             key={href}
