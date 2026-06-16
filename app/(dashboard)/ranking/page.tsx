@@ -1,7 +1,10 @@
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { resolveActiveGroup } from '@/lib/active-group'
 import { RankingTable } from '@/components/bolao/RankingTable'
+
+const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
 export const metadata = {
   title: 'Ranking — Bolão da Copa',
@@ -22,7 +25,17 @@ export default async function RankingPage({ searchParams }: RankingPageProps) {
     redirect('/login')
   }
 
-  const activeGroup = await resolveActiveGroup(supabase, user.id, params.group, '/ranking')
+  const cookieStore = await cookies()
+  const cookieGroupId = cookieStore.get(ACTIVE_GROUP_COOKIE)?.value
+
+  const activeGroup = await resolveActiveGroup(
+    supabase,
+    user.id,
+    params.group,
+    '/ranking',
+    {},
+    cookieGroupId
+  )
 
   if ('error' in activeGroup) {
     return (
