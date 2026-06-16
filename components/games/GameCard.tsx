@@ -82,16 +82,9 @@ export default function GameCard({
       ? '0 × 0'
       : '- × -'
 
-  const cardBorderColor = isLive
-    ? 'var(--color-primary)'
-    : isFinished
-      ? 'var(--color-muted)'
-      : 'var(--color-border)'
-  const cardBg = isLive
-    ? 'rgba(0, 156, 59, 0.18)'
-    : isFinished
-      ? 'rgba(90, 122, 106, 0.2)'
-      : 'var(--color-surface)'
+  const cardBorderColor = isLive ? 'var(--color-primary)' : 'var(--color-border)'
+  const cardBorderStyle = isFinished ? 'dashed' : 'solid'
+  const cardBg = isLive ? 'rgba(0, 156, 59, 0.18)' : 'var(--color-surface)'
 
   // Handler chamado pelo PredictionForm ao concluir edição bem-sucedida
   function handleEditSuccess(updated: Prediction) {
@@ -102,17 +95,17 @@ export default function GameCard({
   return (
     <div
       style={{
-        border: `1px solid ${cardBorderColor}`,
+        border: `1px ${cardBorderStyle} ${cardBorderColor}`,
         backgroundColor: cardBg,
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
         overflow: 'hidden',
-        opacity: isFinished ? 0.72 : 1,
+        filter: isFinished ? 'grayscale(45%) opacity(0.75)' : undefined,
       }}
     >
       {/* Header do card: rodada · data · horário */}
       <div
         style={{
-          borderBottom: `1px solid ${cardBorderColor}`,
+          borderBottom: `1px ${cardBorderStyle} ${cardBorderColor}`,
           padding: '0.5rem 0.75rem',
           display: 'flex',
           justifyContent: 'space-between',
@@ -220,7 +213,7 @@ export default function GameCard({
       {/* Footer do card: status */}
       <div
         style={{
-          borderTop: `1px solid ${cardBorderColor}`,
+          borderTop: `1px ${cardBorderStyle} ${cardBorderColor}`,
           padding: '0.5rem 0.75rem',
           display: 'flex',
           alignItems: 'center',
