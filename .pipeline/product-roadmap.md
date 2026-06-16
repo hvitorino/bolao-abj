@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 21 features
+- Total: 22 features
 - Concluídas: 21
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -270,3 +270,24 @@ Criado em: 2026-06-13
 - Times e rodadas traduzidos para português com fallback seguro quando a tradução não existe
 **Dependências:** game-navigation
 **Observação:** feature implementada fora do fluxo padrão do pipeline (sem spec formal do Analista nem branch `feature/espn-sync` com merge via Revisor) — registrada aqui retroativamente para manter o roadmap fiel ao estado real do sistema em produção. Especificação técnica e changelog ficaram registrados em `.pipeline/espn-sync-spec.md`, `.pipeline/espn-sync-plan.md` e `.pipeline/espn-sync-changelog.md`, e passou por correções subsequentes (commits `1a0bd3c`, `78c68d8`, `2fc8ba5`, `853e927`) já incorporadas à main.
+
+---
+
+### 22. convites-nominais — Convites Nominais para Grupos — em progresso
+**Objetivo:** Permitir que o admin de um grupo convide ativamente uma pessoa específica (em vez de depender só de compartilhar manualmente o link reutilizável), criando um convite nominal rastreável que o destinatário vê e pode aceitar/recusar dentro do produto.
+
+**Decisão de escopo (análise do PM):** a feature `grupos` (item 20, já concluída) entregou criação de grupo e convite via **link reutilizável anônimo** — qualquer pessoa com o link entra, sem rastro de quem foi convidado nem confirmação de quem ainda não respondeu. A spec original de `grupos` listou explicitamente como fora de escopo: "Convite por e-mail/notificação push (o convite é só o link reutilizável copiável)". A solicitação do usuário ("enviar convites") aponta para esse gap real: hoje não existe nenhuma forma de convidar uma pessoa específica nem de ver/gerenciar convites pendentes.
+
+Avaliado o contexto do projeto (bolão pequeno entre amigos, sem provedor de e-mail configurado — `package.json` não tem `resend`/`nodemailer`/`sendgrid` nem qualquer SDK de envio de e-mail, e não há variável de ambiente de SMTP/API key documentada), envio de e-mail real foi descartado como desproporcional para esta entrega: exigiria contratar/configurar um provedor externo e verificar domínio, o que está fora do que o projeto tem hoje. O escopo desta feature é um **convite nominal dentro do produto**: o admin escolhe um usuário já cadastrado (por nome, ou e-mail se aplicável) e cria um convite endereçado a ele; o convite aparece como pendente para o admin (visibilidade de quem foi convidado e quem ainda não aceitou) e para o convidado (notificação dentro do app, ex: lista "convites pendentes" visível ao logar). Convite por link reutilizável continua existindo em paralelo (não é removido) — esta feature adiciona um segundo mecanismo, mais direcionado, sem substituir o primeiro.
+
+Envio por e-mail real fica registrado como sugestão futura (ver `product-final-report.md` quando atualizado).
+
+**Critérios de sucesso:**
+- Admin de um grupo consegue criar um convite nominal endereçado a um usuário específico já cadastrado no sistema (buscável por nome ou e-mail), sem precisar compartilhar link manualmente
+- O convite nominal fica em estado "pendente" e é visível ao admin na tela do grupo (quem foi convidado, quando, status)
+- O usuário convidado vê o convite pendente dentro do produto (ex: notificação/lista ao acessar `/grupos` ou dashboard) e consegue aceitar (entra no grupo como `member`) ou recusar
+- Convidar um usuário que já é membro do grupo, ou repetir o convite para a mesma pessoa enquanto pendente, é tratado de forma idempotente/com mensagem clara (sem duplicar convites nem erro confuso)
+- Mecanismo de convite por link reutilizável (feature `grupos`) continua funcionando sem regressão
+- Isolamento por grupo é preservado: convite nominal só é visível/gerenciável por quem é admin do grupo em questão; usuário só vê convites endereçados a ele mesmo
+
+**Dependências:** grupos
