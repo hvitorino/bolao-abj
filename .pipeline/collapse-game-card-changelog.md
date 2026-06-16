@@ -3,7 +3,7 @@
 **Slug:** collapse-game-card
 **Branch:** feature/collapse-game-card
 **Data:** 2026-06-16
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
