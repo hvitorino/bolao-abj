@@ -155,16 +155,24 @@ export default function GameParticipantsList({
                   ? `${p.prediction.home_score} × ${p.prediction.away_score}`
                   : '-'
 
-              // Pontuação parcial calculada client-side somente quando o jogo está ao vivo
-              // e o participante possui um palpite registrado.
-              const livePoints =
+              // Para jogos ao vivo: calcula resultado completo (points + breakdown)
+              // no cliente. Trata home/away_score null como 0 (placar inicial 0×0).
+              const liveResult =
                 showLivePoints && p.prediction && liveGame
-                  ? calculateLiveScore(liveGame, p.prediction)?.points ?? null
+                  ? calculateLiveScore(
+                      {
+                        home_score: liveGame.home_score ?? 0,
+                        away_score: liveGame.away_score ?? 0,
+                      },
+                      p.prediction
+                    )
                   : null
 
-              // Linha clicável (oferece breakdown) somente quando há palpite
-              // E score oficial já calculado (registro em `scores` existente).
-              const isExpandable = p.prediction !== null && p.breakdown !== null
+              const livePoints = liveResult?.points ?? null
+              const effectivePoints = showLivePoints ? livePoints : p.points
+              const effectiveBreakdown = showLivePoints ? (liveResult?.breakdown ?? null) : p.breakdown
+
+              const isExpandable = p.prediction !== null && effectiveBreakdown !== null
               const isExpanded = expandedUserId === p.userId
 
               function handleToggle() {
@@ -313,13 +321,13 @@ export default function GameParticipantsList({
                       </td>
                     )}
                   </tr>
-                  {isExpanded && p.breakdown && p.points !== null && (
+                  {isExpanded && effectiveBreakdown && effectivePoints !== null && (
                     <tr>
                       <td
                         colSpan={columnCount}
                         style={{ padding: 0, borderBottom: '1px solid var(--color-border)' }}
                       >
-                        <PredictionBreakdown points={p.points} breakdown={p.breakdown} />
+                        <PredictionBreakdown points={effectivePoints} breakdown={effectiveBreakdown} />
                       </td>
                     </tr>
                   )}
