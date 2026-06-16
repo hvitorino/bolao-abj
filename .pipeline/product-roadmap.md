@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 18 features
-- Concluídas: 17
-- Em progresso: 1
-- Pendentes: 0
+- Total: 19 features
+- Concluídas: 18
+- Em progresso: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -195,7 +195,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 16. fix-initial-state-load — Correção: Carregamento do Estado Inicial nos Hooks Realtime — em progresso
+### 16. fix-initial-state-load — Correção: Carregamento do Estado Inicial nos Hooks Realtime — concluída
 **Objetivo:** Garantir que os hooks de Realtime (useGameRealtime, useScoreRealtime) carreguem o estado inicial via fetch no mount, eliminando a tela vazia que ocorre ao recarregar a página enquanto aguarda o próximo evento Realtime chegar.
 **Critérios de sucesso:**
 - Ao carregar/recarregar a página, os dados dos jogos (placar, status) são exibidos imediatamente, sem esperar por evento Realtime
@@ -228,3 +228,16 @@ Criado em: 2026-06-13
 - Testes e validações adequados da mudança são realizados dentro do pipeline
 - O pipeline só termina após revisão/aprovação e merge, com os artefatos `.pipeline` atualizados
 **Dependências:** auth, game-navigation, predictions, game-participants-view
+
+---
+
+### 19. live-scoring — Pontuação em Tempo Real Durante Jogos ao Vivo — pendente
+**Objetivo:** Exibir, enquanto um jogo está com status `live`, a pontuação parcial/projetada de cada palpiteiro recalculada em tempo real a cada mudança de placar — aplicando as mesmas regras de `lib/scoring.ts`/`calculate_scores_for_game` ao placar atual (ainda não final) — em vez de só mostrar pontuação após o jogo terminar. Ao finalizar o jogo, a pontuação final oficial (já calculada via trigger) deve prevalecer sem inconsistência com a última pontuação parcial exibida.
+**Critérios de sucesso:**
+- Durante um jogo `live`, a pontuação de cada palpiteiro recalcula e atualiza na tela automaticamente conforme `home_score`/`away_score` mudam via Realtime, sem reload manual
+- A pontuação parcial usa exatamente a mesma lógica cumulativa de `lib/scoring.ts` (vencedor, placar exato, placar do vencedor, diferença de gols, placar do perdedor, goleada) aplicada ao placar parcial atual
+- A UI marca claramente que a pontuação exibida durante o jogo `live` é parcial/provisória (ex: indicador "AO VIVO" / "PROVISÓRIO"), distinguindo-a da pontuação final de `scores`
+- Ao `games.status` mudar para `finished`, a pontuação final calculada pelo trigger Postgres bate com a última pontuação parcial mostrada para o mesmo placar (mesma lógica, sem "pulo" de pontos inexplicado)
+- O cálculo parcial é client-side (reutilizando `calculateScore()` de `lib/scoring.ts` sobre os dados já recebidos via `useGameRealtime`/predictions), sem necessidade de nova tabela ou de persistir parcial em `scores` — `scores` continua reservada à pontuação oficial pós-jogo
+- O ranking (`/ranking`) também reflete a pontuação parcial de jogos `live` somada à pontuação oficial de jogos `finished`, e não apenas a pontuação oficial
+**Dependências:** auth, game-navigation, predictions, live-scores, live-scores-realtime, scoring, ranking, game-participants-view
