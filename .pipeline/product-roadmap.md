@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 23 features
+- Total: 24 features
 - Concluídas: 23
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -308,3 +308,15 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Mantém compatibilidade com o fluxo existente para usuários sem grupo (redirect para `/grupos`) e com o membership check (`error: 'forbidden'`) de `resolveActiveGroup()`
 **Dependências:** grupos
 **Observação de conclusão:** aprovada sem rodada de fix em 2026-06-16. O dropdown `GroupSwitcher` no header foi substituído por um cookie HTTP (`bolao_active_group`) que persiste o grupo ativo entre navegações no menu, reloads (F5) e sessões do navegador; deep links (`?group=`) continuam funcionando como override pontual sem persistir. A troca de grupo ativo passou a ocorrer explicitamente em `/grupos` ou `/grupos/[id]` via novo componente `AtivarGrupoButton`, que chama o novo endpoint `POST /api/groups/active`. `npm run lint` e `npm run build` passaram sem erros. Nenhuma migration nova; nenhuma alteração em RLS, regras de pontuação ou Realtime.
+
+---
+
+### 24. exemplos-por-regra — Exemplo Dedicado por Regra de Pontuação — em progresso
+**Objetivo:** Na página `/como-pontuar`, garantir que cada uma das 6 regras listadas em `ScoringRulesTable` tenha um exemplo de cálculo concreto e isolado demonstrando especificamente aquela regra, em vez de depender apenas de exemplos compostos genéricos.
+**Critérios de sucesso:**
+- Cada uma das 6 regras da tabela (acerto do vencedor, placar exato, somente placar do vencedor, diferença de gols correta, somente placar do perdedor, goleada) tem um exemplo de cálculo visível na página demonstrando especificamente aquela regra isolada (ou o mínimo de regras combinadas necessário para isolá-la sem confundir com outra)
+- Os exemplos deixam claro o vínculo com a regra correspondente da tabela (rótulo, ordem ou agrupamento visual que ligue exemplo à linha da tabela)
+- Nenhuma regressão nos exemplos/conteúdo já existentes que continuem válidos (empate, cumulatividade) — podem ser reaproveitados/ajustados dentro do novo conjunto
+- Cálculos exibidos são matematicamente corretos conforme `lib/scoring.ts`, idealmente validados contra a função real
+- Layout responsivo e visual seguem DESIGN.md, consistente com `ScoringExample`/`ScoringRulesTable` já existentes
+**Dependências:** como-pontuar
