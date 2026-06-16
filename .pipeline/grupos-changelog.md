@@ -3,7 +3,11 @@
 **Slug:** grupos
 **Branch:** feature/grupos
 **Data:** 2026-06-15
-**Status:** aguardando revisão
+**Status:** aprovado
+
+**Notas da revisão:** Aprovado sem ressalvas bloqueantes. Duas observações não-bloqueantes registradas para limpeza futura:
+1. A migration `group_scoped_rls` remove a policy `predictions_insert_own`, que na verdade já existia desde `20260613000003_create_predictions.sql` (a spec afirmava incorretamente que ela não existia antes). Funcionalmente inofensivo — todas as escritas passam pelo `service_role`, que ignora RLS.
+2. A view `ranking_view` (criada em `20260614000001_fix_ranking_all_profiles.sql`) não foi removida nem escopada por `group_id` nesta feature. Confirmado que não é referenciada em nenhum código de aplicação ativo (`grep` em todo o repo), portanto sem risco de vazamento de dados hoje. Recomenda-se removê-la ou escopá-la em uma limpeza futura.
 
 ---
 
