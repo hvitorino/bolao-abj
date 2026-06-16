@@ -59,6 +59,8 @@ export default function GameCard({
   )
   // Estado de edição — controla se o formulário está aberto no modo edição
   const [isEditing, setIsEditing] = useState(false)
+  // Estado de expansão da seção de palpites dos participantes — colapsado por padrão
+  const [isParticipantsExpanded, setIsParticipantsExpanded] = useState(false)
 
   // Subscreve ao canal Realtime do Supabase para este jogo específico.
   const { game: liveGame } = useGameRealtime(game.id, game)
@@ -435,14 +437,47 @@ export default function GameCard({
         )}
       </div>
 
-      {/* Seção de palpites de todos os participantes — sempre visível quando há dados */}
+      {/* Toggle de expansão — só aparece quando há participantes para mostrar */}
       {participants.length > 0 && (
-        <GameParticipantsList
-          participants={participants}
-          gameStatus={liveGame.status as 'pending' | 'live' | 'finished'}
-          currentUserId={userId}
-          liveGame={{ home_score: liveGame.home_score, away_score: liveGame.away_score }}
-        />
+        <button
+          type="button"
+          onClick={() => setIsParticipantsExpanded((prev) => !prev)}
+          aria-expanded={isParticipantsExpanded}
+          aria-controls={`participants-${liveGame.id}`}
+          style={{
+            width: '100%',
+            background: 'none',
+            border: 'none',
+            borderTopStyle: 'dashed',
+            borderTopWidth: '1px',
+            borderTopColor: 'var(--color-border)',
+            padding: '0.5rem 0.75rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0.4rem',
+            cursor: 'pointer',
+            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+            fontSize: '10px',
+            color: 'var(--color-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+          }}
+        >
+          {isParticipantsExpanded ? 'OCULTAR PALPITES ▴' : 'VER PALPITES ▾'}
+        </button>
+      )}
+
+      {/* Seção de palpites de todos os participantes — exibida sob demanda via toggle */}
+      {participants.length > 0 && isParticipantsExpanded && (
+        <div id={`participants-${liveGame.id}`}>
+          <GameParticipantsList
+            participants={participants}
+            gameStatus={liveGame.status as 'pending' | 'live' | 'finished'}
+            currentUserId={userId}
+            liveGame={{ home_score: liveGame.home_score, away_score: liveGame.away_score }}
+          />
+        </div>
       )}
     </div>
   )

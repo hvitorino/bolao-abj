@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [collapse-game-card] — Colapsar/Expandir Card de Jogo com Palpites dos Participantes — 2026-06-16
+
+- Cada `GameCard` em `/jogos` passa a carregar **colapsado** por padrão, ocultando a seção "PALPITES DOS PARTICIPANTES" (`GameParticipantsList`); novo estado local `isParticipantsExpanded` (`useState(false)`) em `components/games/GameCard.tsx`
+- Botão `<button type="button">` de toggle (renderizado apenas quando `participants.length > 0`) alterna a exibição, com texto `VER PALPITES ▾` (colapsado) / `OCULTAR PALPITES ▴` (expandido), `aria-expanded` e `aria-controls` corretos — focável via Tab, ativável via Enter/Espaço nativamente
+- Estado de expansão é local a cada card via `useState`: múltiplos cards podem ficar expandidos simultaneamente, sem interferência entre eles; ao trocar de dia na navegação, os cards do dia revisitado voltam a montar colapsados (comportamento natural de desmontagem/remontagem do React, sem mecanismo de persistência)
+- `useGameRealtime`/`useScoreRealtime` permanecem incondicionais no topo do componente — colapsar a seção de participantes não interrompe as subscriptions Realtime; placar e pontuação provisória continuam atualizando mesmo com o card colapsado
+- Feature puramente de UI/interação client-side: sem mudança de schema, sem migration, sem endpoint novo, sem alteração em `GameParticipantsList.tsx`, `GameList.tsx` ou `app/(dashboard)/jogos/page.tsx`
+
 ## [fix-loser-score-rule] — Correção da Regra "Somente Placar do Perdedor" — 2026-06-16
 
 - Inverte a condição do bônus "Somente placar do perdedor" (+1 pt) em `lib/scoring.ts` e na função Postgres `calculate_scores_for_game`: antes era concedido quando o usuário ERRAVA o vencedor mas acertava o placar de quem perdeu; agora exige que o usuário TAMBÉM tenha acertado o vencedor (mesmo pré-requisito já usado por "diferença de gols correta" e "somente placar do vencedor"), permanecendo mutuamente exclusivo com placar exato
