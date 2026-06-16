@@ -479,6 +479,7 @@ export default function GameCard({
           participants={participants}
           gameStatus={liveGame.status as 'pending' | 'live' | 'finished'}
           currentUserId={userId}
+          liveGame={{ home_score: liveGame.home_score, away_score: liveGame.away_score }}
         />
       )}
     </div>

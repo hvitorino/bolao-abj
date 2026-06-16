@@ -1,6 +1,8 @@
 'use client'
 
 import { useRankingRealtime } from '@/lib/hooks/useRankingRealtime'
+import { useLivePointsByUser } from '@/lib/hooks/useLivePointsByUser'
+import type { RankingEntry } from '@/lib/types/ranking'
 import { RankingRow } from './RankingRow'
 
 interface RankingTableProps {
@@ -16,10 +18,51 @@ function formatTime(date: Date): string {
   })
 }
 
+// Soma a pontuação parcial de jogos `live` à pontuação oficial e recalcula
+// `rank_position` no cliente (critério de empate: nome A-Z, igual ao backend).
+// `rank_position` reproduz a semântica de RANK() do Postgres usada por
+// `get_ranking()`: participantes com `total_points` idêntico recebem a
+// mesma posição (empate), e a próxima posição distinta usa `index + 1`
+// (não `count_anteriores + 1`), exatamente como RANK() faz ao pular números.
+// `aproveitamento` permanece inalterado — continua refletindo apenas jogos `finished`.
+function applyLivePoints(
+  ranking: RankingEntry[],
+  livePoints: Record<string, number>
+): RankingEntry[] {
+  const adjusted = ranking.map((entry) => ({
+    ...entry,
+    total_points: entry.total_points + (livePoints[entry.user_id] ?? 0),
+  }))
+
+  adjusted.sort((a, b) => {
+    if (b.total_points !== a.total_points) return b.total_points - a.total_points
+    return a.participant_name.localeCompare(b.participant_name, 'pt-BR')
+  })
+
+  let previousRank = 0
+  let previousPoints: number | null = null
+
+  return adjusted.map((entry, index) => {
+    const rank_position =
+      previousPoints !== null && entry.total_points === previousPoints
+        ? previousRank
+        : index + 1
+
+    previousRank = rank_position
+    previousPoints = entry.total_points
+
+    return { ...entry, rank_position }
+  })
+}
+
 export function RankingTable({ currentUserId }: RankingTableProps) {
   const { ranking, loading, error, lastUpdatedAt } = useRankingRealtime()
+  const { livePoints, loading: livePointsLoading } = useLivePointsByUser()
 
-  if (loading) {
+  const hasLivePoints = Object.values(livePoints).some((points) => points > 0)
+  const adjustedRanking = applyLivePoints(ranking, livePoints)
+
+  if (loading || livePointsLoading) {
     return (
       <div
         style={{
@@ -123,6 +166,12 @@ export function RankingTable({ currentUserId }: RankingTableProps) {
           >
             ● AO VIVO
           </span>
+          {/* Nota visível enquanto a soma de pontos provisórios de jogos `live` for > 0 para alguém */}
+          {hasLivePoints && (
+            <span style={{ color: 'var(--color-live)' }}>
+              INCLUI PONTOS PROVISÓRIOS
+            </span>
+          )}
           {/* Timestamp de última atualização — visível somente após o primeiro fetch bem-sucedido */}
           {lastUpdatedAt !== null && (
             <>
@@ -213,7 +262,7 @@ export function RankingTable({ currentUserId }: RankingTableProps) {
 
         {/* Tbody */}
         <tbody>
-          {ranking.map((entry) => (
+          {adjustedRanking.map((entry) => (
             <RankingRow
               key={entry.user_id}
               entry={entry}

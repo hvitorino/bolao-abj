@@ -165,3 +165,26 @@ export const BREAKDOWN_LABELS: Record<keyof ScoreBreakdown, string> = {
   loser_score: 'Placar do perdedor',
   goleada: 'Goleada',
 }
+
+/**
+ * Calcula a pontuação parcial/provisória de um palpite com base no placar
+ * momentâneo de um jogo ao vivo (`status === 'live'`).
+ *
+ * Reaproveita `calculateScore()` sem nenhuma reimplementação de regras —
+ * a única diferença é a tolerância a placar ainda não definido (`null`),
+ * retornando `null` nesse caso defensivo em vez de quebrar.
+ *
+ * @param game - Placar atual do jogo ao vivo (home_score/away_score podem ser null)
+ * @param prediction - Palpite do usuário (home_score, away_score)
+ * @returns ScoringResult com a pontuação parcial, ou `null` se o placar ainda não está definido
+ */
+export function calculateLiveScore(
+  game: { home_score: number | null; away_score: number | null },
+  prediction: PredictionScores
+): ScoringResult | null {
+  if (game.home_score === null || game.away_score === null) return null
+  return calculateScore(
+    { home_score: game.home_score, away_score: game.away_score },
+    prediction
+  )
+}
