@@ -34,7 +34,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'unauthorized', message: 'Autenticação requerida.' }, { status: 401 })
   }
 
-  const gameId = new URL(request.url).searchParams.get('game_id')
+  const searchParams = new URL(request.url).searchParams
+  const gameId = searchParams.get('game_id')
+  const groupId = searchParams.get('group_id')
+
   if (!gameId || !isValidUUID(gameId)) {
     return NextResponse.json(
       { error: 'invalid_params', message: 'game_id é obrigatório e deve ser um UUID válido.' },
@@ -42,11 +45,19 @@ export async function GET(request: NextRequest) {
     )
   }
 
+  if (!groupId || !isValidUUID(groupId)) {
+    return NextResponse.json(
+      { error: 'invalid_params', message: 'group_id é obrigatório e deve ser um UUID válido.' },
+      { status: 400 }
+    )
+  }
+
   const { data, error } = await serviceClient()
     .from('predictions')
-    .select('id,game_id,user_id,home_score,away_score,submitted_at')
+    .select('id,game_id,user_id,group_id,home_score,away_score,submitted_at')
     .eq('user_id', user.id)
     .eq('game_id', gameId)
+    .eq('group_id', groupId)
     .maybeSingle()
 
   if (error) {
@@ -63,18 +74,25 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'unauthorized', message: 'Autenticação requerida.' }, { status: 401 })
   }
 
-  let body: { game_id?: unknown; home_score?: unknown; away_score?: unknown }
+  let body: { game_id?: unknown; group_id?: unknown; home_score?: unknown; away_score?: unknown }
   try {
     body = await request.json()
   } catch {
     return NextResponse.json({ error: 'invalid_params', message: 'Body inválido.' }, { status: 422 })
   }
 
-  const { game_id: gameId, home_score: homeScore, away_score: awayScore } = body
+  const { game_id: gameId, group_id: groupId, home_score: homeScore, away_score: awayScore } = body
 
   if (typeof gameId !== 'string' || !isValidUUID(gameId)) {
     return NextResponse.json(
       { error: 'invalid_params', message: 'game_id é obrigatório e deve ser um UUID válido.' },
+      { status: 422 }
+    )
+  }
+
+  if (typeof groupId !== 'string' || !isValidUUID(groupId)) {
+    return NextResponse.json(
+      { error: 'invalid_params', message: 'group_id é obrigatório e deve ser um UUID válido.' },
       { status: 422 }
     )
   }
@@ -87,6 +105,25 @@ export async function POST(request: NextRequest) {
   }
 
   const db = serviceClient()
+
+  const { data: membership, error: membershipError } = await db
+    .from('group_members')
+    .select('id')
+    .eq('group_id', groupId)
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (membershipError) {
+    console.error('[api/predictions] membership lookup error:', membershipError)
+    return NextResponse.json({ error: 'server_error', message: 'Erro ao verificar participação no grupo.' }, { status: 500 })
+  }
+
+  if (!membership) {
+    return NextResponse.json(
+      { error: 'forbidden', message: 'Você não participa deste grupo.' },
+      { status: 403 }
+    )
+  }
 
   const { data: game, error: gameError } = await db
     .from('games')
@@ -119,6 +156,7 @@ export async function POST(request: NextRequest) {
     .select('id')
     .eq('user_id', user.id)
     .eq('game_id', gameId)
+    .eq('group_id', groupId)
     .maybeSingle()
 
   if (existing) {
@@ -133,6 +171,7 @@ export async function POST(request: NextRequest) {
     .insert({
       user_id: user.id,
       game_id: gameId,
+      group_id: groupId,
       home_score: homeScore as number,
       away_score: awayScore as number,
       submitted_at: new Date().toISOString(),
