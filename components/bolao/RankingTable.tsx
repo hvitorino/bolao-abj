@@ -7,6 +7,8 @@ import { RankingRow } from './RankingRow'
 
 interface RankingTableProps {
   currentUserId: string
+  groupId: string
+  groupName: string
 }
 
 // Formata data/hora local do usuário no formato HH:MM:SS
@@ -55,9 +57,9 @@ function applyLivePoints(
   })
 }
 
-export function RankingTable({ currentUserId }: RankingTableProps) {
-  const { ranking, loading, error, lastUpdatedAt } = useRankingRealtime()
-  const { livePoints, loading: livePointsLoading } = useLivePointsByUser()
+export function RankingTable({ currentUserId, groupId, groupName }: RankingTableProps) {
+  const { ranking, loading, error, lastUpdatedAt } = useRankingRealtime(groupId)
+  const { livePoints, loading: livePointsLoading } = useLivePointsByUser(groupId)
 
   const hasLivePoints = Object.values(livePoints).some((points) => points > 0)
   const adjustedRanking = applyLivePoints(ranking, livePoints)
@@ -144,7 +146,7 @@ export function RankingTable({ currentUserId }: RankingTableProps) {
             color: 'var(--color-text)',
           }}
         >
-          RANKING — BOLÃO DO CARTOLA ABJ
+          RANKING — {groupName.toUpperCase()}
         </span>
         <span
           style={{

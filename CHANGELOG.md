@@ -6,6 +6,22 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [grupos] — Grupos Privados (Bolões Isolados) — 2026-06-16
+
+- **Banco de dados (7 migrations, espelhadas em `supabase/migrations/` e `db/migrations/`):**
+  - `create_groups_and_members`: tabelas `groups`/`group_members`, função `is_group_member()` (`SECURITY DEFINER`), policies `groups_select_member`/`groups_insert_own`/`group_members_select_member`
+  - `add_group_id_to_predictions_and_scores`: coluna `group_id` nullable + índices em `predictions`/`scores`
+  - `seed_bolao_ingrisia_group`: cria grupo "Bolão da Ingrisia ABJ", torna "Hamon" admin, migra membros e dados existentes (backfill idempotente)
+  - `enforce_group_id_not_null`: `group_id` passa a `NOT NULL`; nova constraint `UNIQUE(user_id, game_id, group_id)` substitui a antiga `UNIQUE(user_id, game_id)`
+  - `group_scoped_rls`: policies de `SELECT` em `predictions`/`scores` reescritas para escopo por grupo via `is_group_member`
+  - `group_scoped_scoring_trigger`: `calculate_scores_for_game` passa a gravar `group_id`, sem nenhuma alteração na lógica de pontuação (regra de goleada `>=4`/`>=4` preservada)
+  - `get_ranking_by_group`: `get_ranking(p_group_id uuid)` substitui a função global, baseada em `group_members` filtrado por grupo
+- **Endpoints (Next.js Route Handlers):** `GET/POST /api/groups`, `GET /api/groups/[id]`, `GET /api/groups/resolve-invite`, `POST /api/groups/join`; `predictions` e `ranking` agora exigem `group_id` e validam membership (403 se não-membro)
+- **Componentes/páginas:** `/grupos`, `/grupos/novo`, `/grupos/[id]`, `/convite/[token]`, `GroupSwitcher`, `CreateGroupForm`, `CopyInviteLink`, `JoinGroupButton`; `/jogos`, `/ranking`, `/meus-palpites` escopados pelo grupo ativo via novo helper `lib/active-group.ts` (`resolveActiveGroup`)
+- `lib/hooks/useRankingRealtime.ts` e `lib/hooks/useLivePointsByUser.ts` passam a receber `groupId` e escopam os canais Realtime por grupo
+- `/login` e `/cadastro` passam a suportar `?redirect=`, com `useSearchParams()` envolvido em `Suspense` para preservar o build estático
+- Observações não-bloqueantes registradas na revisão: a policy legada `predictions_insert_own` (já existente antes desta feature) foi removida sem impacto, pois todas as escritas usam `service_role`; a view `ranking_view` (não utilizada por nenhum código de aplicação) não foi escopada por grupo e deve ser limpa em uma manutenção futura
+
 ## [live-scoring] — Pontuação em Tempo Real Durante Jogos ao Vivo — 2026-06-15
 
 - `lib/scoring.ts`: nova função `calculateLiveScore(game, prediction)` — reaproveita `calculateScore()` sem duplicar regras, tolera placar nulo (`home_score`/`away_score` ainda não definidos) retornando `null`

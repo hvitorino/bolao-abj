@@ -1,5 +1,7 @@
 import { dayBoundsInUTC, isValidDateString, todayInBrasilia } from '@/lib/date'
 import { createClient } from '@/lib/supabase/server'
+import { resolveActiveGroup } from '@/lib/active-group'
+import { redirect } from 'next/navigation'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
@@ -8,7 +10,7 @@ import DayNavigator from '@/components/games/DayNavigator'
 import GameList from '@/components/games/GameList'
 
 interface JogosPageProps {
-  searchParams: Promise<{ date?: string }>
+  searchParams: Promise<{ date?: string; group?: string }>
 }
 
 export default async function JogosPage({ searchParams }: JogosPageProps) {
@@ -24,6 +26,44 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
   const { start: startOfDay, end: endOfDay } = dayBoundsInUTC(currentDate)
 
   const supabase = await createClient()
+
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser()
+
+  if (!authUser) {
+    redirect('/login')
+  }
+
+  const activeGroup = await resolveActiveGroup(
+    supabase,
+    authUser.id,
+    params.group,
+    '/jogos',
+    { date: dateParam }
+  )
+
+  if ('error' in activeGroup) {
+    return (
+      <div
+        style={{
+          maxWidth: '480px',
+          margin: '0 auto',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          border: '1px solid var(--color-error)',
+          backgroundColor: 'var(--color-surface)',
+          padding: '1.5rem',
+          textAlign: 'center',
+          color: 'var(--color-error)',
+          fontSize: '13px',
+        }}
+      >
+        ✗ VOCÊ NÃO PARTICIPA DESTE GRUPO
+      </div>
+    )
+  }
+
+  const { groupId: activeGroupId, groupName: activeGroupName } = activeGroup
 
   // Buscar jogos do dia
   const { data: rawGames, error: gamesError } = await supabase
@@ -41,10 +81,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
       })
     : null
 
-  // Buscar usuário autenticado
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = authUser
 
   // Buscar palpites do usuário para os jogos do dia
   let predictionsByGameId: Record<string, Prediction> = {}
@@ -58,35 +95,38 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
     // Executar todas as queries em paralelo para evitar N+1
     const [
       { data: predictions, count },
-      { data: allProfiles },
+      { data: groupMembers },
       { data: allPredictions },
       { data: allScores },
     ] = await Promise.all([
-      // Palpites do usuário logado (com contagem para guessCount)
+      // Palpites do usuário logado neste grupo (com contagem para guessCount)
       supabase
         .from('predictions')
         .select('id, game_id, user_id, home_score, away_score, submitted_at', {
           count: 'exact',
         })
         .eq('user_id', user.id)
+        .eq('group_id', activeGroupId)
         .in('game_id', gameIds),
 
-      // Todos os perfis do bolão
+      // Membros do grupo ativo (substitui "todos os perfis do sistema")
       supabase
-        .from('profiles')
-        .select('id, name')
-        .order('name', { ascending: true }),
+        .from('group_members')
+        .select('user_id, profiles(id, name)')
+        .eq('group_id', activeGroupId),
 
-      // Palpites de todos os usuários nos jogos do dia
+      // Palpites de todos os membros do grupo ativo nos jogos do dia
       supabase
         .from('predictions')
         .select('id, game_id, user_id, home_score, away_score, submitted_at')
+        .eq('group_id', activeGroupId)
         .in('game_id', gameIds),
 
-      // Scores de todos os usuários nos jogos do dia
+      // Scores de todos os membros do grupo ativo nos jogos do dia
       supabase
         .from('scores')
         .select('*')
+        .eq('group_id', activeGroupId)
         .in('game_id', gameIds),
     ])
 
@@ -118,23 +158,33 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
       scoreByUserGame[`${s.user_id}:${s.game_id}`] = s.points
     }
 
+    type GroupMemberRow = {
+      user_id: string
+      profiles: { id: string; name: string } | { id: string; name: string }[] | null
+    }
+    const memberProfiles = ((groupMembers ?? []) as GroupMemberRow[])
+      .map((row) => {
+        const profile = Array.isArray(row.profiles) ? row.profiles[0] : row.profiles
+        return profile ? { id: profile.id, name: profile.name } : null
+      })
+      .filter((p): p is { id: string; name: string } => p !== null)
+      .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+
     for (const gameId of gameIds) {
-      participantsByGameId[gameId] = (allProfiles ?? []).map(
-        (profile: { id: string; name: string }) => {
-          const key = `${profile.id}:${gameId}`
-          const prediction = predByUserGame[key] ?? null
-          const points =
-            prediction !== null
-              ? (scoreByUserGame[key] ?? null)
-              : null
-          return {
-            userId: profile.id,
-            name: profile.name,
-            prediction,
-            points,
-          } as ParticipantEntry
-        }
-      )
+      participantsByGameId[gameId] = memberProfiles.map((profile) => {
+        const key = `${profile.id}:${gameId}`
+        const prediction = predByUserGame[key] ?? null
+        const points =
+          prediction !== null
+            ? (scoreByUserGame[key] ?? null)
+            : null
+        return {
+          userId: profile.id,
+          name: profile.name,
+          prediction,
+          points,
+        } as ParticipantEntry
+      })
     }
   }
 
@@ -179,6 +229,16 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         >
           COPA DO MUNDO 2026
         </span>
+        <span
+          style={{
+            color: 'var(--color-muted)',
+            fontSize: '12px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          · {activeGroupName.toUpperCase()}
+        </span>
       </div>
 
       {/* Erro ao buscar jogos */}
@@ -215,6 +275,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         scoresByGameId={scoresByGameId}
         participantsByGameId={participantsByGameId}
         userId={user?.id}
+        groupId={activeGroupId}
       />
     </div>
   )

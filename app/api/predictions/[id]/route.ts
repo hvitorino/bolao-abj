@@ -59,7 +59,7 @@ export async function PATCH(
   // 2. Buscar palpite existente
   const { data: prediction, error: predictionError } = await db
     .from('predictions')
-    .select('id,user_id,game_id,home_score,away_score,submitted_at')
+    .select('id,user_id,game_id,group_id,home_score,away_score,submitted_at')
     .eq('id', id)
     .maybeSingle()
 

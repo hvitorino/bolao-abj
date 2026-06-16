@@ -11,6 +11,7 @@ interface GameListProps {
   scoresByGameId?: Record<string, Score>
   participantsByGameId?: Record<string, ParticipantEntry[]>
   userId?: string
+  groupId: string
 }
 
 export default function GameList({
@@ -20,6 +21,7 @@ export default function GameList({
   scoresByGameId = {},
   participantsByGameId = {},
   userId,
+  groupId,
 }: GameListProps) {
   if (games.length === 0) {
     return (
@@ -110,6 +112,7 @@ export default function GameList({
                 score={scoresByGameId[game.id] ?? null}
                 participants={participantsByGameId[game.id] ?? []}
                 userId={userId}
+                groupId={groupId}
               />
             ))}
           </div>

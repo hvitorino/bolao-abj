@@ -19,6 +19,7 @@ interface GameCardProps {
   score?: Score | null
   participants?: ParticipantEntry[]
   userId?: string // necessário para filtrar Realtime por usuário
+  groupId: string // grupo ativo — enviado no POST/PATCH de predictions
 }
 
 // Formata horário do jogo para exibição em BRT (UTC-3)
@@ -50,6 +51,7 @@ export default function GameCard({
   score = null,
   participants = [],
   userId,
+  groupId,
 }: GameCardProps) {
   // Estado local da prediction — permite atualizar após edição sem reload
   const [currentPrediction, setCurrentPrediction] = useState<Prediction | null>(
@@ -345,6 +347,7 @@ export default function GameCard({
             {isEditing && currentPrediction && (
               <PredictionForm
                 gameId={liveGame.id}
+                groupId={groupId}
                 homeTeamCode={liveGame.home_team_code}
                 awayTeamCode={liveGame.away_team_code}
                 matchDate={liveGame.match_date}
@@ -371,6 +374,7 @@ export default function GameCard({
             {!currentPrediction && !isEditing && (
               <PredictionForm
                 gameId={liveGame.id}
+                groupId={groupId}
                 homeTeamCode={liveGame.home_team_code}
                 awayTeamCode={liveGame.away_team_code}
                 matchDate={liveGame.match_date}
