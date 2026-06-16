@@ -1,9 +1,9 @@
-import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from './logout-button'
 import { NavLinks } from './nav-links'
+import { GroupSwitcher } from './group-switcher'
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
@@ -61,23 +61,19 @@ export default async function DashboardLayout({
         style={{
           backgroundColor: 'var(--color-surface)',
           borderBottom: '1px solid var(--color-border)',
-          padding: '0.75rem 1.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '0.75rem',
+          padding: '0.625rem 1.5rem 0',
         }}
       >
-        {/* Logo + navegação principal */}
+        {/* Linha 1: grid 3 colunas */}
         <div
           style={{
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center',
-            gap: '2rem',
-            flexWrap: 'wrap',
+            paddingBottom: '0.5rem',
           }}
         >
+          {/* Col 1: logo à esquerda */}
           <span
             style={{
               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
@@ -91,94 +87,28 @@ export default async function DashboardLayout({
             BOLÃO DA COPA
           </span>
 
-          {/* Links de navegação */}
-          <NavLinks />
-        </div>
+          {/* Col 2: grupo ativo + convites (centralizado) */}
+          <GroupSwitcher
+            groups={groups}
+            activeGroupId={activeGroup?.id}
+            pendingInvitesCount={pendingInvitesCount ?? 0}
+          />
 
-        {/* Grupo ativo + usuário + logout */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            flexWrap: 'wrap',
-            minWidth: 0,
-          }}
-        >
-          {groups.length > 0 && activeGroup ? (
-            <Link
-              href="/grupos"
-              style={{
-                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                fontSize: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                color: 'var(--color-muted)',
-                textDecoration: 'none',
-                border: '1px solid var(--color-border)',
-                padding: '0.3rem 0.5rem',
-                maxWidth: '50vw',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              GRUPO: {activeGroup.name.toUpperCase()}
-            </Link>
-          ) : (
-            <Link
-              href="/grupos"
-              style={{
-                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                fontSize: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                color: 'var(--color-primary)',
-                textDecoration: 'none',
-                fontWeight: 'bold',
-                border: '1px solid var(--color-primary)',
-                padding: '0.3rem 0.5rem',
-              }}
-            >
-              CRIAR/ENTRAR EM UM GRUPO
-            </Link>
-          )}
-
-          {(pendingInvitesCount ?? 0) > 0 && (
-            <Link
-              href="/grupos"
-              style={{
-                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                fontSize: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                color: 'var(--color-accent)',
-                textDecoration: 'none',
-                fontWeight: 'bold',
-                border: '1px solid var(--color-accent)',
-                padding: '0.3rem 0.5rem',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              ✉ {pendingInvitesCount} {pendingInvitesCount === 1 ? 'CONVITE' : 'CONVITES'}
-            </Link>
-          )}
-          <span
-            className="hidden sm:inline-block"
+          {/* Col 3: email + logout à direita */}
+          <div
             style={{
-              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-              fontSize: '12px',
-              color: 'var(--color-muted)',
-              textTransform: 'uppercase',
-              maxWidth: '220px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
             }}
           >
-            {user.email}
-          </span>
-          <LogoutButton />
+            <LogoutButton />
+          </div>
+        </div>
+
+        {/* Linha 2: navegação */}
+        <div style={{ borderTop: '1px solid var(--color-border)' }}>
+          <NavLinks />
         </div>
       </header>
 

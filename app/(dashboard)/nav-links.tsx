@@ -19,6 +19,7 @@ export function NavLinks() {
       style={{
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: '1.5rem',
       }}
     >
@@ -39,10 +40,11 @@ export function NavLinks() {
               textDecoration: 'none',
               color: isActive ? 'var(--color-primary)' : 'var(--color-muted)',
               borderBottom: isActive
-                ? '1px solid var(--color-primary)'
-                : '1px solid transparent',
-              paddingBottom: '2px',
+                ? '2px solid var(--color-primary)'
+                : '2px solid transparent',
+              padding: '0.5rem 0',
               transition: 'color 0.15s ease, border-color 0.15s ease',
+              display: 'inline-block',
             }}
           >
             {label}
