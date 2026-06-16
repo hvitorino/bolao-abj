@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 19 features
-- Concluídas: 18
+- Concluídas: 19
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -231,7 +231,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 19. live-scoring — Pontuação em Tempo Real Durante Jogos ao Vivo — pendente
+### 19. live-scoring — Pontuação em Tempo Real Durante Jogos ao Vivo — concluída
 **Objetivo:** Exibir, enquanto um jogo está com status `live`, a pontuação parcial/projetada de cada palpiteiro recalculada em tempo real a cada mudança de placar — aplicando as mesmas regras de `lib/scoring.ts`/`calculate_scores_for_game` ao placar atual (ainda não final) — em vez de só mostrar pontuação após o jogo terminar. Ao finalizar o jogo, a pontuação final oficial (já calculada via trigger) deve prevalecer sem inconsistência com a última pontuação parcial exibida.
 **Critérios de sucesso:**
 - Durante um jogo `live`, a pontuação de cada palpiteiro recalcula e atualiza na tela automaticamente conforme `home_score`/`away_score` mudam via Realtime, sem reload manual
