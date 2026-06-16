@@ -1,17 +1,21 @@
 import { ParticipantEntry } from '@/lib/types/participant'
+import { calculateLiveScore } from '@/lib/scoring'
 
 interface GameParticipantsListProps {
   participants: ParticipantEntry[]
   gameStatus: 'pending' | 'live' | 'finished'
   currentUserId?: string
+  liveGame?: { home_score: number | null; away_score: number | null } // placar atual ao vivo
 }
 
 export default function GameParticipantsList({
   participants,
   gameStatus,
   currentUserId,
+  liveGame,
 }: GameParticipantsListProps) {
   const showPoints = gameStatus === 'finished'
+  const showLivePoints = gameStatus === 'live'
   const isPending = gameStatus === 'pending'
 
   return (
@@ -25,14 +29,36 @@ export default function GameParticipantsList({
       {/* Título da seção */}
       <div
         style={{
-          fontSize: '10px',
-          color: 'var(--color-muted)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'space-between',
+          alignItems: 'baseline',
+          gap: '0.5rem',
           marginBottom: '0.5rem',
         }}
       >
-        PALPITES DOS PARTICIPANTES
+        <span
+          style={{
+            fontSize: '10px',
+            color: 'var(--color-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+          }}
+        >
+          PALPITES DOS PARTICIPANTES
+        </span>
+        {showLivePoints && (
+          <span
+            style={{
+              fontSize: '9px',
+              color: 'var(--color-live)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+            }}
+          >
+            * PROVISÓRIO — RECALCULADO AO VIVO
+          </span>
+        )}
       </div>
 
       {/* Estado vazio */}
@@ -90,7 +116,7 @@ export default function GameParticipantsList({
               >
                 PALPITE
               </th>
-              {showPoints && (
+              {(showPoints || showLivePoints) && (
                 <th
                   style={{
                     textAlign: 'right',
@@ -104,7 +130,7 @@ export default function GameParticipantsList({
                     paddingLeft: '0.75rem',
                   }}
                 >
-                  PTS
+                  {showLivePoints ? 'PTS*' : 'PTS'}
                 </th>
               )}
             </tr>
@@ -118,6 +144,13 @@ export default function GameParticipantsList({
                 : p.prediction
                   ? `${p.prediction.home_score} × ${p.prediction.away_score}`
                   : '-'
+
+              // Pontuação parcial calculada client-side somente quando o jogo está ao vivo
+              // e o participante possui um palpite registrado.
+              const livePoints =
+                showLivePoints && p.prediction && liveGame
+                  ? calculateLiveScore(liveGame, p.prediction)?.points ?? null
+                  : null
 
               return (
                 <tr key={p.userId}>
@@ -169,7 +202,7 @@ export default function GameParticipantsList({
                     {predictionLabel}
                   </td>
 
-                  {/* Coluna PTS — somente quando jogo encerrado */}
+                  {/* Coluna PTS — pontuação oficial (finished) ou provisória (live) */}
                   {showPoints && (
                     <td
                       style={{
@@ -190,6 +223,29 @@ export default function GameParticipantsList({
                         ? '-'
                         : p.points !== null
                           ? `+${p.points}`
+                          : '-'}
+                    </td>
+                  )}
+                  {showLivePoints && (
+                    <td
+                      style={{
+                        padding: '0.35rem 0',
+                        paddingLeft: '0.75rem',
+                        borderBottom: '1px solid var(--color-border)',
+                        textAlign: 'right',
+                        fontWeight: 'bold',
+                        color:
+                          p.prediction === null
+                            ? 'var(--color-muted)'
+                            : livePoints !== null && livePoints > 0
+                              ? 'var(--color-live)'
+                              : 'var(--color-muted)',
+                      }}
+                    >
+                      {p.prediction === null
+                        ? '-'
+                        : livePoints !== null
+                          ? `+${livePoints}`
                           : '-'}
                     </td>
                   )}
