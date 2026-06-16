@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [live-scoring] — Pontuação em Tempo Real Durante Jogos ao Vivo — 2026-06-15
+
+- `lib/scoring.ts`: nova função `calculateLiveScore(game, prediction)` — reaproveita `calculateScore()` sem duplicar regras, tolera placar nulo (`home_score`/`away_score` ainda não definidos) retornando `null`
+- `components/bolao/GameParticipantsList.tsx`: nova prop `liveGame`; durante jogos `status === 'live'`, exibe coluna `PTS*` com pontuação parcial por participante (`color-live`), `-` para quem não tem palpite, e legenda `* PROVISÓRIO — RECALCULADO AO VIVO`
+- `components/games/GameCard.tsx`: passa `liveGame` (placar já mantido por `useGameRealtime`) para `GameParticipantsList`, sem nova subscription
+- `lib/hooks/useLivePointsByUser.ts` (novo): busca jogos `live` + palpites, calcula pontuação parcial agregada por `user_id`, assina canal Realtime `live-points-games` (tabela `games`, evento `UPDATE`) com debounce de 1000ms; degrada graciosamente em erro de rede (loga no console, mantém último valor)
+- `components/bolao/RankingTable.tsx`: combina `useRankingRealtime()` + `useLivePointsByUser()`; soma pontuação oficial + pontos parciais de jogos `live`, reordena e recalcula `rank_position` no cliente reproduzindo a semântica de `RANK()` do Postgres (empates recebem a mesma posição, próxima posição distinta "pula" o número de empatados); exibe nota `INCLUI PONTOS PROVISÓRIOS` quando aplicável; `aproveitamento` permanece calculado apenas sobre jogos `finished`
+- Nenhuma migration, nenhum endpoint Ruby novo, nenhuma escrita em `scores` — cálculo 100% client-side, sem persistência
+- Correção pós-revisão (fix-1): `rank_position` calculado por `applyLivePoints()` inicialmente usava numeração sequencial estrita (`index + 1`), causando regressão visual em empates no topo do ranking (apenas um líder marcado com `►`); corrigido para herdar a posição do item anterior quando os pontos totais são iguais, reproduzindo `RANK() OVER (ORDER BY total_points DESC)` usado por `get_ranking()`
+
 ## [fix-live-sync] — Correção: Status ao Vivo e Polling de Fallback — 2026-06-15
 
 - `mapStatus` corrigido em `app/api/admin/sync-games/route.ts` e `supabase/functions/sync-games/index.ts`: passa a usar `event.status.type.state` (`"pre"` | `"in"` | `"post"`) em vez de `name` (`STATUS_IN_PROGRESS`), cobrindo todos os status ao vivo da ESPN (`STATUS_FIRST_HALF`, `STATUS_SECOND_HALF`, `STATUS_HALF_TIME`, etc.)
