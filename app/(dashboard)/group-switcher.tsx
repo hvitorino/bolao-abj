@@ -41,6 +41,10 @@ export function GroupSwitcher({ groups, activeGroupId }: GroupSwitcherProps) {
         border: '1px solid var(--color-border)',
         padding: '0.3rem 0.5rem',
         cursor: 'pointer',
+        maxWidth: '50vw',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
       }}
     >
       {groups.map((g) => (

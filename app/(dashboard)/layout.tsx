@@ -81,7 +81,9 @@ export default async function DashboardLayout({
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '1rem',
+            gap: '0.75rem',
+            flexWrap: 'wrap',
+            minWidth: 0,
           }}
         >
           {groups.length > 0 ? (
@@ -105,11 +107,16 @@ export default async function DashboardLayout({
             </Link>
           )}
           <span
+            className="hidden sm:inline-block"
             style={{
               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
               fontSize: '12px',
               color: 'var(--color-muted)',
               textTransform: 'uppercase',
+              maxWidth: '220px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             }}
           >
             {user.email}

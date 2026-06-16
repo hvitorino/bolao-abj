@@ -133,6 +133,8 @@ export function RankingTable({ currentUserId, groupId, groupName }: RankingTable
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
           backgroundColor: 'var(--color-surface)',
         }}
       >

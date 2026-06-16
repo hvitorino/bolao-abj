@@ -204,8 +204,9 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
           paddingBottom: '0.75rem',
           borderBottom: '1px solid var(--color-border)',
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'baseline',
           gap: '0.75rem',
+          flexWrap: 'wrap',
         }}
       >
         <span
