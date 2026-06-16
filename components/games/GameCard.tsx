@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
@@ -44,13 +44,6 @@ function formatMatchDate(matchDate: string): string {
     .replace(/ DE /g, ' ')
 }
 
-// Formata o tempo decorrido desde a última atualização do placar
-function formatElapsed(date: Date): string {
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
-  if (seconds < 60) return `${seconds}s`
-  return `${Math.floor(seconds / 60)}min`
-}
-
 export default function GameCard({
   game,
   prediction = null,
@@ -65,12 +58,8 @@ export default function GameCard({
   // Estado de edição — controla se o formulário está aberto no modo edição
   const [isEditing, setIsEditing] = useState(false)
 
-  // Tick de 10s para recalcular o texto "atualizado há Xs" sem reload
-  const [tick, setTick] = useState(0)
-
   // Subscreve ao canal Realtime do Supabase para este jogo específico.
-  // Desestrutura o novo retorno: { game: liveGame, lastUpdatedAt, connectionStatus }
-  const { game: liveGame, lastUpdatedAt } = useGameRealtime(game.id, game)
+  const { game: liveGame } = useGameRealtime(game.id, game)
 
   // Subscreve ao score do usuário para este jogo.
   // liveScore atualiza quando o trigger Postgres calcula pontuação após jogo encerrado.
@@ -89,17 +78,6 @@ export default function GameCard({
 
   const cardBorderColor = isLive ? 'var(--color-primary)' : 'var(--color-border)'
   const cardBg = isLive ? 'rgba(0, 156, 59, 0.18)' : 'var(--color-surface)'
-
-  // Tick de 10s — criado apenas quando o jogo está ao vivo para economizar recursos.
-  // Ao atualizar `tick`, causa re-render que recalcula formatElapsed(lastUpdatedAt).
-  useEffect(() => {
-    if (!isLive) return
-    const interval = setInterval(() => setTick(t => t + 1), 10_000)
-    return () => clearInterval(interval)
-  }, [isLive])
-
-  // Suprime aviso de variável não usada: tick é consumido indiretamente via re-render
-  void tick
 
   // Handler chamado pelo PredictionForm ao concluir edição bem-sucedida
   function handleEditSuccess(updated: Prediction) {
@@ -268,26 +246,6 @@ export default function GameCard({
             >
               {matchTime} BRT
             </span>
-            {lastUpdatedAt !== null && (
-              <>
-                <span
-                  style={{
-                    color: 'var(--color-muted)',
-                    fontSize: '11px',
-                  }}
-                >
-                  ·
-                </span>
-                <span
-                  style={{
-                    color: 'var(--color-muted)',
-                    fontSize: '11px',
-                  }}
-                >
-                  atualizado há {formatElapsed(lastUpdatedAt)}
-                </span>
-              </>
-            )}
           </>
         )}
 
