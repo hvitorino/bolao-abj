@@ -101,7 +101,7 @@ export default async function MeusPalpitesPage({ searchParams }: MeusPalpitesPag
     )
   }
 
-  const { groupId: activeGroupId, groupName: activeGroupName } = activeGroup
+  const { groupId: activeGroupId } = activeGroup
 
   // 1. Buscar todos os palpites do usuário neste grupo (mais recentes primeiro)
   const { data: predictions } = await supabase
@@ -161,54 +161,6 @@ export default async function MeusPalpitesPage({ searchParams }: MeusPalpitesPag
         margin: '0 auto',
       }}
     >
-      {/* Cabeçalho */}
-      <div
-        style={{
-          marginBottom: '1.25rem',
-          paddingBottom: '0.75rem',
-          borderBottom: '1px solid var(--color-border)',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'baseline',
-            gap: '0.75rem',
-            flexWrap: 'wrap',
-          }}
-        >
-          <span
-            style={{
-              fontSize: '14px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              color: 'var(--color-primary)',
-            }}
-          >
-            MEUS PALPITES — {activeGroupName.toUpperCase()}
-          </span>
-          <span
-            style={{
-              color: 'var(--color-muted)',
-              fontSize: '11px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-            }}
-          >
-            {rows.length} palpite{rows.length !== 1 ? 's' : ''}
-            {totalPoints > 0 && (
-              <>
-                {' '}·{' '}
-                <span style={{ color: 'var(--color-accent)' }}>
-                  {totalPoints} pontos no total
-                </span>
-              </>
-            )}
-          </span>
-        </div>
-      </div>
-
       {/* Estado vazio */}
       {rows.length === 0 && (
         <div
