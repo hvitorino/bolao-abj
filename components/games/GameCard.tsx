@@ -412,8 +412,8 @@ export default function GameCard({
                   submittedAt={currentPrediction.submitted_at}
                   // Sem onEditRequest — jogos ao vivo/encerrados não exibem botão de edição
                 />
-                {/* Breakdown de pontuação — visível quando jogo encerrado e score calculado */}
-                {isFinished &&
+                {/* Breakdown de pontuação — visível quando jogo ao vivo ou encerrado e score calculado */}
+                {(isLive || isFinished) &&
                   liveScore &&
                   liveGame.home_score !== null &&
                   liveGame.away_score !== null && (
