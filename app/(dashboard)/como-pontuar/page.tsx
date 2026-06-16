@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Como Pontuar — Bolão da Copa',
 }
 
-// Exemplo 1 — Regra 1: Acerto do vencedor (BRA 2×0 MEX, palpite 1×0) → +3 pts
+// Exemplo 1 — Regra 1: Acerto do vencedor (BRA 2×0 MEX, palpite 3×2) → +3 pts
 // Confirmado contra calculateScore(): breakdown {winner:3, exact:0, winner_score:0, diff:0, loser_score:0, goleada:0}
 const EXEMPLO_1 = {
   title: 'EXEMPLO 1 — ACERTO DO VENCEDOR',
@@ -16,8 +16,8 @@ const EXEMPLO_1 = {
   awayTeam: 'MEX',
   homeScore: 2,
   awayScore: 0,
-  predHome: 1,
-  predAway: 0,
+  predHome: 3,
+  predAway: 2,
   breakdown: [
     { label: 'Acertou o vencedor', points: 3, hit: true },
     { label: 'Placar exato', points: 0, hit: false },
@@ -25,7 +25,7 @@ const EXEMPLO_1 = {
     { label: 'Diferença de gols correta', points: 0, hit: false },
   ],
   total: 3,
-  note: 'Acertou que o BRA venceria, mas errou a diferença de gols (real=2, palpite=1) e o placar do vencedor (real=2, palpite=1). Nenhum bônus adicional se aplica.',
+  note: 'Acertou que o BRA venceria, mas errou o placar do vencedor (real=2, palpite=3), a diferença de gols (real=2, palpite=1) e o placar do perdedor (real=0, palpite=2). Nenhum bônus adicional se aplica.',
 }
 
 // Exemplo 2 — Regra 2: Placar exato (BRA 3×1 ARG, palpite 3×1) → +8 pts
@@ -90,8 +90,8 @@ const EXEMPLO_4 = {
   note: 'Diferença real e do palpite são iguais (2 gols), mas nenhum dos dois placares individuais bateu exatamente (BRA: palpite 3 ≠ real 2; MEX: palpite 1 ≠ real 0). Ainda assim, acertar a diferença com o vencedor certo garante o bônus de +2.',
 }
 
-// Exemplo 5 — Regra 5: Somente placar do perdedor (BRA 3×1 ARG, palpite 0×1) → +1 pt
-// Confirmado contra calculateScore(): breakdown {winner:0, exact:0, winner_score:0, diff:0, loser_score:1, goleada:0}
+// Exemplo 5 — Regra 5: Somente placar do perdedor (BRA 3×1 ARG, palpite 2×1) → +4 pts
+// Confirmado contra calculateScore(): breakdown {winner:3, exact:0, winner_score:0, diff:0, loser_score:1, goleada:0}
 const EXEMPLO_5 = {
   title: 'EXEMPLO 5 — SOMENTE PLACAR DO PERDEDOR',
   ruleLabel: 'Somente placar do perdedor',
@@ -99,18 +99,21 @@ const EXEMPLO_5 = {
   awayTeam: 'ARG',
   homeScore: 3,
   awayScore: 1,
-  predHome: 0,
+  predHome: 2,
   predAway: 1,
   breakdown: [
-    { label: 'Acertou o vencedor', points: 0, hit: false },
+    { label: 'Acertou o vencedor', points: 3, hit: true },
+    { label: 'Placar exato', points: 0, hit: false },
+    { label: 'Somente placar do vencedor', points: 0, hit: false },
+    { label: 'Diferença de gols correta', points: 0, hit: false },
     { label: 'Somente placar do perdedor', points: 1, hit: true },
   ],
-  total: 1,
-  note: 'Mesmo errando completamente o vencedor (palpite indicava ARG vencendo, mas o BRA venceu), o placar do time que de fato perdeu (ARG, 1 gol) foi acertado. Esse bônus é o único que não exige acertar o vencedor — é avaliado de forma independente.',
+  total: 4,
+  note: 'Acertou que o BRA venceria (placar do vencedor errado: real=3, palpite=2; diferença real=2, palpite=1) e, além disso, acertou exatamente o placar do time que perdeu (ARG, 1 gol). Esse bônus agora exige ter acertado o vencedor — diferente da versão anterior da regra.',
 }
 
-// Exemplo 6 — Regra 6: Goleada (BRA 5×0 MEX, palpite 4×0) → +4 pts
-// Confirmado contra calculateScore(): breakdown {winner:3, exact:0, winner_score:0, diff:0, loser_score:0, goleada:1}
+// Exemplo 6 — Regra 6: Goleada (BRA 5×0 MEX, palpite 4×0) → +5 pts
+// Confirmado contra calculateScore(): breakdown {winner:3, exact:0, winner_score:0, diff:0, loser_score:1, goleada:1}
 const EXEMPLO_6 = {
   title: 'EXEMPLO 6 — GOLEADA',
   ruleLabel: 'Goleada',
@@ -125,10 +128,11 @@ const EXEMPLO_6 = {
     { label: 'Placar exato', points: 0, hit: false },
     { label: 'Somente placar do vencedor', points: 0, hit: false },
     { label: 'Diferença de gols correta', points: 0, hit: false },
+    { label: 'Somente placar do perdedor', points: 1, hit: true },
     { label: 'Goleada', points: 1, hit: true },
   ],
-  total: 4,
-  note: 'Goleada é cumulativa com o acerto do vencedor e independente de acertar o placar exato ou a diferença: basta o vencedor do palpite ter feito 4+ gols (palpite: BRA fez 4) E a diferença real do jogo ter sido de 4+ gols (real: 5−0=5).',
+  total: 5,
+  note: 'Goleada é cumulativa com o acerto do vencedor e independente de acertar o placar exato ou a diferença: basta o vencedor do palpite ter feito 4+ gols (palpite: BRA fez 4) E a diferença real do jogo ter sido de 4+ gols (real: 5−0=5). Neste cenário, o placar do perdedor (MEX, 0 gols) também bateu, somando o bônus de "somente placar do perdedor" (+1).',
 }
 
 // Exemplo Bônus — Empate exato (ALE 1×1 FRA, palpite 1×1) → +8 pts
