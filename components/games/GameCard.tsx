@@ -67,7 +67,6 @@ export default function GameCard({
   const [isParticipantsExpanded, setIsParticipantsExpanded] = useState(false)
   // Estado de hover do toggle — inverte cores para reforçar que é clicável
   const [isHoveringToggle, setIsHoveringToggle] = useState(false)
-  const [isHoveringEdit, setIsHoveringEdit] = useState(false)
 
   // Subscreve ao canal Realtime do Supabase para este jogo específico.
   const { game: liveGame } = useGameRealtime(game.id, game)
@@ -128,39 +127,15 @@ export default function GameCard({
         >
           {liveGame.round}
         </span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span
-            style={{
-              color: 'var(--color-muted)',
-              fontSize: '11px',
-              textTransform: 'uppercase',
-            }}
-          >
-            {formatMatchDate(liveGame.match_date)}
-          </span>
-          {canEdit && !isEditing && (
-            <button
-              type="button"
-              title="Editar palpite"
-              onClick={() => setIsEditing(true)}
-              onMouseEnter={() => setIsHoveringEdit(true)}
-              onMouseLeave={() => setIsHoveringEdit(false)}
-              style={{
-                background: 'none',
-                border: '1px solid var(--color-primary)',
-                color: isHoveringEdit ? 'var(--color-bg)' : 'var(--color-primary)',
-                backgroundColor: isHoveringEdit ? 'var(--color-primary)' : 'transparent',
-                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                fontSize: '11px',
-                lineHeight: 1,
-                padding: '0.1rem 0.3rem',
-                cursor: 'pointer',
-              }}
-            >
-              ✎
-            </button>
-          )}
-        </div>
+        <span
+          style={{
+            color: 'var(--color-muted)',
+            fontSize: '11px',
+            textTransform: 'uppercase',
+          }}
+        >
+          {formatMatchDate(liveGame.match_date)}
+        </span>
       </div>
 
       {/* Corpo do card: times e placar */}
@@ -405,6 +380,7 @@ export default function GameCard({
                 homeTeamCode={liveGame.home_team_code}
                 awayTeamCode={liveGame.away_team_code}
                 submittedAt={currentPrediction.submitted_at}
+                onEditRequest={canEdit ? () => setIsEditing(true) : undefined}
               />
             )}
 
