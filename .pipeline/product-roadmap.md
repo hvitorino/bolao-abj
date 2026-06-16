@@ -3,8 +3,8 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 24 features
-- Concluídas: 24
+- Total: 25 features
+- Concluídas: 25
 - Em progresso: 0
 - Pendentes: 0
 
@@ -321,3 +321,16 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Layout responsivo e visual seguem DESIGN.md, consistente com `ScoringExample`/`ScoringRulesTable` já existentes
 **Dependências:** como-pontuar
 **Observação de conclusão:** aprovada e mergeada em 2026-06-16 (commit `2f7e9f7`, `merge(feature/exemplos-por-regra)`). Seis exemplos isolados criados, um por regra, na mesma ordem de `SCORING_RULES`/`ScoringRulesTable`, mais um exemplo complementar de empate em subseção própria. Nova prop opcional `ruleLabel` em `ScoringExample.tsx` faz o vínculo visual exemplo↔regra. Grid responsivo ajustado para breakpoint intermediário (640px/1024px) evitando cards apertados em tablet. Valores validados contra `calculateScore()` real via script ad-hoc (não commitado). `npm run lint` e `npm run build` limpos.
+
+---
+
+### 25. fix-loser-score-rule — Correção da Regra "Somente Placar do Perdedor" — concluída
+**Objetivo:** Corrigir a condição de concessão do bônus "Somente placar do perdedor" (+1 pt) para exigir também o acerto do vencedor do jogo — a regra anterior concedia o bônus justamente quando o vencedor era errado, contradizendo a tabela de pontuação do `CLAUDE.md`.
+**Critérios de sucesso:**
+- `lib/scoring.ts` só concede `loser_score_points` quando `predWinner === realWinner` (mesma estrutura usada por `winner_score_points`/`diff_points`), e o branch de vencedor errado não concede nenhum bônus
+- Função Postgres `calculate_scores_for_game` espelha exatamente a mesma condição, via nova migration idempotente que não edita migrations já aplicadas
+- Migration recalcula retroativamente os `scores` de jogos `finished` já gravados pela regra antiga
+- `CLAUDE.md`, `ScoringRulesTable.tsx` e os exemplos afetados em `/como-pontuar` (EXEMPLO_1, EXEMPLO_5, EXEMPLO_6) refletem a regra corrigida sem regressão nas demais regras de pontuação
+- Validação exaustiva (simulação de todos os placares possíveis) confirma exclusividade mútua entre `winner_score`, `diff` e `loser_score`, sem dupla contagem
+**Dependências:** scoring
+**Observação:** correção pontual de regra de negócio (branch `fix/fix-loser-score-rule`, fora do fluxo `feature/`), análoga a `fix-goleada-scoring` (item 12). Aprovada sem rodada de fix em 2026-06-16. Migration `supabase/migrations/20260616130000_fix_loser_score_rule.sql` criada mas **não aplicada** ao banco de produção — aplicação pendente, a ser feita via skill `supabase-migration` quando solicitada explicitamente. `npm run lint` e `npm run build` limpos.
