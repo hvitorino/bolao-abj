@@ -22,6 +22,10 @@
 --   SELECT COUNT(*) FROM scores      WHERE group_id IS NULL; -- deve ser 0
 -- Só então aplicar 20260615120300 (NOT NULL + nova constraint).
 
+-- gen_random_bytes (usado no token de convite) vem da extensão pgcrypto,
+-- que não estava habilitada neste projeto.
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 DO $$
 DECLARE
   v_group_id  uuid;
