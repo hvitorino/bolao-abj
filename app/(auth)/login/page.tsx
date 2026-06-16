@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
@@ -21,6 +21,8 @@ function mapErrorMessage(error: string): string {
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/jogos'
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [estado, setEstado] = useState<FormState>('idle')
@@ -44,7 +46,7 @@ export default function LoginPage() {
     }
 
     setEstado('success')
-    router.push('/jogos')
+    router.push(redirectTo)
   }
 
   const cardStyle: React.CSSProperties = {
@@ -162,7 +164,7 @@ export default function LoginPage() {
       >
         Não tem conta?{' '}
         <Link
-          href="/cadastro"
+          href={searchParams.get('redirect') ? `/cadastro?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : '/cadastro'}
           style={{
             color: 'var(--color-primary)',
             textDecoration: 'none',

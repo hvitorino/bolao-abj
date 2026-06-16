@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/Button'
@@ -21,6 +21,8 @@ function mapErrorMessage(error: string): string {
 
 export default function CadastroPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirect') || '/jogos'
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
@@ -68,7 +70,7 @@ export default function CadastroPage() {
 
     // Confirmação desativada — redireciona direto
     setEstado('success')
-    router.push('/jogos')
+    router.push(redirectTo)
   }
 
   const cardStyle: React.CSSProperties = {
@@ -225,7 +227,7 @@ export default function CadastroPage() {
       >
         Já tem conta?{' '}
         <Link
-          href="/login"
+          href={searchParams.get('redirect') ? `/login?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : '/login'}
           style={{
             color: 'var(--color-primary)',
             textDecoration: 'none',
