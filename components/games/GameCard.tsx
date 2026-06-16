@@ -82,8 +82,16 @@ export default function GameCard({
       ? '0 × 0'
       : '- × -'
 
-  const cardBorderColor = isLive ? 'var(--color-primary)' : 'var(--color-border)'
-  const cardBg = isLive ? 'rgba(0, 156, 59, 0.18)' : 'var(--color-surface)'
+  const cardBorderColor = isLive
+    ? 'var(--color-primary)'
+    : isFinished
+      ? 'var(--color-muted)'
+      : 'var(--color-border)'
+  const cardBg = isLive
+    ? 'rgba(0, 156, 59, 0.18)'
+    : isFinished
+      ? 'rgba(90, 122, 106, 0.08)'
+      : 'var(--color-surface)'
 
   // Handler chamado pelo PredictionForm ao concluir edição bem-sucedida
   function handleEditSuccess(updated: Prediction) {
@@ -292,11 +300,15 @@ export default function GameCard({
               style={{
                 color: 'var(--color-muted)',
                 fontSize: '11px',
+                fontWeight: 'bold',
                 textTransform: 'uppercase',
-                letterSpacing: '0.05em',
+                letterSpacing: '0.08em',
+                border: '1px solid var(--color-muted)',
+                padding: '0.1rem 0.4rem',
+                flexShrink: 0,
               }}
             >
-              ENCERRADO
+              □ ENCERRADO
             </span>
             <span
               style={{
