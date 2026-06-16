@@ -8,6 +8,7 @@ const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
+import type { ScoreBreakdown } from '@/lib/types/score'
 import { ParticipantEntry } from '@/lib/types/participant'
 import DayNavigator from '@/components/games/DayNavigator'
 import GameList from '@/components/games/GameList'
@@ -160,9 +161,12 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         away_score: p.away_score,
       }
     }
-    const scoreByUserGame: Record<string, number> = {}
+    const scoreByUserGame: Record<string, { points: number; breakdown: ScoreBreakdown }> = {}
     for (const s of typedAllScores) {
-      scoreByUserGame[`${s.user_id}:${s.game_id}`] = s.points
+      scoreByUserGame[`${s.user_id}:${s.game_id}`] = {
+        points: s.points,
+        breakdown: s.breakdown,
+      }
     }
 
     type GroupMemberRow = {
@@ -181,15 +185,13 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
       participantsByGameId[gameId] = memberProfiles.map((profile) => {
         const key = `${profile.id}:${gameId}`
         const prediction = predByUserGame[key] ?? null
-        const points =
-          prediction !== null
-            ? (scoreByUserGame[key] ?? null)
-            : null
+        const scoreEntry = prediction !== null ? (scoreByUserGame[key] ?? null) : null
         return {
           userId: profile.id,
           name: profile.name,
           prediction,
-          points,
+          points: scoreEntry?.points ?? null,
+          breakdown: scoreEntry?.breakdown ?? null,
         } as ParticipantEntry
       })
     }
