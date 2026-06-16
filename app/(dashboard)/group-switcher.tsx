@@ -4,13 +4,20 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 interface GroupSwitcherProps {
   groups: { id: string; name: string; role: 'admin' | 'member' }[]
-  activeGroupId: string
+  // Opcional: o layout do dashboard não tem acesso a `searchParams` (apenas
+  // páginas recebem esse prop no App Router), então o próprio GroupSwitcher
+  // lê `useSearchParams().get('group')` como fallback quando a prop não é
+  // informada — mantém a flexibilidade de quem already conhece o grupo ativo
+  // (ex: se um dia for renderizado a partir de uma page) passar explicitamente.
+  activeGroupId?: string
 }
 
 export function GroupSwitcher({ groups, activeGroupId }: GroupSwitcherProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  const resolvedActiveId = activeGroupId ?? searchParams.get('group') ?? groups[0]?.id ?? ''
 
   function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const newGroupId = e.target.value
@@ -21,7 +28,7 @@ export function GroupSwitcher({ groups, activeGroupId }: GroupSwitcherProps) {
 
   return (
     <select
-      value={activeGroupId}
+      value={resolvedActiveId}
       onChange={handleChange}
       aria-label="Selecionar grupo ativo"
       style={{

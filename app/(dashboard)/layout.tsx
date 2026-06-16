@@ -1,7 +1,14 @@
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import LogoutButton from './logout-button'
 import { NavLinks } from './nav-links'
+import { GroupSwitcher } from './group-switcher'
+
+interface GroupRow {
+  role: 'admin' | 'member'
+  groups: { id: string; name: string } | { id: string; name: string }[] | null
+}
 
 export default async function DashboardLayout({
   children,
@@ -16,6 +23,18 @@ export default async function DashboardLayout({
   if (!user) {
     redirect('/login')
   }
+
+  // Grupos do usuário, para o seletor de grupo ativo no header.
+  const { data: groupRows } = await supabase
+    .from('group_members')
+    .select('role, joined_at, groups(id, name)')
+    .eq('user_id', user.id)
+    .order('joined_at', { ascending: true })
+
+  const groups = ((groupRows ?? []) as GroupRow[]).map((row) => {
+    const g = Array.isArray(row.groups) ? row.groups[0] : row.groups
+    return { id: g?.id ?? '', name: g?.name ?? '', role: row.role }
+  })
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
@@ -57,7 +76,7 @@ export default async function DashboardLayout({
           <NavLinks />
         </div>
 
-        {/* Usuário + logout */}
+        {/* Grupo ativo + usuário + logout */}
         <div
           style={{
             display: 'flex',
@@ -65,6 +84,26 @@ export default async function DashboardLayout({
             gap: '1rem',
           }}
         >
+          {groups.length > 0 ? (
+            <GroupSwitcher groups={groups} />
+          ) : (
+            <Link
+              href="/grupos"
+              style={{
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '12px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                color: 'var(--color-primary)',
+                textDecoration: 'none',
+                fontWeight: 'bold',
+                border: '1px solid var(--color-primary)',
+                padding: '0.3rem 0.5rem',
+              }}
+            >
+              CRIAR/ENTRAR EM UM GRUPO
+            </Link>
+          )}
           <span
             style={{
               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
