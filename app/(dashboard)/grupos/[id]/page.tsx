@@ -3,7 +3,9 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { CopyInviteLink } from '@/components/bolao/CopyInviteLink'
+import { InviteUserSearch } from '@/components/bolao/InviteUserSearch'
 import type { GroupMemberEntry } from '@/lib/types/group'
+import type { GroupInviteSent } from '@/lib/types/group-invite'
 
 interface GrupoDetalhesPageProps {
   params: Promise<{ id: string }>
@@ -14,6 +16,35 @@ interface GroupMemberRow {
   role: 'admin' | 'member'
   joined_at: string
   profiles: { id: string; name: string } | { id: string; name: string }[] | null
+}
+
+interface GroupInviteRow {
+  id: string
+  invited_user_id: string
+  status: 'pending' | 'accepted' | 'declined'
+  created_at: string
+  responded_at: string | null
+}
+
+const STATUS_LABEL: Record<GroupInviteSent['status'], string> = {
+  pending: 'PENDENTE',
+  accepted: 'ACEITO',
+  declined: 'RECUSADO',
+}
+
+const STATUS_COLOR: Record<GroupInviteSent['status'], string> = {
+  pending: 'var(--color-muted)',
+  accepted: 'var(--color-win)',
+  declined: 'var(--color-error)',
+}
+
+function formatDateTime(iso: string): string {
+  const date = new Date(iso)
+  const dd = String(date.getDate()).padStart(2, '0')
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const hh = String(date.getHours()).padStart(2, '0')
+  const min = String(date.getMinutes()).padStart(2, '0')
+  return `${dd}/${mm} ${hh}:${min}`
 }
 
 // Deriva a origem (protocolo + host) a partir dos headers da requisição —
@@ -112,6 +143,39 @@ export default async function GrupoDetalhesPage({ params }: GrupoDetalhesPagePro
     inviteUrl = `${origin}/convite/${group.invite_token}`
   }
 
+  // Convites nominais enviados pelo admin deste grupo — somente leitura,
+  // a policy de RLS group_invites_select_admin_or_invitee permite a consulta
+  // direta via client autenticado do usuário (is_group_admin(group_id, auth.uid())).
+  let sentInvites: GroupInviteSent[] = []
+  if (isAdmin) {
+    const { data: invitesData } = await supabase
+      .from('group_invites')
+      .select('id, invited_user_id, status, created_at, responded_at')
+      .eq('group_id', id)
+      .order('created_at', { ascending: false })
+
+    const inviteRows = (invitesData ?? []) as GroupInviteRow[]
+
+    if (inviteRows.length > 0) {
+      const invitedUserIds = [...new Set(inviteRows.map((row) => row.invited_user_id))]
+      const { data: invitedProfiles } = await supabase
+        .from('profiles')
+        .select('id, name')
+        .in('id', invitedUserIds)
+
+      const nameById = new Map((invitedProfiles ?? []).map((p) => [p.id, p.name] as const))
+
+      sentInvites = inviteRows.map((row) => ({
+        id: row.id,
+        invitedUserId: row.invited_user_id,
+        invitedUserName: nameById.get(row.invited_user_id) ?? '—',
+        status: row.status,
+        createdAt: row.created_at,
+        respondedAt: row.responded_at,
+      }))
+    }
+  }
+
   return (
     <div style={{ maxWidth: '560px', margin: '0 auto' }}>
       <div
@@ -177,6 +241,81 @@ export default async function GrupoDetalhesPage({ params }: GrupoDetalhesPagePro
               LINK DE CONVITE (REUTILIZÁVEL)
             </div>
             <CopyInviteLink inviteUrl={inviteUrl} />
+          </div>
+        )}
+
+        {/* Convidar participante nominalmente — somente admin */}
+        {isAdmin && (
+          <div
+            style={{
+              padding: '1rem',
+              borderBottom: '1px solid var(--color-border)',
+            }}
+          >
+            <div
+              style={{
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                color: 'var(--color-muted)',
+                marginBottom: '0.5rem',
+              }}
+            >
+              CONVIDAR PARTICIPANTE
+            </div>
+            <InviteUserSearch groupId={id} />
+
+            {sentInvites.length > 0 && (
+              <div style={{ marginTop: '1rem' }}>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.08em',
+                    color: 'var(--color-muted)',
+                    marginBottom: '0.5rem',
+                    paddingTop: '0.75rem',
+                    borderTop: '1px solid var(--color-border)',
+                  }}
+                >
+                  CONVITES ENVIADOS
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  {sentInvites.map((invite) => (
+                    <div
+                      key={invite.id}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '0.5rem',
+                        flexWrap: 'wrap',
+                        fontSize: '13px',
+                      }}
+                    >
+                      <span style={{ color: 'var(--color-text)' }}>
+                        • {invite.invitedUserName.toUpperCase()}
+                      </span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span
+                          style={{
+                            fontSize: '10px',
+                            color: STATUS_COLOR[invite.status],
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                          }}
+                        >
+                          {STATUS_LABEL[invite.status]}
+                        </span>
+                        <span style={{ fontSize: '10px', color: 'var(--color-muted)' }}>
+                          {formatDateTime(invite.createdAt)}
+                        </span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

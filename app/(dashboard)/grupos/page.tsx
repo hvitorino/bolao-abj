@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/Button'
+import { PendingInvitesList, type PendingInvite } from '@/components/bolao/PendingInvitesList'
 import type { GroupMembership } from '@/lib/types/group'
 
 export const metadata = {
@@ -12,6 +13,13 @@ interface GroupMembershipRow {
   role: 'admin' | 'member'
   joined_at: string
   groups: { id: string; name: string; created_at: string } | { id: string; name: string; created_at: string }[] | null
+}
+
+interface PendingInviteRow {
+  id: string
+  group_id: string
+  invited_by: string
+  created_at: string
 }
 
 export default async function GruposPage() {
@@ -40,6 +48,38 @@ export default async function GruposPage() {
     }
   })
 
+  // Convites nominais pendentes endereçados a este usuário, em qualquer grupo.
+  const { data: pendingInviteRows } = await supabase
+    .from('group_invites')
+    .select('id, group_id, invited_by, created_at')
+    .eq('invited_user_id', user.id)
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+
+  const pendingRows = (pendingInviteRows ?? []) as PendingInviteRow[]
+
+  let pendingInvites: PendingInvite[] = []
+  if (pendingRows.length > 0) {
+    const groupIds = [...new Set(pendingRows.map((row) => row.group_id))]
+    const inviterIds = [...new Set(pendingRows.map((row) => row.invited_by))]
+
+    const [{ data: groupsData }, { data: profilesData }] = await Promise.all([
+      supabase.from('groups').select('id, name').in('id', groupIds),
+      supabase.from('profiles').select('id, name').in('id', inviterIds),
+    ])
+
+    const groupNameById = new Map((groupsData ?? []).map((g) => [g.id, g.name] as const))
+    const inviterNameById = new Map((profilesData ?? []).map((p) => [p.id, p.name] as const))
+
+    pendingInvites = pendingRows.map((row) => ({
+      id: row.id,
+      groupId: row.group_id,
+      groupName: groupNameById.get(row.group_id) ?? '—',
+      invitedByName: inviterNameById.get(row.invited_by) ?? '—',
+      createdAt: row.created_at,
+    }))
+  }
+
   return (
     <div
       style={{
@@ -49,6 +89,9 @@ export default async function GruposPage() {
         margin: '0 auto',
       }}
     >
+      {/* Convites recebidos — informação mais urgente/actionable da tela */}
+      <PendingInvitesList invites={pendingInvites} />
+
       {/* Cabeçalho */}
       <div
         style={{
