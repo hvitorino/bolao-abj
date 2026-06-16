@@ -68,3 +68,19 @@ e0c5912 feat(live-scoring): adiciona hook useLivePointsByUser para agregar pontu
 b4b0ec5 feat(live-scoring): adiciona calculateLiveScore para pontuação parcial de jogos ao vivo
 8c2a6c5 chore(live-scoring): adiciona plano de implementação
 ```
+
+---
+
+## Correções pós-revisão (Fix 1)
+
+### Problema corrigido
+
+`applyLivePoints()` em `components/bolao/RankingTable.tsx` recalculava `rank_position` no cliente com numeração estritamente sequencial (`index + 1`), o que não reproduzia a semântica de `RANK() OVER (ORDER BY total_points DESC)` usada pelo backend em `get_ranking()`. Participantes empatados em `total_points` (oficial + pontos parciais de jogos `live`) recebiam posições distintas, então apenas o primeiro pelo critério de desempate (nome A-Z) era marcado com `isLeader === true` e exibia o indicador `►`, enquanto sem pontos live ativos (ranking 100% oficial, já usando `RANK()`) ambos apareceriam como líderes. Isso gerava uma regressão visual inconsistente dependendo da existência ou não de jogos `live` no momento.
+
+### Correção aplicada
+
+`applyLivePoints()` agora itera a lista já ordenada (`total_points DESC`, critério de empate nome A-Z) mantendo `previousRank` e `previousPoints`: se o `total_points` do item atual é igual ao do item anterior, herda o mesmo `rank_position`; caso contrário, usa `index + 1`. Isso reproduz exatamente o comportamento de `RANK()` do Postgres, incluindo o "pulo" de posições após um grupo empatado (ex.: dois líderes em posição 1, próximo participante em posição 3).
+
+Validação mental do cenário de empate: dois participantes com `total_points = 8` (após soma de live points) e um terceiro com `total_points = 5` → resultado `[1, 1, 3]`, ambos os líderes empatados com `rank_position === 1` e, portanto, ambos exibindo `►` em `RankingRow` via `isLeader = entry.rank_position === 1 && entry.total_points > 0`.
+
+`npm run lint` e `npm run build` executados com sucesso após a correção, sem erros.

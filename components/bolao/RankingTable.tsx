@@ -20,6 +20,10 @@ function formatTime(date: Date): string {
 
 // Soma a pontuação parcial de jogos `live` à pontuação oficial e recalcula
 // `rank_position` no cliente (critério de empate: nome A-Z, igual ao backend).
+// `rank_position` reproduz a semântica de RANK() do Postgres usada por
+// `get_ranking()`: participantes com `total_points` idêntico recebem a
+// mesma posição (empate), e a próxima posição distinta usa `index + 1`
+// (não `count_anteriores + 1`), exatamente como RANK() faz ao pular números.
 // `aproveitamento` permanece inalterado — continua refletindo apenas jogos `finished`.
 function applyLivePoints(
   ranking: RankingEntry[],
@@ -35,10 +39,20 @@ function applyLivePoints(
     return a.participant_name.localeCompare(b.participant_name, 'pt-BR')
   })
 
-  return adjusted.map((entry, index) => ({
-    ...entry,
-    rank_position: index + 1,
-  }))
+  let previousRank = 0
+  let previousPoints: number | null = null
+
+  return adjusted.map((entry, index) => {
+    const rank_position =
+      previousPoints !== null && entry.total_points === previousPoints
+        ? previousRank
+        : index + 1
+
+    previousRank = rank_position
+    previousPoints = entry.total_points
+
+    return { ...entry, rank_position }
+  })
 }
 
 export function RankingTable({ currentUserId }: RankingTableProps) {
