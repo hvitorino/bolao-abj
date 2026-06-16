@@ -8,6 +8,7 @@ import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 interface PredictionFormProps {
   gameId: string
+  groupId: string
   homeTeamCode: string
   awayTeamCode: string
   matchDate: string // ISO 8601
@@ -36,6 +37,7 @@ function formatCountdown(minutes: number): string {
 
 export default function PredictionForm({
   gameId,
+  groupId,
   homeTeamCode,
   awayTeamCode,
   matchDate,
@@ -159,6 +161,7 @@ export default function PredictionForm({
           },
           body: JSON.stringify({
             game_id: gameId,
+            group_id: groupId,
             home_score: home,
             away_score: away,
           }),
