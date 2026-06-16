@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { resolveActiveGroup } from '@/lib/active-group'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
@@ -49,7 +50,12 @@ function formatStatus(status: string): string {
   }
 }
 
-export default async function MeusPalpitesPage() {
+interface MeusPalpitesPageProps {
+  searchParams: Promise<{ group?: string }>
+}
+
+export default async function MeusPalpitesPage({ searchParams }: MeusPalpitesPageProps) {
+  const params = await searchParams
   const supabase = await createClient()
 
   const {
@@ -60,11 +66,36 @@ export default async function MeusPalpitesPage() {
     redirect('/login')
   }
 
-  // 1. Buscar todos os palpites do usuário (mais recentes primeiro)
+  const activeGroup = await resolveActiveGroup(supabase, user.id, params.group, '/meus-palpites')
+
+  if ('error' in activeGroup) {
+    return (
+      <div
+        style={{
+          maxWidth: '480px',
+          margin: '0 auto',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          border: '1px solid var(--color-error)',
+          backgroundColor: 'var(--color-surface)',
+          padding: '1.5rem',
+          textAlign: 'center',
+          color: 'var(--color-error)',
+          fontSize: '13px',
+        }}
+      >
+        ✗ VOCÊ NÃO PARTICIPA DESTE GRUPO
+      </div>
+    )
+  }
+
+  const { groupId: activeGroupId, groupName: activeGroupName } = activeGroup
+
+  // 1. Buscar todos os palpites do usuário neste grupo (mais recentes primeiro)
   const { data: predictions } = await supabase
     .from('predictions')
     .select('*')
     .eq('user_id', user.id)
+    .eq('group_id', activeGroupId)
     .order('submitted_at', { ascending: false })
 
   const predictionList: Prediction[] = predictions ?? []
@@ -85,11 +116,13 @@ export default async function MeusPalpitesPage() {
       (gamesData ?? []).map((g: Game) => [g.id, g])
     )
 
-    // 3. Buscar scores calculados
+    // 3. Buscar scores calculados (escopados por grupo — um usuário pode ter
+    // palpites para o mesmo jogo em grupos diferentes)
     const { data: scoresData } = await supabase
       .from('scores')
       .select('*')
       .eq('user_id', user.id)
+      .eq('group_id', activeGroupId)
       .in('game_id', gameIds)
 
     const scoresByPredictionId: Record<string, Score> = Object.fromEntries(
@@ -140,7 +173,7 @@ export default async function MeusPalpitesPage() {
               color: 'var(--color-primary)',
             }}
           >
-            MEUS PALPITES
+            MEUS PALPITES — {activeGroupName.toUpperCase()}
           </span>
           <span
             style={{
