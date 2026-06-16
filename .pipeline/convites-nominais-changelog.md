@@ -3,7 +3,7 @@
 **Slug:** convites-nominais
 **Branch:** feature/convites-nominais
 **Data:** 2026-06-16
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

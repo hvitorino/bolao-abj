@@ -6,6 +6,13 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [convites-nominais] — Convites Nominais para Grupos — 2026-06-16
+
+- **Banco de dados** (`create_group_invites`, espelhada em `supabase/migrations/` e `db/migrations/`): tabela `group_invites` (`group_id`, `invited_user_id`, `invited_by`, `status` `pending`/`accepted`/`declined`, `created_at`, `responded_at`), índices auxiliares e índice único parcial `group_invites_unique_pending` (nunca dois convites `pending` simultâneos para o mesmo par grupo/usuário); RLS habilitado com policy `group_invites_select_admin_or_invitee` (admin do grupo vê tudo do grupo, convidado vê o que é endereçado a ele); função `is_group_admin()` (`SECURITY DEFINER`, mesmo padrão de `is_group_member` de `grupos`); função `search_users_to_invite()` (`SECURITY DEFINER`) busca por nome/e-mail em `profiles`/`auth.users` sem nunca expor e-mail de terceiros no retorno
+- **Endpoints (Next.js Route Handlers):** `GET /api/groups/[id]/invites/search-users` (busca de usuário a convidar, admin-only), `POST/GET /api/groups/[id]/invites` (criar convite idempotente — `already_member`/`already_pending`/`created` — e listar convites enviados, admin-only), `GET /api/invites/pending` (convites pendentes do usuário autenticado), `POST /api/invites/[id]/accept` e `POST /api/invites/[id]/decline` (resposta do convidado, com checagem de propriedade e status, `409` se já respondido)
+- **Componentes/páginas:** `InviteUserSearch` (busca com debounce 400ms + convite) e `PendingInvitesList` (aceitar/recusar) novos; badge `✉ N CONVITE(S)` no header do dashboard (`app/(dashboard)/layout.tsx`); seção "Convites Recebidos" em `/grupos`; seção "Convidar Participante" + "Convites Enviados" em `/grupos/[id]` (somente admin)
+- Feature aditiva: nenhuma alteração no fluxo de convite por link reutilizável (`groups.invite_token`, `/convite/[token]`, `resolve-invite`, `join`) nem em `predictions`/`scores`/`ranking`/regras de pontuação
+
 ## [grupos] — Grupos Privados (Bolões Isolados) — 2026-06-16
 
 - **Banco de dados (7 migrations, espelhadas em `supabase/migrations/` e `db/migrations/`):**
