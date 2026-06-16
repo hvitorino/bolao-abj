@@ -80,11 +80,19 @@ export default function GameCard({
   const isFinished = liveGame.status === 'finished'
   const isPending = liveGame.status === 'pending'
 
+  // Para jogos ao vivo o banco pode ainda ter home_score/away_score null
+  // enquanto o placar real é 0×0 — tratamos null como 0 nesse contexto.
+  const liveHomeScore = isLive ? (liveGame.home_score ?? 0) : liveGame.home_score
+  const liveAwayScore = isLive ? (liveGame.away_score ?? 0) : liveGame.away_score
+
   // Score provisório calculado no cliente para jogos ao vivo, antes do trigger
   // do Postgres gravar na tabela `scores` (que só ocorre ao encerrar o jogo).
   const provisionalScore =
     isLive && currentPrediction && !liveScore
-      ? calculateLiveScore(liveGame, currentPrediction)
+      ? calculateLiveScore(
+          { home_score: liveHomeScore, away_score: liveAwayScore },
+          currentPrediction
+        )
       : null
   const displayScore = liveScore ?? provisionalScore
   const hasScore = liveGame.home_score !== null && liveGame.away_score !== null
@@ -425,16 +433,16 @@ export default function GameCard({
                     encerrado usa score da tabela `scores` via Realtime */}
                 {(isLive || isFinished) &&
                   displayScore &&
-                  liveGame.home_score !== null &&
-                  liveGame.away_score !== null && (
+                  liveHomeScore !== null &&
+                  liveAwayScore !== null && (
                     <div style={{ marginTop: '0.5rem' }}>
                       <ScoreDisplay
                         points={displayScore.points}
                         breakdown={displayScore.breakdown}
                         predictionHomeScore={currentPrediction.home_score}
                         predictionAwayScore={currentPrediction.away_score}
-                        gameHomeScore={liveGame.home_score}
-                        gameAwayScore={liveGame.away_score}
+                        gameHomeScore={liveHomeScore}
+                        gameAwayScore={liveAwayScore}
                         homeTeamCode={liveGame.home_team_code}
                         awayTeamCode={liveGame.away_team_code}
                       />
