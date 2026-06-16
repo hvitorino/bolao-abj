@@ -3,7 +3,7 @@
 **Slug:** exemplos-por-regra
 **Branch:** feature/exemplos-por-regra
 **Data:** 2026-06-16
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

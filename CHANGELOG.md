@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [exemplos-por-regra] — Exemplo Dedicado por Regra de Pontuação — 2026-06-16
+
+- Página `/como-pontuar`: os antigos 3 exemplos (cobrindo só 2 das 6 regras isoladamente) foram substituídos por 7 exemplos — 6 numerados (`EXEMPLO_1` a `EXEMPLO_6`), alinhados 1:1 e na mesma ordem das linhas de `SCORING_RULES` em `ScoringRulesTable.tsx`, mais 1 exemplo bônus de empate exato em subseção própria ("EXEMPLO COMPLEMENTAR")
+- `components/bolao/ScoringExample.tsx` ganha prop opcional `ruleLabel` — renderiza rótulo `REGRA: <texto>` abaixo do título vinculando visualmente cada card à linha correspondente da tabela; comportamento existente preservado quando a prop não é usada
+- Todos os 7 breakdowns (pontos e composição) foram validados programaticamente contra `calculateScore()` de `lib/scoring.ts`, tanto pelo Programador quanto de forma independente pelo Revisor — bateram byte-a-byte
+- Exemplo 5 ("Somente placar do perdedor") isola corretamente o cenário em que o vencedor é errado no palpite, evitando o bug histórico do fix-1 de `como-pontuar`
+- Grid responsivo ajustado: 1 coluna (`<640px`), 2 colunas (`640–1023px`), 3 colunas (`≥1024px`)
+- Sem alteração de backend, banco de dados ou proteção de rotas — feature inteiramente estática
+
 ## [grupo-ativo-persistente] — Seleção Persistente de Grupo Ativo — 2026-06-16
 
 - A seleção de "grupo ativo" passa a persistir via cookie HTTP `bolao_active_group` (`Path=/`, `SameSite=Lax`, `Secure` em produção, `Max-Age` de 1 ano, sem `HttpOnly`), eliminando a regressão em que navegar pelo menu perdia o `?group=` da URL e recalculava o primeiro grupo por `joined_at`
