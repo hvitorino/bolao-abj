@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 22 features
-- Concluídas: 21
-- Em progresso: 1
+- Concluídas: 22
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -273,7 +273,7 @@ Criado em: 2026-06-13
 
 ---
 
-### 22. convites-nominais — Convites Nominais para Grupos — em progresso
+### 22. convites-nominais — Convites Nominais para Grupos — concluída
 **Objetivo:** Permitir que o admin de um grupo convide ativamente uma pessoa específica (em vez de depender só de compartilhar manualmente o link reutilizável), criando um convite nominal rastreável que o destinatário vê e pode aceitar/recusar dentro do produto.
 
 **Decisão de escopo (análise do PM):** a feature `grupos` (item 20, já concluída) entregou criação de grupo e convite via **link reutilizável anônimo** — qualquer pessoa com o link entra, sem rastro de quem foi convidado nem confirmação de quem ainda não respondeu. A spec original de `grupos` listou explicitamente como fora de escopo: "Convite por e-mail/notificação push (o convite é só o link reutilizável copiável)". A solicitação do usuário ("enviar convites") aponta para esse gap real: hoje não existe nenhuma forma de convidar uma pessoa específica nem de ver/gerenciar convites pendentes.
@@ -291,3 +291,4 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Isolamento por grupo é preservado: convite nominal só é visível/gerenciável por quem é admin do grupo em questão; usuário só vê convites endereçados a ele mesmo
 
 **Dependências:** grupos
+**Observação de conclusão:** aprovada sem rodada de fix em 2026-06-16; merge `feature/convites-nominais` na main confirmado (commit `39275f2`). Migration `group_invites` com RLS, índice único parcial para idempotência, funções `is_group_admin`/`search_users_to_invite` (SECURITY DEFINER, sem expor e-mail de terceiros). Endpoints novos com autenticação Bearer JWT + autorização explícita. Zero diff nos arquivos do fluxo de link reutilizável (`groups.invite_token`, `/convite/[token]`, `resolve-invite`, `join`). `npm run lint` e `npm run build` limpos. Polimento futuro não-bloqueante identificado: `PendingInvitesList` não refaz fetch automático ao receber `409` (convite já respondido em outra aba) — apenas exibe erro inline.
