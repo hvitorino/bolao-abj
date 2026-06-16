@@ -43,7 +43,7 @@ Nenhuma alteração.
 
 3. **Remoção de `overflowX: 'auto'` justificada pela remoção da coluna:** Com apenas 3 colunas em mobile (#, PARTICIPANTE, PONTOS), a tabela cabe na viewport de 375px sem scrollbar horizontal. Em desktop (4 colunas), o `maxWidth: 800px` da page já contém o layout.
 
-4. **Títulos substituídos, não duplicados:** O cabeçalho interno da `RankingTable` já exibe `"RANKING — BOLÃO DO CARTOLA ABJ"` com indicador `● AO VIVO`. Manter o `<h1>RANKING GERAL</h1>` na page.tsx seria redundância de informação além de custo de altura em mobile.
+4. **Títulos substituídos, não duplicados:** O cabeçalho interno da `RankingTable` já exibe `"RANKING — BOLÃO DA COPA"` com indicador `● AO VIVO`. Manter o `<h1>RANKING GERAL</h1>` na page.tsx seria redundância de informação além de custo de altura em mobile.
 
 ---
 

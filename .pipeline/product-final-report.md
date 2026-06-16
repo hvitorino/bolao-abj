@@ -1,4 +1,4 @@
-# Relatório Final — Bolão do Cartola ABJ
+# Relatório Final — Bolão da Copa
 
 Data de conclusão: 2026-06-16
 
@@ -29,7 +29,7 @@ Data de conclusão: 2026-06-16
 
 ## Resumo
 
-O Bolão do Cartola ABJ foi construído do zero a partir de 2026-06-13. A aplicação permite que grupos de amigos registrem palpites de placar para os jogos da Copa do Mundo FIFA 2026, acompanhem resultados em tempo real e disputem uma classificação geral — agora isolada por bolão privado.
+O Bolão da Copa foi construído do zero a partir de 2026-06-13. A aplicação permite que grupos de amigos registrem palpites de placar para os jogos da Copa do Mundo FIFA 2026, acompanhem resultados em tempo real e disputem uma classificação geral — agora isolada por bolão privado.
 
 A stack escolhida (Next.js 15 + Supabase + Ruby/Sinatra) provou-se adequada ao longo de todo o ciclo: o Supabase Realtime eliminou a necessidade de polling para placares e ranking; a lógica de pontuação server-side permaneceu auditável via trigger Postgres espelhado em `lib/scoring.ts`; o App Router do Next.js separou claramente rotas públicas e protegidas via middleware; e o modelo de dados absorveu a extensão para multi-tenancy (`group_id`) sem reescrever a lógica de negócio core.
 

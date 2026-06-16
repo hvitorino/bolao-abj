@@ -80,7 +80,7 @@ function LoginForm() {
             margin: 0,
           }}
         >
-          BOLÃO DO CARTOLA ABJ
+          BOLÃO DA COPA
         </h1>
         <p
           style={{

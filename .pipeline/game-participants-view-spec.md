@@ -84,7 +84,7 @@ interface GameParticipantsListProps {
 │  PARTICIPANTE        │ PALPITE   │ PTS             │
 ├──────────────────────┼───────────┼─────────────────┤
 │  ■ VOCÊ              │  2 × 1   │  +8             │
-│    CARTOLA_MASTER    │  3 × 0   │  +3             │
+│    GOLEADOR_MASTER   │  3 × 0   │  +3             │
 │    FUTEBOL_REI       │    -     │   -             │
 └──────────────────────┴───────────┴─────────────────┘
 ```

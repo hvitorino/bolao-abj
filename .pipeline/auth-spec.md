@@ -8,7 +8,7 @@
 
 ## Objetivo
 
-Implementar o sistema de autenticação do Bolão do Cartola ABJ usando Supabase Auth, permitindo que participantes se cadastrem com e-mail e senha e façam login, com criação automática de perfil na tabela `profiles` e proteção de todas as rotas da área logada.
+Implementar o sistema de autenticação do Bolão da Copa usando Supabase Auth, permitindo que participantes se cadastrem com e-mail e senha e façam login, com criação automática de perfil na tabela `profiles` e proteção de todas as rotas da área logada.
 
 ---
 
@@ -157,7 +157,7 @@ middleware.ts                   # Next.js middleware para proteção de rotas
 **Design (DESIGN.md):**
 - Background da página: `color-bg` (`#0a0e1a`)
 - Card central com borda: `1px solid var(--color-border)`, bg `color-surface`
-- Título: `BOLÃO DO CARTOLA ABJ` em uppercase, `color-accent`, fonte monospace Bold
+- Título: `BOLÃO DA COPA` em uppercase, `color-accent`, fonte monospace Bold
 - Subtítulo: `LOGIN` em uppercase, `color-muted`
 - Inputs: bg `color-surface`, borda `color-border`, focus `color-primary`, texto `color-text`, fonte monospace
 - Botão: bg `color-primary`, texto `color-bg`, uppercase, sem sombra, borda `1px solid color-primary`

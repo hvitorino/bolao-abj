@@ -10,7 +10,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Bolão do Cartola ABJ',
+  title: 'Bolão da Copa',
   description: 'Bolão da Copa do Mundo FIFA 2026',
 }
 

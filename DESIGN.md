@@ -1,4 +1,4 @@
-# DESIGN.md — Bolão do Cartola ABJ
+# DESIGN.md — Bolão da Copa
 
 ## Conceito Visual
 
@@ -84,11 +84,11 @@ Configurar no `tailwind.config.ts` como variáveis CSS customizadas:
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│  RANKING — BOLÃO DO CARTOLA ABJ                      │
+│  RANKING — BOLÃO DA COPA                             │
 ├─────┬───────────────────────┬────────┬───────────────┤
 │  #  │ PARTICIPANTE          │ PONTOS │ APROVEIT.      │
 ├─────┼───────────────────────┼────────┼───────────────┤
-│  1  │ ► CARTOLA_MASTER      │   47   │  73%          │
+│  1  │ ► GOLEADOR_MASTER     │   47   │  73%          │
 │  2  │   FUTEBOL_REI         │   39   │  61%          │
 │  3  │   TORCEDOR_FIEL       │   35   │  55%          │
 └─────┴───────────────────────┴────────┴───────────────┘

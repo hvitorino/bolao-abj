@@ -4,7 +4,7 @@ import { ScoringRulesTable } from '@/components/bolao/ScoringRulesTable'
 import { ScoringExample } from '@/components/bolao/ScoringExample'
 
 export const metadata: Metadata = {
-  title: 'Como Pontuar — Bolão do Cartola ABJ',
+  title: 'Como Pontuar — Bolão da Copa',
 }
 
 // Exemplo 1: Placar exato (BRA 3×1 ARG, palpite 3×1) → +8 pts
@@ -97,7 +97,7 @@ export default function ComoPontuarPage() {
             letterSpacing: '0.08em',
           }}
         >
-          BOLÃO DO CARTOLA ABJ · COPA 2026
+          BOLÃO DA COPA · 2026
         </p>
       </div>
 

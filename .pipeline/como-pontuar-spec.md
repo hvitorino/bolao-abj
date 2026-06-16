@@ -61,7 +61,7 @@ components/
 
 **Estrutura de conteúdo (de cima para baixo):**
 
-1. Header da página com título `COMO PONTUAR` e subtítulo `BOLÃO DO CARTOLA ABJ · COPA 2026`
+1. Header da página com título `COMO PONTUAR` e subtítulo `BOLÃO DA COPA · 2026`
 2. Bloco de aviso/introdução: os bônus são cumulativos com o acerto do vencedor
 3. Componente `<ScoringRulesTable />` — tabela de todos os eventos e pontos
 4. Seção de exemplos com título `EXEMPLOS DE CÁLCULO` contendo três instâncias de `<ScoringExample />`
@@ -72,7 +72,7 @@ components/
 
 ```typescript
 export const metadata = {
-  title: 'Como Pontuar — Bolão do Cartola ABJ',
+  title: 'Como Pontuar — Bolão da Copa',
 }
 ```
 
@@ -361,7 +361,7 @@ Máximo teórico por jogo: 3 + 5 + 3 + 2 + 1 + 1 = 15 pts
 ┌─ main padding: 1.5rem ──────────────────────────────┐
 │                                                      │
 │  COMO PONTUAR                          [título H1]  │
-│  BOLÃO DO CARTOLA ABJ · COPA 2026     [subtítulo]   │
+│  BOLÃO DA COPA · 2026                 [subtítulo]   │
 │                                                      │
 │  ┌──────────────────────────────────────────────┐   │
 │  │  TABELA DE PONTUAÇÃO  (ScoringRulesTable)    │   │

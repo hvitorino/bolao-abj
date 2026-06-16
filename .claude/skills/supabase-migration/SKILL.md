@@ -1,9 +1,9 @@
 ---
 name: supabase-migration
-description: Use when the user asks to run, execute, or apply a Supabase migration in the Bolão ABJ project.
+description: Use when the user asks to run, execute, or apply a Supabase migration in the Bolão da Copa project.
 ---
 
-# Executar Migration Supabase — Bolão ABJ
+# Executar Migration Supabase — Bolão da Copa
 
 ## Overview
 

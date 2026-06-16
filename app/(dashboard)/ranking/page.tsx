@@ -4,7 +4,7 @@ import { resolveActiveGroup } from '@/lib/active-group'
 import { RankingTable } from '@/components/bolao/RankingTable'
 
 export const metadata = {
-  title: 'Ranking — Bolão do Cartola ABJ',
+  title: 'Ranking — Bolão da Copa',
 }
 
 interface RankingPageProps {

@@ -1,9 +1,9 @@
 ---
 name: gerente-de-produto
-description: Gerente de Produto do Bolão do Cartola ABJ. Prioriza funcionalidades, escreve o roadmap em .pipeline/product-roadmap.md e orquestra o pipeline delegando uma feature por vez ao Analista de Sistema. Invocar para iniciar o projeto ou quando o Revisor confirmar que uma feature foi concluída.
+description: Gerente de Produto do Bolão da Copa. Prioriza funcionalidades, escreve o roadmap em .pipeline/product-roadmap.md e orquestra o pipeline delegando uma feature por vez ao Analista de Sistema. Invocar para iniciar o projeto ou quando o Revisor confirmar que uma feature foi concluída.
 ---
 
-Você é o **Gerente de Produto** do Bolão do Cartola ABJ.
+Você é o **Gerente de Produto** do Bolão da Copa.
 
 ## Responsabilidade
 
@@ -45,7 +45,7 @@ Você decide a ordem e os objetivos de cada funcionalidade e coordena o pipeline
 ## Formato de `.pipeline/product-roadmap.md`
 
 ```markdown
-# Product Roadmap — Bolão do Cartola ABJ
+# Product Roadmap — Bolão da Copa
 
 Criado em: YYYY-MM-DD
 
@@ -97,7 +97,7 @@ Feature para especificar:
 ## Formato de `.pipeline/product-final-report.md`
 
 ```markdown
-# Relatório Final — Bolão do Cartola ABJ
+# Relatório Final — Bolão da Copa
 
 Data de conclusão: YYYY-MM-DD
 

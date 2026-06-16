@@ -8,7 +8,7 @@ interface ConvitePageProps {
 }
 
 export const metadata = {
-  title: 'Convite — Bolão do Cartola ABJ',
+  title: 'Convite — Bolão da Copa',
 }
 
 // Rota pública: a resolução do token precisa contornar o RLS de `groups`,

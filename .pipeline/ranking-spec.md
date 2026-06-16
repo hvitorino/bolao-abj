@@ -136,7 +136,7 @@ $$;
   {
     "position": 1,
     "user_id": "uuid",
-    "participant_name": "CARTOLA_MASTER",
+    "participant_name": "GOLEADOR_MASTER",
     "total_points": 47,
     "games_predicted": 8,
     "aproveitamento": 65
@@ -236,7 +236,7 @@ type RankingTableProps = {
 ┌─────┬───────────────────────┬────────┬───────────────┐
 │  #  │ PARTICIPANTE          │ PONTOS │ APROVEIT.      │
 ├─────┼───────────────────────┼────────┼───────────────┤
-│  1  │ ► CARTOLA_MASTER      │   47   │  65%          │
+│  1  │ ► GOLEADOR_MASTER     │   47   │  65%          │
 │  2  │   FUTEBOL_REI         │   39   │  61%          │
 │  3  │   TORCEDOR_FIEL       │   35   │  55%          │
 └─────┴───────────────────────┴────────┴───────────────┘
@@ -248,7 +248,7 @@ type RankingTableProps = {
 - Linhas: `border-bottom: 1px solid var(--color-border)`, padding `0.5rem`
 - Primeira linha do `<tbody>` sem `border-top` especial — borda vem do `<thead>`
 - Indicador de atualização: pequeno texto `"● AO VIVO"` no cabeçalho da tabela em `color-live` com classe `blink` (aparece após o primeiro carregamento)
-- Título do cabeçalho: `"RANKING — BOLÃO DO CARTOLA ABJ"`
+- Título do cabeçalho: `"RANKING — BOLÃO DA COPA"`
 
 ### Página: `/ranking`
 
@@ -272,7 +272,7 @@ Classificação ao vivo · atualiza em tempo real
 ### Atualização do Layout do Dashboard
 
 **Arquivo:** `app/(dashboard)/layout.tsx`
-**Modificação:** Adicionar links de navegação no header entre o título "BOLÃO DO CARTOLA ABJ" e o email do usuário.
+**Modificação:** Adicionar links de navegação no header entre o título "BOLÃO DA COPA" e o email do usuário.
 
 **Links:**
 - `JOGOS` → `/jogos`

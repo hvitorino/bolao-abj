@@ -77,7 +77,7 @@ export default async function DashboardLayout({
               color: 'var(--color-accent)',
             }}
           >
-            BOLÃO DO CARTOLA ABJ
+            BOLÃO DA COPA
           </span>
 
           {/* Links de navegação */}

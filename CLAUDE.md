@@ -1,4 +1,4 @@
-# Bolão do Cartola ABJ
+# Bolão da Copa
 
 Bolão da Copa do Mundo FIFA 2026 para um pequeno grupo de amigos.
 

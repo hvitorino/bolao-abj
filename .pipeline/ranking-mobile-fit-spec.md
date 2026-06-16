@@ -58,7 +58,7 @@ Com 10 participantes: 68 + 24 + 52 + 20 + 42 + 34 + (10 × 36) + 36 = **636px** 
 
 Três ajustes combinados, sem nenhuma alteração no servidor:
 
-1. **Remover o bloco de título da `ranking/page.tsx`** — o cabeçalho interno da `RankingTable` já exibe `"RANKING — BOLÃO DO CARTOLA ABJ"`, tornando o título da page.tsx redundante. Remover o `<div>` com o `<h1>` e o subtítulo economiza ~52px + gap 20px = 72px.
+1. **Remover o bloco de título da `ranking/page.tsx`** — o cabeçalho interno da `RankingTable` já exibe `"RANKING — BOLÃO DA COPA"`, tornando o título da page.tsx redundante. Remover o `<div>` com o `<h1>` e o subtítulo economiza ~52px + gap 20px = 72px.
 
 2. **Reduzir padding das linhas em mobile** — trocar `padding: '0.5rem 0.75rem'` por `padding: '0.35rem 0.5rem'` nas células de `RankingRow`. Reduz cada linha de ~36px para ~28px, economizando ~8px × N linhas.
 

@@ -257,7 +257,7 @@ setLastUpdatedAt(new Date())
 
 2. No header da tabela, ao lado do indicador `● AO VIVO`, adicionar o timestamp de última atualização quando `lastUpdatedAt !== null`:
    ```
-   RANKING — BOLÃO DO CARTOLA ABJ          ● AO VIVO · 14:32:05
+   RANKING — BOLÃO DA COPA                 ● AO VIVO · 14:32:05
    ```
    - Formato: `HH:MM:SS` em horário local do usuário
    - Cor: `var(--color-muted)`, `fontSize: '11px'`

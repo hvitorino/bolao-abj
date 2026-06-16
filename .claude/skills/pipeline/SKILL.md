@@ -1,9 +1,9 @@
 ---
 name: pipeline
-description: Use when the user requests any feature, improvement, bug fix, or new functionality for the Bolão ABJ project. Triggers the full multi-agent development pipeline (PM → Analyst → Developer → Reviewer) instead of implementing directly.
+description: Use when the user requests any feature, improvement, bug fix, or new functionality for the Bolão da Copa project. Triggers the full multi-agent development pipeline (PM → Analyst → Developer → Reviewer) instead of implementing directly.
 ---
 
-# Pipeline de Desenvolvimento — Bolão ABJ
+# Pipeline de Desenvolvimento — Bolão da Copa
 
 ## Overview
 

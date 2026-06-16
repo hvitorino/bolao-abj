@@ -1,4 +1,4 @@
-# Changelog — Bolão do Cartola ABJ
+# Changelog — Bolão da Copa
 
 Histórico de implementações aprovadas pelo Revisor.
 

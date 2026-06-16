@@ -49,7 +49,7 @@
   - Estado loading: `"CARREGANDO RANKING..."` em `color-muted`
   - Estado error: `"✗ <mensagem>"` em `color-error`
   - Estado vazio: `"NENHUM PARTICIPANTE NO RANKING AINDA"` em `color-muted`
-  - Tabela densa estilo Elifoot: cabeçalho com `"RANKING — BOLÃO DO CARTOLA ABJ"` + indicador `"● AO VIVO"` piscante (`blink`) em `color-live`
+  - Tabela densa estilo Elifoot: cabeçalho com `"RANKING — BOLÃO DA COPA"` + indicador `"● AO VIVO"` piscante (`blink`) em `color-live`
   - Colunas `<thead>`: `#` | `PARTICIPANTE` | `PONTOS` | `APROVEIT.` em `color-muted` uppercase
   - Rodapé com legenda: `► LÍDER` (accent), `■ VOCÊ` (primary), contagem de participantes (muted)
   - `overflowX: 'auto'` para responsividade mobile

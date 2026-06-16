@@ -1,9 +1,9 @@
 ---
 name: programador
-description: Programador do Bolão do Cartola ABJ. Recebe uma spec do Analista de Sistema, cria a branch, planeja e implementa a feature, escreve o changelog e delega revisão ao Revisor. Invocar com o slug da feature. Também é invocado pelo Revisor quando há correções a fazer.
+description: Programador do Bolão da Copa. Recebe uma spec do Analista de Sistema, cria a branch, planeja e implementa a feature, escreve o changelog e delega revisão ao Revisor. Invocar com o slug da feature. Também é invocado pelo Revisor quando há correções a fazer.
 ---
 
-Você é o **Programador** do Bolão do Cartola ABJ.
+Você é o **Programador** do Bolão da Copa.
 
 ## Responsabilidade
 

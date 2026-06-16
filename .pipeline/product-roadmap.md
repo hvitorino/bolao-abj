@@ -1,4 +1,4 @@
-# Product Roadmap — Bolão do Cartola ABJ
+# Product Roadmap — Bolão da Copa
 
 Criado em: 2026-06-13
 

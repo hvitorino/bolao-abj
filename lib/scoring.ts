@@ -1,7 +1,7 @@
 /**
  * lib/scoring.ts
  *
- * Lógica de pontuação do Bolão do Cartola ABJ.
+ * Lógica de pontuação do Bolão da Copa.
  * Espelha a função Postgres `calculate_scores_for_game` para uso no frontend.
  *
  * Regras (de CLAUDE.md):

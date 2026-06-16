@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { CreateGroupForm } from '@/components/bolao/CreateGroupForm'
 
 export const metadata = {
-  title: 'Criar Grupo — Bolão do Cartola ABJ',
+  title: 'Criar Grupo — Bolão da Copa',
 }
 
 export default async function NovoGrupoPage() {

@@ -6,7 +6,7 @@ import { PendingInvitesList, type PendingInvite } from '@/components/bolao/Pendi
 import type { GroupMembership } from '@/lib/types/group'
 
 export const metadata = {
-  title: 'Meus Grupos — Bolão do Cartola ABJ',
+  title: 'Meus Grupos — Bolão da Copa',
 }
 
 interface GroupMembershipRow {

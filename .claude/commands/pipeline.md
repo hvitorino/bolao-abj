@@ -3,7 +3,7 @@ description: Planeja e implementa uma feature usando o pipeline completo de agen
 argument-hint: Descrição do que deve ser implementado
 ---
 
-# Pipeline de Desenvolvimento — Bolão ABJ
+# Pipeline de Desenvolvimento — Bolão da Copa
 
 O usuário solicitou: **$ARGUMENTS**
 
