@@ -106,35 +106,6 @@ export default async function GruposPage() {
       {/* Convites recebidos — informação mais urgente/actionable da tela */}
       <PendingInvitesList invites={pendingInvites} />
 
-      {/* Cabeçalho */}
-      <div
-        style={{
-          marginBottom: '1.25rem',
-          paddingBottom: '0.75rem',
-          borderBottom: '1px solid var(--color-border)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '0.75rem',
-        }}
-      >
-        <span
-          style={{
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--color-text)',
-          }}
-        >
-          MEUS GRUPOS
-        </span>
-        <Link href="/grupos/novo" style={{ textDecoration: 'none' }}>
-          <Button type="button">CRIAR NOVO GRUPO</Button>
-        </Link>
-      </div>
-
       {/* Erro ao buscar grupos */}
       {error && (
         <div
@@ -265,6 +236,20 @@ export default async function GruposPage() {
               </div>
             )
           })}
+
+          {/* Botão de criar grupo no rodapé da lista */}
+          <div
+            style={{
+              borderTop: '1px solid var(--color-border)',
+              padding: '0.75rem 1rem',
+              display: 'flex',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <Link href="/grupos/novo" style={{ textDecoration: 'none' }}>
+              <Button type="button">CRIAR NOVO GRUPO</Button>
+            </Link>
+          </div>
         </div>
       )}
     </div>
