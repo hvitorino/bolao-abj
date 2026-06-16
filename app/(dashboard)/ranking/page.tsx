@@ -62,7 +62,6 @@ export default async function RankingPage({ searchParams }: RankingPageProps) {
       <RankingTable
         currentUserId={user.id}
         groupId={activeGroup.groupId}
-        groupName={activeGroup.groupName}
       />
     </div>
   )

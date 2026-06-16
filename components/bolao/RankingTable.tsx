@@ -8,7 +8,6 @@ import { RankingRow } from './RankingRow'
 interface RankingTableProps {
   currentUserId: string
   groupId: string
-  groupName: string
 }
 
 // Formata data/hora local do usuário no formato HH:MM:SS
@@ -57,7 +56,7 @@ function applyLivePoints(
   })
 }
 
-export function RankingTable({ currentUserId, groupId, groupName }: RankingTableProps) {
+export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
   const { ranking, loading, error, lastUpdatedAt } = useRankingRealtime(groupId)
   const { livePoints, loading: livePointsLoading } = useLivePointsByUser(groupId)
 
@@ -125,67 +124,6 @@ export function RankingTable({ currentUserId, groupId, groupName }: RankingTable
         backgroundColor: 'var(--color-surface)',
       }}
     >
-      {/* Cabeçalho da tabela com título e indicador ao vivo */}
-      <div
-        style={{
-          padding: '0.75rem 1rem',
-          borderBottom: '1px solid var(--color-border)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '0.5rem',
-          backgroundColor: 'var(--color-surface)',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '13px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--color-text)',
-          }}
-        >
-          RANKING — {groupName.toUpperCase()}
-        </span>
-        <span
-          style={{
-            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '11px',
-            color: 'var(--color-muted)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-          }}
-        >
-          <span
-            className="blink"
-            style={{
-              color: 'var(--color-live)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-            }}
-          >
-            ● AO VIVO
-          </span>
-          {/* Nota visível enquanto a soma de pontos provisórios de jogos `live` for > 0 para alguém */}
-          {hasLivePoints && (
-            <span style={{ color: 'var(--color-live)' }}>
-              INCLUI PONTOS PROVISÓRIOS
-            </span>
-          )}
-          {/* Timestamp de última atualização — visível somente após o primeiro fetch bem-sucedido */}
-          {lastUpdatedAt !== null && (
-            <>
-              <span>·</span>
-              <span>{formatTime(lastUpdatedAt)}</span>
-            </>
-          )}
-        </span>
-      </div>
-
       {/* Tabela principal */}
       <table
         style={{
