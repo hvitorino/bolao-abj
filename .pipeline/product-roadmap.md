@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 27 features
-- Concluídas: 26
+- Concluídas: 27
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -350,7 +350,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 27. prediction-score-breakdown — Detalhamento da Pontuação no Palpite — pendente
+### 27. prediction-score-breakdown — Detalhamento da Pontuação no Palpite — concluída
 **Objetivo:** Dentro da lista de palpites de um jogo já expandido (`GameParticipantsList`, entregue por `game-participants-view`/`collapse-game-card`), permitir que o usuário clique na linha do palpite de um participante para revelar o breakdown detalhado da pontuação daquele palpite (vencedor, placar exato, placar do vencedor, diferença de gols, placar do perdedor, goleada), lendo diretamente o campo `breakdown jsonb` já existente em `scores`, sem duplicar a lógica de cálculo.
 **Critérios de sucesso:**
 - Clicar na linha do palpite de um participante (dentro de um jogo já expandido) exibe o breakdown de pontos daquele palpite, com cada componente que contribuiu (>0 pontos) rotulado e visível; se nenhum bônus se aplicou, indicação clara de "0 pontos"
@@ -359,4 +359,4 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Jogos/palpites sem `scores` correspondente (sem pontuação calculada ainda) não quebram a UI — a linha não oferece expansão de detalhe, ou mostra estado vazio apropriado
 - Layout segue DESIGN.md rigorosamente (monospace, paleta verde/amarelo/azul, dense, sem ícones decorativos)
 **Dependências:** game-participants-view, collapse-game-card, scoring
-**Observação:** feature pontual solicitada diretamente pelo usuário; PM não deve avançar para outras features do roadmap após a conclusão desta (escopo limitado a esta entrega).
+**Observação:** feature pontual solicitada diretamente pelo usuário; PM não deve avançar para outras features do roadmap após a conclusão desta (escopo limitado a esta entrega). Aprovada sem rodada de fix em 2026-06-16; merge `feature/prediction-score-breakdown` na main confirmado. Implementação fiel à spec: leitura pura do campo `breakdown jsonb` já existente em `scores` (sem reimplementar cálculo, sem migration, sem endpoint novo). Novo componente `components/bolao/PredictionBreakdown.tsx`, accordion exclusivo por jogo em `GameParticipantsList.tsx` com acessibilidade via teclado (`role="button"`, `tabIndex`, `Enter`/`Espaço`, `aria-expanded`), tipo `ParticipantEntry` estendido com `breakdown: ScoreBreakdown | null`. `npm run lint` e `npm run build` passaram sem erros.
