@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 23 features
-- Concluídas: 22
-- Em progresso: 1
+- Concluídas: 23
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -295,7 +295,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 23. grupo-ativo-persistente — Seleção Persistente de Grupo Ativo — em progresso
+### 23. grupo-ativo-persistente — Seleção Persistente de Grupo Ativo — concluída
 **Objetivo:** Fazer a seleção do "grupo ativo" ocorrer exclusivamente na área/aba "Grupos" e persistir em todas as páginas do dashboard (Jogos, Ranking, Palpites) até que o usuário a altere ativamente de novo, ali na área de Grupos — corrigindo a perda de seleção hoje causada por `NavLinks` apontar para paths "nus" sem preservar `?group=`.
 
 **Contexto do problema (levantamento do PM):** hoje o grupo ativo é resolvido só via query param `?group=<id>` (`lib/active-group.ts`/`resolveActiveGroup()`); sem o param, o sistema sempre cai no primeiro grupo por `joined_at ASC`. Não há persistência em cookie/localStorage/sessão. O `GroupSwitcher` (`app/(dashboard)/group-switcher.tsx`) aparece no header em todas as páginas do dashboard (renderizado em `app/(dashboard)/layout.tsx`), não só em Grupos, e ao trocar grupo só atualiza o `?group=` da página atual. `NavLinks` (`app/(dashboard)/nav-links.tsx`) linka para `/jogos`, `/ranking`, `/meus-palpites`, `/grupos`, `/como-pontuar` sem preservar `?group=` — ao clicar em outra aba, a seleção se perde e a página recalcula para o primeiro grupo. A página `/grupos` hoje não tem nenhum seletor de grupo ativo.
@@ -307,3 +307,4 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - A persistência sobrevive a reload de página (mecanismo — cookie, localStorage, ou estado server-side — a critério do Analista, desde que atenda ao requisito)
 - Mantém compatibilidade com o fluxo existente para usuários sem grupo (redirect para `/grupos`) e com o membership check (`error: 'forbidden'`) de `resolveActiveGroup()`
 **Dependências:** grupos
+**Observação de conclusão:** aprovada sem rodada de fix em 2026-06-16. O dropdown `GroupSwitcher` no header foi substituído por um cookie HTTP (`bolao_active_group`) que persiste o grupo ativo entre navegações no menu, reloads (F5) e sessões do navegador; deep links (`?group=`) continuam funcionando como override pontual sem persistir. A troca de grupo ativo passou a ocorrer explicitamente em `/grupos` ou `/grupos/[id]` via novo componente `AtivarGrupoButton`, que chama o novo endpoint `POST /api/groups/active`. `npm run lint` e `npm run build` passaram sem erros. Nenhuma migration nova; nenhuma alteração em RLS, regras de pontuação ou Realtime.
