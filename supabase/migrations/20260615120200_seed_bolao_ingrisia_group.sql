@@ -49,7 +49,7 @@ BEGIN
     INSERT INTO groups (name, invite_token, created_by)
     VALUES (
       'Bolão da Ingrisia ABJ',
-      translate(encode(gen_random_bytes(24), 'base64'), '+/', '-_'),
+      translate(encode(extensions.gen_random_bytes(24), 'base64'), '+/', '-_'),
       v_admin_id
     )
     RETURNING id INTO v_group_id;
