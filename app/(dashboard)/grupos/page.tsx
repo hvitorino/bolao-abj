@@ -173,7 +173,6 @@ export default async function GruposPage() {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   gap: '0.75rem',
-                  flexWrap: 'wrap',
                   padding: '0.75rem 1rem',
                   borderTop: index > 0 ? '1px solid var(--color-border)' : 'none',
                   backgroundColor: isActive ? 'rgba(0, 156, 59, 0.08)' : undefined,
@@ -185,10 +184,12 @@ export default async function GruposPage() {
                   style={{
                     textDecoration: 'none',
                     color: 'var(--color-text)',
+                    flex: 1,
                     minWidth: 0,
+                    overflow: 'hidden',
                   }}
                 >
-                  <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{group.name}</span>
+                  <span style={{ fontSize: '13px', fontWeight: 'bold', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{group.name}</span>
                 </Link>
 
                 <div
@@ -196,7 +197,7 @@ export default async function GruposPage() {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
-                    flexWrap: 'wrap',
+                    flexShrink: 0,
                   }}
                 >
                   <span
