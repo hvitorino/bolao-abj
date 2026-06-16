@@ -3,7 +3,7 @@
 **Slug:** fix-loser-score-rule
 **Branch:** fix/fix-loser-score-rule
 **Data:** 2026-06-16
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
