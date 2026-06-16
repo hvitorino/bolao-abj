@@ -9,6 +9,7 @@ import PredictionDisplay from '@/components/bolao/PredictionDisplay'
 import ScoreDisplay from '@/components/bolao/ScoreDisplay'
 import { useGameRealtime } from '@/lib/hooks/useGameRealtime'
 import { useScoreRealtime } from '@/lib/hooks/useScoreRealtime'
+import { calculateLiveScore } from '@/lib/scoring'
 import GameParticipantsList from '@/components/bolao/GameParticipantsList'
 import { ParticipantEntry } from '@/lib/types/participant'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
@@ -78,6 +79,14 @@ export default function GameCard({
   const isLive = liveGame.status === 'live'
   const isFinished = liveGame.status === 'finished'
   const isPending = liveGame.status === 'pending'
+
+  // Score provisório calculado no cliente para jogos ao vivo, antes do trigger
+  // do Postgres gravar na tabela `scores` (que só ocorre ao encerrar o jogo).
+  const provisionalScore =
+    isLive && currentPrediction && !liveScore
+      ? calculateLiveScore(liveGame, currentPrediction)
+      : null
+  const displayScore = liveScore ?? provisionalScore
   const hasScore = liveGame.home_score !== null && liveGame.away_score !== null
   const matchTime = formatMatchTime(liveGame.match_date)
   const scoreText = hasScore
@@ -412,15 +421,16 @@ export default function GameCard({
                   submittedAt={currentPrediction.submitted_at}
                   // Sem onEditRequest — jogos ao vivo/encerrados não exibem botão de edição
                 />
-                {/* Breakdown de pontuação — visível quando jogo ao vivo ou encerrado e score calculado */}
+                {/* Breakdown de pontuação — ao vivo usa score provisório calculado no cliente;
+                    encerrado usa score da tabela `scores` via Realtime */}
                 {(isLive || isFinished) &&
-                  liveScore &&
+                  displayScore &&
                   liveGame.home_score !== null &&
                   liveGame.away_score !== null && (
                     <div style={{ marginTop: '0.5rem' }}>
                       <ScoreDisplay
-                        points={liveScore.points}
-                        breakdown={liveScore.breakdown}
+                        points={displayScore.points}
+                        breakdown={displayScore.breakdown}
                         predictionHomeScore={currentPrediction.home_score}
                         predictionAwayScore={currentPrediction.away_score}
                         gameHomeScore={liveGame.home_score}
