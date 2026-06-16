@@ -206,51 +206,6 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         margin: '0 auto',
       }}
     >
-      {/* Título da seção */}
-      <div
-        style={{
-          marginBottom: '1.25rem',
-          paddingBottom: '0.75rem',
-          borderBottom: '1px solid var(--color-border)',
-          display: 'flex',
-          alignItems: 'baseline',
-          gap: '0.75rem',
-          flexWrap: 'wrap',
-        }}
-      >
-        <span
-          style={{
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--color-text)',
-          }}
-        >
-          JOGOS
-        </span>
-        <span
-          style={{
-            color: 'var(--color-muted)',
-            fontSize: '12px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          COPA DO MUNDO 2026
-        </span>
-        <span
-          style={{
-            color: 'var(--color-muted)',
-            fontSize: '12px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          · {activeGroupName.toUpperCase()}
-        </span>
-      </div>
-
       {/* Erro ao buscar jogos */}
       {gamesError && (
         <div
