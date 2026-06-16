@@ -1,7 +1,10 @@
+import { cookies } from 'next/headers'
 import { dayBoundsInUTC, isValidDateString, todayInBrasilia } from '@/lib/date'
 import { createClient } from '@/lib/supabase/server'
 import { resolveActiveGroup } from '@/lib/active-group'
 import { redirect } from 'next/navigation'
+
+const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
@@ -35,12 +38,16 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
     redirect('/login')
   }
 
+  const cookieStore = await cookies()
+  const cookieGroupId = cookieStore.get(ACTIVE_GROUP_COOKIE)?.value
+
   const activeGroup = await resolveActiveGroup(
     supabase,
     authUser.id,
     params.group,
     '/jogos',
-    { date: dateParam }
+    { date: dateParam },
+    cookieGroupId
   )
 
   if ('error' in activeGroup) {

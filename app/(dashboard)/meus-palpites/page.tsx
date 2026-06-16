@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { resolveActiveGroup } from '@/lib/active-group'
@@ -5,6 +6,8 @@ import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
+
+const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
 /**
  * Página /meus-palpites
@@ -66,7 +69,17 @@ export default async function MeusPalpitesPage({ searchParams }: MeusPalpitesPag
     redirect('/login')
   }
 
-  const activeGroup = await resolveActiveGroup(supabase, user.id, params.group, '/meus-palpites')
+  const cookieStore = await cookies()
+  const cookieGroupId = cookieStore.get(ACTIVE_GROUP_COOKIE)?.value
+
+  const activeGroup = await resolveActiveGroup(
+    supabase,
+    user.id,
+    params.group,
+    '/meus-palpites',
+    {},
+    cookieGroupId
+  )
 
   if ('error' in activeGroup) {
     return (

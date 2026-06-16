@@ -1,11 +1,14 @@
 import Link from 'next/link'
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { CopyInviteLink } from '@/components/bolao/CopyInviteLink'
 import { InviteUserSearch } from '@/components/bolao/InviteUserSearch'
+import { AtivarGrupoButton } from '@/components/bolao/AtivarGrupoButton'
 import type { GroupMemberEntry } from '@/lib/types/group'
 import type { GroupInviteSent } from '@/lib/types/group-invite'
+
+const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
 interface GrupoDetalhesPageProps {
   params: Promise<{ id: string }>
@@ -120,6 +123,9 @@ export default async function GrupoDetalhesPage({ params }: GrupoDetalhesPagePro
 
   const isAdmin = membership.role === 'admin'
 
+  const cookieStore = await cookies()
+  const isActiveGroup = cookieStore.get(ACTIVE_GROUP_COOKIE)?.value === id
+
   const { data: membersData } = await supabase
     .from('group_members')
     .select('user_id, role, joined_at, profiles(id, name)')
@@ -185,7 +191,7 @@ export default async function GrupoDetalhesPage({ params }: GrupoDetalhesPagePro
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
         }}
       >
-        {/* Cabeçalho: nome do grupo + badge de papel */}
+        {/* Cabeçalho: nome do grupo + badge de papel + ativação de grupo */}
         <div
           style={{
             padding: '0.75rem 1rem',
@@ -193,6 +199,8 @@ export default async function GrupoDetalhesPage({ params }: GrupoDetalhesPagePro
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            gap: '0.75rem',
+            flexWrap: 'wrap',
           }}
         >
           <span
@@ -206,19 +214,37 @@ export default async function GrupoDetalhesPage({ params }: GrupoDetalhesPagePro
           >
             {group.name}
           </span>
-          <span
-            style={{
-              fontSize: '11px',
-              color: isAdmin ? 'var(--color-accent)' : 'var(--color-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              border: '1px solid',
-              borderColor: isAdmin ? 'var(--color-accent)' : 'var(--color-muted)',
-              padding: '0.1rem 0.4rem',
-            }}
-          >
-            {isAdmin ? 'ADMIN' : 'MEMBRO'}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <span
+              style={{
+                fontSize: '11px',
+                color: isAdmin ? 'var(--color-accent)' : 'var(--color-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                border: '1px solid',
+                borderColor: isAdmin ? 'var(--color-accent)' : 'var(--color-muted)',
+                padding: '0.1rem 0.4rem',
+              }}
+            >
+              {isAdmin ? 'ADMIN' : 'MEMBRO'}
+            </span>
+
+            {isActiveGroup ? (
+              <span
+                style={{
+                  fontSize: '11px',
+                  color: 'var(--color-accent)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontWeight: 'bold',
+                }}
+              >
+                GRUPO ATIVO
+              </span>
+            ) : (
+              <AtivarGrupoButton groupId={id} groupName={group.name} />
+            )}
+          </div>
         </div>
 
         {/* Seção de convite — somente admin */}
