@@ -31,6 +31,10 @@ function formatMatchTime(matchDate: string): string {
   })
 }
 
+function isDeadlinePassed(matchDate: string): boolean {
+  return Date.now() >= new Date(matchDate).getTime() - 5 * 60 * 1000
+}
+
 // Formata data curta para o header do card
 function formatMatchDate(matchDate: string): string {
   return new Date(matchDate)
@@ -63,6 +67,7 @@ export default function GameCard({
   const [isParticipantsExpanded, setIsParticipantsExpanded] = useState(false)
   // Estado de hover do toggle — inverte cores para reforçar que é clicável
   const [isHoveringToggle, setIsHoveringToggle] = useState(false)
+  const [isHoveringEdit, setIsHoveringEdit] = useState(false)
 
   // Subscreve ao canal Realtime do Supabase para este jogo específico.
   const { game: liveGame } = useGameRealtime(game.id, game)
@@ -85,6 +90,7 @@ export default function GameCard({
   const cardBorderColor = isLive ? 'var(--color-primary)' : 'var(--color-border)'
   const cardBorderStyle = isFinished ? 'dashed' : 'solid'
   const cardBg = isLive ? 'rgba(0, 156, 59, 0.18)' : 'var(--color-surface)'
+  const canEdit = isPending && currentPrediction != null && !isDeadlinePassed(liveGame.match_date)
 
   // Handler chamado pelo PredictionForm ao concluir edição bem-sucedida
   function handleEditSuccess(updated: Prediction) {
@@ -122,15 +128,39 @@ export default function GameCard({
         >
           {liveGame.round}
         </span>
-        <span
-          style={{
-            color: 'var(--color-muted)',
-            fontSize: '11px',
-            textTransform: 'uppercase',
-          }}
-        >
-          {formatMatchDate(liveGame.match_date)}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span
+            style={{
+              color: 'var(--color-muted)',
+              fontSize: '11px',
+              textTransform: 'uppercase',
+            }}
+          >
+            {formatMatchDate(liveGame.match_date)}
+          </span>
+          {canEdit && !isEditing && (
+            <button
+              type="button"
+              title="Editar palpite"
+              onClick={() => setIsEditing(true)}
+              onMouseEnter={() => setIsHoveringEdit(true)}
+              onMouseLeave={() => setIsHoveringEdit(false)}
+              style={{
+                background: 'none',
+                border: '1px solid var(--color-primary)',
+                color: isHoveringEdit ? 'var(--color-bg)' : 'var(--color-primary)',
+                backgroundColor: isHoveringEdit ? 'var(--color-primary)' : 'transparent',
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '11px',
+                lineHeight: 1,
+                padding: '0.1rem 0.3rem',
+                cursor: 'pointer',
+              }}
+            >
+              ✎
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Corpo do card: times e placar */}
@@ -367,7 +397,7 @@ export default function GameCard({
               />
             )}
 
-            {/* Há palpite e não está editando: exibir PredictionDisplay com botão EDITAR */}
+            {/* Há palpite e não está editando: exibir PredictionDisplay */}
             {currentPrediction && !isEditing && (
               <PredictionDisplay
                 homeScore={currentPrediction.home_score}
@@ -375,8 +405,6 @@ export default function GameCard({
                 homeTeamCode={liveGame.home_team_code}
                 awayTeamCode={liveGame.away_team_code}
                 submittedAt={currentPrediction.submitted_at}
-                matchDate={liveGame.match_date}
-                onEditRequest={() => setIsEditing(true)}
               />
             )}
 
@@ -406,7 +434,7 @@ export default function GameCard({
                   homeTeamCode={liveGame.home_team_code}
                   awayTeamCode={liveGame.away_team_code}
                   submittedAt={currentPrediction.submitted_at}
-                  // Sem matchDate/onEditRequest — jogos ao vivo/encerrados nunca exibem botão EDITAR
+                  // Sem onEditRequest — jogos ao vivo/encerrados não exibem botão de edição
                 />
                 {/* Breakdown de pontuação — visível quando jogo encerrado e score calculado */}
                 {isFinished &&
