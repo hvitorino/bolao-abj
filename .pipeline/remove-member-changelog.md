@@ -3,7 +3,7 @@
 **Slug:** remove-member
 **Branch:** feature/remove-member
 **Data:** 2026-06-17
-**Status:** aguardando revisão
+**Status:** aguardando revisão (fix 1 aplicado)
 
 ---
 
@@ -52,4 +52,20 @@
 ce74dc3 feat(remove-member): cria componente RemoveMemberButton com modal de confirmação
 bb4ff88 feat(remove-member): cria handler DELETE /api/groups/[id]/members/[userId]
 f0f7e10 chore(remove-member): adiciona plano de implementação
+```
+
+---
+
+## Correções Fix 1
+
+**Data:** 2026-06-17
+
+### Problema corrigido
+
+- `components/bolao/RemoveMemberButton.tsx` (linha 224) — label do botão de confirmação no estado `error` alterado de "CONFIRMAR REMOÇÃO" para "TENTAR NOVAMENTE". A expressão condicional agora cobre os três estados: `loading` → "REMOVENDO...", `error` → "TENTAR NOVAMENTE", demais → "CONFIRMAR REMOÇÃO".
+
+### Commit
+
+```
+2919631 fix(remove-member): exibe label 'TENTAR NOVAMENTE' no botão de confirmação quando estado é error
 ```
