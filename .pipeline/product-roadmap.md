@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 29 features
+- Total: 30 features
 - Concluídas: 29
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -392,3 +392,17 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Sem nova tabela, migration ou endpoint dedicado — as datas são derivadas de `games.match_date` existente
 - Acessibilidade: chips são elementos `<button>` ou `<a>` com `aria-current="true"` no chip ativo; navegação por teclado funciona corretamente
 **Dependências:** game-navigation, date-picker-jogos
+
+---
+
+### 30. delete-group — Exclusão de Grupo pelo Admin — em progresso
+**Objetivo:** Permitir que o admin de um grupo o exclua diretamente pela aba Grupos, deletando em cascata todos os palpites e scores associados, sem afetar os perfis dos participantes.
+**Critérios de sucesso:**
+- Botão "Excluir grupo" visível apenas para o admin do grupo, na aba Grupos (ex: na página `/grupos/[id]` ou lista de grupos)
+- Clicar no botão abre um modal de confirmação explicitando que palpites e scores serão deletados permanentemente e que participantes não serão removidos do sistema
+- Confirmação no modal dispara chamada ao Route Handler `DELETE /api/groups/[id]`, autenticado via Bearer JWT com verificação server-side de que o usuário é admin do grupo
+- O Route Handler executa `DELETE FROM groups WHERE id = $1` via cliente Supabase com `service_role`; o cascade de `predictions` e `scores` já está garantido no banco (`ON DELETE CASCADE`)
+- Após a exclusão com sucesso, o usuário é redirecionado para `/grupos` e o grupo deletado não aparece mais na lista
+- Tentativa de excluir grupo por não-admin retorna `403`; grupo inexistente retorna `404`
+- A exclusão não afeta `profiles` nem `auth.users` — apenas `groups`, `predictions` e `scores` vinculados ao grupo
+**Dependências:** grupos
