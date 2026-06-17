@@ -3,7 +3,7 @@
 **Slug:** date-picker-jogos
 **Branch:** feature/date-picker-jogos
 **Data:** 2026-06-17
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
