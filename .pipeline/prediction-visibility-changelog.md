@@ -3,7 +3,7 @@
 **Slug:** prediction-visibility
 **Branch:** feature/prediction-visibility
 **Data:** 2026-06-17
-**Status:** aguardando revisão (fix 1 aplicado)
+**Status:** aprovado
 
 ---
 
