@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 30 features
+- Total: 31 features
 - Concluídas: 30
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -392,6 +392,19 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Sem nova tabela, migration ou endpoint dedicado — as datas são derivadas de `games.match_date` existente
 - Acessibilidade: chips são elementos `<button>` ou `<a>` com `aria-current="true"` no chip ativo; navegação por teclado funciona corretamente
 **Dependências:** game-navigation, date-picker-jogos
+
+---
+
+### 31. remove-member — Remover Participante do Grupo — em progresso
+**Objetivo:** O admin do grupo pode remover um participante a partir da tela de gerenciamento do grupo. Ao lado de cada membro (exceto o próprio admin), aparece uma ação de remover; após confirmação, o membro é excluído da tabela `group_members` e perde acesso ao grupo imediatamente.
+**Critérios de sucesso:**
+- Admin vê botão/ícone de remover ao lado de cada membro (não ao lado de si mesmo)
+- Ao clicar, aparece confirmação antes de executar a remoção
+- Após confirmação, o membro é removido da tabela `group_members` no Supabase
+- A lista de participantes atualiza imediatamente após a remoção
+- Membros removidos perdem acesso ao grupo
+- Não-admin não vê a opção de remover
+**Dependências:** grupos, delete-group
 
 ---
 
