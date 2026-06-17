@@ -82,14 +82,18 @@ export default function DayNavigator({ currentDate, gameCount, guessCount }: Day
           ◀
         </Button>
 
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', flex: 1, minWidth: 0, padding: '0 0.5rem' }}>
           <span
             style={{
+              display: 'block',
               color: today ? 'var(--color-accent)' : 'var(--color-text)',
-              fontSize: '14px',
+              fontSize: 'clamp(11px, 3vw, 14px)',
               fontWeight: 'bold',
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
             {formatDateDisplay(currentDate)}
@@ -97,11 +101,11 @@ export default function DayNavigator({ currentDate, gameCount, guessCount }: Day
           {today && (
             <span
               style={{
-                display: 'inline-block',
-                marginLeft: '0.5rem',
+                display: 'block',
                 color: 'var(--color-accent)',
                 fontSize: '11px',
                 textTransform: 'uppercase',
+                marginTop: '2px',
               }}
             >
               (HOJE)
