@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [delete-group] — Exclusão de Grupo pelo Admin — 2026-06-17
+
+- Admin de um grupo pode excluí-lo permanentemente via botão "EXCLUIR GRUPO" na seção "ZONA DE PERIGO" em `/grupos/[id]`, visível somente quando `isAdmin === true`
+- Modal de confirmação exibe o nome do grupo em destaque (`color-accent`), lista de consequências com ✗ (palpites e scores deletados, em `color-error`) e ✓ (perfis não afetados, em `color-win`), botões "CANCELAR" e "CONFIRMAR EXCLUSÃO"
+- Estados internos do componente: idle → confirming → loading → error/sucesso; em erro o modal permanece aberto com mensagem inline e botão reabilitado; em sucesso redireciona para `/grupos`
+- **Endpoint criado:** `DELETE /api/groups/[id]` (handler adicionado ao Route Handler existente) — verifica auth JWT, UUID, existência do grupo (404), membership (403 "Você não participa deste grupo."), role admin (403 "Apenas o admin pode excluir o grupo."); executa delete via `serviceClient` (service_role) com ON DELETE CASCADE para `group_members`, `predictions`, `scores` e `group_invites`; retorna `{ deleted: true, group_id }`
+- **Componente criado:** `components/bolao/DeleteGroupButton.tsx` — client component com 4 estados (idle/confirming/loading/error), modal acessível (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`), estilo Elifoot sem border-radius nem box-shadow, fonte JetBrains Mono, responsivo com `flex-wrap: wrap` nos botões
+- **Página modificada:** `app/(dashboard)/grupos/[id]/page.tsx` — seção "ZONA DE PERIGO" com borda `color-error` adicionada após lista de participantes, condicional a `isAdmin`
+- Nenhuma migration de schema ou RLS — ON DELETE CASCADE já existia nas FKs; `serviceClient` (service_role) ignora RLS por design; verificação de admin é defesa primária no Route Handler
+
 ## [date-chips-nav] — Navegação por Chips de Data — 2026-06-17
 
 - Substituído o componente `DayNavigator` (dropdown + setas ◀ ▶) por `DateChipsNav` — faixa horizontal de chips clicáveis, um por data com jogos

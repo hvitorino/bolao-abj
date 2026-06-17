@@ -3,7 +3,7 @@
 **Slug:** delete-group
 **Branch:** feature/delete-group
 **Data:** 2026-06-17
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
