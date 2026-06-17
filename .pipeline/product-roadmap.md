@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 28 features
+- Total: 29 features
 - Concluídas: 28
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -376,3 +376,19 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - As setas `◀ ▶` de navegação dia a dia permanecem funcionando (não são removidas)
 - Sem nova tabela, migration ou endpoint dedicado — as datas são derivadas de `games.match_date` existente
 **Dependências:** game-navigation
+
+---
+
+### 29. date-chips-nav — Navegação por Chips de Data — em progresso
+**Objetivo:** Substituir completamente o dropdown de seleção de data e as setas de navegação dia a dia (`DayNavigator`) por uma faixa de chips horizontais com scroll, onde cada chip representa uma data com jogos disponíveis; o chip ativo fica destacado em `color-accent` bold e é centralizado automaticamente na viewport ao carregar a página.
+**Critérios de sucesso:**
+- O `DayNavigator` existente (dropdown + setas `◀ ▶`) é completamente substituído pela faixa de chips horizontais
+- Apenas datas com pelo menos 1 jogo aparecem como chips (mesmo critério já usado pelo `date-picker-jogos`)
+- O chip da data ativa é exibido em `color-accent` bold; os demais ficam em `color-muted` ou `color-text`
+- Ao carregar a página, o chip ativo é automaticamente centralizado na área visível (scroll automático via `scrollIntoView` ou equivalente)
+- A faixa suporta scroll horizontal (overflow-x: auto) em mobile sem barra de scroll visível
+- Clicar em qualquer chip navega diretamente para `/jogos?date=YYYY-MM-DD` da data correspondente
+- Visual: JetBrains Mono, sem bordas arredondadas (`border-radius: 0`), seguindo rigorosamente DESIGN.md (paleta verde/amarelo/azul, monospace, dense, sem ícones decorativos)
+- Sem nova tabela, migration ou endpoint dedicado — as datas são derivadas de `games.match_date` existente
+- Acessibilidade: chips são elementos `<button>` ou `<a>` com `aria-current="true"` no chip ativo; navegação por teclado funciona corretamente
+**Dependências:** game-navigation, date-picker-jogos
