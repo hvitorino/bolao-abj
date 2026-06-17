@@ -3,8 +3,8 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 31 features
-- Concluídas: 31
+- Total: 32 features
+- Concluídas: 32
 - Em progresso: 0
 - Pendentes: 0
 
@@ -405,6 +405,23 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Membros removidos perdem acesso ao grupo
 - Não-admin não vê a opção de remover
 **Dependências:** grupos, delete-group
+
+---
+
+### 32. prediction-visibility — Distinção entre Palpite Oculto e Pendente — concluída
+**Objetivo:** Evoluir a visibilidade dos palpites na tela de jogos para que, em jogos `pending`, terceiros vejam `OCULTO` (cinza) quando o palpite existe mas está protegido por regra de negócio, e `PENDENTE` (vermelho) quando o palpite ainda não foi enviado — distinguindo os dois estados sem revelar o valor do palpite.
+**Critérios de sucesso:**
+- Em jogos `pending`, terceiros com palpite exibem `OCULTO` em `color-muted` (cinza)
+- Em jogos `pending`, terceiros sem palpite exibem `PENDENTE` em `color-error` (vermelho)
+- O próprio usuário sempre vê seu palpite real, independentemente do status do jogo
+- Em jogos `live` e `finished`, o comportamento original é mantido (palpites visíveis para todos)
+- A query service_role seleciona apenas `user_id, game_id` — nenhum valor de palpite de terceiros chega ao cliente em jogos `pending`
+- `hasPrediction` populado apenas para membros do grupo ativo (sem vazar dados entre grupos)
+- `lib/supabase/service-server.ts` centraliza o cliente service_role sem duplicação
+- `npm run lint` e `npm run build` passam sem erros novos
+- Decisão arquitetural de uso de service_role documentada com justificativa explícita na spec
+**Dependências:** auth, game-navigation, predictions, game-participants-view, fix-prediction-visibility
+**Observação de conclusão:** aprovada após uma rodada de fix (fix-1 exigiu apenas documentação — spec formal e justificativa arquitetural; nenhuma mudança de código). Merge `feature/prediction-visibility` na main confirmado (commit `e3a7d29`) em 2026-06-17.
 
 ---
 
