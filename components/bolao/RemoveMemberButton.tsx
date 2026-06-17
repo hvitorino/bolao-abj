@@ -221,7 +221,7 @@ export function RemoveMemberButton({
                   opacity: isLoading ? 0.6 : 1,
                 }}
               >
-                {isLoading ? 'REMOVENDO...' : 'CONFIRMAR REMOÇÃO'}
+                {isLoading ? 'REMOVENDO...' : state === 'error' ? 'TENTAR NOVAMENTE' : 'CONFIRMAR REMOÇÃO'}
               </button>
             </div>
           </div>
