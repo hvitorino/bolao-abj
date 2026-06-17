@@ -9,6 +9,7 @@ import PredictionDisplay from '@/components/bolao/PredictionDisplay'
 import ScoreDisplay from '@/components/bolao/ScoreDisplay'
 import { useGameRealtime } from '@/lib/hooks/useGameRealtime'
 import { useScoreRealtime } from '@/lib/hooks/useScoreRealtime'
+import { useParticipantsRealtime } from '@/lib/hooks/useParticipantsRealtime'
 import { calculateLiveScore } from '@/lib/scoring'
 import GameParticipantsList from '@/components/bolao/GameParticipantsList'
 import { ParticipantEntry } from '@/lib/types/participant'
@@ -75,6 +76,16 @@ export default function GameCard({
   // Subscreve ao score do usuário para este jogo.
   // liveScore atualiza quando o trigger Postgres calcula pontuação após jogo encerrado.
   const liveScore = useScoreRealtime(game.id, userId ?? '', score)
+
+  // Gerencia palpites dos participantes em tempo real.
+  // Faz fetch dos palpites revelados quando o jogo muda para live/finished —
+  // resolve o bug em que participants ficavam como OCULTO/PENDENTE após a transição Realtime.
+  const liveParticipants = useParticipantsRealtime(
+    game.id,
+    groupId,
+    participants,
+    game.status as 'pending' | 'live' | 'finished'
+  )
 
   const isLive = liveGame.status === 'live'
   const isFinished = liveGame.status === 'finished'
@@ -470,7 +481,7 @@ export default function GameCard({
       </div>
 
       {/* Toggle de expansão — só aparece quando há participantes para mostrar */}
-      {participants.length > 0 && (
+      {liveParticipants.length > 0 && (
         <button
           type="button"
           onClick={() => setIsParticipantsExpanded((prev) => !prev)}
@@ -504,10 +515,10 @@ export default function GameCard({
       )}
 
       {/* Seção de palpites de todos os participantes — exibida sob demanda via toggle */}
-      {participants.length > 0 && isParticipantsExpanded && (
+      {liveParticipants.length > 0 && isParticipantsExpanded && (
         <div id={`participants-${liveGame.id}`}>
           <GameParticipantsList
-            participants={participants}
+            participants={liveParticipants}
             gameStatus={liveGame.status as 'pending' | 'live' | 'finished'}
             currentUserId={userId}
             liveGame={{ home_score: liveGame.home_score, away_score: liveGame.away_score }}
