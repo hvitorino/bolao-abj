@@ -71,7 +71,7 @@ export default function PredictionDisplay({
         </button>
       )}
 
-      {/* Linha superior: título à esquerda, pontos + chevron à direita */}
+      {/* Linha superior: título */}
       <div
         style={{
           display: 'flex',
@@ -94,16 +94,12 @@ export default function PredictionDisplay({
         {showPoints && (
           <div
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              fontSize: '11px',
+              fontSize: '13px',
               fontWeight: 'bold',
               color: points > 0 ? 'var(--color-accent)' : 'var(--color-muted)',
             }}
           >
-            <span>+{points} PTS</span>
-            <span style={{ fontSize: '10px' }}>{isExpanded ? '▴' : '▾'}</span>
+            +{points} PTS
           </div>
         )}
       </div>
@@ -146,6 +142,32 @@ export default function PredictionDisplay({
           }}
         >
           {submittedLabel}
+        </div>
+      )}
+
+      {/* Footer de expansão — CTA visível para ver breakdown */}
+      {isExpandable && (
+        <div
+          style={{
+            marginTop: '0.6rem',
+            marginLeft: '-0.75rem',
+            marginRight: '-0.75rem',
+            marginBottom: '-0.75rem',
+            borderTop: '1px dashed var(--color-primary)',
+            padding: '0.35rem 0.75rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0.35rem',
+            fontSize: '10px',
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            color: 'var(--color-primary)',
+            backgroundColor: 'rgba(0, 156, 59, 0.08)',
+          }}
+        >
+          {isExpanded ? 'OCULTAR PONTUAÇÃO ▴' : 'VER PONTUAÇÃO ▾'}
         </div>
       )}
     </>
