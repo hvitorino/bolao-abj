@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 28 features
-- Concluídas: 27
+- Concluídas: 28
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -363,7 +363,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 28. date-picker-jogos — Seletor de Datas com Jogos — em progresso
+### 28. date-picker-jogos — Seletor de Datas com Jogos — concluída
 **Objetivo:** Na aba de jogos, ao clicar na data exibida no `DayNavigator`, abrir um dropdown/picker listando apenas as datas que possuem jogos cadastrados no Supabase, permitindo navegação direta a qualquer data sem precisar clicar seta a seta.
 **Critérios de sucesso:**
 - Clicar na área de exibição da data abre um dropdown com a lista de datas que possuem jogos (`games.match_date` distintos, convertidos para datas em BRT)
