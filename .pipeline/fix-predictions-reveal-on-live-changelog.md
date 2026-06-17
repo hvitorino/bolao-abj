@@ -3,7 +3,7 @@
 **Slug:** fix-predictions-reveal-on-live
 **Branch:** feature/fix-predictions-reveal-on-live
 **Data:** 2026-06-17
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

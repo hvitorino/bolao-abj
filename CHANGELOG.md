@@ -6,6 +6,19 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-predictions-reveal-on-live] — Revelação Automática de Palpites ao Vivo — 2026-06-17
+
+- Corrigido bug em que palpites de terceiros permaneciam como OCULTO/PENDENTE após um jogo mudar de `pending` para `live` via Supabase Realtime, exigindo reload manual da página
+- **Endpoint criado:** `GET /api/participants-predictions` (Next.js Route Handler) — autentica via Bearer JWT, valida UUIDs de `game_id` e `group_id`, usa cliente Supabase com JWT do usuário (RLS ativa) para retornar `{ user_id, game_id, home_score, away_score }` apenas dos palpites visíveis ao usuário
+- **Hook criado:** `lib/hooks/useParticipantsRealtime.ts` — hook client que gerencia dois caminhos: (1) fetch imediato no mount quando `initialGameStatus !== 'pending'` (cobre página aberta com jogo já ao vivo); (2) subscricão ao canal Realtime `game-participants-${gameId}` na tabela `games` para detectar transição `pending → live` e disparar fetch automaticamente
+- Merge de dados via `mergeWithPredictions` preserva todos os campos SSR (`name`, `points`, `breakdown`, `hasPrediction`) e nunca esvazia o array antes do fetch concluir — sem flash de estado vazio durante a transição
+- `hasFetchedForLive` (`useRef`) garante idempotência: fetch ocorre no máximo uma vez por ciclo de vida do componente, mesmo com múltiplos eventos Realtime chegando
+- RLS como barreira primária: em caso de race condition (fetch chega com jogo ainda `pending`), `home_score`/`away_score` retornam `null` pela RLS e o merge trata `null` como ausência de prediction
+- **Componente modificado:** `components/games/GameCard.tsx` — integra `useParticipantsRealtime`; `participants` (prop SSR) é passada como estado inicial; `liveParticipants` (retorno do hook) substitui `participants` nas duas ocorrências de renderização condicional e passagem para `GameParticipantsList`
+- Lógica `prediction-visibility` preservada: o hook não interfere com jogos `pending` — fetch só ocorre quando status já não é `pending`
+- Canal Realtime `game-participants-${gameId}` é separado do canal `game-${gameId}` (usado por `useGameRealtime`) para evitar conflito de estado; subscription é removida corretamente no cleanup do `useEffect`
+- Nenhuma migration de schema, RLS policy ou componente visual alterado — mudança exclusivamente de lógica de dados
+
 ## [prediction-visibility] — Distinção entre Palpite Oculto e Pendente — 2026-06-17
 
 - Em jogos `pending`, a coluna PALPITE de terceiros passa a exibir `OCULTO` (cinza, `color-muted`) quando o participante já enviou seu palpite, e `PENDENTE` (vermelho, `color-error`) quando ainda não enviou — eliminando a ambiguidade do traço `-` introduzida pela feature predecessor `fix-prediction-visibility`
