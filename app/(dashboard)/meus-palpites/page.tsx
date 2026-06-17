@@ -218,7 +218,7 @@ export default async function MeusPalpitesPage({ searchParams }: MeusPalpitesPag
                       fontWeight: 'bold',
                       borderLeft: i > 0 ? '1px solid var(--color-border)' : 'none',
                       borderBottom: '1px solid var(--color-border)',
-                      textAlign: i === 0 ? 'left' : 'center',
+                      textAlign: 'center',
                       whiteSpace: 'nowrap',
                     }}
                   >
@@ -239,7 +239,7 @@ export default async function MeusPalpitesPage({ searchParams }: MeusPalpitesPag
                 return (
                   <tr key={prediction.id} style={{ backgroundColor: rowBg }}>
                     {/* JOGO */}
-                    <td style={{ padding: '0.6rem 0.75rem', borderTop: cellBorder }}>
+                    <td style={{ padding: '0.6rem 0.75rem', borderTop: cellBorder, textAlign: 'center' }}>
                       <div
                         style={{
                           fontWeight: 'bold',
