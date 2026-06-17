@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { dayBoundsInUTC, isValidDateString, matchDateToLocalDate, todayInBrasilia } from '@/lib/date'
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service-server'
 import { resolveActiveGroup } from '@/lib/active-group'
 import { redirect } from 'next/navigation'
 
@@ -117,11 +118,13 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
     const gameIds = games.map((g: Game) => g.id)
 
     // Executar todas as queries em paralelo para evitar N+1
+    const supabaseService = createServiceClient()
     const [
       { data: predictions, count },
       { data: groupMembers },
       { data: allPredictions },
       { data: allScores },
+      { data: predictionExistence },
     ] = await Promise.all([
       // Palpites do usuário logado neste grupo (com contagem para guessCount)
       supabase
@@ -140,6 +143,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         .eq('group_id', activeGroupId),
 
       // Palpites de todos os membros do grupo ativo nos jogos do dia
+      // (RLS bloqueia home_score/away_score de terceiros em jogos pending — intencional)
       supabase
         .from('predictions')
         .select('id, game_id, user_id, home_score, away_score, submitted_at')
@@ -150,6 +154,15 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
       supabase
         .from('scores')
         .select('*')
+        .eq('group_id', activeGroupId)
+        .in('game_id', gameIds),
+
+      // Existência de palpites por (user_id, game_id) — usa service_role para ignorar RLS.
+      // Seleciona apenas user_id e game_id (sem home_score/away_score) para não vazar placares.
+      // Permite distinguir OCULTO (palpitou) de PENDENTE (não palpitou) em jogos pending.
+      supabaseService
+        .from('predictions')
+        .select('user_id, game_id')
         .eq('group_id', activeGroupId)
         .in('game_id', gameIds),
     ])
@@ -177,6 +190,12 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         away_score: p.away_score,
       }
     }
+
+    // Índice de existência de palpites (via service_role, sem expor placares)
+    // Chave: "userId:gameId" — presente quando o participante registrou palpite
+    const hasPredictionByUserGame = new Set<string>(
+      (predictionExistence ?? []).map((row) => `${row.user_id}:${row.game_id}`)
+    )
     const scoreByUserGame: Record<string, { points: number; breakdown: ScoreBreakdown }> = {}
     for (const s of typedAllScores) {
       scoreByUserGame[`${s.user_id}:${s.game_id}`] = {
@@ -208,6 +227,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
           prediction,
           points: scoreEntry?.points ?? null,
           breakdown: scoreEntry?.breakdown ?? null,
+          hasPrediction: hasPredictionByUserGame.has(key),
         } as ParticipantEntry
       })
     }

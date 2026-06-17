@@ -6,6 +6,18 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [prediction-visibility] — Distinção entre Palpite Oculto e Pendente — 2026-06-17
+
+- Em jogos `pending`, a coluna PALPITE de terceiros passa a exibir `OCULTO` (cinza, `color-muted`) quando o participante já enviou seu palpite, e `PENDENTE` (vermelho, `color-error`) quando ainda não enviou — eliminando a ambiguidade do traço `-` introduzida pela feature predecessor `fix-prediction-visibility`
+- O próprio usuário sempre vê seu palpite real, independentemente do status do jogo; em jogos `live` e `finished`, todos os palpites permanecem visíveis (comportamento original mantido)
+- A privacidade dos valores de palpite é preservada: a query de existência seleciona apenas `user_id, game_id` — `home_score`/`away_score` de terceiros nunca trafegam para o cliente em jogos `pending`
+- Decisão arquitetural documentada em `.pipeline/prediction-visibility-spec.md`: uso de service_role para verificação de existência (booleano) é explicitamente distinto da diretiva da spec anterior, que proibia leitura de conteúdo via service_role
+- **Arquivo criado:** `lib/supabase/service-server.ts` — cliente service_role centralizado para Server Components e Route Handlers, com `persistSession: false`
+- **Tipo estendido:** `lib/types/participant.ts` — campo `hasPrediction: boolean` adicionado a `ParticipantEntry`
+- **Página modificada:** `app/(dashboard)/jogos/page.tsx` — quinta query paralela (service_role, `select('user_id, game_id')`, filtrada por grupo e jogos do dia) monta índice `Set<string>` com chave `"userId:gameId"` para lookup O(1); campo `hasPrediction` populado em cada `ParticipantEntry`
+- **Componente modificado:** `components/bolao/GameParticipantsList.tsx` — lógica de `predictionLabel` e cor diferencia `OCULTO`/`PENDENTE`/placar real em jogos `pending` de terceiros
+- Nenhuma migration de schema, RLS policy ou endpoint criado/alterado
+
 ## [remove-member] — Remover Participante do Grupo — 2026-06-17
 
 - Admin de um grupo pode remover qualquer participante (exceto a si mesmo) diretamente pela tela `/grupos/[id]`, via botão `[REMOVER]` ao lado de cada linha de membro

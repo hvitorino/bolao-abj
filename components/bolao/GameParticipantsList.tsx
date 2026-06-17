@@ -150,7 +150,9 @@ export default function GameParticipantsList({
               const isCurrentUser = p.userId === currentUserId
               const shouldHidePrediction = isPending && !isCurrentUser
               const predictionLabel = shouldHidePrediction
-                ? 'OCULTO'
+                ? p.hasPrediction
+                  ? 'OCULTO'
+                  : 'PENDENTE'
                 : p.prediction
                   ? `${p.prediction.home_score} × ${p.prediction.away_score}`
                   : '-'
@@ -262,8 +264,11 @@ export default function GameParticipantsList({
                         textAlign: 'center',
                         fontWeight: 'bold',
                         fontSize: '12px',
-                        color:
-                          shouldHidePrediction || p.prediction
+                        color: shouldHidePrediction
+                          ? p.hasPrediction
+                            ? 'var(--color-muted)'
+                            : 'var(--color-error)'
+                          : p.prediction
                             ? 'var(--color-accent)'
                             : 'var(--color-muted)',
                         textTransform: shouldHidePrediction ? 'uppercase' : undefined,
