@@ -6,6 +6,7 @@ import { CopyInviteLink } from '@/components/bolao/CopyInviteLink'
 import { InviteUserSearch } from '@/components/bolao/InviteUserSearch'
 import { AtivarGrupoButton } from '@/components/bolao/AtivarGrupoButton'
 import { DeleteGroupButton } from '@/components/bolao/DeleteGroupButton'
+import { MembersList } from '@/components/bolao/MembersList'
 import type { GroupMemberEntry } from '@/lib/types/group'
 import type { GroupInviteSent } from '@/lib/types/group-invite'
 
@@ -359,33 +360,12 @@ export default async function GrupoDetalhesPage({ params }: GrupoDetalhesPagePro
           >
             PARTICIPANTES ({members.length})
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            {members.map((member) => (
-              <div
-                key={member.userId}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  fontSize: '13px',
-                }}
-              >
-                <span style={{ color: 'var(--color-text)' }}>
-                  • {member.name.toUpperCase()}
-                </span>
-                <span
-                  style={{
-                    fontSize: '10px',
-                    color: member.role === 'admin' ? 'var(--color-accent)' : 'var(--color-muted)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em',
-                  }}
-                >
-                  {member.role === 'admin' ? 'ADMIN' : 'MEMBRO'}
-                </span>
-              </div>
-            ))}
-          </div>
+          <MembersList
+            groupId={id}
+            initialMembers={members}
+            currentUserId={user.id}
+            isAdmin={isAdmin}
+          />
         </div>
       </div>
 
