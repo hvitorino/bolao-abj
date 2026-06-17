@@ -27,18 +27,22 @@ interface PredictionRow {
   score: Score | null
 }
 
-// Formata data curta: "14 JUN 2026"
+// Formata data curta: "14 JUN"
 function formatDate(matchDate: string): string {
   return new Date(matchDate)
     .toLocaleDateString('pt-BR', {
       timeZone: 'America/Sao_Paulo',
       day: '2-digit',
       month: 'short',
-      year: 'numeric',
     })
     .toUpperCase()
     .replace(/\./g, '')
     .replace(/ DE /g, ' ')
+}
+
+// Remove prefixo "Copa do Mundo NNNN" do nome da rodada
+function formatRound(round: string): string {
+  return round.replace(/copa do mundo \d{4}\s*[-–]?\s*/i, '').trim()
 }
 
 // Formata status em português
@@ -254,7 +258,7 @@ export default async function MeusPalpitesPage({ searchParams }: MeusPalpitesPag
                           textTransform: 'uppercase',
                         }}
                       >
-                        {game.round} · {formatDate(game.match_date)}
+                        {formatRound(game.round)} · {formatDate(game.match_date)}
                       </div>
                     </td>
 
