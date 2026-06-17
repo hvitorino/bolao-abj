@@ -3,7 +3,7 @@
 **Slug:** date-chips-nav
 **Branch:** feature/date-chips-nav
 **Data:** 2026-06-17
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
