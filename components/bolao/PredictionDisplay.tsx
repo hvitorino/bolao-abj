@@ -10,6 +10,11 @@ interface PredictionDisplayProps {
   awayTeamCode: string
   submittedAt?: string
   onEditRequest?: () => void
+  // Props para modo expansível (ao vivo / encerrado)
+  isExpandable?: boolean
+  isExpanded?: boolean
+  onToggle?: () => void
+  points?: number | null
 }
 
 function formatSubmittedAt(submittedAt: string): string {
@@ -27,27 +32,24 @@ export default function PredictionDisplay({
   awayTeamCode,
   submittedAt,
   onEditRequest,
+  isExpandable = false,
+  isExpanded = false,
+  onToggle,
+  points,
 }: PredictionDisplayProps) {
   const [isHovering, setIsHovering] = useState(false)
 
   const submittedLabel = submittedAt ? `enviado às ${formatSubmittedAt(submittedAt)} BRT` : null
+  const showPoints = isExpandable && points != null
 
-  return (
-    <div
-      style={{
-        position: 'relative',
-        border: '1px solid var(--color-primary)',
-        backgroundColor: 'var(--color-surface)',
-        padding: '0.75rem',
-        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-      }}
-    >
+  const content = (
+    <>
       {/* Ícone de editar — topo direito do card de palpite */}
       {onEditRequest && (
         <button
           type="button"
           title="Editar palpite"
-          onClick={onEditRequest}
+          onClick={(e) => { e.stopPropagation(); onEditRequest() }}
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
           style={{
@@ -69,18 +71,41 @@ export default function PredictionDisplay({
         </button>
       )}
 
-      {/* Título */}
+      {/* Linha superior: título à esquerda, pontos + chevron à direita */}
       <div
         style={{
-          fontSize: '10px',
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--color-win)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
           marginBottom: '0.5rem',
-          fontWeight: 'bold',
         }}
       >
-        ✓ SEU PALPITE
+        <div
+          style={{
+            fontSize: '10px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            color: 'var(--color-win)',
+            fontWeight: 'bold',
+          }}
+        >
+          ✓ SEU PALPITE
+        </div>
+        {showPoints && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              color: points > 0 ? 'var(--color-accent)' : 'var(--color-muted)',
+            }}
+          >
+            <span>+{points} PTS</span>
+            <span style={{ fontSize: '10px' }}>{isExpanded ? '▴' : '▾'}</span>
+          </div>
+        )}
       </div>
 
       {/* Placar do palpite */}
@@ -123,6 +148,41 @@ export default function PredictionDisplay({
           {submittedLabel}
         </div>
       )}
+    </>
+  )
+
+  if (isExpandable && onToggle) {
+    return (
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={onToggle}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onToggle() }}
+        style={{
+          position: 'relative',
+          border: '1px solid var(--color-primary)',
+          backgroundColor: 'var(--color-surface)',
+          padding: '0.75rem',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          cursor: 'pointer',
+        }}
+      >
+        {content}
+      </div>
+    )
+  }
+
+  return (
+    <div
+      style={{
+        position: 'relative',
+        border: '1px solid var(--color-primary)',
+        backgroundColor: 'var(--color-surface)',
+        padding: '0.75rem',
+        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+      }}
+    >
+      {content}
     </div>
   )
 }

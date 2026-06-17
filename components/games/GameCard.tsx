@@ -67,6 +67,8 @@ export default function GameCard({
   const [isEditing, setIsEditing] = useState(false)
   // Estado de expansão da seção de palpites dos participantes — colapsado por padrão
   const [isParticipantsExpanded, setIsParticipantsExpanded] = useState(false)
+  // Estado de expansão do breakdown de pontuação — colapsado por padrão
+  const [isScoreExpanded, setIsScoreExpanded] = useState(false)
   // Estado de hover do toggle — inverte cores para reforçar que é clicável
   const [isHoveringToggle, setIsHoveringToggle] = useState(false)
 
@@ -440,11 +442,13 @@ export default function GameCard({
                   homeTeamCode={liveGame.home_team_code}
                   awayTeamCode={liveGame.away_team_code}
                   submittedAt={currentPrediction.submitted_at}
-                  // Sem onEditRequest — jogos ao vivo/encerrados não exibem botão de edição
+                  isExpandable={!!(displayScore && liveHomeScore !== null && liveAwayScore !== null)}
+                  isExpanded={isScoreExpanded}
+                  onToggle={() => setIsScoreExpanded((prev) => !prev)}
+                  points={displayScore?.points ?? null}
                 />
-                {/* Breakdown de pontuação — ao vivo usa score provisório calculado no cliente;
-                    encerrado usa score da tabela `scores` via Realtime */}
-                {(isLive || isFinished) &&
+                {/* Breakdown de pontuação — revelado ao clicar no palpite */}
+                {isScoreExpanded &&
                   displayScore &&
                   liveHomeScore !== null &&
                   liveAwayScore !== null && (
