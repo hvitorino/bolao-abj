@@ -6,6 +6,20 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [remove-member] — Remover Participante do Grupo — 2026-06-17
+
+- Admin de um grupo pode remover qualquer participante (exceto a si mesmo) diretamente pela tela `/grupos/[id]`, via botão `[REMOVER]` ao lado de cada linha de membro
+- Modal de confirmação exibe nome do participante, aviso de reversibilidade e botão `CONFIRMAR REMOÇÃO`; modal permanece aberto em caso de erro com mensagem inline e botão `TENTAR NOVAMENTE`; fecha e remove da lista em caso de sucesso
+- Atualização otimista: membro desaparece da lista imediatamente via `setMembers(prev => prev.filter(...))` sem reload de página
+- Dupla defesa de auto-remoção: frontend não renderiza botão na própria linha do admin (`member.userId !== currentUserId`); backend rejeita com 403 quando `caller.id === userId`
+- Membro não-admin nunca vê botão `[REMOVER]` (prop `isAdmin` validada no `MembersList`)
+- Palpites e scores do membro removido permanecem no banco como registro histórico; apenas a linha em `group_members` é deletada
+- **Endpoint criado:** `DELETE /api/groups/[id]/members/[userId]` (Next.js Route Handler) — verifica auth JWT (401), UUID válido (400), existência do grupo (404), membership do chamador (403), role admin (403), auto-remoção (403), membership do alvo (422); executa delete via `serviceClient` (service_role); retorna `{ removed: true, group_id, user_id }`
+- **Componente criado:** `components/bolao/RemoveMemberButton.tsx` — client component com 4 estados (idle/confirming/loading/error), modal acessível (`role="dialog"`, `aria-modal="true"`, `aria-labelledby`), estilo Elifoot, JetBrains Mono
+- **Componente criado:** `components/bolao/MembersList.tsx` — client component que gerencia estado local da lista de membros e renderiza `RemoveMemberButton` condicionalmente
+- **Página modificada:** `app/(dashboard)/grupos/[id]/page.tsx` — bloco de lista de participantes substituído por `<MembersList>` com props `groupId`, `initialMembers`, `currentUserId`, `isAdmin`
+- Nenhuma migration de schema ou RLS — deleção via `serviceClient` (service_role) dispensa policy de DELETE para `authenticated`; schema de `group_members` e funções `is_group_admin`/`is_group_member` existem desde features anteriores
+
 ## [delete-group] — Exclusão de Grupo pelo Admin — 2026-06-17
 
 - Admin de um grupo pode excluí-lo permanentemente via botão "EXCLUIR GRUPO" na seção "ZONA DE PERIGO" em `/grupos/[id]`, visível somente quando `isAdmin === true`
