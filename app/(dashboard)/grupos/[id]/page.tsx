@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { CopyInviteLink } from '@/components/bolao/CopyInviteLink'
 import { InviteUserSearch } from '@/components/bolao/InviteUserSearch'
 import { AtivarGrupoButton } from '@/components/bolao/AtivarGrupoButton'
+import { DeleteGroupButton } from '@/components/bolao/DeleteGroupButton'
 import type { GroupMemberEntry } from '@/lib/types/group'
 import type { GroupInviteSent } from '@/lib/types/group-invite'
 
@@ -387,6 +388,34 @@ export default async function GrupoDetalhesPage({ params }: GrupoDetalhesPagePro
           </div>
         </div>
       </div>
+
+      {/* Zona de perigo — somente admin */}
+      {isAdmin && (
+        <div
+          style={{
+            border: '1px solid var(--color-error)',
+            background: 'var(--color-surface)',
+            marginTop: '1rem',
+            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          }}
+        >
+          <div
+            style={{
+              padding: '0.5rem 1rem',
+              borderBottom: '1px solid var(--color-error)',
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              color: 'var(--color-error)',
+            }}
+          >
+            ZONA DE PERIGO
+          </div>
+          <div style={{ padding: '1rem' }}>
+            <DeleteGroupButton groupId={id} groupName={group.name} />
+          </div>
+        </div>
+      )}
 
       <div style={{ marginTop: '1rem' }}>
         <Link
