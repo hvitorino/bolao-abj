@@ -3,7 +3,7 @@
 **Slug:** prediction-visibility
 **Branch:** feature/prediction-visibility
 **Data:** 2026-06-17
-**Status:** aguardando revisão
+**Status:** aguardando revisão (fix 1 aplicado)
 
 ---
 
@@ -54,3 +54,31 @@ b427688 feat(prediction-visibility): adiciona campo hasPrediction em Participant
 5df9fa0 feat(prediction-visibility): cria cliente service_role reutilizável em lib/supabase/service-server.ts
 c441345 chore(prediction-visibility): adiciona plano de implementação
 ```
+
+---
+
+## Correções Fix 1
+
+**Data:** 2026-06-17
+
+### Problemas resolvidos
+
+**Problema 1 — Spec formal ausente:**
+Criado `.pipeline/prediction-visibility-spec.md` com objetivo, histórias de usuário, regras de negócio, critérios de aceite e a decisão arquitetural de uso de service_role documentada com justificativa explícita.
+
+**Problema 2 — Decisão arquitetural não documentada:**
+A spec criada inclui seção "Decisão Arquitetural: Uso de service_role para Verificação de Existência" que:
+- Contextualiza a diretiva da spec predecessor (`fix-prediction-visibility`) e seu escopo original (proteger conteúdo: `home_score`/`away_score`).
+- Distingue o uso proibido (ler valores de palpite via service_role) do uso atual (verificar existência booleana via `user_id, game_id`).
+- Explica por que RLS sozinho era insuficiente para o novo requisito de distinguir `OCULTO` de `PENDENTE`.
+- Documenta as salvaguardas: seleção explícita de colunas, filtro por grupo, contexto exclusivamente server-side.
+
+### O que foi alterado neste fix
+
+- Criado: `.pipeline/prediction-visibility-spec.md`
+- Atualizado: `.pipeline/prediction-visibility-plan.md` — tarefas marcadas como concluídas (`[x]`)
+- Atualizado: `.pipeline/prediction-visibility-changelog.md` (este arquivo) — status e seção de correções
+
+### Nenhuma mudança de código
+
+A implementação em `lib/supabase/service-server.ts`, `lib/types/participant.ts`, `components/bolao/GameParticipantsList.tsx` e `app/(dashboard)/jogos/page.tsx` permanece inalterada — foi validada como correta pelo Revisor.
