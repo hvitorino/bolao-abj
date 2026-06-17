@@ -10,7 +10,7 @@ import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
 import type { ScoreBreakdown } from '@/lib/types/score'
 import { ParticipantEntry } from '@/lib/types/participant'
-import DayNavigator from '@/components/games/DayNavigator'
+import DateChipsNav from '@/components/games/DateChipsNav'
 import GameList from '@/components/games/GameList'
 
 interface JogosPageProps {
@@ -241,11 +241,11 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
 
       {/* Navegador de dias */}
       <div style={{ marginBottom: '1.25rem' }}>
-        <DayNavigator
+        <DateChipsNav
           currentDate={currentDate}
+          availableDates={availableDates}
           gameCount={games?.length ?? 0}
           guessCount={guessCount}
-          availableDates={availableDates}
         />
       </div>
 

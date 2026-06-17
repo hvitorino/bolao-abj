@@ -6,6 +6,22 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [date-chips-nav] — Navegação por Chips de Data — 2026-06-17
+
+- Substituído o componente `DayNavigator` (dropdown + setas ◀ ▶) por `DateChipsNav` — faixa horizontal de chips clicáveis, um por data com jogos
+- Chip da data ativa exibido em `color-accent` bold com borda amarela; chips inativos em `color-muted` com hover para `color-text`
+- Scroll horizontal livre na faixa sem barra de scroll visível (Firefox: `scrollbarWidth: none`; webkit: `.date-chips-scroll::-webkit-scrollbar { display: none }`)
+- Chip ativo centralizado automaticamente na viewport via `scrollIntoView({ inline: 'center' })` ao carregar e ao mudar de data
+- Chips são `<button>` nativos com `aria-current="true"` no ativo; navegação por Tab funciona nativamente
+- Formato de data abreviado no chip: `DD MMM` uppercase (ex: `11 JUN`, `19 JUL`)
+- Estado vazio (`availableDates.length === 0`) exibe "SEM DATAS DISPONÍVEIS" em `color-muted` 11px uppercase
+- Linha de contadores (`X JOGOS · Y PALPITES REGISTRADOS`) preservada abaixo da faixa
+- **Componente criado:** `components/games/DateChipsNav.tsx`
+- **Componente removido:** `components/games/DayNavigator.tsx`
+- **Página modificada:** `app/(dashboard)/jogos/page.tsx` — import e JSX trocados
+- **CSS modificado:** `app/globals.css` — regra webkit para ocultar scrollbar da faixa
+- Nenhuma migration, endpoint, tabela nova ou mudança de RLS
+
 ## [date-picker-jogos] — Seletor de Datas com Jogos — 2026-06-17
 
 - Clicar no texto da data exibida no `DayNavigator` abre um dropdown com a lista de todas as datas que possuem jogos cadastrados
