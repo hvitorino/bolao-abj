@@ -25,11 +25,14 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  const { data: groupRows } = await supabase
-    .from('group_members')
-    .select('role, joined_at, groups(id, name)')
-    .eq('user_id', user.id)
-    .order('joined_at', { ascending: true })
+  const [{ data: groupRows }, { data: profile }] = await Promise.all([
+    supabase
+      .from('group_members')
+      .select('role, joined_at, groups(id, name)')
+      .eq('user_id', user.id)
+      .order('joined_at', { ascending: true }),
+    supabase.from('profiles').select('name').eq('id', user.id).single(),
+  ])
 
   const groups = ((groupRows ?? []) as GroupRow[]).map((row) => {
     const g = Array.isArray(row.groups) ? row.groups[0] : row.groups
@@ -82,6 +85,7 @@ export default async function DashboardLayout({
               groups={groups}
               activeGroupId={activeGroup?.id}
               pendingInvitesCount={pendingInvitesCount ?? 0}
+              userName={profile?.name ?? user.email ?? ''}
             />
           </div>
 

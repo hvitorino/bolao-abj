@@ -24,9 +24,10 @@ interface GroupMenuProps {
   groups: Group[]
   activeGroupId: string | undefined
   pendingInvitesCount: number
+  userName: string
 }
 
-export function GroupMenu({ groups, activeGroupId, pendingInvitesCount }: GroupMenuProps) {
+export function GroupMenu({ groups, activeGroupId, pendingInvitesCount, userName }: GroupMenuProps) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const ref = useRef<HTMLDivElement>(null)
@@ -125,6 +126,19 @@ export function GroupMenu({ groups, activeGroupId, pendingInvitesCount }: GroupM
                 whiteSpace: 'nowrap',
               }}
             >
+              {userName && (
+                <div
+                  style={{
+                    ...MONO,
+                    padding: '0.375rem 0.75rem',
+                    color: 'var(--color-muted)',
+                    borderBottom: '1px solid var(--color-border)',
+                  }}
+                >
+                  {userName.toUpperCase()}
+                </div>
+              )}
+
               {groups.map((group) => (
                 <button
                   key={group.id}
