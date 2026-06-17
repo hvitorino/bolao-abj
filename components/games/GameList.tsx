@@ -102,23 +102,31 @@ export default function GameList({
               cards vizinhos crescer quando um deles expande os palpites */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: '1rem',
-              alignItems: 'start',
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              padding: '1rem',
             }}
           >
-            {gamesByRound[round].map((game) => (
-              <GameCard
-                key={game.id}
-                game={game}
-                prediction={predictionsByGameId[game.id] ?? null}
-                score={scoresByGameId[game.id] ?? null}
-                participants={participantsByGameId[game.id] ?? []}
-                userId={userId}
-                groupId={groupId}
-              />
-            ))}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                gap: '1rem',
+                alignItems: 'start',
+              }}
+            >
+              {gamesByRound[round].map((game) => (
+                <GameCard
+                  key={game.id}
+                  game={game}
+                  prediction={predictionsByGameId[game.id] ?? null}
+                  score={scoresByGameId[game.id] ?? null}
+                  participants={participantsByGameId[game.id] ?? []}
+                  userId={userId}
+                  groupId={groupId}
+                />
+              ))}
+            </div>
           </div>
         </div>
       ))}
