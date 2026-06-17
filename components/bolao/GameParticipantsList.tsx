@@ -66,7 +66,7 @@ export default function GameParticipantsList({
               letterSpacing: '0.05em',
             }}
           >
-            * PROVISÓRIO — RECALCULADO AO VIVO
+            AO VIVO
           </span>
         )}
       </div>
