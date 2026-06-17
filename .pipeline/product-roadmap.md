@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 31 features
-- Concluídas: 30
-- Em progresso: 1
+- Concluídas: 31
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -395,7 +395,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 31. remove-member — Remover Participante do Grupo — em progresso
+### 31. remove-member — Remover Participante do Grupo — concluída
 **Objetivo:** O admin do grupo pode remover um participante a partir da tela de gerenciamento do grupo. Ao lado de cada membro (exceto o próprio admin), aparece uma ação de remover; após confirmação, o membro é excluído da tabela `group_members` e perde acesso ao grupo imediatamente.
 **Critérios de sucesso:**
 - Admin vê botão/ícone de remover ao lado de cada membro (não ao lado de si mesmo)
