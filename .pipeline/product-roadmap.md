@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 32 features
+- Total: 33 features
 - Concluídas: 32
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -422,6 +422,16 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Decisão arquitetural de uso de service_role documentada com justificativa explícita na spec
 **Dependências:** auth, game-navigation, predictions, game-participants-view, fix-prediction-visibility
 **Observação de conclusão:** aprovada após uma rodada de fix (fix-1 exigiu apenas documentação — spec formal e justificativa arquitetural; nenhuma mudança de código). Merge `feature/prediction-visibility` na main confirmado (commit `e3a7d29`) em 2026-06-17.
+
+---
+
+### 33. fix-predictions-reveal-on-live — Correção: Revelação de Palpites ao Vivo — em progresso
+**Objetivo:** Corrigir o bug em que, quando o status de um jogo muda para `live`, os palpites dos demais participantes continuam exibidos como "-" na UI até que o usuário recarregue manualmente a página — a transição de status deveria disparar automaticamente um refetch dos palpites para todos os clientes conectados.
+**Critérios de sucesso:**
+- Quando o status de um jogo muda para `live` (via Supabase Realtime ou polling), todos os palpites de todos os participantes são carregados e exibidos automaticamente, sem necessidade de reload
+- A transição é suave — nenhum flash ou estado intermediário vazio
+- Funciona para todos os usuários conectados na página simultaneamente
+**Dependências:** auth, game-navigation, predictions, live-scores-realtime, fix-prediction-visibility, prediction-visibility
 
 ---
 
