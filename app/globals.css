@@ -44,6 +44,11 @@ body {
   font-size: 12px;
 }
 
+/* Ocultar scrollbar na faixa de chips de data (webkit) */
+.date-chips-scroll::-webkit-scrollbar {
+  display: none;
+}
+
 @media (min-width: 768px) {
   .ranking-name-cell {
     font-size: 14px;
