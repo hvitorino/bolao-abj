@@ -98,19 +98,6 @@ export default function DayNavigator({ currentDate, gameCount, guessCount }: Day
           >
             {formatDateDisplay(currentDate)}
           </span>
-          {today && (
-            <span
-              style={{
-                display: 'block',
-                color: 'var(--color-accent)',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-                marginTop: '2px',
-              }}
-            >
-              (HOJE)
-            </span>
-          )}
         </div>
 
         <Button
