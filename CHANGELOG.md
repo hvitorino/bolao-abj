@@ -6,6 +6,23 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [date-picker-jogos] — Seletor de Datas com Jogos — 2026-06-17
+
+- Clicar no texto da data exibida no `DayNavigator` abre um dropdown com a lista de todas as datas que possuem jogos cadastrados
+- Datas exibidas no formato "DIA DA SEMANA, DD MMM YYYY" (via `formatDateDisplay`), em uppercase, fonte JetBrains Mono
+- Data atual destacada em `color-accent` bold; item com foco via teclado destacado com `background: color-secondary`
+- Navegação por teclado completa: `ArrowDown`/`ArrowUp` (com wrap), `Enter` para navegar, `Escape` para fechar e devolver foco, `Tab` para fechar sem travar foco nativo
+- Fechar ao clicar fora via `mousedown` listener no `document` (apenas quando aberto); sem navegação ao clicar fora
+- Dropdown acessível: `role="listbox"`, `aria-haspopup="listbox"`, `aria-expanded`, `aria-activedescendant`, `role="option"`, `aria-selected`
+- Indicador `▼`/`▲` em `color-muted` exibido após o texto da data; sem borda/fundo/sombra no trigger
+- Setas `◀ ▶` existentes preservadas sem nenhuma alteração
+- Conversão de timezone correta: `2026-06-12T00:00:00Z` → `2026-06-11` (jogo às 21h BRT)
+- Deduplicação via `Set` garante uma entrada por dia BRT mesmo com múltiplos jogos com `match_date` UTC distintos
+- **Função criada:** `matchDateToLocalDate` em `lib/date.ts` — converte `timestamptz` UTC para data BRT (`YYYY-MM-DD`) via `Intl.DateTimeFormat`, coerente com `todayInBrasilia()` e `dayBoundsInUTC()` já existentes
+- **Componente modificado:** `components/games/DayNavigator.tsx` — interface estendida com `availableDates: string[]`, `<span>` da data convertido em `<button>`, dropdown absoluto adicionado
+- **Página modificada:** `app/(dashboard)/jogos/page.tsx` — query de `allMatchDates` executada em paralelo com a query de jogos do dia via `Promise.all`; prop `availableDates` passada para `DayNavigator`
+- Nenhuma migration, tabela nova, endpoint ou mudança de RLS
+
 ## [prediction-score-breakdown] — Detalhamento da Pontuação no Palpite — 2026-06-16
 
 - Dentro de `GameParticipantsList` (jogo expandido), clicar na linha de um participante com palpite e score já calculado (`breakdown !== null`) revela o detalhamento da pontuação daquele palpite (accordion exclusivo por jogo)

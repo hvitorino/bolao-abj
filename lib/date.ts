@@ -1,5 +1,19 @@
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
+/**
+ * Converte um timestamptz ISO 8601 (UTC) para data local em BRT (YYYY-MM-DD).
+ * Usado para mapear match_date de games para a data do dia em que o jogo ocorre
+ * no fuso de Brasília.
+ */
+export function matchDateToLocalDate(isoUtcString: string): string {
+  return new Date(isoUtcString)
+    .toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+    .split('/')
+    .reverse()
+    .map((part, index) => (index === 0 ? part : part.padStart(2, '0')))
+    .join('-')
+}
+
 export function isValidDateString(dateStr: string): boolean {
   if (!ISO_DATE_REGEX.test(dateStr)) return false
 

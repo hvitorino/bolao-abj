@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { dayBoundsInUTC, isValidDateString, todayInBrasilia } from '@/lib/date'
+import { dayBoundsInUTC, isValidDateString, matchDateToLocalDate, todayInBrasilia } from '@/lib/date'
 import { createClient } from '@/lib/supabase/server'
 import { resolveActiveGroup } from '@/lib/active-group'
 import { redirect } from 'next/navigation'
@@ -73,12 +73,28 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
 
   const { groupId: activeGroupId, groupName: activeGroupName } = activeGroup
 
-  // Buscar jogos do dia
-  const { data: rawGames, error: gamesError } = await supabase
-    .from('games')
-    .select('*')
-    .gte('match_date', startOfDay)
-    .lte('match_date', endOfDay)
+  // Buscar jogos do dia e todas as datas com jogos (para o date picker) em paralelo
+  const [
+    { data: rawGames, error: gamesError },
+    { data: allMatchDates },
+  ] = await Promise.all([
+    supabase
+      .from('games')
+      .select('*')
+      .gte('match_date', startOfDay)
+      .lte('match_date', endOfDay),
+    supabase
+      .from('games')
+      .select('match_date')
+      .order('match_date', { ascending: true }),
+  ])
+
+  // Converter para datas BRT únicas e ordenadas
+  const availableDates: string[] = allMatchDates
+    ? Array.from(
+        new Set(allMatchDates.map((row) => matchDateToLocalDate(row.match_date)))
+      ).sort()
+    : []
 
   const STATUS_ORDER: Record<string, number> = { live: 0, pending: 1, finished: 2 }
   const games = rawGames
@@ -229,6 +245,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
           currentDate={currentDate}
           gameCount={games?.length ?? 0}
           guessCount={guessCount}
+          availableDates={availableDates}
         />
       </div>
 
