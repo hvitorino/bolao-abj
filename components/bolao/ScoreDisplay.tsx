@@ -1,16 +1,9 @@
 import type { ScoreBreakdown } from '@/lib/types/score'
 import { BREAKDOWN_LABELS } from '@/lib/scoring'
-import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 interface ScoreDisplayProps {
   points: number
   breakdown: ScoreBreakdown
-  predictionHomeScore: number
-  predictionAwayScore: number
-  gameHomeScore: number
-  gameAwayScore: number
-  homeTeamCode: string
-  awayTeamCode: string
 }
 
 /**
@@ -26,16 +19,7 @@ interface ScoreDisplayProps {
  * │  TOTAL                        8 pontos               │
  * └──────────────────────────────────────────────────────┘
  */
-export default function ScoreDisplay({
-  points,
-  breakdown,
-  predictionHomeScore,
-  predictionAwayScore,
-  gameHomeScore,
-  gameAwayScore,
-  homeTeamCode,
-  awayTeamCode,
-}: ScoreDisplayProps) {
+export default function ScoreDisplay({ points, breakdown }: ScoreDisplayProps) {
   // Monta lista ordenada de itens do breakdown com pontos > 0
   const breakdownItems: Array<{ label: string; pts: number }> = [
     { label: BREAKDOWN_LABELS.winner, pts: breakdown.winner },
@@ -55,51 +39,11 @@ export default function ScoreDisplay({
         fontSize: '11px',
       }}
     >
-      {/* Cabeçalho: placar real · palpite · total de pontos */}
-      <div
-        style={{
-          padding: '0.5rem 0.75rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.4rem',
-          flexWrap: 'wrap',
-        }}
-      >
-        <span style={{ fontSize: '16px', lineHeight: 1 }}>
-          {getTeamFlag(homeTeamCode)}
-        </span>
-        <span style={{ color: 'var(--color-accent)', fontWeight: 'bold', fontSize: '14px' }}>
-          {gameHomeScore}×{gameAwayScore}
-        </span>
-        <span style={{ fontSize: '16px', lineHeight: 1 }}>
-          {getTeamFlag(awayTeamCode)}
-        </span>
-        <span style={{ color: 'var(--color-border)', margin: '0 0.25rem' }}>·</span>
-        <span style={{ color: 'var(--color-muted)', textTransform: 'uppercase' }}>
-          SEU PALPITE:
-        </span>
-        <span style={{ color: 'var(--color-text)', fontWeight: 'bold' }}>
-          {predictionHomeScore}×{predictionAwayScore}
-        </span>
-        <span style={{ color: 'var(--color-border)', margin: '0 0.25rem' }}>·</span>
-        <span
-          style={{
-            color: points > 0 ? 'var(--color-accent)' : 'var(--color-muted)',
-            fontWeight: 'bold',
-            fontSize: '13px',
-            marginLeft: 'auto',
-          }}
-        >
-          +{points} PTS
-        </span>
-      </div>
-
       {/* Breakdown — apenas itens com pontos */}
       {breakdownItems.length > 0 && (
         <>
           <div
             style={{
-              borderTop: '1px solid var(--color-border)',
               padding: '0.4rem 0.75rem',
             }}
           >
@@ -175,7 +119,6 @@ export default function ScoreDisplay({
       {breakdownItems.length === 0 && (
         <div
           style={{
-            borderTop: '1px solid var(--color-border)',
             padding: '0.4rem 0.75rem',
             color: 'var(--color-muted)',
             textTransform: 'uppercase',

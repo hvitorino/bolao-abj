@@ -459,12 +459,6 @@ export default function GameCard({
                       <ScoreDisplay
                         points={displayScore.points}
                         breakdown={displayScore.breakdown}
-                        predictionHomeScore={currentPrediction.home_score}
-                        predictionAwayScore={currentPrediction.away_score}
-                        gameHomeScore={liveHomeScore}
-                        gameAwayScore={liveAwayScore}
-                        homeTeamCode={liveGame.home_team_code}
-                        awayTeamCode={liveGame.away_team_code}
                       />
                     </div>
                   )}
