@@ -55,42 +55,46 @@ export default async function DashboardLayout({
           padding: '0.625rem 1.5rem 0',
         }}
       >
-        {/* Linha 1: logo à esquerda, menu de grupo à direita */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingBottom: '0.5rem',
-          }}
-        >
-          <span
+        <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+          {/* Linha 1: logo à esquerda, menu de grupo à direita */}
+          <div
             style={{
-              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-              fontSize: '14px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              color: 'var(--color-accent)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingBottom: '0.5rem',
             }}
           >
-            BOLÃO DA COPA
-          </span>
+            <span
+              style={{
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '14px',
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                color: 'var(--color-accent)',
+              }}
+            >
+              BOLÃO DA COPA
+            </span>
 
-          <GroupMenu
-            groups={groups}
-            activeGroupId={activeGroup?.id}
-            pendingInvitesCount={pendingInvitesCount ?? 0}
-          />
-        </div>
+            <GroupMenu
+              groups={groups}
+              activeGroupId={activeGroup?.id}
+              pendingInvitesCount={pendingInvitesCount ?? 0}
+            />
+          </div>
 
-        {/* Linha 2: navegação centralizada */}
-        <div style={{ borderTop: '1px solid var(--color-border)' }}>
-          <NavLinks />
+          {/* Linha 2: navegação */}
+          <div style={{ borderTop: '1px solid var(--color-border)' }}>
+            <NavLinks />
+          </div>
         </div>
       </header>
 
-      <main style={{ padding: '1.5rem' }}>{children}</main>
+      <main style={{ padding: '1.5rem' }}>
+        <div style={{ maxWidth: '960px', margin: '0 auto' }}>{children}</div>
+      </main>
     </div>
   )
 }
