@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 30 features
-- Concluídas: 29
-- Em progresso: 1
+- Concluídas: 30
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -395,7 +395,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 30. delete-group — Exclusão de Grupo pelo Admin — em progresso
+### 30. delete-group — Exclusão de Grupo pelo Admin — concluída
 **Objetivo:** Permitir que o admin de um grupo o exclua diretamente pela aba Grupos, deletando em cascata todos os palpites e scores associados, sem afetar os perfis dos participantes.
 **Critérios de sucesso:**
 - Botão "Excluir grupo" visível apenas para o admin do grupo, na aba Grupos (ex: na página `/grupos/[id]` ou lista de grupos)
