@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 33 features
-- Concluídas: 32
-- Em progresso: 1
+- Concluídas: 33
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -425,7 +425,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 33. fix-predictions-reveal-on-live — Correção: Revelação de Palpites ao Vivo — em progresso
+### 33. fix-predictions-reveal-on-live — Correção: Revelação de Palpites ao Vivo — concluída
 **Objetivo:** Corrigir o bug em que, quando o status de um jogo muda para `live`, os palpites dos demais participantes continuam exibidos como "-" na UI até que o usuário recarregue manualmente a página — a transição de status deveria disparar automaticamente um refetch dos palpites para todos os clientes conectados.
 **Critérios de sucesso:**
 - Quando o status de um jogo muda para `live` (via Supabase Realtime ou polling), todos os palpites de todos os participantes são carregados e exibidos automaticamente, sem necessidade de reload
