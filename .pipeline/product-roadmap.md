@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 27 features
+- Total: 28 features
 - Concluídas: 27
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -360,3 +360,19 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Layout segue DESIGN.md rigorosamente (monospace, paleta verde/amarelo/azul, dense, sem ícones decorativos)
 **Dependências:** game-participants-view, collapse-game-card, scoring
 **Observação:** feature pontual solicitada diretamente pelo usuário; PM não deve avançar para outras features do roadmap após a conclusão desta (escopo limitado a esta entrega). Aprovada sem rodada de fix em 2026-06-16; merge `feature/prediction-score-breakdown` na main confirmado. Implementação fiel à spec: leitura pura do campo `breakdown jsonb` já existente em `scores` (sem reimplementar cálculo, sem migration, sem endpoint novo). Novo componente `components/bolao/PredictionBreakdown.tsx`, accordion exclusivo por jogo em `GameParticipantsList.tsx` com acessibilidade via teclado (`role="button"`, `tabIndex`, `Enter`/`Espaço`, `aria-expanded`), tipo `ParticipantEntry` estendido com `breakdown: ScoreBreakdown | null`. `npm run lint` e `npm run build` passaram sem erros.
+
+---
+
+### 28. date-picker-jogos — Seletor de Datas com Jogos — em progresso
+**Objetivo:** Na aba de jogos, ao clicar na data exibida no `DayNavigator`, abrir um dropdown/picker listando apenas as datas que possuem jogos cadastrados no Supabase, permitindo navegação direta a qualquer data sem precisar clicar seta a seta.
+**Critérios de sucesso:**
+- Clicar na área de exibição da data abre um dropdown com a lista de datas que possuem jogos (`games.match_date` distintos, convertidos para datas em BRT)
+- Apenas datas com pelo menos 1 jogo aparecem na lista (sem datas vazias)
+- Selecionar uma data na lista fecha o dropdown e navega diretamente para aquela data (`/jogos?date=YYYY-MM-DD`)
+- A data atual (`currentDate`) aparece destacada na lista (ex: `color-accent`)
+- O dropdown pode ser fechado sem selecionar nenhuma data (clique fora ou tecla Esc)
+- Acessibilidade: navegação por teclado (setas, Enter, Esc) funciona corretamente
+- Visual segue DESIGN.md rigorosamente (monospace, paleta verde/amarelo/azul, sem ícones decorativos, dense)
+- As setas `◀ ▶` de navegação dia a dia permanecem funcionando (não são removidas)
+- Sem nova tabela, migration ou endpoint dedicado — as datas são derivadas de `games.match_date` existente
+**Dependências:** game-navigation
