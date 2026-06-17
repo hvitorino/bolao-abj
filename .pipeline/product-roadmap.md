@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 29 features
-- Concluídas: 28
-- Em progresso: 1
+- Concluídas: 29
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -379,7 +379,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 29. date-chips-nav — Navegação por Chips de Data — em progresso
+### 29. date-chips-nav — Navegação por Chips de Data — concluída
 **Objetivo:** Substituir completamente o dropdown de seleção de data e as setas de navegação dia a dia (`DayNavigator`) por uma faixa de chips horizontais com scroll, onde cada chip representa uma data com jogos disponíveis; o chip ativo fica destacado em `color-accent` bold e é centralizado automaticamente na viewport ao carregar a página.
 **Critérios de sucesso:**
 - O `DayNavigator` existente (dropdown + setas `◀ ▶`) é completamente substituído pela faixa de chips horizontais
