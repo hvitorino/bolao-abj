@@ -131,8 +131,10 @@ export function GroupMenu({ groups, activeGroupId, pendingInvitesCount, userName
                   style={{
                     ...MONO,
                     padding: '0.375rem 0.75rem',
-                    color: 'var(--color-muted)',
+                    color: 'var(--color-accent)',
+                    fontWeight: 'bold',
                     borderBottom: '1px solid var(--color-border)',
+                    letterSpacing: '0.1em',
                   }}
                 >
                   {userName.toUpperCase()}
