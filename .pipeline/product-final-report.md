@@ -1,6 +1,6 @@
 # Relatório Final — Bolão da Copa
 
-Data de conclusão: 2026-06-16
+Data de conclusão: 2026-06-17
 
 ## Features Implementadas
 
@@ -28,6 +28,13 @@ Data de conclusão: 2026-06-16
 22. [convites-nominais] — Convites Nominais para Grupos — 2026-06-16
 23. [grupo-ativo-persistente] — Seleção Persistente de Grupo Ativo — 2026-06-16
 24. [exemplos-por-regra] — Exemplo Dedicado por Regra de Pontuação — 2026-06-16
+25. [fix-loser-score-rule] — Correção da Regra "Somente Placar do Perdedor" — 2026-06-16
+26. [collapse-game-card] — Colapsar/Expandir Card de Jogo com Palpites dos Participantes — 2026-06-16
+27. [prediction-score-breakdown] — Detalhamento da Pontuação no Palpite — 2026-06-16
+28. [date-picker-jogos] — Seletor de Datas com Jogos — 2026-06-16
+29. [date-chips-nav] — Navegação por Chips de Data — 2026-06-16
+30. [delete-group] — Exclusão de Grupo pelo Admin — 2026-06-17
+31. [remove-member] — Remover Participante do Grupo — 2026-06-17
 
 ## Resumo
 
@@ -49,7 +56,9 @@ A última entrega, `grupo-ativo-persistente`, corrigiu uma lacuna de UX aberta p
 
 A entrega final, `exemplos-por-regra`, poliu a página educativa `/como-pontuar`: até então, os exemplos de cálculo eram majoritariamente compostos (misturando várias regras num único placar), o que deixava implícito qual regra exata cada exemplo demonstrava. A feature criou seis exemplos isolados — um por linha de `ScoringRulesTable` (acerto do vencedor, placar exato, somente placar do vencedor, diferença de gols correta, somente placar do perdedor, goleada), na mesma ordem da tabela, mais um exemplo complementar de empate preservado em subseção própria fora da numeração 1-6. Uma nova prop opcional `ruleLabel` em `ScoringExample.tsx` cria o vínculo visual explícito entre cada card e a regra correspondente, sem exigir mudança em nenhum outro call site do componente. O grid responsivo ganhou um breakpoint intermediário (640px/1024px) para não deixar os seis cards apertados em telas de tablet. Todos os valores foram validados contra `calculateScore()` real via script ad-hoc (não commitado, apenas para conferência). Aprovada sem rodada de fix.
 
-Com isso, as 6 funcionalidades centrais do `CLAUDE.md` e todas as extensões identificadas ao longo do desenvolvimento (15 correções/melhorias, 1 retrofit estrutural de multi-tenancy, 1 integração de dados externos, 1 mecanismo adicional de convite, 1 correção de persistência de contexto multi-grupo e 1 melhoria de clareza didática) estão implementadas, revisadas e mergeadas na main.
+Features adicionadas após o relatório inicial: `fix-loser-score-rule` corrigiu a condição do bônus "somente placar do perdedor" (+1 pt), que era concedido justamente quando o vencedor era errado — a correção exigiu uma migration com recalculo retroativo dos scores finalizados pela regra antiga e espelhamento idêntico em `lib/scoring.ts` e na função Postgres `calculate_scores_for_game`. `collapse-game-card` reduziu a densidade visual da tela de jogos tornando a seção de palpites dos participantes colapsada por padrão, com accordion acessível via teclado e sem interromper subscriptions Realtime. `prediction-score-breakdown` agregou transparência ao cálculo: clicar na linha de um participante já expandido revela o breakdown detalhado lendo diretamente o campo `breakdown jsonb` de `scores`, sem reimplementar nenhuma lógica de cálculo. `date-picker-jogos` e `date-chips-nav` evoluíram a navegação por data: primeiro adicionando um dropdown com apenas as datas que possuem jogos ao clicar na data do `DayNavigator`, depois substituindo completamente o dropdown e as setas por uma faixa horizontal de chips com scroll automático para o chip ativo, mais ágil em mobile. `delete-group` fechou o ciclo de administração de grupos permitindo que o admin exclua um grupo com confirmação explícita, cascade automático de palpites e scores via `ON DELETE CASCADE` já configurado no banco, e redirect para `/grupos` após a exclusão. Por fim, `remove-member` completou a superfície de administração de membros: o admin vê um botão de remover ao lado de cada participante (exceto si mesmo), confirma antes de executar, e a lista atualiza imediatamente após a remoção.
+
+Com isso, as 6 funcionalidades centrais do `CLAUDE.md` e todas as extensões identificadas ao longo do desenvolvimento (múltiplas correções/melhorias, 1 retrofit estrutural de multi-tenancy, 1 integração de dados externos, 1 mecanismo adicional de convite, 1 correção de persistência de contexto multi-grupo, melhorias de UX na navegação, transparência de pontuação e administração completa de grupos) estão implementadas, revisadas e mergeadas na main.
 
 ## Próximos passos sugeridos
 
