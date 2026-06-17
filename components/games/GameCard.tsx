@@ -302,6 +302,9 @@ export default function GameCard({
                 fontSize: '11px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
+                border: '1px solid transparent',
+                padding: '0.1rem 0.4rem',
+                flexShrink: 0,
               }}
             >
               PENDENTE
