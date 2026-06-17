@@ -46,7 +46,7 @@ export function GroupMenu({ groups, activeGroupId, pendingInvitesCount }: GroupM
   function switchGroup(groupId: string) {
     document.cookie = `${ACTIVE_GROUP_COOKIE}=${groupId}; path=/; max-age=31536000`
     setOpen(false)
-    router.refresh()
+    window.location.reload()
   }
 
   async function handleLogout() {
