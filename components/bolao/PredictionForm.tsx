@@ -53,6 +53,8 @@ export default function PredictionForm({
   )
   const [status, setStatus] = useState<FormStatus>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [shakeHome, setShakeHome] = useState(false)
+  const [shakeAway, setShakeAway] = useState(false)
   const [submittedPrediction, setSubmittedPrediction] = useState<Prediction | null>(
     // Só pré-popula submittedPrediction se NÃO estamos no modo edição
     // (no modo edição, onCancelEdit está definido e queremos mostrar o formulário)
@@ -117,7 +119,14 @@ export default function PredictionForm({
     const away = parseInt(awayScore, 10)
 
     if (isNaN(home) || isNaN(away) || home < 0 || away < 0) {
-      setErrorMessage('Informe os placares para os dois times.')
+      if (isNaN(home) || home < 0) {
+        setShakeHome(true)
+        setTimeout(() => setShakeHome(false), 400)
+      }
+      if (isNaN(away) || away < 0) {
+        setShakeAway(true)
+        setTimeout(() => setShakeAway(false), 400)
+      }
       return
     }
 
@@ -260,7 +269,13 @@ export default function PredictionForm({
             value={homeScore}
             onChange={(e) => handleScoreInput(e.target.value, setHomeScore)}
             disabled={isDisabled}
-            style={inputStyle}
+            className={shakeHome ? 'shake' : undefined}
+            style={{
+              ...inputStyle,
+              border: shakeHome
+                ? '2px solid var(--color-error)'
+                : inputStyle.border,
+            }}
             aria-label={`Placar ${homeTeamCode}`}
             placeholder="0"
           />
@@ -280,7 +295,13 @@ export default function PredictionForm({
             value={awayScore}
             onChange={(e) => handleScoreInput(e.target.value, setAwayScore)}
             disabled={isDisabled}
-            style={inputStyle}
+            className={shakeAway ? 'shake' : undefined}
+            style={{
+              ...inputStyle,
+              border: shakeAway
+                ? '2px solid var(--color-error)'
+                : inputStyle.border,
+            }}
             aria-label={`Placar ${awayTeamCode}`}
             placeholder="0"
           />
