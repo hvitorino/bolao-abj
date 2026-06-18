@@ -48,13 +48,26 @@ export function GroupChatWidget({
   const [hasFetched, setHasFetched] = useState(false)
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true)
 
+  const [chipBottom, setChipBottom] = useState(24)
+  const [isDragging, setIsDragging] = useState(false)
+
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const isOpenRef = useRef(isOpen)
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isDraggingRef = useRef(false)
+  const dragStartYRef = useRef(0)
+  const dragStartBottomRef = useRef(0)
+  const hasDraggedRef = useRef(false)
 
   const localStorageKey = `chat_last_read_${activeGroupId}`
+  const CHIP_BOTTOM_KEY = 'chat_chip_bottom'
+
+  useEffect(() => {
+    const saved = localStorage.getItem(CHIP_BOTTOM_KEY)
+    if (saved) setChipBottom(Number(saved))
+  }, [])
 
   // Sincroniza a ref com o estado (para usar dentro do closure do Realtime)
   useEffect(() => {
@@ -129,8 +142,32 @@ export function GroupChatWidget({
     }
   }, [activeGroupId, supabase])
 
+  const handleChipPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    hasDraggedRef.current = false
+    isDraggingRef.current = true
+    dragStartYRef.current = e.clientY
+    dragStartBottomRef.current = chipBottom
+    setIsDragging(true)
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }, [chipBottom])
+
+  const handleChipPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current) return
+    const deltaY = dragStartYRef.current - e.clientY
+    if (Math.abs(deltaY) > 4) hasDraggedRef.current = true
+    const newBottom = Math.max(8, Math.min(window.innerHeight - 60, dragStartBottomRef.current + deltaY))
+    setChipBottom(newBottom)
+  }, [])
+
+  const handleChipPointerUp = useCallback(() => {
+    isDraggingRef.current = false
+    setIsDragging(false)
+    localStorage.setItem(CHIP_BOTTOM_KEY, String(chipBottom))
+  }, [chipBottom])
+
   // Abre o painel
   const handleOpen = useCallback(async () => {
+    if (hasDraggedRef.current) return
     setIsOpen(true)
     setUnreadCount(0)
 
@@ -226,11 +263,17 @@ export function GroupChatWidget({
   if (!isOpen && !isClosing) {
     return (
       <div
+        onPointerDown={handleChipPointerDown}
+        onPointerMove={handleChipPointerMove}
+        onPointerUp={handleChipPointerUp}
         style={{
           position: 'fixed',
-          bottom: '1.5rem',
+          bottom: chipBottom,
           right: '1.5rem',
           zIndex: 50,
+          cursor: isDragging ? 'grabbing' : 'grab',
+          userSelect: 'none',
+          touchAction: 'none',
         }}
       >
         <button
