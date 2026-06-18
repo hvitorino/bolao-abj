@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import { createServiceClient, resolveGroupForMcp } from '@/lib/mcp/auth'
+import { createServiceClient, resolveGroupForMcp, validateGroupMembership } from '@/lib/mcp/auth'
 
 const MAX_POINTS_PER_GAME = 9
 
@@ -13,19 +13,35 @@ export function registerRankingTools(server: McpServer, userId: string) {
   server.tool(
     'ver_ranking',
     'Exibe o ranking completo do bolão para o grupo ativo do participante.',
-    {},
-    async () => {
+    {
+      group_id: z
+        .string()
+        .uuid()
+        .optional()
+        .describe('ID do grupo (UUID). Se omitido, usa o primeiro grupo por data de entrada.'),
+    },
+    async ({ group_id }) => {
       const db = createServiceClient()
-      const groupId = await resolveGroupForMcp(db, userId)
 
-      if (!groupId) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Você não pertence a nenhum grupo ativo no bolão.',
-            },
-          ],
+      let groupId: string | null
+
+      if (group_id) {
+        const { valid, errorMessage } = await validateGroupMembership(db, userId, group_id)
+        if (!valid) {
+          return { content: [{ type: 'text', text: errorMessage! }] }
+        }
+        groupId = group_id
+      } else {
+        groupId = await resolveGroupForMcp(db, userId)
+        if (!groupId) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: 'Você não pertence a nenhum grupo ativo no bolão.',
+              },
+            ],
+          }
         }
       }
 
