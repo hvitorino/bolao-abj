@@ -154,7 +154,9 @@ export function GroupChatWidget({
   const handleChipPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDraggingRef.current) return
     const deltaY = dragStartYRef.current - e.clientY
-    if (Math.abs(deltaY) > 4) hasDraggedRef.current = true
+    const threshold = e.pointerType === 'mouse' ? 12 : 4
+    if (Math.abs(deltaY) > threshold) hasDraggedRef.current = true
+    if (!hasDraggedRef.current) return
     const newBottom = Math.max(8, Math.min(window.innerHeight - 60, dragStartBottomRef.current + deltaY))
     setChipBottom(newBottom)
   }, [])
