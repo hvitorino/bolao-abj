@@ -74,20 +74,10 @@ export function GroupChatWidget({
     if (!error && data) {
       const msgs = data as unknown as ChatMessage[]
       setMessages(msgs)
-
-      // Calcula não lidas com base no lastReadAt
-      const lastReadAt =
-        typeof window !== 'undefined'
-          ? localStorage.getItem(localStorageKey)
-          : null
-      if (lastReadAt) {
-        const unread = msgs.filter((m) => m.created_at > lastReadAt).length
-        setUnreadCount(unread)
-      }
     }
     setIsLoading(false)
     setHasFetched(true)
-  }, [activeGroupId, localStorageKey, supabase])
+  }, [activeGroupId, supabase])
 
   // Subscription Realtime — iniciada na montagem, independente do fetch
   useEffect(() => {
@@ -164,8 +154,8 @@ export function GroupChatWidget({
   }, [])
 
   // Ao fim da animação de fechamento, desmonta o painel
-  const handleAnimationEnd = useCallback(() => {
-    if (isClosing) {
+  const handleAnimationEnd = useCallback((e: React.AnimationEvent) => {
+    if (isClosing && e.animationName === 'chatClose') {
       setIsOpen(false)
       setIsClosing(false)
     }
