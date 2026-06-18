@@ -336,7 +336,7 @@ export default function GameParticipantsList({
                               fontWeight: 'bold',
                               letterSpacing: '0.05em',
                               padding: '0.2rem 0.5rem',
-                              backgroundColor: 'var(--color-live)',
+                              backgroundColor: 'var(--color-primary)',
                               color: 'var(--color-bg)',
                               lineHeight: 1.4,
                               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
