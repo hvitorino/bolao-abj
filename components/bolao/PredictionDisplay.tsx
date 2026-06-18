@@ -83,7 +83,7 @@ export default function PredictionDisplay({
             onClick={(e) => { e.stopPropagation(); onEditRequest() }}
             style={{
               ...actionButtonBase,
-              backgroundColor: 'var(--color-primary)',
+              backgroundColor: 'var(--color-accent)',
               color: 'var(--color-bg)',
             }}
           >
@@ -97,7 +97,7 @@ export default function PredictionDisplay({
             style={{
               ...actionButtonBase,
               cursor: 'default',
-              backgroundColor: points > 0 ? 'var(--color-accent)' : 'var(--color-muted)',
+              backgroundColor: 'var(--color-accent)',
               color: 'var(--color-bg)',
             }}
           >
