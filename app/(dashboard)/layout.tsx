@@ -54,6 +54,11 @@ export default async function DashboardLayout({
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)' }}>
       <header
         style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
           backgroundColor: 'var(--color-surface)',
           borderBottom: '1px solid var(--color-border)',
           padding: '0.625rem 1.5rem 0',
@@ -97,7 +102,7 @@ export default async function DashboardLayout({
         </div>
       </header>
 
-      <main style={{ padding: '1.5rem' }}>
+      <main style={{ padding: '1.5rem', paddingTop: 'calc(4.75rem + 1.5rem)' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>{children}</div>
       </main>
 
