@@ -49,6 +49,33 @@ body {
   display: none;
 }
 
+/* View Transitions — navegação entre datas */
+@keyframes vt-slide-out-left {
+  to { transform: translateX(-30px); opacity: 0; }
+}
+@keyframes vt-slide-in-right {
+  from { transform: translateX(30px); opacity: 0; }
+}
+@keyframes vt-slide-out-right {
+  to { transform: translateX(30px); opacity: 0; }
+}
+@keyframes vt-slide-in-left {
+  from { transform: translateX(-30px); opacity: 0; }
+}
+
+:root[data-nav-dir="next"]::view-transition-old(root) {
+  animation: 220ms ease-out vt-slide-out-left;
+}
+:root[data-nav-dir="next"]::view-transition-new(root) {
+  animation: 220ms ease-out vt-slide-in-right;
+}
+:root[data-nav-dir="prev"]::view-transition-old(root) {
+  animation: 220ms ease-out vt-slide-out-right;
+}
+:root[data-nav-dir="prev"]::view-transition-new(root) {
+  animation: 220ms ease-out vt-slide-in-left;
+}
+
 @media (min-width: 768px) {
   .ranking-name-cell {
     font-size: 14px;

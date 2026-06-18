@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 
 interface DateChipsNavProps {
@@ -27,6 +27,19 @@ export default function DateChipsNav({
 }: DateChipsNavProps) {
   const router = useRouter()
   const activeChipRef = useRef<HTMLButtonElement>(null)
+  const [, startTransition] = useTransition()
+
+  function navigate(date: string, direction: 'next' | 'prev') {
+    document.documentElement.dataset.navDir = direction
+    if ('startViewTransition' in document) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ;(document as any).startViewTransition(() => {
+        startTransition(() => router.push(`/jogos?date=${date}`))
+      })
+    } else {
+      startTransition(() => router.push(`/jogos?date=${date}`))
+    }
+  }
 
   // Centralizar o chip ativo na faixa ao carregar ou ao mudar a data
   useEffect(() => {
@@ -54,9 +67,9 @@ export default function DateChipsNav({
 
       const idx = availableDates.indexOf(currentDate)
       if (deltaX < 0 && idx < availableDates.length - 1) {
-        router.push(`/jogos?date=${availableDates[idx + 1]}`)
+        navigate(availableDates[idx + 1], 'next')
       } else if (deltaX > 0 && idx > 0) {
-        router.push(`/jogos?date=${availableDates[idx - 1]}`)
+        navigate(availableDates[idx - 1], 'prev')
       }
     }
 
@@ -115,7 +128,8 @@ export default function DateChipsNav({
                   aria-current={isActive ? 'true' : undefined}
                   onClick={() => {
                     if (!isActive) {
-                      router.push(`/jogos?date=${date}`)
+                      const dir = availableDates.indexOf(date) > availableDates.indexOf(currentDate) ? 'next' : 'prev'
+                      navigate(date, dir)
                     }
                   }}
                   style={{
