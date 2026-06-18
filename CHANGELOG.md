@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [predict-all-groups] — Palpite para Todos os Grupos — 2026-06-18
+
+- Novo endpoint `POST /api/predictions/broadcast` (Next.js Route Handler): propaga um palpite para todos os grupos do usuário simultaneamente, com UPSERT idempotente por grupo e verificação de deadline global (match_date - 5min)
+- Validação de JWT via `auth.getUser()` (anon client); UPSERT via service_role client; autorização implícita via query em `group_members` (apenas grupos onde o usuário é membro recebem o palpite)
+- Resposta com sumário: `{ updated_count: N, results: [{ group_id, group_name, status: 'saved' | 'deadline_expired' }] }`; grupos com prazo expirado ou jogo não-pending são ignorados silenciosamente sem bloquear os demais
+- Erros tratados: 401 (sem token), 404 (jogo não encontrado), 422 (deadline_expired ou invalid_params), 500 (erro de banco)
+- Novo componente `components/bolao/PropagatePrompt.tsx`: exibido após submit bem-sucedido no grupo ativo; oferece botões "ESTE GRUPO" e "TODOS OS GRUPOS"; estados internos `idle`/`loading`/`done`/`error` com auto-fechamento de 2s nos estados finais; design Elifoot com JetBrains Mono, tokens CSS do DESIGN.md, sem border-radius nem ícones SVG
+- `components/bolao/PredictionForm.tsx` modificado: novo estado `propagating` no FormStatus; exibe PropagatePrompt no modo criação após submit bem-sucedido; modo edição preservado sem prompt (comportamento original intacto); props e interface externas inalteradas (regressão zero para GameCard)
+- Sem migrations — modelo de dados existente já suportava a feature
+
 ## [group-chat] — Chat do Grupo — 2026-06-18
 
 - Widget de chat flutuante (`GroupChatWidget`) adicionado ao layout do dashboard, visível em todas as páginas para usuários com grupo ativo
