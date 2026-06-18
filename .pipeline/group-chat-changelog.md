@@ -3,7 +3,7 @@
 **Slug:** group-chat
 **Branch:** feature/group-chat
 **Data:** 2026-06-18
-**Status:** aguardando revisão
+**Status:** aguardando revisão (fix-1 aplicado)
 
 ---
 
@@ -67,3 +67,34 @@ f3343e3 feat(group-chat): integra GroupChatWidget no layout do dashboard
 ec01eb8 feat(group-chat): cria migration para tabela group_messages com RLS e Realtime
 3b2210b chore(group-chat): adiciona plano de implementação
 ```
+
+---
+
+## Correções Fix 1
+
+**Data:** 2026-06-18
+
+### Problema 1 — Subscription Realtime iniciada após fetch (crítico)
+- Removida a guarda `if (!hasFetched) return` do `useEffect` do Realtime
+- O canal agora é assinado na montagem do componente, dependendo apenas de `activeGroupId` e `supabase`
+- O callback do evento INSERT aplica deduplicação por `id` (`prev.some((m) => m.id === newMsg.id)`) para evitar duplicatas quando o Realtime recebe mensagens que já foram carregadas pelo fetch inicial
+- O `unreadCount` passa a funcionar desde o mount, mesmo antes da primeira abertura manual do painel
+
+### Problema 2 — Animação de fechamento ausente (importante)
+- Adicionado estado `isClosing: boolean` (inicia como `false`)
+- `handleClose` agora seta `isClosing = true` sem alterar `isOpen` imediatamente
+- Adicionada função `handleAnimationEnd` que, quando `isClosing === true`, seta `isOpen = false` e `isClosing = false`
+- Adicionado `@keyframes chatClose { from { scale(1) translateY(0); opacity: 1 } to { scale(0.95) translateY(8px); opacity: 0 } }` nos estilos inline
+- A prop `animation` do painel agora é condicional: `chatClose 200ms ease-in forwards` quando `isClosing`, `chatOpen 250ms ease-out forwards` caso contrário
+- A guarda do chip foi alterada para `if (!isOpen && !isClosing)` para manter o painel montado durante a animação de saída
+- `onAnimationEnd={handleAnimationEnd}` adicionado ao elemento raiz do painel
+
+### Problema 3 — Scroll forçado durante leitura de histórico (importante)
+- Adicionado estado `isScrolledToBottom: boolean` (inicia como `true`)
+- Adicionado `messagesContainerRef` para referenciar o container de mensagens
+- Adicionado `handleMessagesScroll`: calcula `scrollHeight - scrollTop - clientHeight` e seta `isScrolledToBottom` com limiar de 80px
+- O `useEffect` de scroll automático agora condiciona o `scrollIntoView` a `isScrolledToBottom === true`
+- `overflowAnchor` alterado de `'none'` para `'auto'` para habilitar o âncora nativo do browser quando o usuário está ao final
+
+### Arquivos alterados
+- `components/bolao/GroupChatWidget.tsx` — todas as correções acima (1 arquivo, +44 linhas, -13 linhas)
