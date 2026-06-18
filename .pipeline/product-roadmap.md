@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 36 features
+- Total: 37 features
 - Concluídas: 36
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -485,3 +485,16 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Modelo suporta `group_id` (escopado ao grupo ativo); migração cria tabela `group_messages` com RLS adequada
 - Implementação 100% client-side + Supabase (sem endpoint Ruby)
 **Dependências:** auth, grupos, grupo-ativo-persistente
+
+---
+
+### 37. mcp-bolao — Servidor MCP Remoto — em progresso
+**Objetivo:** Expor o Bolão ABJ como um servidor MCP remoto para que participantes autenticados possam consultar jogos, ranking e palpites — e fazer/editar palpites — via qualquer cliente MCP compatível (Claude Desktop, Claude.ai, Cursor, etc.), sem configuração manual de tokens.
+**Critérios de sucesso:**
+- Servidor MCP acessível em `/api/mcp` com Streamable HTTP transport
+- Fluxo OAuth completo funcional com Supabase Auth (discovery, authorize, callback, token)
+- 6 tools implementadas: `listar_jogos`, `ver_jogo`, `ver_ranking`, `meus_palpites`, `ver_palpites_jogo`, `fazer_palpite`
+- Regras de negócio respeitadas: deadline de 5min, visibilidade de palpites só após início do jogo
+- Tabela `mcp_oauth_codes` criada via migration Supabase
+- UI de onboarding na tela de perfil/configurações exibindo URL do servidor e instruções de conexão
+**Dependências:** auth, game-navigation, predictions, scoring, ranking, grupos, grupo-ativo-persistente
