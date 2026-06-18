@@ -38,6 +38,7 @@ export function GroupChatWidget({
   const supabase = createClient()
 
   const [isOpen, setIsOpen] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [newMessage, setNewMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -45,8 +46,10 @@ export function GroupChatWidget({
   const [unreadCount, setUnreadCount] = useState(0)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [hasFetched, setHasFetched] = useState(false)
+  const [isScrolledToBottom, setIsScrolledToBottom] = useState(true)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const isOpenRef = useRef(isOpen)
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -86,10 +89,8 @@ export function GroupChatWidget({
     setHasFetched(true)
   }, [activeGroupId, localStorageKey, supabase])
 
-  // Subscription Realtime
+  // Subscription Realtime — iniciada na montagem, independente do fetch
   useEffect(() => {
-    if (!hasFetched) return
-
     const channel = supabase
       .channel(`group-chat-${activeGroupId}`)
       .on(
@@ -120,7 +121,11 @@ export function GroupChatWidget({
             profiles: profileData ?? null,
           }
 
-          setMessages((prev) => [...prev, newMsg])
+          // Evita duplicação com mensagens já carregadas pelo fetch inicial
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === newMsg.id)) return prev
+            return [...prev, newMsg]
+          })
 
           if (!isOpenRef.current) {
             setUnreadCount((prev) => prev + 1)
@@ -132,7 +137,7 @@ export function GroupChatWidget({
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [hasFetched, activeGroupId, supabase])
+  }, [activeGroupId, supabase])
 
   // Abre o painel
   const handleOpen = useCallback(async () => {
@@ -153,17 +158,34 @@ export function GroupChatWidget({
     }, 500)
   }, [hasFetched, loadMessages, localStorageKey])
 
-  // Fecha o painel
+  // Fecha o painel — inicia animação de saída antes de desmontar
   const handleClose = useCallback(() => {
-    setIsOpen(false)
+    setIsClosing(true)
   }, [])
 
-  // Scroll automático quando novas mensagens chegam com o painel aberto
+  // Ao fim da animação de fechamento, desmonta o painel
+  const handleAnimationEnd = useCallback(() => {
+    if (isClosing) {
+      setIsOpen(false)
+      setIsClosing(false)
+    }
+  }, [isClosing])
+
+  // Handler de scroll: rastreia se o usuário está perto do final da área de mensagens
+  const handleMessagesScroll = useCallback(() => {
+    const container = messagesContainerRef.current
+    if (!container) return
+    const distanceFromBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight
+    setIsScrolledToBottom(distanceFromBottom <= 80)
+  }, [])
+
+  // Scroll automático quando novas mensagens chegam — só se o usuário já estiver perto do final
   useEffect(() => {
-    if (isOpen && messages.length > 0) {
+    if (isOpen && messages.length > 0 && isScrolledToBottom) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [messages, isOpen])
+  }, [messages, isOpen, isScrolledToBottom])
 
   // Exibe erro por 3 segundos
   const showError = useCallback((msg: string) => {
@@ -211,7 +233,7 @@ export function GroupChatWidget({
   }, [])
 
   // ── CHIP MINIMIZADO ──────────────────────────────────────────────────────────
-  if (!isOpen) {
+  if (!isOpen && !isClosing) {
     return (
       <div
         style={{
@@ -276,6 +298,7 @@ export function GroupChatWidget({
   // ── PAINEL EXPANDIDO ─────────────────────────────────────────────────────────
   return (
     <div
+      onAnimationEnd={handleAnimationEnd}
       style={{
         position: 'fixed',
         bottom: '1.5rem',
@@ -287,13 +310,19 @@ export function GroupChatWidget({
         flexDirection: 'column',
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border)',
-        animation: 'chatOpen 250ms ease-out forwards',
+        animation: isClosing
+          ? 'chatClose 200ms ease-in forwards'
+          : 'chatOpen 250ms ease-out forwards',
       }}
     >
       <style>{`
         @keyframes chatOpen {
           from { transform: scale(0.95) translateY(8px); opacity: 0; }
           to   { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        @keyframes chatClose {
+          from { transform: scale(1) translateY(0); opacity: 1; }
+          to   { transform: scale(0.95) translateY(8px); opacity: 0; }
         }
       `}</style>
 
@@ -354,6 +383,8 @@ export function GroupChatWidget({
 
       {/* Área de mensagens */}
       <div
+        ref={messagesContainerRef}
+        onScroll={handleMessagesScroll}
         style={{
           flex: 1,
           overflowY: 'auto',
@@ -361,7 +392,7 @@ export function GroupChatWidget({
           backgroundColor: 'var(--color-bg)',
           display: 'flex',
           flexDirection: 'column',
-          overflowAnchor: 'none',
+          overflowAnchor: 'auto',
         }}
       >
         {isLoading ? (
