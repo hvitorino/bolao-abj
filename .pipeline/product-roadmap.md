@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 34 features
+- Total: 35 features
 - Concluídas: 34
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -446,6 +446,18 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Tentativa de excluir grupo por não-admin retorna `403`; grupo inexistente retorna `404`
 - A exclusão não afeta `profiles` nem `auth.users` — apenas `groups`, `predictions` e `scores` vinculados ao grupo
 **Dependências:** grupos
+
+---
+
+### 35. predict-all-groups — Palpite para Todos os Grupos — pendente
+**Objetivo:** Ao criar ou editar um palpite, permitir que o usuário escolha propagar aquele palpite para todos os grupos em que participa (respeitando o deadline de cada grupo), além de poder salvar apenas no grupo atual.
+**Critérios de sucesso:**
+- Usuário consegue criar/editar palpite normalmente no grupo ativo (comportamento atual preservado)
+- Após confirmar um palpite, aparece uma opção clara de aplicar apenas ao grupo atual ou a todos os grupos
+- Se escolher "todos os grupos", o palpite é replicado nos demais grupos do usuário onde o prazo ainda não expirou (match_date - now() > 5 minutos e status `pending`)
+- Usuário não consegue editar palpites de outros usuários (autorização preservada)
+- Feedback claro de quantos grupos foram atualizados (ex: "Palpite salvo em 3 grupos")
+**Dependências:** auth, predictions, grupos, grupo-ativo-persistente
 
 ---
 
