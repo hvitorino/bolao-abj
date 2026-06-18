@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React from 'react'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 interface PredictionDisplayProps {
@@ -37,41 +37,24 @@ export default function PredictionDisplay({
   onToggle,
   points,
 }: PredictionDisplayProps) {
-  const [isHovering, setIsHovering] = useState(false)
-
   const submittedLabel = submittedAt ? `enviado às ${formatSubmittedAt(submittedAt)} BRT` : null
   const showPoints = isExpandable && points != null
 
+  const actionButtonBase: React.CSSProperties = {
+    fontSize: '11px',
+    fontWeight: 'bold',
+    letterSpacing: '0.05em',
+    padding: '0.2rem 0.5rem',
+    border: 'none',
+    cursor: 'pointer',
+    fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+    lineHeight: 1.4,
+    flexShrink: 0,
+  }
+
   const content = (
     <>
-      {/* Ícone de editar — topo direito do card de palpite */}
-      {onEditRequest && (
-        <button
-          type="button"
-          title="Editar palpite"
-          onClick={(e) => { e.stopPropagation(); onEditRequest() }}
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
-          style={{
-            position: 'absolute',
-            top: '0.5rem',
-            right: '0.5rem',
-            background: 'none',
-            border: '1px solid var(--color-primary)',
-            color: isHovering ? 'var(--color-bg)' : 'var(--color-primary)',
-            backgroundColor: isHovering ? 'var(--color-primary)' : 'transparent',
-            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '14px',
-            lineHeight: 1,
-            padding: '0.2rem 0.35rem',
-            cursor: 'pointer',
-          }}
-        >
-          ✎
-        </button>
-      )}
-
-      {/* Linha superior: título */}
+      {/* Linha superior: título à esquerda, botão de ação à direita */}
       <div
         style={{
           display: 'flex',
@@ -91,16 +74,31 @@ export default function PredictionDisplay({
         >
           ✓ SEU PALPITE
         </div>
+
+        {/* Botão de editar — jogo pendente */}
+        {onEditRequest && (
+          <button
+            type="button"
+            title="Editar palpite"
+            onClick={(e) => { e.stopPropagation(); onEditRequest() }}
+            style={{
+              ...actionButtonBase,
+              backgroundColor: 'var(--color-primary)',
+              color: 'var(--color-bg)',
+            }}
+          >
+            ✎ EDITAR
+          </button>
+        )}
+
+        {/* Badge de pontuação — jogo ao vivo / encerrado */}
         {showPoints && (
           <div
             style={{
-              fontSize: '11px',
-              fontWeight: 'bold',
-              color: points > 0 ? 'var(--color-accent)' : 'var(--color-muted)',
-              border: `1px solid ${points > 0 ? 'var(--color-accent)' : 'var(--color-muted)'}`,
-              backgroundColor: points > 0 ? 'rgba(255, 223, 0, 0.1)' : 'transparent',
-              padding: '0.15rem 0.45rem',
-              letterSpacing: '0.05em',
+              ...actionButtonBase,
+              cursor: 'default',
+              backgroundColor: points > 0 ? 'var(--color-accent)' : 'var(--color-muted)',
+              color: 'var(--color-bg)',
             }}
           >
             +{points} PTS {isExpanded ? '▴' : '▾'}
