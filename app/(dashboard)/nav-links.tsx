@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: '/meus-palpites', label: 'PALPITES' },
   { href: '/grupos', label: 'GRUPOS' },
   { href: '/como-pontuar', label: 'REGRAS' },
+  { href: '/configuracoes', label: 'CONFIGURAÇÕES' },
 ]
 
 export function NavLinks() {

@@ -6,6 +6,19 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [mcp-bolao] — Servidor MCP Remoto do Bolão — 2026-06-18
+
+- Servidor MCP remoto exposto em `POST /api/mcp` usando `WebStandardStreamableHTTPServerTransport` stateless, compatível com Claude Desktop, Claude.ai e clientes MCP que suportam o protocolo Streamable HTTP (2025-03-26)
+- Autenticação OAuth 2.0 Authorization Code flow com PKCE: `GET /api/mcp/oauth/metadata` (RFC 8414), `POST /api/mcp/oauth/callback`, `POST /api/mcp/oauth/token` com update atômico one-time-use
+- Página `/mcp/autorizar` (Client Component): formulário de login email/senha estilo Elifoot que redireciona de volta ao cliente MCP com código temporário após autenticação
+- 6 tools MCP implementadas: `listar_jogos` (filtros data/status/rodada), `ver_jogo`, `ver_ranking` (grupo resolvido por `joined_at ASC`), `meus_palpites` (ordenado por `match_date` do jogo), `ver_palpites_jogo` (bloqueado em `pending`), `fazer_palpite` (upsert com deadline 5min)
+- `lib/mcp/auth.ts`: `authenticateBearer` (JWT via anonClient), `resolveGroupForMcp` (primeiro grupo por `joined_at ASC`)
+- Migration `supabase/migrations/20260618100000_create_mcp_oauth_codes.sql`: tabela `mcp_oauth_codes` com campos `code`, `user_id`, `redirect_uri`, `code_challenge`, `access_token`, `refresh_token`, `expires_at`, `used`; RLS habilitado sem policies públicas
+- Componente `McpOnboarding.tsx`: URL readonly clicável com botão "COPIAR URL" e feedback "COPIADO ✓" por 2s; fallback `execCommand`
+- Nova rota `/configuracoes` (Server Component) no grupo `(dashboard)`, protegida pelo layout; `serverUrl` calculado dinamicamente via header `host`
+- Link "CONFIGURAÇÕES" adicionado à navegação do dashboard em `nav-links.tsx`
+- Dependências adicionadas: `@modelcontextprotocol/sdk ^1.29.0`, `zod ^4.4.3`
+
 ## [fix-predict-edit-propagation] — Corrigir Propagação de Palpites no Modo de Edição — 2026-06-18
 
 - Removida bifurcação `isEditMode` dentro do bloco `if (res.ok)` em `handleSubmit` de `PredictionForm.tsx`; agora, tanto criação quanto edição passam para `status = 'propagating'` após submit bem-sucedido
