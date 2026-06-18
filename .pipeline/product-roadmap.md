@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 37 features
+- Total: 38 features
 - Concluídas: 37
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -498,3 +498,14 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Tabela `mcp_oauth_codes` criada via migration Supabase
 - UI de onboarding na tela de perfil/configurações exibindo URL do servidor e instruções de conexão
 **Dependências:** auth, game-navigation, predictions, scoring, ranking, grupos, grupo-ativo-persistente
+
+---
+
+### 38. mcp-group-scope — Suporte a Múltiplos Grupos no Servidor MCP — pendente
+**Objetivo:** Corrigir o servidor MCP para suportar múltiplos grupos — adicionar tool `listar_grupos` e parâmetro `group_id` (opcional, com fallback para o primeiro grupo do usuário) nas tools `fazer_palpite`, `meus_palpites` e `ver_ranking`.
+**Critérios de sucesso:**
+- Nova tool `listar_grupos` retorna os grupos do usuário autenticado com id, nome e role
+- `fazer_palpite` aceita `group_id` opcional — se omitido usa o primeiro grupo por `joined_at ASC`, se informado valida que o usuário é membro
+- `meus_palpites` aceita `group_id` opcional com o mesmo fallback
+- `ver_ranking` aceita `group_id` opcional com o mesmo fallback
+**Dependências:** mcp-bolao, grupos
