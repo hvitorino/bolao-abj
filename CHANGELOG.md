@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [mcp-group-scope] — Suporte a Múltiplos Grupos no Servidor MCP — 2026-06-18
+
+- Tool `listar_grupos` criada em `lib/mcp/tools/grupos.ts`: lista os grupos do usuário autenticado com id, nome (maiúsculas), papel (ADMIN/MEMBRO) e data de entrada, ordenados por `joined_at ASC`; inclui nota sobre grupo padrão
+- `lib/mcp/auth.ts`: nova função exportada `validateGroupMembership(serviceClient, userId, groupId)` que verifica membership sem lançar exceção, retornando `{ valid, errorMessage }`
+- `lib/mcp/tools/palpites.ts`: parâmetro `group_id` (UUID opcional) adicionado nas tools `meus_palpites` e `fazer_palpite`; quando informado valida membership via `validateGroupMembership`; quando omitido usa `resolveGroupForMcp` como fallback; verificação de membership redundante removida de `fazer_palpite`
+- `lib/mcp/tools/ranking.ts`: parâmetro `group_id` (UUID opcional) adicionado na tool `ver_ranking` com mesma lógica de resolução de grupo
+- `lib/mcp/server.ts`: import e registro de `registerGruposTools` adicionados em `createMcpServer`
+- Nenhuma migration necessária — tabelas `group_members`, `groups`, `predictions` e `scores` já existiam com as colunas necessárias
+
 ## [mcp-bolao] — Servidor MCP Remoto do Bolão — 2026-06-18
 
 - Servidor MCP remoto exposto em `POST /api/mcp` usando `WebStandardStreamableHTTPServerTransport` stateless, compatível com Claude Desktop, Claude.ai e clientes MCP que suportam o protocolo Streamable HTTP (2025-03-26)
