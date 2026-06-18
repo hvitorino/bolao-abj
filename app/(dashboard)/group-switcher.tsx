@@ -98,15 +98,16 @@ export function GroupMenu({ groups, activeGroupId, pendingInvitesCount, userName
             onClick={() => setOpen((o) => !o)}
             style={{
               ...MONO,
-              color: 'var(--color-muted)',
-              background: 'transparent',
-              border: '1px solid var(--color-border)',
+              color: 'var(--color-bg)',
+              background: 'var(--color-primary)',
+              border: '1px solid var(--color-primary)',
               padding: '0.2rem 0.5rem',
               cursor: 'pointer',
               whiteSpace: 'nowrap',
               display: 'flex',
               alignItems: 'center',
               gap: '0.375rem',
+              fontWeight: 'bold',
             }}
           >
             {triggerLabel}
