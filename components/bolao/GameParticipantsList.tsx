@@ -62,7 +62,7 @@ export default function GameParticipantsList({
           <span
             style={{
               fontSize: '9px',
-              color: 'var(--color-live)',
+              color: 'var(--color-primary)',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
             }}
@@ -352,7 +352,7 @@ export default function GameParticipantsList({
                                 p.prediction === null
                                   ? 'var(--color-muted)'
                                   : livePoints !== null && livePoints > 0
-                                    ? 'var(--color-live)'
+                                    ? 'var(--color-accent)'
                                     : 'var(--color-muted)',
                             }}
                           >
