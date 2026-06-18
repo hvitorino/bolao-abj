@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 37 features
-- Concluídas: 36
-- Em progresso: 1
+- Concluídas: 37
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -488,7 +488,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 37. mcp-bolao — Servidor MCP Remoto — em progresso
+### 37. mcp-bolao — Servidor MCP Remoto — concluída
 **Objetivo:** Expor o Bolão ABJ como um servidor MCP remoto para que participantes autenticados possam consultar jogos, ranking e palpites — e fazer/editar palpites — via qualquer cliente MCP compatível (Claude Desktop, Claude.ai, Cursor, etc.), sem configuração manual de tokens.
 **Critérios de sucesso:**
 - Servidor MCP acessível em `/api/mcp` com Streamable HTTP transport
