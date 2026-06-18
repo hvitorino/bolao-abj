@@ -184,25 +184,16 @@ export default function GameCard({
             □ ENCERRADO
           </span>
         )}
-        <span style={{ color: 'var(--color-muted)', fontSize: '11px' }}>·</span>
-        <span style={{ color: 'var(--color-muted)', fontSize: '11px' }}>{matchTime} BRT</span>
-        {liveGame.venue && (
-          <span
-            style={{
-              color: 'var(--color-muted)',
-              fontSize: '10px',
-              marginLeft: 'auto',
-              textAlign: 'right',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              maxWidth: '120px',
-              flexShrink: 0,
-            }}
-          >
-            {liveGame.venue}
-          </span>
-        )}
+        <span
+          style={{
+            color: 'var(--color-muted)',
+            fontSize: '11px',
+            marginLeft: 'auto',
+            flexShrink: 0,
+          }}
+        >
+          {matchTime} BRT
+        </span>
       </div>
 
       {/* Corpo do card: times e placar */}
