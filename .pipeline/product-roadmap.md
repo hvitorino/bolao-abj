@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 35 features
-- Concluídas: 34
+- Concluídas: 35
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -449,7 +449,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 35. predict-all-groups — Palpite para Todos os Grupos — pendente
+### 35. predict-all-groups — Palpite para Todos os Grupos — concluída
 **Objetivo:** Ao criar ou editar um palpite, permitir que o usuário escolha propagar aquele palpite para todos os grupos em que participa (respeitando o deadline de cada grupo), além de poder salvar apenas no grupo atual.
 **Critérios de sucesso:**
 - Usuário consegue criar/editar palpite normalmente no grupo ativo (comportamento atual preservado)
