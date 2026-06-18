@@ -95,8 +95,8 @@ export default function DateChipsNav({
                     fontWeight: 'bold',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
-                    color: isActive ? 'var(--color-bg)' : 'var(--color-muted)',
-                    backgroundColor: isActive ? 'var(--color-primary)' : 'transparent',
+                    color: isActive ? 'var(--color-bg)' : 'var(--color-text)',
+                    backgroundColor: isActive ? 'var(--color-primary)' : 'var(--color-surface)',
                     border: isActive
                       ? '1px solid var(--color-primary)'
                       : '1px solid var(--color-border)',
