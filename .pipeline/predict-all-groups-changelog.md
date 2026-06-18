@@ -3,7 +3,7 @@
 **Slug:** predict-all-groups
 **Branch:** feature/predict-all-groups
 **Data:** 2026-06-18
-**Status:** aguardando revisão
+**Status:** aguardando revisão (fix-1 aplicado)
 
 ---
 
@@ -73,9 +73,24 @@
 
 ---
 
+---
+
+## Correções Fix 1
+
+### Problema corrigido
+
+**Botões do PropagatePrompt não empilhavam em telas < 360px**
+
+- **Arquivo:** `components/bolao/PropagatePrompt.tsx`
+- **Causa:** Os botões usavam `flex: '1 1 120px'`. Com gap de 8px, dois botões de 120px = 248px de conteúdo — cabem lado a lado em qualquer container >= 248px. Num viewport de 360px com ~24px de padding externo, o container mede ~336px, então os botões nunca empilhavam.
+- **Correção:** Substituído `flex: '1 1 120px'` por `flex: '1 1 45%'` + `minWidth: '120px'` nos dois botões. Com `flexWrap: 'wrap'`, cada botão ocupa 45% do container. Em containers menores que ~267px (viewport < 360px com paddings externos), os botões empilham verticalmente, cobrindo o critério da spec.
+
+---
+
 ## Commits realizados
 
 ```
+02079f6 fix(predict-all-groups): corrige empilhamento dos botões do PropagatePrompt em telas < 360px
 3aa9ec0 feat(predict-all-groups): modifica PredictionForm para estado propagating e integra PropagatePrompt
 36e0da2 feat(predict-all-groups): adiciona componente PropagatePrompt
 0504ab5 feat(predict-all-groups): adiciona endpoint POST /api/predictions/broadcast
