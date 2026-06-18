@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 33 features
+- Total: 34 features
 - Concluídas: 33
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -446,3 +446,19 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Tentativa de excluir grupo por não-admin retorna `403`; grupo inexistente retorna `404`
 - A exclusão não afeta `profiles` nem `auth.users` — apenas `groups`, `predictions` e `scores` vinculados ao grupo
 **Dependências:** grupos
+
+---
+
+### 34. group-chat — Chat do Grupo — pendente
+**Objetivo:** Criar uma funcionalidade de troca de mensagens dentro de cada grupo do bolão, com um chip flutuante fixo no canto inferior direito do dashboard que expande em um painel de chat com histórico em tempo real, contador de não lidas e suporte a envio de mensagens por todos os participantes do grupo.
+**Critérios de sucesso:**
+- Chip flutuante visível em todas as páginas do dashboard (fixo no canto inferior direito), persistindo entre navegações
+- Ao clicar, expande com animação suave mostrando histórico de mensagens do grupo ativo
+- Ao minimizar, contrai com animação de volta ao chip
+- Mensagens atualizadas em tempo real via Supabase Realtime (canal `group_messages`) sem reload de página
+- Contador de não lidas visível no chip quando minimizado e houver mensagens novas desde a última abertura
+- Usuário consegue enviar mensagem com Enter ou clique no botão de envio
+- Mensagens exibem nome do remetente, hora e conteúdo
+- Modelo suporta `group_id` (escopado ao grupo ativo); migração cria tabela `group_messages` com RLS adequada
+- Implementação 100% client-side + Supabase (sem endpoint Ruby)
+**Dependências:** auth, grupos, grupo-ativo-persistente
