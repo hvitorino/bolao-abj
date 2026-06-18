@@ -264,78 +264,73 @@ export function GroupChatWidget({
   // ── CHIP MINIMIZADO ──────────────────────────────────────────────────────────
   if (!isOpen && !isClosing) {
     return (
-      <div
+      <button
+        onClick={handleOpen}
         onPointerDown={handleChipPointerDown}
         onPointerMove={handleChipPointerMove}
         onPointerUp={handleChipPointerUp}
+        aria-label={`Abrir chat do grupo${unreadCount > 0 ? ` (${unreadCount} não lidas)` : ''}`}
         style={{
           position: 'fixed',
           bottom: chipBottom,
           right: '1.5rem',
           zIndex: 50,
-          cursor: isDragging ? 'grabbing' : 'grab',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          padding: '0.5rem 1rem',
+          backgroundColor: 'var(--color-primary)',
+          border: '2px solid var(--color-primary)',
+          borderRadius: '2px',
+          cursor: isDragging ? 'grabbing' : 'pointer',
           userSelect: 'none',
           touchAction: 'none',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          fontSize: '13px',
+          fontWeight: 'bold',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          color: 'var(--color-bg)',
+          boxShadow: '0 4px 16px rgba(0,156,59,0.45), 0 2px 6px rgba(0,0,0,0.6)',
+          transition: 'background-color 150ms ease, box-shadow 150ms ease',
+        }}
+        onMouseEnter={(e) => {
+          if (isDragging) return
+          const btn = e.currentTarget as HTMLButtonElement
+          btn.style.backgroundColor = 'var(--color-accent)'
+          btn.style.borderColor = 'var(--color-accent)'
+          btn.style.boxShadow = '0 4px 20px rgba(255,223,0,0.4), 0 2px 6px rgba(0,0,0,0.6)'
+        }}
+        onMouseLeave={(e) => {
+          const btn = e.currentTarget as HTMLButtonElement
+          btn.style.backgroundColor = 'var(--color-primary)'
+          btn.style.borderColor = 'var(--color-primary)'
+          btn.style.boxShadow = '0 4px 16px rgba(0,156,59,0.45), 0 2px 6px rgba(0,0,0,0.6)'
         }}
       >
-        <button
-          onClick={handleOpen}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.5rem 1rem',
-            backgroundColor: 'var(--color-primary)',
-            border: '2px solid var(--color-primary)',
-            borderRadius: '2px',
-            cursor: 'pointer',
-            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '13px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--color-bg)',
-            boxShadow: '0 4px 16px rgba(0,156,59,0.45), 0 2px 6px rgba(0,0,0,0.6)',
-            transition: 'background-color 150ms ease, box-shadow 150ms ease',
-          }}
-          onMouseEnter={(e) => {
-            const btn = e.currentTarget as HTMLButtonElement
-            btn.style.backgroundColor = 'var(--color-accent)'
-            btn.style.borderColor = 'var(--color-accent)'
-            btn.style.boxShadow = '0 4px 20px rgba(255,223,0,0.4), 0 2px 6px rgba(0,0,0,0.6)'
-          }}
-          onMouseLeave={(e) => {
-            const btn = e.currentTarget as HTMLButtonElement
-            btn.style.backgroundColor = 'var(--color-primary)'
-            btn.style.borderColor = 'var(--color-primary)'
-            btn.style.boxShadow = '0 4px 16px rgba(0,156,59,0.45), 0 2px 6px rgba(0,0,0,0.6)'
-          }}
-          aria-label={`Abrir chat do grupo${unreadCount > 0 ? ` (${unreadCount} não lidas)` : ''}`}
-        >
-          ▲ CHAT
-          {unreadCount > 0 && (
-            <span
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minWidth: '1.25rem',
-                height: '1.25rem',
-                padding: '0 0.3rem',
-                backgroundColor: 'var(--color-accent)',
-                color: '#0a0e1a',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                borderRadius: '2px',
-                lineHeight: 1,
-              }}
-            >
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </span>
-          )}
-        </button>
-      </div>
+        ▲ CHAT
+        {unreadCount > 0 && (
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minWidth: '1.25rem',
+              height: '1.25rem',
+              padding: '0 0.3rem',
+              backgroundColor: 'var(--color-accent)',
+              color: '#0a0e1a',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              borderRadius: '2px',
+              lineHeight: 1,
+            }}
+          >
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </span>
+        )}
+      </button>
     )
   }
 
