@@ -473,8 +473,41 @@ export default function GameCard({
                   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
                 }}
               >
-                {/* Linha de título — espaço equivalente ao "✓ SEU PALPITE" */}
-                <div style={{ marginBottom: '0.5rem', height: '1.4rem' }} />
+                {/* Linha superior: label + badge — espelha "✓ SEU PALPITE" + "+N PTS" */}
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '0.5rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '10px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.1em',
+                      color: 'var(--color-muted)',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    ✗ SEM PALPITE
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      letterSpacing: '0.05em',
+                      padding: '0.2rem 0.5rem',
+                      fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                      lineHeight: 1.4,
+                      backgroundColor: 'var(--color-border)',
+                      color: 'var(--color-muted)',
+                    }}
+                  >
+                    +0 PTS
+                  </div>
+                </div>
                 {/* Placar placeholder */}
                 <div
                   style={{
@@ -501,8 +534,18 @@ export default function GameCard({
                     {getTeamFlag(liveGame.away_team_code)}
                   </span>
                 </div>
-                {/* Espaço equivalente ao horário de envio */}
-                <div style={{ height: '10px', marginTop: '0.35rem' }} />
+                {/* Linha de envio — espelha "enviado às HH:MM BRT" */}
+                <div
+                  style={{
+                    fontSize: '10px',
+                    color: 'var(--color-muted)',
+                    textAlign: 'center',
+                    marginTop: '0.35rem',
+                    opacity: 0.6,
+                  }}
+                >
+                  não enviado
+                </div>
               </div>
             )}
           </>
