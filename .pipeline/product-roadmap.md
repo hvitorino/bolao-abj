@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 38 features
-- Concluídas: 37
+- Concluídas: 38
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -501,7 +501,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 38. mcp-group-scope — Suporte a Múltiplos Grupos no Servidor MCP — pendente
+### 38. mcp-group-scope — Suporte a Múltiplos Grupos no Servidor MCP — concluída
 **Objetivo:** Corrigir o servidor MCP para suportar múltiplos grupos — adicionar tool `listar_grupos` e parâmetro `group_id` (opcional, com fallback para o primeiro grupo do usuário) nas tools `fazer_palpite`, `meus_palpites` e `ver_ranking`.
 **Critérios de sucesso:**
 - Nova tool `listar_grupos` retorna os grupos do usuário autenticado com id, nome e role
