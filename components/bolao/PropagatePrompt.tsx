@@ -184,7 +184,8 @@ export default function PropagatePrompt({
               type="button"
               onClick={onChooseSingle}
               style={{
-                flex: '1 1 120px',
+                flex: '1 1 45%',
+                minWidth: '120px',
                 padding: '0.5rem',
                 backgroundColor: 'var(--color-border)',
                 color: 'var(--color-text)',
@@ -205,7 +206,8 @@ export default function PropagatePrompt({
               type="button"
               onClick={handleBroadcast}
               style={{
-                flex: '1 1 120px',
+                flex: '1 1 45%',
+                minWidth: '120px',
                 padding: '0.5rem',
                 backgroundColor: 'var(--color-primary)',
                 color: 'var(--color-bg)',
