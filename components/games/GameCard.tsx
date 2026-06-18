@@ -37,19 +37,6 @@ function isDeadlinePassed(matchDate: string): boolean {
   return Date.now() >= new Date(matchDate).getTime() - 5 * 60 * 1000
 }
 
-// Formata data curta para o header do card
-function formatMatchDate(matchDate: string): string {
-  return new Date(matchDate)
-    .toLocaleDateString('pt-BR', {
-      timeZone: 'America/Sao_Paulo',
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    })
-    .toUpperCase()
-    .replace(/\./g, '')
-    .replace(/ DE /g, ' ')
-}
 
 export default function GameCard({
   game,
@@ -139,35 +126,83 @@ export default function GameCard({
         filter: isFinished ? 'grayscale(45%) opacity(0.75)' : undefined,
       }}
     >
-      {/* Header do card: rodada · data · horário */}
+      {/* Header do card: status · horário · estádio */}
       <div
         style={{
           borderBottom: `1px ${cardBorderStyle} ${cardBorderColor}`,
           padding: '0.5rem 0.75rem',
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
+          gap: '0.75rem',
+          overflow: 'hidden',
         }}
       >
-        <span
-          style={{
-            color: 'var(--color-muted)',
-            fontSize: '11px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          {liveGame.round}
-        </span>
-        <span
-          style={{
-            color: 'var(--color-muted)',
-            fontSize: '11px',
-            textTransform: 'uppercase',
-          }}
-        >
-          {formatMatchDate(liveGame.match_date)}
-        </span>
+        {isLive && (
+          <span
+            style={{
+              color: 'var(--color-primary)',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              border: '1px solid var(--color-primary)',
+              padding: '0.1rem 0.4rem',
+              flexShrink: 0,
+            }}
+          >
+            ■ AO VIVO
+          </span>
+        )}
+        {isPending && (
+          <span
+            style={{
+              color: 'var(--color-muted)',
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              border: '1px solid transparent',
+              padding: '0.1rem 0.4rem',
+              flexShrink: 0,
+            }}
+          >
+            PENDENTE
+          </span>
+        )}
+        {isFinished && (
+          <span
+            style={{
+              color: 'var(--color-muted)',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              border: '1px solid var(--color-muted)',
+              padding: '0.1rem 0.4rem',
+              flexShrink: 0,
+            }}
+          >
+            □ ENCERRADO
+          </span>
+        )}
+        <span style={{ color: 'var(--color-muted)', fontSize: '11px' }}>·</span>
+        <span style={{ color: 'var(--color-muted)', fontSize: '11px' }}>{matchTime} BRT</span>
+        {liveGame.venue && (
+          <span
+            style={{
+              color: 'var(--color-muted)',
+              fontSize: '10px',
+              marginLeft: 'auto',
+              textAlign: 'right',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: '120px',
+              flexShrink: 0,
+            }}
+          >
+            {liveGame.venue}
+          </span>
+        )}
       </div>
 
       {/* Corpo do card: times e placar */}
@@ -247,141 +282,6 @@ export default function GameCard({
         </div>
       </div>
 
-      {/* Footer do card: status */}
-      <div
-        style={{
-          borderTop: `1px ${cardBorderStyle} ${cardBorderColor}`,
-          padding: '0.5rem 0.75rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.75rem',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Badge de status */}
-        {isLive && (
-          <>
-            <span
-              style={{
-                color: 'var(--color-primary)',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                border: '1px solid var(--color-primary)',
-                padding: '0.1rem 0.4rem',
-                flexShrink: 0,
-              }}
-            >
-              ■ AO VIVO
-            </span>
-            <span
-              style={{
-                color: 'var(--color-muted)',
-                fontSize: '11px',
-              }}
-            >
-              ·
-            </span>
-            <span
-              style={{
-                color: 'var(--color-muted)',
-                fontSize: '11px',
-              }}
-            >
-              {matchTime} BRT
-            </span>
-          </>
-        )}
-
-        {isPending && (
-          <>
-            <span
-              style={{
-                color: 'var(--color-muted)',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                border: '1px solid transparent',
-                padding: '0.1rem 0.4rem',
-                flexShrink: 0,
-              }}
-            >
-              PENDENTE
-            </span>
-            <span
-              style={{
-                color: 'var(--color-muted)',
-                fontSize: '11px',
-              }}
-            >
-              ·
-            </span>
-            <span
-              style={{
-                color: 'var(--color-muted)',
-                fontSize: '11px',
-              }}
-            >
-              {matchTime} BRT
-            </span>
-          </>
-        )}
-
-        {isFinished && (
-          <>
-            <span
-              style={{
-                color: 'var(--color-muted)',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                border: '1px solid var(--color-muted)',
-                padding: '0.1rem 0.4rem',
-                flexShrink: 0,
-              }}
-            >
-              □ ENCERRADO
-            </span>
-            <span
-              style={{
-                color: 'var(--color-muted)',
-                fontSize: '11px',
-              }}
-            >
-              ·
-            </span>
-            <span
-              style={{
-                color: 'var(--color-muted)',
-                fontSize: '11px',
-              }}
-            >
-              {matchTime} BRT
-            </span>
-          </>
-        )}
-
-        {/* Sede (se disponível) */}
-        {liveGame.venue && (
-          <span
-            style={{
-              color: 'var(--color-muted)',
-              fontSize: '10px',
-              marginLeft: 'auto',
-              textAlign: 'right',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              maxWidth: '80px',
-              flexShrink: 0,
-            }}
-          >
-            {liveGame.venue}
-          </span>
-        )}
-      </div>
 
       {/* Área de palpite — separada do jogo por borda tracejada */}
       <div
