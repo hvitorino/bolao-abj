@@ -142,7 +142,7 @@ export function GroupChatWidget({
     }
   }, [activeGroupId, supabase])
 
-  const handleChipPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+  const handleChipPointerDown = useCallback((e: React.PointerEvent<HTMLElement>) => {
     hasDraggedRef.current = false
     isDraggingRef.current = true
     dragStartYRef.current = e.clientY
@@ -151,7 +151,7 @@ export function GroupChatWidget({
     e.currentTarget.setPointerCapture(e.pointerId)
   }, [chipBottom])
 
-  const handleChipPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+  const handleChipPointerMove = useCallback((e: React.PointerEvent<HTMLElement>) => {
     if (!isDraggingRef.current) return
     const deltaY = dragStartYRef.current - e.clientY
     const threshold = e.pointerType === 'mouse' ? 12 : 4
