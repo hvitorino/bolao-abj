@@ -3,7 +3,7 @@
 **Slug:** group-chat
 **Branch:** feature/group-chat
 **Data:** 2026-06-18
-**Status:** aguardando revisão (fix-1 aplicado)
+**Status:** aguardando revisão (fix-2 aplicado)
 
 ---
 
@@ -98,3 +98,22 @@ ec01eb8 feat(group-chat): cria migration para tabela group_messages com RLS e Re
 
 ### Arquivos alterados
 - `components/bolao/GroupChatWidget.tsx` — todas as correções acima (1 arquivo, +44 linhas, -13 linhas)
+
+---
+
+## Correções Fix 2
+
+**Data:** 2026-06-18
+
+### Problema 1 — Recálculo redundante e incorreto de `unreadCount` dentro de `loadMessages` (importante)
+- Removido o bloco que lia `localStorage` e filtrava `msgs` para recalcular `setUnreadCount` dentro de `loadMessages`
+- O único responsável por zerar o contador continua sendo `handleOpen`, que já executa `setUnreadCount(0)` e `localStorage.setItem` antes de invocar `loadMessages`
+- `localStorageKey` removido das dependências do `useCallback` de `loadMessages`, pois não é mais utilizado no corpo da função
+
+### Problema 2 — `handleAnimationEnd` não filtrava pelo nome da animação (importante)
+- `handleAnimationEnd` passou a receber `e: React.AnimationEvent` como parâmetro
+- Adicionada guarda `e.animationName === 'chatClose'` antes de executar `setIsOpen(false)` e `setIsClosing(false)`
+- Previne fechamento prematuro do painel caso animações CSS em elementos filhos façam bubbling do evento `animationend`
+
+### Arquivos alterados
+- `components/bolao/GroupChatWidget.tsx` — ambas as correções acima (1 arquivo, +3 inserções, -13 remoções)
