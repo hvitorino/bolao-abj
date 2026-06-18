@@ -9,7 +9,7 @@ const NAV_ITEMS = [
   { href: '/meus-palpites', label: 'PALPITES' },
   { href: '/grupos', label: 'GRUPOS' },
   { href: '/como-pontuar', label: 'REGRAS' },
-  { href: '/configuracoes', label: 'CONFIGURAÇÕES' },
+  { href: '/configuracoes', label: 'CONFIG' },
 ]
 
 export function NavLinks() {
@@ -20,8 +20,8 @@ export function NavLinks() {
       style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
-        gap: '1.5rem',
+        justifyContent: 'space-between',
+        gap: '0.5rem',
       }}
     >
       {NAV_ITEMS.map(({ href, label }) => {
@@ -35,9 +35,9 @@ export function NavLinks() {
             href={href}
             style={{
               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-              fontSize: '12px',
+              fontSize: '11px',
               textTransform: 'uppercase',
-              letterSpacing: '0.08em',
+              letterSpacing: '0.05em',
               textDecoration: 'none',
               color: isActive ? 'var(--color-primary)' : 'var(--color-muted)',
               borderBottom: isActive
@@ -46,6 +46,7 @@ export function NavLinks() {
               padding: '0.5rem 0',
               transition: 'color 0.15s ease, border-color 0.15s ease',
               display: 'inline-block',
+              whiteSpace: 'nowrap',
             }}
           >
             {label}
