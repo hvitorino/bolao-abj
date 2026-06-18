@@ -37,6 +37,37 @@ export default function DateChipsNav({
     })
   }, [currentDate])
 
+  // Navegação por swipe horizontal no body
+  useEffect(() => {
+    let startX = 0
+    let startY = 0
+
+    function onTouchStart(e: TouchEvent) {
+      startX = e.touches[0].clientX
+      startY = e.touches[0].clientY
+    }
+
+    function onTouchEnd(e: TouchEvent) {
+      const deltaX = e.changedTouches[0].clientX - startX
+      const deltaY = e.changedTouches[0].clientY - startY
+      if (Math.abs(deltaX) < 50 || Math.abs(deltaY) > Math.abs(deltaX)) return
+
+      const idx = availableDates.indexOf(currentDate)
+      if (deltaX < 0 && idx < availableDates.length - 1) {
+        router.push(`/jogos?date=${availableDates[idx + 1]}`)
+      } else if (deltaX > 0 && idx > 0) {
+        router.push(`/jogos?date=${availableDates[idx - 1]}`)
+      }
+    }
+
+    document.body.addEventListener('touchstart', onTouchStart, { passive: true })
+    document.body.addEventListener('touchend', onTouchEnd, { passive: true })
+    return () => {
+      document.body.removeEventListener('touchstart', onTouchStart)
+      document.body.removeEventListener('touchend', onTouchEnd)
+    }
+  }, [currentDate, availableDates, router])
+
   return (
     <div
       style={{
