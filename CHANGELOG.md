@@ -6,6 +6,18 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [group-chat] — Chat do Grupo — 2026-06-18
+
+- Widget de chat flutuante (`GroupChatWidget`) adicionado ao layout do dashboard, visível em todas as páginas para usuários com grupo ativo
+- Chip minimizado no canto inferior direito exibe badge de não lidas (contador baseado em `localStorage`); some ao abrir o painel
+- Painel expandido com área de mensagens rolável, header com nome do grupo e botão `[X]`; animações CSS de abertura (250ms ease-out) e fechamento (200ms ease-in com estado `isClosing`)
+- Mensagens carregadas na primeira abertura (últimas 100 via Supabase); novas mensagens chegam em tempo real via Supabase Realtime (canal `group-chat-${activeGroupId}`, evento `INSERT`, ativo desde a montagem)
+- Envio por `Enter` ou botão `ENVIAR`; `Shift+Enter` insere quebra de linha; limite de 500 caracteres validado no frontend e no banco
+- Nome do próprio usuário em `color-primary`; outros em `color-accent`; JetBrains Mono em todos os elementos; sem border-radius nem ícones decorativos
+- **Migration criada:** `supabase/migrations/20260618000001_create_group_messages.sql` — tabela `group_messages` com índices, RLS (`group_messages_select_member` e `group_messages_insert_member` via `is_group_member()`), publicação no Supabase Realtime
+- **Componente criado:** `components/bolao/GroupChatWidget.tsx` — Client Component completo
+- **Layout modificado:** `app/(dashboard)/layout.tsx` — import e renderização condicional de `<GroupChatWidget>`
+
 ## [fix-predictions-reveal-on-live] — Revelação Automática de Palpites ao Vivo — 2026-06-17
 
 - Corrigido bug em que palpites de terceiros permaneciam como OCULTO/PENDENTE após um jogo mudar de `pending` para `live` via Supabase Realtime, exigindo reload manual da página

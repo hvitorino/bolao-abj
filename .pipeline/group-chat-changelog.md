@@ -3,7 +3,7 @@
 **Slug:** group-chat
 **Branch:** feature/group-chat
 **Data:** 2026-06-18
-**Status:** aguardando revisão (fix-2 aplicado)
+**Status:** aprovado
 
 ---
 
