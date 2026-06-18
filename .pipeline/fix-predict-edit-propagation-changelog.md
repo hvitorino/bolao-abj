@@ -3,7 +3,7 @@
 **Slug:** fix-predict-edit-propagation
 **Branch:** feature/fix-predict-edit-propagation
 **Data:** 2026-06-18
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

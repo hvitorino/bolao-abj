@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-predict-edit-propagation] — Corrigir Propagação de Palpites no Modo de Edição — 2026-06-18
+
+- Removida bifurcação `isEditMode` dentro do bloco `if (res.ok)` em `handleSubmit` de `PredictionForm.tsx`; agora, tanto criação quanto edição passam para `status = 'propagating'` após submit bem-sucedido
+- O `PropagatePrompt` (já existente e agnóstico ao modo) é exibido após qualquer PATCH bem-sucedido no modo edição, oferecendo as opções "ESTE GRUPO" e "TODOS OS GRUPOS"
+- Ao escolher "TODOS OS GRUPOS" em modo edição, `POST /api/predictions/broadcast` é chamado com os novos scores via UPSERT idempotente — grupos com deadline expirado são ignorados silenciosamente
+- Ao escolher "ESTE GRUPO" em modo edição, o prompt fecha sem broadcast; `onSuccess` é chamado e o `GameCard` retorna ao estado de exibição do palpite atualizado
+- Nenhuma alteração em backend, banco de dados, RLS policies, Supabase Realtime ou quaisquer outros componentes — correção cirúrgica de 9 linhas removidas e 2 adicionadas exclusivamente em `components/bolao/PredictionForm.tsx`
+
 ## [predict-all-groups] — Palpite para Todos os Grupos — 2026-06-18
 
 - Novo endpoint `POST /api/predictions/broadcast` (Next.js Route Handler): propaga um palpite para todos os grupos do usuário simultaneamente, com UPSERT idempotente por grupo e verificação de deadline global (match_date - 5min)
