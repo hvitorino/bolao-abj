@@ -493,10 +493,10 @@ export default function GameCard({
           style={{
             width: '100%',
             border: 'none',
-            borderTop: '1px solid var(--color-accent)',
+            borderTop: '1px solid var(--color-primary)',
             backgroundColor: isHoveringToggle
-              ? 'rgba(255, 223, 0, 0.75)'
-              : 'var(--color-accent)',
+              ? 'rgba(0, 156, 59, 0.75)'
+              : 'var(--color-primary)',
             padding: '0.6rem 0.75rem',
             display: 'flex',
             justifyContent: 'center',
