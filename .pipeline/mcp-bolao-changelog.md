@@ -3,7 +3,7 @@
 **Slug:** mcp-bolao
 **Branch:** feature/mcp-bolao
 **Data:** 2026-06-18
-**Status:** aguardando revisão
+**Status:** aguardando revisão (fix-1 aplicado)
 
 ---
 
@@ -72,6 +72,20 @@ A spec RFC 7636 indica que o servidor DEVE verificar o PKCE se o cliente o envio
 4. **`refresh_token` vazio**: no callback, se `refresh_token` não for string (ex: null), salva string vazia. No token endpoint, retorna `undefined` se a string for vazia. Verificar se clientes MCP lidam bem com `refresh_token` ausente
 5. **Sem rate limiting no token endpoint**: qualquer um pode tentar códigos em brute force (embora sejam 64 chars hex). Considerar adicionar rate limiting via middleware no futuro
 6. **`app/mcp/autorizar`** está fora do grupo `(auth)` e `(dashboard)` — não tem layout especial. Isso é intencional (página standalone), mas verificar se o middleware de auth do projeto protege inadvertidamente esta rota
+
+---
+
+## Correções Fix 1 (2026-06-18)
+
+### Problema 1 — Race condition no token endpoint
+**Arquivo:** `app/api/mcp/oauth/token/route.ts`
+- Encadeado `.select('code')` ao update atômico (`.update({ used: true }).eq('code', code).eq('used', false).select('code')`).
+- Após o update, verifica se `updatedRows` é não-vazio; caso contrário, retorna `400 invalid_grant` com mensagem "Código de autorização já utilizado." — detecta concorrência sem janela de race condition.
+
+### Problema 2 — Ordenação de palpites por data do jogo
+**Arquivo:** `lib/mcp/tools/palpites.ts` (linha 78)
+- Substituído `.order('submitted_at', { ascending: true })` por `.order('match_date', { ascending: true, referencedTable: 'games' })`.
+- Palpites agora listados em ordem cronológica dos jogos, independentemente da ordem de submissão.
 
 ---
 
