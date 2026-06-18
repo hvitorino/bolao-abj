@@ -1,6 +1,6 @@
 # Relatório Final — Bolão da Copa
 
-Data de conclusão: 2026-06-17
+Data de conclusão: 2026-06-18
 
 ## Features Implementadas
 
@@ -37,6 +37,10 @@ Data de conclusão: 2026-06-17
 31. [remove-member] — Remover Participante do Grupo — 2026-06-17
 32. [prediction-visibility] — Distinção entre Palpite Oculto e Pendente — 2026-06-17
 33. [fix-predictions-reveal-on-live] — Correção: Revelação Automática de Palpites ao Vivo — 2026-06-17
+34. [group-chat] — Chat do Grupo — 2026-06-17
+35. [predict-all-groups] — Palpite para Todos os Grupos — 2026-06-18
+36. [fix-predict-edit-propagation] — Corrigir Propagação de Palpites no Modo de Edição — 2026-06-18
+37. [mcp-bolao] — Servidor MCP Remoto do Bolão — 2026-06-18
 
 ## Resumo
 
@@ -63,6 +67,8 @@ Features adicionadas após o relatório inicial: `fix-loser-score-rule` corrigiu
 Com isso, as 6 funcionalidades centrais do `CLAUDE.md` e todas as extensões identificadas ao longo do desenvolvimento (múltiplas correções/melhorias, 1 retrofit estrutural de multi-tenancy, 1 integração de dados externos, 1 mecanismo adicional de convite, 1 correção de persistência de contexto multi-grupo, melhorias de UX na navegação, transparência de pontuação e administração completa de grupos) estão implementadas, revisadas e mergeadas na main.
 
 As duas features finais fecharam o ciclo de visibilidade de palpites. `prediction-visibility` (item 32) distinguiu dois estados que antes eram indiferenciados: em jogos `pending`, terceiros com palpite passaram a ver `OCULTO` em `color-muted` (cinza) e terceiros sem palpite passaram a ver `PENDENTE` em `color-error` (vermelho); o próprio usuário sempre vê seu palpite real. A query que lista participantes por jogo passou a usar cliente `service_role` server-side apenas para selecionar `user_id, game_id` de palpites em jogos pendentes — nenhum valor de palpite de terceiro chega ao cliente antes do início da partida. A decisão arquitetural de uso de `service_role` foi documentada com justificativa explícita na spec após a primeira rodada de fix (que exigiu apenas documentação, sem mudança de código). `lib/supabase/service-server.ts` centralizou o cliente `service_role` sem duplicação. Por fim, `fix-predictions-reveal-on-live` (item 33) corrigiu a regressão decorrente dessa mesma feature: quando o status de um jogo mudava para `live` via Supabase Realtime, os palpites dos demais participantes continuavam exibidos como "-" até reload manual — porque os dados de palpites eram carregados apenas no mount, sem se atualizar quando o canal Realtime notificava mudança de status. A correção fez o hook de palpites dos participantes refazer o fetch automaticamente ao detectar a transição `pending` → `live`, garantindo que todos os clientes conectados vejam os palpites revelados de forma automática e simultânea.
+
+As quatro features finais completaram o produto. `group-chat` (item 34) criou uma funcionalidade de troca de mensagens dentro de cada grupo: um chip flutuante fixo no canto inferior direito do dashboard expande em um painel de chat com histórico em tempo real (Supabase Realtime, canal `group_messages`), contador de não lidas e suporte a envio com Enter ou botão — persistindo entre páginas do dashboard, com migration criando a tabela `group_messages` com RLS escopada por grupo. `predict-all-groups` (item 35) permitiu que, ao criar ou editar um palpite, o usuário escolha propagar aquele palpite para todos os seus grupos em que o prazo ainda não expirou, com feedback de quantos grupos foram atualizados. `fix-predict-edit-propagation` (item 36) corrigiu o bug em que o `PropagatePrompt` não aparecia após salvar um palpite em modo de edição (apenas na criação), alinhando os dois fluxos. Por fim, `mcp-bolao` (item 37) expôs o Bolão ABJ como servidor MCP remoto em `/api/mcp` com Streamable HTTP transport e fluxo OAuth completo via Supabase Auth, implementando 6 tools (`listar_jogos`, `ver_jogo`, `ver_ranking`, `meus_palpites`, `ver_palpites_jogo`, `fazer_palpite`) com todas as regras de negócio (deadline, visibilidade de palpites) respeitadas — permitindo que participantes consultem e palpitem via Claude Desktop, Claude.ai, Cursor ou qualquer cliente MCP compatível.
 
 ## Próximos passos sugeridos
 
