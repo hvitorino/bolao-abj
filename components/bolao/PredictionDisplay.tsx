@@ -94,12 +94,16 @@ export default function PredictionDisplay({
         {showPoints && (
           <div
             style={{
-              fontSize: '13px',
+              fontSize: '11px',
               fontWeight: 'bold',
               color: points > 0 ? 'var(--color-accent)' : 'var(--color-muted)',
+              border: `1px solid ${points > 0 ? 'var(--color-accent)' : 'var(--color-muted)'}`,
+              backgroundColor: points > 0 ? 'rgba(255, 223, 0, 0.1)' : 'transparent',
+              padding: '0.15rem 0.45rem',
+              letterSpacing: '0.05em',
             }}
           >
-            +{points} PTS
+            +{points} PTS {isExpanded ? '▴' : '▾'}
           </div>
         )}
       </div>
@@ -145,31 +149,6 @@ export default function PredictionDisplay({
         </div>
       )}
 
-      {/* Footer de expansão — CTA visível para ver breakdown */}
-      {isExpandable && (
-        <div
-          style={{
-            marginTop: '0.6rem',
-            marginLeft: '-0.75rem',
-            marginRight: '-0.75rem',
-            marginBottom: '-0.75rem',
-            borderTop: '1px dashed var(--color-primary)',
-            padding: '0.35rem 0.75rem',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '0.35rem',
-            fontSize: '10px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            color: 'var(--color-primary)',
-            backgroundColor: 'rgba(0, 156, 59, 0.08)',
-          }}
-        >
-          {isExpanded ? 'OCULTAR PONTUAÇÃO ▴' : 'VER PONTUAÇÃO ▾'}
-        </div>
-      )}
     </>
   )
 
