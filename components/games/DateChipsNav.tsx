@@ -92,24 +92,25 @@ export default function DateChipsNav({
                     padding: '0.35rem 0.75rem',
                     fontSize: '12px',
                     fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                    fontWeight: isActive ? 'bold' : 'normal',
+                    fontWeight: 'bold',
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
-                    color: isActive ? 'var(--color-accent)' : 'var(--color-muted)',
-                    backgroundColor: 'var(--color-surface)',
+                    color: isActive ? 'var(--color-bg)' : 'var(--color-muted)',
+                    backgroundColor: isActive ? 'var(--color-primary)' : 'transparent',
                     border: isActive
-                      ? '1px solid var(--color-accent)'
+                      ? '1px solid var(--color-primary)'
                       : '1px solid var(--color-border)',
                     borderRadius: 0,
                     cursor: isActive ? 'default' : 'pointer',
-                    transition: 'color 0.1s, border-color 0.1s',
+                    transition: 'color 0.1s, border-color 0.1s, background-color 0.1s',
                     whiteSpace: 'nowrap',
                   }}
                   onMouseEnter={(e) => {
                     if (!isActive) {
                       const btn = e.currentTarget
-                      btn.style.color = 'var(--color-text)'
-                      btn.style.borderColor = 'var(--color-muted)'
+                      btn.style.color = 'var(--color-bg)'
+                      btn.style.borderColor = 'var(--color-primary)'
+                      btn.style.backgroundColor = 'rgba(0, 156, 59, 0.75)'
                     }
                   }}
                   onMouseLeave={(e) => {
@@ -117,6 +118,7 @@ export default function DateChipsNav({
                       const btn = e.currentTarget
                       btn.style.color = 'var(--color-muted)'
                       btn.style.borderColor = 'var(--color-border)'
+                      btn.style.backgroundColor = 'transparent'
                     }
                   }}
                 >
