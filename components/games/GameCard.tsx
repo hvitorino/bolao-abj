@@ -368,7 +368,6 @@ export default function GameCard({
                 style={{
                   position: 'relative',
                   border: '1px solid var(--color-border)',
-                  backgroundColor: 'var(--color-surface)',
                   padding: '0.75rem',
                   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
                 }}

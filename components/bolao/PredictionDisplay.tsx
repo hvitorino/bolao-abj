@@ -160,7 +160,6 @@ export default function PredictionDisplay({
         style={{
           position: 'relative',
           border: '1px solid var(--color-primary)',
-          backgroundColor: 'var(--color-surface)',
           padding: '0.75rem',
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
           cursor: 'pointer',

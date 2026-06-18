@@ -34,7 +34,6 @@ export default function ScoreDisplay({ points, breakdown }: ScoreDisplayProps) {
     <div
       style={{
         border: '1px solid var(--color-primary)',
-        backgroundColor: 'var(--color-surface)',
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
         fontSize: '11px',
       }}
