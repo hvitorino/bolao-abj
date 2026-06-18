@@ -3,6 +3,7 @@ import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/
 import { NextRequest } from 'next/server'
 import { authenticateBearer, createServiceClient } from '@/lib/mcp/auth'
 import { registerJogosTools } from '@/lib/mcp/tools/jogos'
+import { registerGruposTools } from '@/lib/mcp/tools/grupos'
 import { registerRankingTools } from '@/lib/mcp/tools/ranking'
 import { registerPalpitesTools } from '@/lib/mcp/tools/palpites'
 
@@ -13,6 +14,7 @@ function createMcpServer(userId: string): McpServer {
   })
 
   registerJogosTools(server)
+  registerGruposTools(server, userId)
   registerRankingTools(server, userId)
   registerPalpitesTools(server, userId)
 

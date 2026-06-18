@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import { createServiceClient, resolveGroupForMcp } from '@/lib/mcp/auth'
+import { createServiceClient, resolveGroupForMcp, validateGroupMembership } from '@/lib/mcp/auth'
 
 function formatMatchDateShort(isoString: string): string {
   const d = new Date(isoString)
@@ -30,19 +30,34 @@ export function registerPalpitesTools(server: McpServer, userId: string) {
         .enum(['pending', 'live', 'finished'])
         .optional()
         .describe('Filtrar por status do jogo (opcional)'),
+      group_id: z
+        .string()
+        .uuid()
+        .optional()
+        .describe('ID do grupo (UUID). Se omitido, usa o primeiro grupo por data de entrada.'),
     },
-    async ({ status }) => {
+    async ({ status, group_id }) => {
       const db = createServiceClient()
-      const groupId = await resolveGroupForMcp(db, userId)
 
-      if (!groupId) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Você não pertence a nenhum grupo ativo no bolão.',
-            },
-          ],
+      let groupId: string | null
+
+      if (group_id) {
+        const { valid, errorMessage } = await validateGroupMembership(db, userId, group_id)
+        if (!valid) {
+          return { content: [{ type: 'text', text: errorMessage! }] }
+        }
+        groupId = group_id
+      } else {
+        groupId = await resolveGroupForMcp(db, userId)
+        if (!groupId) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: 'Você não pertence a nenhum grupo ativo no bolão.',
+              },
+            ],
+          }
         }
       }
 
@@ -236,19 +251,34 @@ export function registerPalpitesTools(server: McpServer, userId: string) {
       game_id: z.string().uuid().describe('ID do jogo (UUID)'),
       home_score: z.number().int().min(0).describe('Placar do time da casa (>= 0)'),
       away_score: z.number().int().min(0).describe('Placar do time visitante (>= 0)'),
+      group_id: z
+        .string()
+        .uuid()
+        .optional()
+        .describe('ID do grupo (UUID). Se omitido, usa o primeiro grupo por data de entrada.'),
     },
-    async ({ game_id, home_score, away_score }) => {
+    async ({ game_id, home_score, away_score, group_id }) => {
       const db = createServiceClient()
-      const groupId = await resolveGroupForMcp(db, userId)
 
-      if (!groupId) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Você não pertence a nenhum grupo ativo no bolão.',
-            },
-          ],
+      let groupId: string | null
+
+      if (group_id) {
+        const { valid, errorMessage } = await validateGroupMembership(db, userId, group_id)
+        if (!valid) {
+          return { content: [{ type: 'text', text: errorMessage! }] }
+        }
+        groupId = group_id
+      } else {
+        groupId = await resolveGroupForMcp(db, userId)
+        if (!groupId) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: 'Você não pertence a nenhum grupo ativo no bolão.',
+              },
+            ],
+          }
         }
       }
 
@@ -273,25 +303,6 @@ export function registerPalpitesTools(server: McpServer, userId: string) {
             {
               type: 'text',
               text: 'Prazo encerrado — faltam menos de 5 minutos para o início do jogo.',
-            },
-          ],
-        }
-      }
-
-      // Verificar membership
-      const { data: membership } = await db
-        .from('group_members')
-        .select('id')
-        .eq('group_id', groupId)
-        .eq('user_id', userId)
-        .maybeSingle()
-
-      if (!membership) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Você não pertence a nenhum grupo ativo no bolão.',
             },
           ],
         }

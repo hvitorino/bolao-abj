@@ -35,3 +35,25 @@ export async function resolveGroupForMcp(
     .maybeSingle()
   return data?.group_id ?? null
 }
+
+export async function validateGroupMembership(
+  serviceClient: ReturnType<typeof createServiceClient>,
+  userId: string,
+  groupId: string
+): Promise<{ valid: boolean; errorMessage?: string }> {
+  const { data } = await serviceClient
+    .from('group_members')
+    .select('group_id')
+    .eq('group_id', groupId)
+    .eq('user_id', userId)
+    .maybeSingle()
+
+  if (!data) {
+    return {
+      valid: false,
+      errorMessage: 'Você não é membro deste grupo ou o grupo não existe.',
+    }
+  }
+
+  return { valid: true }
+}
