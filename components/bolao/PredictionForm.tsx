@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Prediction } from '@/lib/types/prediction'
 import PredictionDisplay from './PredictionDisplay'
+import PropagatePrompt from './PropagatePrompt'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 interface PredictionFormProps {
@@ -17,7 +18,7 @@ interface PredictionFormProps {
   onSuccess?: (updated: Prediction) => void // Callback chamado após submit bem-sucedido
 }
 
-type FormStatus = 'idle' | 'loading' | 'success' | 'error'
+type FormStatus = 'idle' | 'loading' | 'success' | 'propagating' | 'error'
 
 // Calcula minutos restantes até o deadline (5min antes do jogo)
 function minutesUntilDeadline(matchDate: string): number {
@@ -80,8 +81,36 @@ export default function PredictionForm({
   const showCountdown = minutesRemaining > 0 && minutesRemaining < 120
   const isCountdownUrgent = minutesRemaining <= 30
 
-  // Se já tem palpite enviado e não estamos no modo edição, exibir PredictionDisplay
-  if (submittedPrediction && !isEditMode) {
+  // Estado 'propagating': palpite salvo no grupo ativo, aguardando decisão do usuário
+  if (status === 'propagating' && submittedPrediction) {
+    return (
+      <PropagatePrompt
+        gameId={gameId}
+        homeScore={submittedPrediction.home_score}
+        awayScore={submittedPrediction.away_score}
+        homeTeamCode={homeTeamCode}
+        awayTeamCode={awayTeamCode}
+        onChooseSingle={() => {
+          setStatus('success')
+          onSuccess?.(submittedPrediction)
+        }}
+        onChooseAll={() => {
+          setStatus('success')
+          onSuccess?.(submittedPrediction)
+        }}
+      />
+    )
+  }
+
+  // Se já tem palpite enviado (pós-propagação, pós-edição, ou palpite pré-existente)
+  // e não estamos em modo edição nem em propagating: exibir PredictionDisplay.
+  // 'idle' cobre o caso de abertura com initialPrediction já preenchido.
+  // 'success' cobre o caso pós-submit (criação ou edição).
+  if (
+    submittedPrediction &&
+    !isEditMode &&
+    (status === 'idle' || status === 'success')
+  ) {
     return (
       <PredictionDisplay
         homeScore={submittedPrediction.home_score}
@@ -181,10 +210,16 @@ export default function PredictionForm({
 
       if (res.ok) {
         const updatedPrediction = data as Prediction
-        setStatus('success')
         setSubmittedPrediction(updatedPrediction)
-        // Notifica o pai (GameCard) sobre o sucesso
-        onSuccess?.(updatedPrediction)
+
+        if (isEditMode) {
+          // Modo edição: comportamento original — notifica o pai diretamente
+          setStatus('success')
+          onSuccess?.(updatedPrediction)
+        } else {
+          // Modo criação: vai para 'propagating' para perguntar se propaga
+          setStatus('propagating')
+        }
       } else if (data.error === 'deadline_expired') {
         setStatus('error')
         setErrorMessage('Prazo encerrado. Não é possível editar o palpite.')
