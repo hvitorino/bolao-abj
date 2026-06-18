@@ -239,45 +239,54 @@ export function GroupChatWidget({
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
-            minWidth: '96px',
-            padding: '0.375rem 0.75rem',
-            backgroundColor: 'var(--color-surface)',
-            border: '1px solid var(--color-border)',
+            padding: '0.5rem 1rem',
+            backgroundColor: 'var(--color-primary)',
+            border: '2px solid var(--color-primary)',
+            borderRadius: '2px',
             cursor: 'pointer',
             fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '12px',
+            fontSize: '13px',
             fontWeight: 'bold',
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
-            color: 'var(--color-accent)',
-            transition: 'border-color 200ms ease',
+            color: 'var(--color-bg)',
+            boxShadow: '0 4px 16px rgba(0,156,59,0.45), 0 2px 6px rgba(0,0,0,0.6)',
+            transition: 'background-color 150ms ease, box-shadow 150ms ease',
           }}
           onMouseEnter={(e) => {
-            ;(e.currentTarget as HTMLButtonElement).style.borderColor =
-              'var(--color-primary)'
+            const btn = e.currentTarget as HTMLButtonElement
+            btn.style.backgroundColor = 'var(--color-accent)'
+            btn.style.borderColor = 'var(--color-accent)'
+            btn.style.boxShadow = '0 4px 20px rgba(255,223,0,0.4), 0 2px 6px rgba(0,0,0,0.6)'
           }}
           onMouseLeave={(e) => {
-            ;(e.currentTarget as HTMLButtonElement).style.borderColor =
-              'var(--color-border)'
+            const btn = e.currentTarget as HTMLButtonElement
+            btn.style.backgroundColor = 'var(--color-primary)'
+            btn.style.borderColor = 'var(--color-primary)'
+            btn.style.boxShadow = '0 4px 16px rgba(0,156,59,0.45), 0 2px 6px rgba(0,0,0,0.6)'
           }}
           aria-label={`Abrir chat do grupo${unreadCount > 0 ? ` (${unreadCount} não lidas)` : ''}`}
         >
-          CHAT
+          ▲ CHAT
           {unreadCount > 0 && (
             <span
               style={{
-                display: 'inline-block',
-                padding: '0 0.375rem',
-                backgroundColor: 'var(--color-primary)',
-                color: 'var(--color-bg)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: '1.25rem',
+                height: '1.25rem',
+                padding: '0 0.3rem',
+                backgroundColor: 'var(--color-accent)',
+                color: '#0a0e1a',
                 fontSize: '11px',
                 fontWeight: 'bold',
                 fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                borderRadius: 0,
-                lineHeight: '1.4',
+                borderRadius: '2px',
+                lineHeight: 1,
               }}
             >
-              {unreadCount}
+              {unreadCount > 99 ? '99+' : unreadCount}
             </span>
           )}
         </button>
