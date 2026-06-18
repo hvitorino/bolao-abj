@@ -211,15 +211,8 @@ export default function PredictionForm({
       if (res.ok) {
         const updatedPrediction = data as Prediction
         setSubmittedPrediction(updatedPrediction)
-
-        if (isEditMode) {
-          // Modo edição: comportamento original — notifica o pai diretamente
-          setStatus('success')
-          onSuccess?.(updatedPrediction)
-        } else {
-          // Modo criação: vai para 'propagating' para perguntar se propaga
-          setStatus('propagating')
-        }
+        // Sempre vai para 'propagating' — criação e edição
+        setStatus('propagating')
       } else if (data.error === 'deadline_expired') {
         setStatus('error')
         setErrorMessage('Prazo encerrado. Não é possível editar o palpite.')
