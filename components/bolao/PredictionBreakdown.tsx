@@ -40,7 +40,6 @@ export default function PredictionBreakdown({ points, breakdown }: PredictionBre
   return (
     <div
       style={{
-        backgroundColor: 'var(--color-bg)',
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
         fontSize: '10px',
         padding: '0.5rem 0.75rem',
