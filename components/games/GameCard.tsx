@@ -466,15 +466,43 @@ export default function GameCard({
             ) : (
               <div
                 style={{
-                  fontSize: '11px',
-                  color: 'var(--color-muted)',
-                  textAlign: 'center',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  padding: '0.25rem 0',
+                  position: 'relative',
+                  border: '1px solid var(--color-border)',
+                  backgroundColor: 'var(--color-surface)',
+                  padding: '0.75rem',
+                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
                 }}
               >
-                SEM PALPITE
+                {/* Linha de título — espaço equivalente ao "✓ SEU PALPITE" */}
+                <div style={{ marginBottom: '0.5rem', height: '1.4rem' }} />
+                {/* Placar placeholder */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
+                  <span style={{ fontSize: '18px', lineHeight: 1, opacity: 0.4 }}>
+                    {getTeamFlag(liveGame.home_team_code)}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '22px',
+                      fontWeight: 'bold',
+                      color: 'var(--color-muted)',
+                      letterSpacing: '0.05em',
+                    }}
+                  >
+                    - × -
+                  </span>
+                  <span style={{ fontSize: '18px', lineHeight: 1, opacity: 0.4 }}>
+                    {getTeamFlag(liveGame.away_team_code)}
+                  </span>
+                </div>
+                {/* Espaço equivalente ao horário de envio */}
+                <div style={{ height: '10px', marginTop: '0.35rem' }} />
               </div>
             )}
           </>
