@@ -27,6 +27,7 @@ export default function GameParticipantsList({
   // breakdown expandido por vez, dentro desta instância de lista
   // (um jogo). Reinicia a cada montagem (ex: ao expandir o card pai).
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
+  const [hoveredUserId, setHoveredUserId] = useState<string | null>(null)
 
   return (
     <div
@@ -196,10 +197,18 @@ export default function GameParticipantsList({
                           }
                         : undefined
                     }
+                    onMouseEnter={isExpandable ? () => setHoveredUserId(p.userId) : undefined}
+                    onMouseLeave={isExpandable ? () => setHoveredUserId(null) : undefined}
                     role={isExpandable ? 'button' : undefined}
                     tabIndex={isExpandable ? 0 : undefined}
                     aria-expanded={isExpandable ? isExpanded : undefined}
-                    style={isExpandable ? { cursor: 'pointer' } : undefined}
+                    style={{
+                      cursor: isExpandable ? 'pointer' : undefined,
+                      backgroundColor:
+                        isExpandable && hoveredUserId === p.userId
+                          ? 'rgba(0, 156, 59, 0.08)'
+                          : undefined,
+                    }}
                   >
                     {/* Coluna PARTICIPANTE */}
                     <td
@@ -241,17 +250,6 @@ export default function GameParticipantsList({
                           )}
                           {p.name}
                         </span>
-                        {isExpandable && (
-                          <span
-                            style={{
-                              color: 'var(--color-muted)',
-                              fontSize: '9px',
-                              flexShrink: 0,
-                            }}
-                          >
-                            {isExpanded ? '▴' : '▾'}
-                          </span>
-                        )}
                       </div>
                     </td>
 
@@ -286,20 +284,39 @@ export default function GameParticipantsList({
                           paddingLeft: '0.75rem',
                           borderBottom: '1px solid var(--color-border)',
                           textAlign: 'right',
-                          fontWeight: 'bold',
-                          color:
-                            p.prediction === null
-                              ? 'var(--color-muted)'
-                              : p.points !== null && p.points > 0
-                                ? 'var(--color-accent)'
-                                : 'var(--color-muted)',
                         }}
                       >
-                        {p.prediction === null
-                          ? '-'
-                          : p.points !== null
-                            ? `+${p.points}`
-                            : '-'}
+                        {isExpandable && p.points !== null ? (
+                          <span
+                            style={{
+                              display: 'inline-block',
+                              fontSize: '11px',
+                              fontWeight: 'bold',
+                              letterSpacing: '0.05em',
+                              padding: '0.2rem 0.5rem',
+                              backgroundColor: 'var(--color-primary)',
+                              color: 'var(--color-bg)',
+                              lineHeight: 1.4,
+                              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                            }}
+                          >
+                            +{p.points} {isExpanded ? '▴' : '▾'}
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              fontWeight: 'bold',
+                              color:
+                                p.prediction === null
+                                  ? 'var(--color-muted)'
+                                  : p.points !== null && p.points > 0
+                                    ? 'var(--color-accent)'
+                                    : 'var(--color-muted)',
+                            }}
+                          >
+                            {p.prediction === null ? '-' : p.points !== null ? `+${p.points}` : '-'}
+                          </span>
+                        )}
                       </td>
                     )}
                     {showLivePoints && (
@@ -309,20 +326,39 @@ export default function GameParticipantsList({
                           paddingLeft: '0.75rem',
                           borderBottom: '1px solid var(--color-border)',
                           textAlign: 'right',
-                          fontWeight: 'bold',
-                          color:
-                            p.prediction === null
-                              ? 'var(--color-muted)'
-                              : livePoints !== null && livePoints > 0
-                                ? 'var(--color-live)'
-                                : 'var(--color-muted)',
                         }}
                       >
-                        {p.prediction === null
-                          ? '-'
-                          : livePoints !== null
-                            ? `+${livePoints}`
-                            : '-'}
+                        {isExpandable && livePoints !== null ? (
+                          <span
+                            style={{
+                              display: 'inline-block',
+                              fontSize: '11px',
+                              fontWeight: 'bold',
+                              letterSpacing: '0.05em',
+                              padding: '0.2rem 0.5rem',
+                              backgroundColor: 'var(--color-live)',
+                              color: 'var(--color-bg)',
+                              lineHeight: 1.4,
+                              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                            }}
+                          >
+                            +{livePoints} {isExpanded ? '▴' : '▾'}
+                          </span>
+                        ) : (
+                          <span
+                            style={{
+                              fontWeight: 'bold',
+                              color:
+                                p.prediction === null
+                                  ? 'var(--color-muted)'
+                                  : livePoints !== null && livePoints > 0
+                                    ? 'var(--color-live)'
+                                    : 'var(--color-muted)',
+                            }}
+                          >
+                            {p.prediction === null ? '-' : livePoints !== null ? `+${livePoints}` : '-'}
+                          </span>
+                        )}
                       </td>
                     )}
                   </tr>
