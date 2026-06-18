@@ -3,8 +3,8 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 35 features
-- Concluídas: 35
+- Total: 36 features
+- Concluídas: 36
 - Em progresso: 0
 - Pendentes: 0
 
@@ -458,6 +458,17 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Usuário não consegue editar palpites de outros usuários (autorização preservada)
 - Feedback claro de quantos grupos foram atualizados (ex: "Palpite salvo em 3 grupos")
 **Dependências:** auth, predictions, grupos, grupo-ativo-persistente
+
+---
+
+### 36. fix-predict-edit-propagation — Corrigir Propagação de Palpites no Modo de Edição — concluída
+**Objetivo:** Corrigir o bug em que o `PropagatePrompt` não era exibido ao usuário após salvar um palpite em modo de edição (update de palpite existente), de modo que a opção de propagar para outros grupos também apareça nesse fluxo, não apenas na criação.
+**Critérios de sucesso:**
+- Após salvar um palpite editado (palpite existente atualizado), o `PropagatePrompt` é exibido da mesma forma que após criar um palpite novo
+- Fluxo de propagação para todos os grupos funciona corretamente tanto no modo de criação quanto no modo de edição
+- Nenhuma regressão no comportamento do `PredictionForm` para criação de palpites
+**Dependências:** predict-all-groups
+**Observação de conclusão:** aprovada e mergeada na main em 2026-06-18 (commit `ef78749`). Fix pontual isolado em `PredictionForm` para expor `PropagatePrompt` também no caminho de edição.
 
 ---
 
