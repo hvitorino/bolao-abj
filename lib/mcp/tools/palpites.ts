@@ -75,7 +75,7 @@ export function registerPalpitesTools(server: McpServer, userId: string) {
         )
         .eq('user_id', userId)
         .eq('group_id', groupId)
-        .order('submitted_at', { ascending: true })
+        .order('match_date', { ascending: true, referencedTable: 'games' })
 
       if (status) {
         query = query.eq('games.status', status)

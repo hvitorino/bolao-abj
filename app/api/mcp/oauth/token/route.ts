@@ -113,18 +113,27 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Marcar o código como usado (atomicamente)
-  const { error: updateError } = await db
+  // Marcar o código como usado (atomicamente) — .select() retorna as linhas afetadas,
+  // permitindo detectar race condition se outra requisição concorrente já atualizou used=true.
+  const { data: updatedRows, error: updateError } = await db
     .from('mcp_oauth_codes')
     .update({ used: true })
     .eq('code', code)
     .eq('used', false)
+    .select('code')
 
   if (updateError) {
     console.error('[mcp/oauth/token] update error:', updateError)
     return NextResponse.json(
       { error: 'server_error', message: 'Erro ao processar token.' },
       { status: 500 }
+    )
+  }
+
+  if (!updatedRows || updatedRows.length === 0) {
+    return NextResponse.json(
+      { error: 'invalid_grant', message: 'Código de autorização já utilizado.' },
+      { status: 400 }
     )
   }
 
