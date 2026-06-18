@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 34 features
-- Concluídas: 33
+- Concluídas: 34
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -449,7 +449,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 34. group-chat — Chat do Grupo — pendente
+### 34. group-chat — Chat do Grupo — concluída
 **Objetivo:** Criar uma funcionalidade de troca de mensagens dentro de cada grupo do bolão, com um chip flutuante fixo no canto inferior direito do dashboard que expande em um painel de chat com histórico em tempo real, contador de não lidas e suporte a envio de mensagens por todos os participantes do grupo.
 **Critérios de sucesso:**
 - Chip flutuante visível em todas as páginas do dashboard (fixo no canto inferior direito), persistindo entre navegações
