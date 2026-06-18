@@ -8,7 +8,15 @@ interface ChatMessage {
   content: string
   created_at: string
   user_id: string
-  profiles: { name: string } | null
+  profiles: { name: string } | { name: string }[] | null
+}
+
+function resolveProfile(
+  profiles: ChatMessage['profiles']
+): { name: string } | null {
+  if (!profiles) return null
+  if (Array.isArray(profiles)) return profiles[0] ?? null
+  return profiles
 }
 
 interface GroupChatWidgetProps {
@@ -61,7 +69,8 @@ export function GroupChatWidget({
       .limit(100)
 
     if (!error && data) {
-      setMessages(data as ChatMessage[])
+      const msgs = data as unknown as ChatMessage[]
+      setMessages(msgs)
 
       // Calcula não lidas com base no lastReadAt
       const lastReadAt =
@@ -69,9 +78,7 @@ export function GroupChatWidget({
           ? localStorage.getItem(localStorageKey)
           : null
       if (lastReadAt) {
-        const unread = (data as ChatMessage[]).filter(
-          (m) => m.created_at > lastReadAt
-        ).length
+        const unread = msgs.filter((m) => m.created_at > lastReadAt).length
         setUnreadCount(unread)
       }
     }
@@ -394,7 +401,8 @@ export function GroupChatWidget({
         ) : (
           messages.map((msg) => {
             const isOwn = msg.user_id === currentUserId
-            const name = msg.profiles?.name ?? 'ANÔNIMO'
+            const profile = resolveProfile(msg.profiles)
+            const name = profile?.name ?? 'ANÔNIMO'
             return (
               <div
                 key={msg.id}
