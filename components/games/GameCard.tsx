@@ -495,9 +495,9 @@ export default function GameCard({
             border: 'none',
             borderTop: '1px solid var(--color-accent)',
             backgroundColor: isHoveringToggle
-              ? 'var(--color-accent)'
-              : 'rgba(255, 223, 0, 0.1)',
-            padding: '0.5rem 0.75rem',
+              ? 'rgba(255, 223, 0, 0.75)'
+              : 'var(--color-accent)',
+            padding: '0.6rem 0.75rem',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -506,7 +506,7 @@ export default function GameCard({
             fontFamily: "'JetBrains Mono', 'Courier New', monospace",
             fontSize: '11px',
             fontWeight: 'bold',
-            color: isHoveringToggle ? 'var(--color-bg)' : 'var(--color-accent)',
+            color: 'var(--color-bg)',
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
           }}
