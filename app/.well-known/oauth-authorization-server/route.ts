@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     issuer: base,
     authorization_endpoint: `${base}/mcp/autorizar`,
     token_endpoint: `${base}/api/mcp/oauth/token`,
+    registration_endpoint: `${base}/api/mcp/oauth/register`,
     response_types_supported: ['code'],
     grant_types_supported: ['authorization_code'],
     code_challenge_methods_supported: ['S256'],
