@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { NavLinks } from './nav-links'
 import { GroupMenu } from './group-switcher'
+import { GroupChatWidget } from '@/components/bolao/GroupChatWidget'
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
@@ -99,6 +100,14 @@ export default async function DashboardLayout({
       <main style={{ padding: '1.5rem' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>{children}</div>
       </main>
+
+      {activeGroup && (
+        <GroupChatWidget
+          activeGroupId={activeGroup.id}
+          activeGroupName={activeGroup.name}
+          currentUserId={user.id}
+        />
+      )}
     </div>
   )
 }
