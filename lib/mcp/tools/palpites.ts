@@ -89,7 +89,7 @@ export function registerPalpitesTools(server: McpServer, userId: string) {
         }
       }
 
-      const predictions = (data ?? []) as PredictionRow[]
+      const predictions = (data ?? []) as unknown as PredictionRow[]
 
       if (predictions.length === 0) {
         return {
