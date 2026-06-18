@@ -3,7 +3,7 @@
 **Slug:** mcp-bolao
 **Branch:** feature/mcp-bolao
 **Data:** 2026-06-18
-**Status:** aguardando revisão (fix-1 aplicado)
+**Status:** aprovado
 
 ---
 
