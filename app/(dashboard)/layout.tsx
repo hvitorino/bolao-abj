@@ -98,7 +98,7 @@ export default async function DashboardLayout({
 
           {/* Linha 2: navegação */}
           <div style={{ borderTop: '1px solid var(--color-border)' }}>
-            <NavLinks />
+            <NavLinks groupId={activeGroup?.id ?? ''} currentUserId={user.id} />
           </div>
         </div>
       </header>
