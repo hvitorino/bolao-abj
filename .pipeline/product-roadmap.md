@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 42 features
-- Concluídas: 41
-- Em progresso: 1
+- Concluídas: 42
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -538,7 +538,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 42. recap-bottom-sheet — Botão Fixo no Rodapé com Bottom Sheet de Resumo — em progresso
+### 42. recap-bottom-sheet — Botão Fixo no Rodapé com Bottom Sheet de Resumo — concluída
 **Objetivo:** Substituir o RecapFloatingButton (FAB no canto inferior esquerdo) por um botão fixo de largura total no rodapé da tela, que ao ser clicado abre o conteúdo do resumo diário em um bottom sheet com animação suave de slide-up, respeitando safe-area no iOS e seguindo DESIGN.md.
 **Critérios de sucesso:**
 - FAB (RecapFloatingButton) é removido e substituído por um elemento fixo no rodapé (full-width ou near-full-width)
