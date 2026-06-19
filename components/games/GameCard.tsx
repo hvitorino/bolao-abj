@@ -342,17 +342,24 @@ export default function GameCard({
                   points={displayScore?.points ?? null}
                 />
                 {/* Breakdown de pontuação — revelado ao clicar no palpite */}
-                {isScoreExpanded &&
-                  displayScore &&
-                  liveHomeScore !== null &&
-                  liveAwayScore !== null && (
-                    <div style={{ marginTop: '0.5rem' }}>
-                      <ScoreDisplay
-                        points={displayScore.points}
-                        breakdown={displayScore.breakdown}
-                      />
+                {displayScore && liveHomeScore !== null && liveAwayScore !== null && (
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateRows: isScoreExpanded ? '1fr' : '0fr',
+                      transition: 'grid-template-rows 300ms ease',
+                    }}
+                  >
+                    <div style={{ overflow: 'hidden' }}>
+                      <div style={{ marginTop: '0.5rem' }}>
+                        <ScoreDisplay
+                          points={displayScore.points}
+                          breakdown={displayScore.breakdown}
+                        />
+                      </div>
                     </div>
-                  )}
+                  </div>
+                )}
               </>
             ) : (
               <div

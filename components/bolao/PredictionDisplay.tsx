@@ -101,7 +101,16 @@ export default function PredictionDisplay({
               color: 'var(--color-bg)',
             }}
           >
-            +{points} PTS {isExpanded ? '▴' : '▾'}
+            +{points} PTS{' '}
+            <span
+              style={{
+                display: 'inline-block',
+                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 250ms ease',
+              }}
+            >
+              ▾
+            </span>
           </div>
         )}
       </div>
