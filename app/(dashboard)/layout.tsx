@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { NavLinks } from './nav-links'
 import { GroupMenu } from './group-switcher'
 import { GroupChatWidget } from '@/components/bolao/GroupChatWidget'
+import { DailyRecapModal } from '@/components/bolao/DailyRecapModal'
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
@@ -110,6 +111,13 @@ export default async function DashboardLayout({
         <GroupChatWidget
           activeGroupId={activeGroup.id}
           activeGroupName={activeGroup.name}
+          currentUserId={user.id}
+        />
+      )}
+
+      {activeGroup && (
+        <DailyRecapModal
+          groupId={activeGroup.id}
           currentUserId={user.id}
         />
       )}

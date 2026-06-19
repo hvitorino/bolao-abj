@@ -6,6 +6,13 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [daily-recap-modal] — Modal de Resumo Diário — 2026-06-19
+
+- Hook `lib/hooks/useDailyRecap.ts` criado: calcula "ontem em BRT" via `getBRTDayBounds()`, busca jogos finalizados do dia anterior, carrega scores e predictions em paralelo, agrega ranking do dia por usuário e calcula 5 badges (CRAQUE, VIDENTE, ARTILHEIRO, APOSTADOR, PÉ-FRIO)
+- Componente `components/bolao/DailyRecapModal.tsx` criado: controla abertura única por dia via `localStorage` (chave `bolao_recap_<YYYY-MM-DD-BRT>`), exibe backdrop com fechamento por clique, seções de jogos, ranking do dia e destaques; design Elifoot com JetBrains Mono, paleta brasileira, sem border-radius/shadow
+- `app/(dashboard)/layout.tsx` atualizado: `<DailyRecapModal>` adicionado ao final do JSX, condicional a `activeGroup` existir
+- 100% client-side — sem novos endpoints Ruby, sem migrations; queries nas tabelas existentes `games`, `scores`, `profiles`, `predictions` escopadas por `group_id`
+
 ## [mcp-group-scope] — Suporte a Múltiplos Grupos no Servidor MCP — 2026-06-18
 
 - Tool `listar_grupos` criada em `lib/mcp/tools/grupos.ts`: lista os grupos do usuário autenticado com id, nome (maiúsculas), papel (ADMIN/MEMBRO) e data de entrada, ordenados por `joined_at ASC`; inclui nota sobre grupo padrão
