@@ -164,10 +164,12 @@ export function RecapBottomSheet({ data, currentUserId, isOpen, onClose }: Recap
 
   useEffect(() => {
     if (isOpen) {
-      setVisible(true)
-      setAnimating(false)
+      queueMicrotask(() => {
+        setVisible(true)
+        setAnimating(false)
+      })
     } else if (visible) {
-      setAnimating(true)
+      queueMicrotask(() => setAnimating(true))
       const timer = setTimeout(() => {
         setVisible(false)
         setAnimating(false)
