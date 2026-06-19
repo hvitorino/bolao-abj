@@ -16,6 +16,18 @@ export interface LiveTodayEntry {
   rankPosition: number
 }
 
+export interface LiveTodayGame {
+  id: string
+  home_team: string
+  away_team: string
+  home_team_code: string
+  away_team_code: string
+  home_score: number | null
+  away_score: number | null
+  status: 'pending' | 'live' | 'finished'
+  match_date: string
+}
+
 // ---------------------------------------------------------------------------
 // Helpers de data (BRT = UTC-3)
 // ---------------------------------------------------------------------------
@@ -51,10 +63,12 @@ function getBRTTodayBounds(): { todayStart: string; todayEnd: string } {
 
 export function useLiveTodayRanking(groupId: string): {
   entries: LiveTodayEntry[]
+  games: LiveTodayGame[]
   loading: boolean
   hasGamesToday: boolean
 } {
   const [entries, setEntries] = useState<LiveTodayEntry[]>([])
+  const [games, setGames] = useState<LiveTodayGame[]>([])
   const [loading, setLoading] = useState(true)
   const [hasGamesToday, setHasGamesToday] = useState(false)
 
@@ -71,7 +85,7 @@ export function useLiveTodayRanking(groupId: string): {
       // 1. Buscar jogos de hoje
       const { data: gamesRaw, error: gamesError } = await supabase
         .from('games')
-        .select('id, status, home_score, away_score')
+        .select('id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, status, match_date')
         .gte('match_date', todayStart)
         .lt('match_date', todayEnd)
 
@@ -85,12 +99,26 @@ export function useLiveTodayRanking(groupId: string): {
 
       if (games.length === 0) {
         setHasGamesToday(false)
+        setGames([])
         setEntries([])
         setLoading(false)
         return
       }
 
       setHasGamesToday(true)
+      setGames(
+        (gamesRaw ?? []).map((g) => ({
+          id: g.id as string,
+          home_team: g.home_team as string,
+          away_team: g.away_team as string,
+          home_team_code: g.home_team_code as string,
+          away_team_code: g.away_team_code as string,
+          home_score: g.home_score as number | null,
+          away_score: g.away_score as number | null,
+          status: g.status as 'pending' | 'live' | 'finished',
+          match_date: g.match_date as string,
+        }))
+      )
 
       // 2. Separar jogos por status
       const finishedIds = games
@@ -287,5 +315,5 @@ export function useLiveTodayRanking(groupId: string): {
     }
   }, [fetchData, groupId])
 
-  return { entries, loading, hasGamesToday }
+  return { entries, games, loading, hasGamesToday }
 }
