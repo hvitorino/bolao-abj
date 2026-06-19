@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 41 features
-- Concluídas: 40
-- Em progresso: 1
+- Concluídas: 41
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -526,7 +526,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 41. daily-recap-modal-refactor — Refatoração do Daily Recap Modal — em progresso
+### 41. daily-recap-modal-refactor — Refatoração do Daily Recap Modal — concluída
 **Objetivo:** Reposicionar o botão de acesso ao resumo do dia anterior como elemento fixo no bottom da tela (substituindo o RecapButton do menu de navegação), e revisar os badges do modal para exibir exatamente 3: Craque do Dia, Mãe Diná (absorvendo dados da artilharia de palpites) e Pé-frio.
 **Critérios de sucesso:**
 - RecapButton removido do menu de topo (nav-links.tsx)
