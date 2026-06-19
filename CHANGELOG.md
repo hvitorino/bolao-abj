@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [group-member-history] — Palpites e Pontuação ao Adicionar Participante a Grupo — 2026-06-19
+
+- `supabase/migrations/20260619000001_copy_predictions_on_join.sql` (espelhada em `db/migrations/20260619_copy_predictions_on_join.sql`) — migration com três partes:
+  1. Função `copy_predictions_to_group(p_user_id uuid, p_group_id uuid)` (`SECURITY DEFINER`, `LANGUAGE plpgsql`) — copia palpites mais recentes do usuário de qualquer outro grupo para `p_group_id` via `DISTINCT ON (game_id) ORDER BY game_id, submitted_at DESC`; usa `ON CONFLICT (user_id, game_id, group_id) DO NOTHING` para idempotência; cada INSERT protegido por sub-bloco `BEGIN/EXCEPTION` com `RAISE WARNING` para não bloquear a entrada no grupo; após a cópia, chama `calculate_scores_for_game(g.id)` para cada jogo `finished` com prediction copiada; variável de cursor declarada como `RECORD` (correção do fix-1 — `%ROWTYPE` com SELECT parcial fazia mapeamento por posição, corrompendo os valores)
+  2. Função trigger `trigger_copy_predictions_on_join()` — chama `copy_predictions_to_group(NEW.user_id, NEW.group_id)` e retorna `NEW`
+  3. Trigger `on_group_member_inserted` — `AFTER INSERT ON group_members FOR EACH ROW`, precedido de `DROP TRIGGER IF EXISTS` para idempotência
+- Nenhuma alteração em endpoints backend (`POST /api/groups/join` e `POST /api/invites/[id]/accept`) — o trigger Postgres cobre ambos os pontos de entrada automaticamente
+- Nenhuma alteração no frontend — dados replicados aparecem em ranking, jogos e meus-palpites via filtros por `group_id` já existentes
+
 ## [live-today-games] — Jogos do Dia no Bottom Sheet "Tá Rolando" — 2026-06-19
 
 - `lib/hooks/useLiveTodayRanking.ts`: interface `LiveTodayGame` exportada com 9 campos (`id`, `home_team`, `away_team`, `home_team_code`, `away_team_code`, `home_score`, `away_score`, `status`, `match_date`); SELECT de jogos ampliado com os 5 campos faltantes; estado `games: LiveTodayGame[]` adicionado; `setGames([])` chamado no branch sem jogos; retorno do hook atualizado para incluir `games`

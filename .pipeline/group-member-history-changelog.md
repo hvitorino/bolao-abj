@@ -3,7 +3,7 @@
 **Slug:** group-member-history
 **Branch:** feature/group-member-history
 **Data:** 2026-06-19
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
