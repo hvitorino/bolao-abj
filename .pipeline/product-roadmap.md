@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 45 features
+- Total: 46 features
 - Concluídas: 45
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -601,3 +601,18 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - A tool é documentada com descrição e schema Zod corretos seguindo o padrão dos demais tools em `lib/mcp/tools/`
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** mcp-bolao
+
+---
+
+### 46. dual-footer-bar — Barra Dupla no Rodapé (Rolou ontem / Tá rolando) — pendente
+**Objetivo:** Substituir o `RecapFooterButton` único por uma barra fixada no rodapé com dois botões lado a lado: "Rolou ontem" (reabre o bottom sheet de recap existente, renomeado) e "Tá rolando" (novo bottom sheet com ranking ao vivo dos jogos do dia corrente, atualizado via Supabase Realtime). O chip flutuante de chat permanece inalterado.
+**Critérios de sucesso:**
+- O `RecapFooterButton` existente é substituído por um componente `DualFooterBar` com dois botões de largura igual, lado a lado, fixados no rodapé em todas as páginas do dashboard
+- O botão "Rolou ontem" abre o `RecapBottomSheet` existente com o mesmo comportamento e conteúdo atuais (sem regressão)
+- O botão "Tá rolando" abre um novo `LiveTodayBottomSheet` exibindo o ranking de pontos acumulados nos jogos do dia corrente (jogos com `match_date` igual à data atual em BRT), atualizado em tempo real via Supabase Realtime no canal `scores`
+- O ranking do "Tá rolando" lista todos os participantes do grupo ativo com: posição, nome e pontuação total dos jogos de hoje (soma das entradas de `scores` para jogos do dia, incluindo pontuação parcial/ao vivo quando aplicável via `live-scoring`)
+- Ambos os botões ficam ocultos ou desabilitados individualmente quando não há conteúdo relevante: "Rolou ontem" oculto se não há jogos finalizados ontem; "Tá rolando" oculto se não há jogos hoje
+- O chip flutuante de chat (`group-chat`) não é alterado em posição, aparência ou comportamento
+- Visual segue DESIGN.md rigorosamente: JetBrains Mono, paleta verde/amarelo/azul, sem border-radius excessivo, dense, sem ícones decorativos além do label de texto
+- `npm run lint` e `npm run build` passam sem erros novos
+**Dependências:** recap-bottom-sheet, recap-cache-visual, recap-game-cards, live-scoring, group-chat
