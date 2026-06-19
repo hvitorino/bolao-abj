@@ -226,12 +226,14 @@ export function useLiveTodayRanking(groupId: string): {
 
   useEffect(() => {
     if (!groupId) {
-      setLoading(false)
+      queueMicrotask(() => setLoading(false))
       return
     }
 
-    // Busca inicial
-    void fetchData()
+    // Busca inicial (setTimeout 0 para não chamar setState sincronamente no efeito)
+    const initialFetchTimer = window.setTimeout(() => {
+      void fetchData()
+    }, 0)
 
     const supabase = createClient()
     let debounceGames: number | undefined
@@ -277,6 +279,7 @@ export function useLiveTodayRanking(groupId: string): {
       .subscribe()
 
     return () => {
+      window.clearTimeout(initialFetchTimer)
       window.clearTimeout(debounceGames)
       window.clearTimeout(debounceScores)
       supabase.removeChannel(gamesChannel)
