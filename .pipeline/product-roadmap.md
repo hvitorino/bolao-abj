@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 39 features
-- Concluídas: 38
-- Em progresso: 1
+- Concluídas: 39
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -501,7 +501,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 39. daily-recap-modal — Modal de Resumo Diário — em progresso
+### 39. daily-recap-modal — Modal de Resumo Diário — concluída
 **Objetivo:** Exibir uma janela modal automaticamente no primeiro acesso do dia, mostrando de forma lúdica e bem-humorada as pontuações e o ranking do dia anterior, com badges/medalhas para os melhores e piores desempenhos.
 **Critérios de sucesso:**
 - Modal aparece automaticamente no primeiro acesso do dia (controle via localStorage) e não reaparece após fechar
