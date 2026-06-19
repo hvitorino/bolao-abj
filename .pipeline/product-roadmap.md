@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 47 features
+- Total: 48 features
 - Concluídas: 47
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -631,3 +631,15 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Visual segue DESIGN.md rigorosamente: JetBrains Mono, paleta verde/amarelo/azul, dense, sem border-radius excessivo
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** dual-footer-bar
+
+---
+
+### 48. group-member-history — Palpites e Pontuação ao Adicionar Participante a Grupo — pendente
+**Objetivo:** Ao adicionar um participante a um grupo, seus palpites e pontuações já existentes (de qualquer grupo) passam a ser computados automaticamente no novo grupo — sem duplicação de dados, apenas ampliando o escopo de visualização e cálculo.
+**Critérios de sucesso:**
+- Ao adicionar um usuário a um grupo (via convite nominal ou link reutilizável), seus palpites já existentes na tabela `predictions` aparecem no contexto desse grupo (ranking, palpites por jogo, detalhamento)
+- A pontuação do usuário é calculada corretamente no ranking do novo grupo, considerando todos os palpites já feitos, sem necessidade de re-inserir dados
+- Nenhum dado é duplicado — os palpites permanecem únicos por usuário/jogo/group_id; apenas o escopo de visualização por grupo é expandido
+- O ranking do novo grupo exibe o usuário recém-adicionado com sua pontuação histórica atualizada imediatamente após a entrada
+- Regressão zero: usuários já membros de grupos não têm palpites ou pontuações alterados
+**Dependências:** auth, predictions, scoring, grupos, convites-nominais
