@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 45 features
-- Concluídas: 44
-- Em progresso: 1
+- Concluídas: 45
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -592,7 +592,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 45. mcp-scoring-rules — Tool MCP: Consultar Regras de Pontuação — em progresso
+### 45. mcp-scoring-rules — Tool MCP: Consultar Regras de Pontuação — concluída
 **Objetivo:** Adicionar uma tool no servidor MCP do projeto que expõe as regras de pontuação do bolão de forma estruturada, permitindo que agentes e usuários as consultem programaticamente via qualquer cliente MCP compatível.
 **Critérios de sucesso:**
 - Uma tool MCP chamada `consultar_regras_pontuacao` está disponível no servidor MCP do projeto (registrada em `lib/mcp/server.ts`)
