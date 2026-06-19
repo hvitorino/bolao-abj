@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 47 features
-- Concluídas: 46
-- Em progresso: 1
+- Concluídas: 47
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -619,7 +619,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 47. live-today-games — Jogos do Dia no Bottom Sheet "Tá Rolando" — em progresso
+### 47. live-today-games — Jogos do Dia no Bottom Sheet "Tá Rolando" — concluída
 **Objetivo:** Exibir os jogos do dia corrente no `LiveTodayBottomSheet`, acima do ranking ao vivo, mostrando times com bandeiras, placar atual e status de cada partida.
 **Critérios de sucesso:**
 - `useLiveTodayRanking` retorna também a lista de jogos do dia (com campos: `id`, `home_team`, `away_team`, `home_team_code`, `away_team_code`, `home_score`, `away_score`, `status`, `match_date`) além dos `entries` já existentes
