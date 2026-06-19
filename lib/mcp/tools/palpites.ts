@@ -146,8 +146,13 @@ export function registerPalpitesTools(server: McpServer, userId: string) {
     'Exibe os palpites de todos os participantes em um jogo específico. Disponível apenas após o início da partida.',
     {
       game_id: z.string().uuid().describe('ID do jogo (UUID)'),
+      group_id: z
+        .string()
+        .uuid()
+        .optional()
+        .describe('ID do grupo (UUID). Se omitido, usa o primeiro grupo por data de entrada.'),
     },
-    async ({ game_id }) => {
+    async ({ game_id, group_id }) => {
       const db = createServiceClient()
 
       const { data: game, error: gameError } = await db
@@ -173,7 +178,17 @@ export function registerPalpitesTools(server: McpServer, userId: string) {
         }
       }
 
-      const groupId = await resolveGroupForMcp(db, userId)
+      let groupId: string | null
+
+      if (group_id) {
+        const { valid, errorMessage } = await validateGroupMembership(db, userId, group_id)
+        if (!valid) {
+          return { content: [{ type: 'text', text: errorMessage! }] }
+        }
+        groupId = group_id
+      } else {
+        groupId = await resolveGroupForMcp(db, userId)
+      }
 
       if (!groupId) {
         return {
