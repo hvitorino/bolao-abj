@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 39 features
+- Total: 40 features
 - Concluídas: 39
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -512,6 +512,17 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Não aparece se não houver jogos finalizados no dia anterior
 - Visual segue DESIGN.md rigorosamente (monospace, paleta verde/amarelo/azul, dense)
 **Dependências:** auth, scoring, ranking, grupos, grupo-ativo-persistente
+
+---
+
+### 40. daily-recap-on-demand — Resumo Diário sob Demanda — pendente
+**Objetivo:** Permitir que o usuário visualize o resumo do dia anterior a qualquer momento, adicionando um ponto de entrada visível na navegação existente que reabre o DailyRecapModal já existente sob demanda, independentemente de já ter sido visto hoje.
+**Critérios de sucesso:**
+- Existe um ponto de entrada visível na UI (botão ou link) para abrir o resumo do dia anterior manualmente
+- Clicar nesse ponto de entrada abre o DailyRecapModal independentemente de já ter sido visto hoje
+- O comportamento automático (aparecer no primeiro acesso) continua funcionando normalmente
+- O ponto de entrada fica oculto ou desabilitado se não houver jogos finalizados no dia anterior
+**Dependências:** daily-recap-modal
 
 ---
 
