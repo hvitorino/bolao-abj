@@ -3,7 +3,7 @@
 **Slug:** dual-footer-bar
 **Branch:** feature/dual-footer-bar
 **Data:** 2026-06-19
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
