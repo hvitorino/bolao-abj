@@ -1,5 +1,4 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { z } from 'zod'
 
 const SCORING_RULES_TEXT = `REGRAS DE PONTUAÇÃO — BOLÃO ABJ
 ════════════════════════════════════════
