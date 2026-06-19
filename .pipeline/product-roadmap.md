@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 48 features
-- Concluídas: 47
+- Concluídas: 48
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -634,7 +634,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 48. group-member-history — Palpites e Pontuação ao Adicionar Participante a Grupo — pendente
+### 48. group-member-history — Palpites e Pontuação ao Adicionar Participante a Grupo — concluída
 **Objetivo:** Ao adicionar um participante a um grupo, seus palpites e pontuações já existentes (de qualquer grupo) passam a ser computados automaticamente no novo grupo — sem duplicação de dados, apenas ampliando o escopo de visualização e cálculo.
 **Critérios de sucesso:**
 - Ao adicionar um usuário a um grupo (via convite nominal ou link reutilizável), seus palpites já existentes na tabela `predictions` aparecem no contexto desse grupo (ranking, palpites por jogo, detalhamento)
