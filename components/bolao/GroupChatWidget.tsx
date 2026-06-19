@@ -272,7 +272,7 @@ export function GroupChatWidget({
         aria-label={`Abrir chat do grupo${unreadCount > 0 ? ` (${unreadCount} não lidas)` : ''}`}
         style={{
           position: 'fixed',
-          bottom: `calc(${chipBottom} + var(--recap-footer-h, 0px))`,
+          bottom: `calc(${chipBottom}px + var(--recap-footer-h, 0px))`,
           right: '1.5rem',
           zIndex: 51,
           display: 'flex',
