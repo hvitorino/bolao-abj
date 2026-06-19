@@ -28,7 +28,7 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 DECLARE
-  v_pred predictions%ROWTYPE;
+  v_pred RECORD;
 BEGIN
   -- Para cada jogo em que o usuário tem palpite em QUALQUER outro grupo,
   -- mas ainda NÃO tem palpite no grupo p_group_id, copiar o palpite mais
