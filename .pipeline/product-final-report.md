@@ -1,7 +1,7 @@
 # Relatório Final — Bolão da Copa
 
 Data de conclusão: 2026-06-19
-Total de features concluídas: 42
+Total de features concluídas: 46
 
 ## Features Implementadas
 
@@ -47,6 +47,10 @@ Total de features concluídas: 42
 40. [daily-recap-on-demand] — Resumo Diário sob Demanda — 2026-06-19
 41. [daily-recap-modal-refactor] — Refatoração do Daily Recap Modal — 2026-06-19
 42. [recap-bottom-sheet] — Botão Fixo no Rodapé com Bottom Sheet de Resumo — 2026-06-19
+43. [recap-cache-visual] — Cache LocalStorage e Visual Aprimorado do Recap — 2026-06-19
+44. [recap-game-cards] — Cards Visuais de Jogos no Recap — 2026-06-19
+45. [mcp-scoring-rules] — Tool MCP: Consultar Regras de Pontuação — 2026-06-19
+46. [dual-footer-bar] — Barra Dupla no Rodapé (Rolou ontem / Tá rolando) — 2026-06-19
 
 ## Resumo
 
@@ -80,7 +84,9 @@ As últimas duas features completaram o produto. `mcp-group-scope` (item 38) cor
 
 As últimas três features finalizaram o produto com foco em engajamento e experiência diária. `daily-recap-on-demand` (item 40) adicionou um ponto de entrada visível para reabertura do resumo do dia anterior a qualquer momento, independentemente de já ter sido visto hoje — o comportamento automático do primeiro acesso continuou funcionando normalmente, e o botão fica oculto quando não há jogos finalizados no dia anterior. `daily-recap-modal-refactor` (item 41) reposicionou o controle de acesso ao resumo: o RecapButton foi removido do menu de navegação superior e substituído por um elemento fixo no rodapé da tela, mais proeminente e contextual; os badges do modal foram revisados para exibir exatamente três — Craque do Dia, Mãe Diná (absorvendo os dados de artilharia de palpites) e Pé-frio — descartando Artilheiro do Dia e Apostador do Dia. Por fim, `recap-bottom-sheet` (item 42) substituiu o FloatingActionButton (FAB no canto inferior esquerdo) por um botão fixo de largura total no rodapé, que ao ser clicado abre o conteúdo do resumo em um bottom sheet com animação de slide-up suave e fecha com slide-down ao clicar no backdrop ou no botão de fechar; safe-area do iOS respeitada e layout correto em mobile e desktop; o comportamento automático do primeiro acesso do dia continua abrindo o bottom sheet diretamente.
 
-Com isso, todas as 42 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 36 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
+As quatro features finais completaram o produto com foco em experiência e acessibilidade via MCP. `recap-cache-visual` (item 43) eliminou o delay perceptível na segunda abertura do bottom sheet: dados do recap são cacheados no localStorage com chave por data em BRT (`bolao_recap_data_YYYY-MM-DD`), exibidos instantaneamente em acessos subsequentes com sincronização em background silenciosa; além disso, o `RecapFooterButton` ganhou maior destaque e o `RecapBottomSheet` teve sua hierarquia visual aprimorada (cabeçalho em evidência, badges mais destacados, ranking mais legível). `recap-game-cards` (item 44) substituiu a linha de texto simples na seção "JOGOS DE ONTEM" do bottom sheet por cards compactos horizontais com bandeiras emoji (`getTeamFlag()`), código abreviado do time e placar centralizado — sem nova dependência externa e sem alteração no hook `useDailyRecap`. `mcp-scoring-rules` (item 45) adicionou a tool `consultar_regras_pontuacao` ao servidor MCP, expondo de forma estruturada todas as regras de pontuação (eventos, pontos, cumulatividade, empate e exemplo concreto) para agentes e usuários via qualquer cliente MCP compatível — sem parâmetros de entrada, seguindo o padrão de schema Zod já estabelecido pelas demais tools. Por fim, `dual-footer-bar` (item 46) substituiu o `RecapFooterButton` único por um componente `DualFooterBar` com dois botões de largura igual fixados no rodapé: "Rolou ontem" abre o `RecapBottomSheet` existente sem regressão, e "Tá rolando" abre um novo `LiveTodayBottomSheet` com ranking ao vivo dos jogos do dia corrente (jogos com `match_date` igual à data atual em BRT), atualizado em tempo real via Supabase Realtime no canal `scores`; cada botão fica oculto individualmente quando não há conteúdo relevante (sem jogos finalizados ontem / sem jogos hoje), e o chip flutuante de chat permanece inalterado.
+
+Com isso, todas as 46 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 40 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
 
 ## Próximos passos sugeridos
 
