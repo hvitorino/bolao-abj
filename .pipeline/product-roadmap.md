@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 44 features
-- Concluídas: 43
-- Em progresso: 1
+- Concluídas: 44
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -578,7 +578,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 44. recap-game-cards — Cards Visuais de Jogos no Recap — em progresso
+### 44. recap-game-cards — Cards Visuais de Jogos no Recap — concluída
 **Objetivo:** Na seção "JOGOS DE ONTEM" do RecapBottomSheet, substituir a linha de texto simples por cards compactos que exibam bandeiras, nomes abreviados e o placar de cada jogo finalizado, tornando a leitura mais rápida e o visual mais rico.
 **Critérios de sucesso:**
 - Cada jogo da seção "JOGOS DE ONTEM" é exibido como um card compacto e independente, com o layout: [bandeira + código do time da casa] [placar] [bandeira + código do visitante]
