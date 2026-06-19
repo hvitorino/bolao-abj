@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { LiveTodayEntry } from '@/lib/hooks/useLiveTodayRanking'
+import type { LiveTodayEntry, LiveTodayGame } from '@/lib/hooks/useLiveTodayRanking'
+import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 // ---------------------------------------------------------------------------
 // Constantes de estilo
@@ -10,11 +11,103 @@ import type { LiveTodayEntry } from '@/lib/hooks/useLiveTodayRanking'
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
 // ---------------------------------------------------------------------------
+// Sub-componente: card de jogo do dia
+// ---------------------------------------------------------------------------
+
+function LiveTodayGameCard({ game }: { game: LiveTodayGame }) {
+  const isLive = game.status === 'live'
+  const isFinished = game.status === 'finished'
+
+  const teamStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    fontFamily: FONT,
+    fontSize: '11px',
+    fontWeight: 'bold',
+    color: 'var(--color-muted)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+  }
+
+  return (
+    <div
+      style={{
+        border: '1px solid var(--color-border)',
+        padding: '0.3rem 0.5rem',
+        marginBottom: '0.2rem',
+        backgroundColor: 'var(--color-bg)',
+      }}
+    >
+      {/* Linha principal: time casa | placar | time visitante */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '4px',
+        }}
+      >
+        {/* Time da casa */}
+        <div style={teamStyle}>
+          <span style={{ fontSize: '14px', lineHeight: 1 }}>
+            {getTeamFlag(game.home_team_code)}
+          </span>
+          {game.home_team_code}
+        </div>
+
+        {/* Placar central */}
+        <div
+          style={{
+            fontFamily: FONT,
+            fontSize: '13px',
+            fontWeight: 'bold',
+            color: 'var(--color-accent)',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}
+        >
+          {game.status === 'pending'
+            ? '— × —'
+            : `${game.home_score ?? 0} × ${game.away_score ?? 0}`}
+        </div>
+
+        {/* Time visitante */}
+        <div style={{ ...teamStyle, flexDirection: 'row-reverse' }}>
+          <span style={{ fontSize: '14px', lineHeight: 1 }}>
+            {getTeamFlag(game.away_team_code)}
+          </span>
+          {game.away_team_code}
+        </div>
+      </div>
+
+      {/* Badge de status (apenas live e finished) */}
+      {(isLive || isFinished) && (
+        <div
+          style={{
+            marginTop: '0.2rem',
+            fontFamily: FONT,
+            fontSize: '10px',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: isLive ? 'var(--color-live)' : 'var(--color-muted)',
+            animation: isLive ? 'blink 1s step-end infinite' : 'none',
+          }}
+        >
+          {isLive ? '● AO VIVO' : '✓ ENCERRADO'}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Props
 // ---------------------------------------------------------------------------
 
 interface LiveTodayBottomSheetProps {
   entries: LiveTodayEntry[]
+  games: LiveTodayGame[]
   loading: boolean
   currentUserId: string
   isOpen: boolean
@@ -27,6 +120,7 @@ interface LiveTodayBottomSheetProps {
 
 export function LiveTodayBottomSheet({
   entries,
+  games,
   loading,
   currentUserId,
   isOpen,
@@ -125,6 +219,14 @@ export function LiveTodayBottomSheet({
           }}
         />
 
+        {/* Keyframes para badge AO VIVO */}
+        <style>{`
+          @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+          }
+        `}</style>
+
         {/* Cabeçalho colorido */}
         <div
           style={{
@@ -193,6 +295,36 @@ export function LiveTodayBottomSheet({
 
         {/* Corpo */}
         <div style={{ marginTop: '1.25rem' }}>
+
+          {/* Seção: JOGOS DE HOJE */}
+          {games.length > 0 && (
+            <>
+              <div
+                style={{
+                  fontFamily: FONT,
+                  fontSize: '11px',
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  color: 'var(--color-text)',
+                  letterSpacing: '0.12em',
+                  marginBottom: '0.4rem',
+                }}
+              >
+                JOGOS DE HOJE
+              </div>
+              {games.map((g) => (
+                <LiveTodayGameCard key={g.id} game={g} />
+              ))}
+              {/* Separador antes do ranking */}
+              <div
+                style={{
+                  borderTop: '1px solid var(--color-border)',
+                  margin: '0.75rem 0',
+                }}
+              />
+            </>
+          )}
+
           {loading ? (
             <div
               style={{
