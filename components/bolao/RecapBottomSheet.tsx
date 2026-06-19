@@ -132,14 +132,14 @@ function RecapGameCard({ game }: { game: RecapGame }) {
         gridTemplateColumns: '1fr auto 1fr',
         alignItems: 'center',
         border: '1px solid var(--color-border)',
-        padding: '0.5rem 0.75rem',
-        marginBottom: '0.5rem',
+        padding: '0.25rem 0.5rem',
+        marginBottom: '0.25rem',
         backgroundColor: 'var(--color-bg)',
       }}
     >
       {/* Coluna esquerda: time da casa */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '22px', lineHeight: 1 }}>
+        <div style={{ fontSize: '16px', lineHeight: 1 }}>
           {getTeamFlag(game.home_team_code)}
         </div>
         <div
@@ -159,9 +159,9 @@ function RecapGameCard({ game }: { game: RecapGame }) {
       <div
         style={{
           textAlign: 'center',
-          minWidth: '60px',
+          minWidth: '44px',
           fontFamily: FONT,
-          fontSize: '18px',
+          fontSize: '14px',
           fontWeight: 'bold',
           color: 'var(--color-accent)',
           letterSpacing: '0.05em',
@@ -172,7 +172,7 @@ function RecapGameCard({ game }: { game: RecapGame }) {
 
       {/* Coluna direita: time visitante */}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '22px', lineHeight: 1 }}>
+        <div style={{ fontSize: '16px', lineHeight: 1 }}>
           {getTeamFlag(game.away_team_code)}
         </div>
         <div
