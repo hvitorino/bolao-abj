@@ -213,7 +213,7 @@ export function RecapBottomSheet({ data, currentUserId, isOpen, onClose }: Recap
           left: 0,
           right: 0,
           zIndex: 201,
-          maxHeight: '85vh',
+          maxHeight: '70vh',
           overflowY: 'auto',
           background: 'var(--color-surface)',
           borderTop: '1px solid var(--color-border)',
