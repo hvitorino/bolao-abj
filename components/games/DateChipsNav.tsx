@@ -159,9 +159,9 @@ export default function DateChipsNav({
                   onMouseLeave={(e) => {
                     if (!isActive) {
                       const btn = e.currentTarget
-                      btn.style.color = 'var(--color-muted)'
+                      btn.style.color = 'var(--color-text)'
                       btn.style.borderColor = 'var(--color-border)'
-                      btn.style.backgroundColor = 'transparent'
+                      btn.style.backgroundColor = 'rgba(26, 74, 46, 0.6)'
                     }
                   }}
                 >
