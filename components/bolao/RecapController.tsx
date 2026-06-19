@@ -36,6 +36,17 @@ export function RecapController({ groupId, currentUserId }: RecapControllerProps
   const { loading, hasData, data } = useDailyRecap(groupId)
   const decidedRef = useRef(false)
 
+  // Expõe a altura do footer ao GroupChatWidget via CSS custom property
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--recap-footer-h',
+      hasData && !loading ? '60px' : '0px'
+    )
+    return () => {
+      document.documentElement.style.setProperty('--recap-footer-h', '0px')
+    }
+  }, [hasData, loading])
+
   // Abertura automática no primeiro acesso do dia (via localStorage)
   useEffect(() => {
     if (loading) return
