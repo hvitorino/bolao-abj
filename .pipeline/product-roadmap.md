@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 40 features
-- Concluídas: 39
+- Concluídas: 40
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -515,7 +515,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 40. daily-recap-on-demand — Resumo Diário sob Demanda — pendente
+### 40. daily-recap-on-demand — Resumo Diário sob Demanda — concluída
 **Objetivo:** Permitir que o usuário visualize o resumo do dia anterior a qualquer momento, adicionando um ponto de entrada visível na navegação existente que reabre o DailyRecapModal já existente sob demanda, independentemente de já ter sido visto hoje.
 **Critérios de sucesso:**
 - Existe um ponto de entrada visível na UI (botão ou link) para abrir o resumo do dia anterior manualmente
