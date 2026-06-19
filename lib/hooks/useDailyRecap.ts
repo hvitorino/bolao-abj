@@ -269,6 +269,24 @@ function calcBadges(
 }
 
 // ---------------------------------------------------------------------------
+// Cache localStorage
+// ---------------------------------------------------------------------------
+
+/**
+ * Retorna a chave de cache para os dados do recap do dia atual em BRT.
+ * Formato: `bolao_recap_data_YYYY-MM-DD`
+ * A chave muda quando a data BRT muda, invalidando o cache automaticamente.
+ */
+function getRecapCacheKey(): string {
+  const nowUTC = new Date()
+  const nowBRT = new Date(nowUTC.getTime() - 3 * 60 * 60 * 1000)
+  const yyyy = nowBRT.getUTCFullYear()
+  const mm = String(nowBRT.getUTCMonth() + 1).padStart(2, '0')
+  const dd = String(nowBRT.getUTCDate()).padStart(2, '0')
+  return `bolao_recap_data_${yyyy}-${mm}-${dd}`
+}
+
+// ---------------------------------------------------------------------------
 // Hook principal
 // ---------------------------------------------------------------------------
 
@@ -289,9 +307,7 @@ export function useDailyRecap(groupId: string): {
 
     let cancelled = false
 
-    async function load() {
-      setLoading(true)
-
+    async function fetchFromSupabase(): Promise<DailyRecapData | null> {
       const supabase = createClient()
       const { yesterdayStart, yesterdayEnd } = getBRTDayBounds()
 
@@ -305,13 +321,8 @@ export function useDailyRecap(groupId: string): {
         .gte('match_date', yesterdayStart)
         .lt('match_date', yesterdayEnd)
 
-      if (cancelled) return
-
       if (gamesError || !gamesRaw || gamesRaw.length === 0) {
-        setHasData(false)
-        setData(null)
-        setLoading(false)
-        return
+        return null
       }
 
       const gameIds = gamesRaw.map((g) => g.id)
@@ -332,13 +343,8 @@ export function useDailyRecap(groupId: string): {
           .eq('group_id', groupId),
       ])
 
-      if (cancelled) return
-
       if (scoresResult.error || predictionsResult.error) {
-        setHasData(false)
-        setData(null)
-        setLoading(false)
-        return
+        return null
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -413,11 +419,56 @@ export function useDailyRecap(groupId: string): {
         away_score: g.away_score ?? 0,
       }))
 
-      const recap: DailyRecapData = {
+      return {
         yesterdayLabel: getYesterdayLabelBRT(),
         games,
         rankingDay,
         badges,
+      }
+    }
+
+    async function load() {
+      const cacheKey = getRecapCacheKey()
+
+      // Tentar cache hit
+      const raw = localStorage.getItem(cacheKey)
+      if (raw) {
+        try {
+          const cached = JSON.parse(raw) as DailyRecapData
+          // Exibir cache instantaneamente — sem setar loading
+          setData(cached)
+          setHasData(true)
+          setLoading(false)
+
+          // Background sync: atualiza silenciosamente sem alterar loading
+          const fresh = await fetchFromSupabase()
+          if (cancelled) return
+          if (fresh !== null) {
+            localStorage.setItem(cacheKey, JSON.stringify(fresh))
+            setData(fresh)
+          }
+          // Se fresh === null (sem jogos), mantém o cache exibido — não sobrescreve
+          return
+        } catch {
+          // JSON corrompido — tratar como cache miss e continuar
+        }
+      }
+
+      // Cache miss — fetch normal com loading indicator
+      setLoading(true)
+      const recap = await fetchFromSupabase()
+      if (cancelled) return
+
+      if (recap === null) {
+        setHasData(false)
+        setData(null)
+        setLoading(false)
+        return
+      }
+
+      // Salvar no cache somente quando há jogos (recap.games.length > 0)
+      if (recap.games.length > 0) {
+        localStorage.setItem(cacheKey, JSON.stringify(recap))
       }
 
       setData(recap)
