@@ -300,7 +300,16 @@ export default function GameParticipantsList({
                               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
                             }}
                           >
-                            +{p.points} {isExpanded ? '▴' : '▾'}
+                            +{p.points}{' '}
+                            <span
+                              style={{
+                                display: 'inline-block',
+                                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                                transition: 'transform 250ms ease',
+                              }}
+                            >
+                              ▾
+                            </span>
                           </span>
                         ) : (
                           <span
@@ -342,7 +351,16 @@ export default function GameParticipantsList({
                               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
                             }}
                           >
-                            +{livePoints} {isExpanded ? '▴' : '▾'}
+                            +{livePoints}{' '}
+                            <span
+                              style={{
+                                display: 'inline-block',
+                                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                                transition: 'transform 250ms ease',
+                              }}
+                            >
+                              ▾
+                            </span>
                           </span>
                         ) : (
                           <span
@@ -362,13 +380,26 @@ export default function GameParticipantsList({
                       </td>
                     )}
                   </tr>
-                  {isExpanded && effectiveBreakdown && effectivePoints !== null && (
+                  {effectiveBreakdown && effectivePoints !== null && (
                     <tr>
                       <td
                         colSpan={columnCount}
-                        style={{ padding: 0, borderBottom: '1px solid var(--color-border)' }}
+                        style={{
+                          padding: 0,
+                          borderBottom: isExpanded ? '1px solid var(--color-border)' : 'none',
+                        }}
                       >
-                        <PredictionBreakdown points={effectivePoints} breakdown={effectiveBreakdown} />
+                        <div
+                          style={{
+                            display: 'grid',
+                            gridTemplateRows: isExpanded ? '1fr' : '0fr',
+                            transition: 'grid-template-rows 300ms ease',
+                          }}
+                        >
+                          <div style={{ overflow: 'hidden' }}>
+                            <PredictionBreakdown points={effectivePoints} breakdown={effectiveBreakdown} />
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   )}
