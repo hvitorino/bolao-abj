@@ -222,12 +222,16 @@ export function DailyRecapModal({ groupId, currentUserId, forceOpen, onClose }: 
   }, [loading, hasData])
 
   // Effect 2: abertura sob demanda (forceOpen=true ignora localStorage)
+  // A guarda `if (isOpen) return` evita que mudanças em `loading` ou `hasData`
+  // reabram o modal caso o usuário já o tenha fechado enquanto forceOpen ainda
+  // não foi propagado como false pelo componente pai.
   useEffect(() => {
     if (!forceOpen) return
     if (loading) return
     if (!hasData) return
+    if (isOpen) return
     queueMicrotask(() => setIsOpen(true))
-  }, [forceOpen, loading, hasData])
+  }, [forceOpen, loading, hasData, isOpen])
 
   const handleClose = () => {
     setIsOpen(false)
