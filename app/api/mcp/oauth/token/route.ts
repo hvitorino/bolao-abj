@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { createHash } from 'crypto'
+import { createHash, randomBytes } from 'crypto'
+
+const MCP_TOKEN_TTL_MS = 48 * 60 * 60 * 1000 // 48 horas
 
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -137,10 +139,25 @@ export async function POST(request: NextRequest) {
     )
   }
 
+  // Emitir token opaco MCP com TTL de 48h (independente do JWT Supabase)
+  const mcpToken = randomBytes(32).toString('hex')
+  const expiresAt = new Date(Date.now() + MCP_TOKEN_TTL_MS).toISOString()
+
+  const { error: tokenInsertError } = await db
+    .from('mcp_access_tokens')
+    .insert({ token: mcpToken, user_id: oauthCode.user_id, expires_at: expiresAt })
+
+  if (tokenInsertError) {
+    console.error('[mcp/oauth/token] token insert error:', tokenInsertError)
+    return NextResponse.json(
+      { error: 'server_error', message: 'Erro ao emitir token de acesso.' },
+      { status: 500 }
+    )
+  }
+
   return NextResponse.json({
-    access_token: oauthCode.access_token,
+    access_token: mcpToken,
     token_type: 'Bearer',
-    expires_in: 3600,
-    refresh_token: oauthCode.refresh_token || undefined,
+    expires_in: MCP_TOKEN_TTL_MS / 1000,
   })
 }

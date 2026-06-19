@@ -17,9 +17,16 @@ export function createServiceClient() {
 }
 
 export async function authenticateBearer(token: string): Promise<{ userId: string } | null> {
-  const { data: { user }, error } = await createAnonClient().auth.getUser(token)
-  if (error || !user) return null
-  return { userId: user.id }
+  const { data, error } = await createServiceClient()
+    .from('mcp_access_tokens')
+    .select('user_id, expires_at')
+    .eq('token', token)
+    .maybeSingle()
+
+  if (error || !data) return null
+  if (new Date() > new Date(data.expires_at)) return null
+
+  return { userId: data.user_id }
 }
 
 export async function resolveGroupForMcp(
