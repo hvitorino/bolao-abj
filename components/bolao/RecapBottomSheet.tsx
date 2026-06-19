@@ -25,14 +25,6 @@ const OPENING_MSG = MENSAGENS[Math.floor(Math.random() * MENSAGENS.length)]
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
 const S = {
-  title: {
-    fontFamily: FONT,
-    fontSize: '14px',
-    fontWeight: 'bold',
-    textTransform: 'uppercase' as const,
-    color: 'var(--color-accent)',
-    letterSpacing: '0.1em',
-  },
   separator: {
     borderTop: '1px solid var(--color-border)',
     margin: '1rem 0',
@@ -42,17 +34,9 @@ const S = {
     fontSize: '11px',
     fontWeight: 'bold',
     textTransform: 'uppercase' as const,
-    color: 'var(--color-muted)',
+    color: 'var(--color-text)',
     letterSpacing: '0.12em',
     marginBottom: '0.5rem',
-  },
-  openingMsg: {
-    fontFamily: FONT,
-    fontSize: '12px',
-    color: 'var(--color-muted)',
-    marginBottom: '0',
-    marginTop: '0.5rem',
-    lineHeight: 1.6,
   },
   gameRow: {
     fontFamily: FONT,
@@ -62,6 +46,7 @@ const S = {
     gap: '0.5rem',
     alignItems: 'center',
     marginBottom: '0.25rem',
+    paddingTop: '0.5rem',
   },
   gameScore: {
     fontWeight: 'bold',
@@ -81,6 +66,7 @@ const S = {
     letterSpacing: '0.08em',
     paddingBottom: '0.25rem',
     fontWeight: 'normal',
+    borderBottom: '1px solid var(--color-border)',
   },
   thRight: {
     textAlign: 'right' as const,
@@ -90,6 +76,7 @@ const S = {
     letterSpacing: '0.08em',
     paddingBottom: '0.25rem',
     fontWeight: 'normal',
+    borderBottom: '1px solid var(--color-border)',
   },
   td: {
     paddingTop: '0.2rem',
@@ -105,20 +92,23 @@ const S = {
     verticalAlign: 'middle' as const,
   },
   badgeBlock: {
-    marginBottom: '0.75rem',
+    marginBottom: '1rem',
+    borderLeft: '2px solid var(--color-primary)',
+    paddingLeft: '0.75rem',
   },
   badgeLabel: {
     fontFamily: FONT,
-    fontSize: '11px',
+    fontSize: '12px',
     fontWeight: 'bold',
     textTransform: 'uppercase' as const,
-    color: 'var(--color-accent)',
+    color: 'var(--color-primary)',
     letterSpacing: '0.1em',
   },
   badgeRecipient: {
     fontFamily: FONT,
-    fontSize: '13px',
-    color: 'var(--color-text)',
+    fontSize: '15px',
+    fontWeight: 'bold',
+    color: 'var(--color-accent)',
     marginTop: '0.1rem',
   },
   badgeDesc: {
@@ -161,6 +151,7 @@ interface RecapBottomSheetProps {
 export function RecapBottomSheet({ data, currentUserId, isOpen, onClose }: RecapBottomSheetProps) {
   const [visible, setVisible] = useState(false)
   const [animating, setAnimating] = useState(false)
+  const [closeBtnHovered, setCloseBtnHovered] = useState(false)
 
   useEffect(() => {
     if (isOpen) {
@@ -233,7 +224,7 @@ export function RecapBottomSheet({ data, currentUserId, isOpen, onClose }: Recap
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Handle visual */}
+        {/* Handle visual — renderiza ANTES do cabeçalho colorido */}
         <div
           style={{
             width: '40px',
@@ -244,45 +235,70 @@ export function RecapBottomSheet({ data, currentUserId, isOpen, onClose }: Recap
           }}
         />
 
-        {/* Cabeçalho */}
+        {/* Cabeçalho colorido — faixa verde com título e mensagem lúdica */}
         <div
           style={{
+            backgroundColor: 'var(--color-primary)',
+            margin: '-1.25rem -1.5rem 0',
+            padding: '1rem 1.5rem',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '0.5rem',
+            flexDirection: 'column',
+            gap: '0.25rem',
+            position: 'relative',
           }}
         >
-          <div style={S.title}>
-            RESUMO DO DIA{data ? ` — ${data.yesterdayLabel}` : ''}
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
+          <div
             style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontFamily: FONT,
-              fontSize: '14px',
-              color: 'var(--color-muted)',
-              padding: '0 0.25rem',
-              transition: 'color 0.15s ease',
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
             }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-text)'
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-muted)'
-            }}
-            aria-label="Fechar resumo"
           >
-            ✕
-          </button>
+            <div
+              style={{
+                fontFamily: FONT,
+                fontSize: '15px',
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                color: 'var(--color-accent)',
+                letterSpacing: '0.12em',
+              }}
+            >
+              RESUMO DO DIA{data ? ` — ${data.yesterdayLabel}` : ''}
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: FONT,
+                fontSize: '14px',
+                color: closeBtnHovered ? 'var(--color-accent)' : 'rgba(240,244,248,0.7)',
+                padding: '0 0.25rem',
+                transition: 'color 0.15s ease',
+                flexShrink: 0,
+                marginLeft: '0.5rem',
+              }}
+              onMouseEnter={() => setCloseBtnHovered(true)}
+              onMouseLeave={() => setCloseBtnHovered(false)}
+              aria-label="Fechar resumo"
+            >
+              ✕
+            </button>
+          </div>
+          <div
+            style={{
+              fontFamily: FONT,
+              fontSize: '12px',
+              color: 'rgba(240,244,248,0.7)',
+              lineHeight: 1.5,
+            }}
+          >
+            {OPENING_MSG}
+          </div>
         </div>
-
-        {/* Mensagem lúdica */}
-        <p style={S.openingMsg}>{OPENING_MSG}</p>
 
         {data && (
           <>
@@ -290,7 +306,7 @@ export function RecapBottomSheet({ data, currentUserId, isOpen, onClose }: Recap
                 Seção: JOGOS DE ONTEM
             ---------------------------------------------------------------- */}
             <div style={S.separator} />
-            <div style={S.sectionLabel}>JOGOS DE ONTEM</div>
+            <div style={{ ...S.sectionLabel, color: 'var(--color-muted)' }}>JOGOS DE ONTEM</div>
 
             {data.games.map((g) => (
               <div key={g.id} style={S.gameRow}>
@@ -325,14 +341,29 @@ export function RecapBottomSheet({ data, currentUserId, isOpen, onClose }: Recap
                 {data.rankingDay.map((entry, idx) => {
                   const isLeader = idx === 0
                   const isCurrentUser = entry.user_id === currentUserId
-                  const nameColor = isCurrentUser
-                    ? 'var(--color-primary)'
-                    : isLeader
-                      ? 'var(--color-accent)'
+
+                  // Background: líder tem amarelo; usuário atual (não líder) tem verde
+                  let rowBg: string | undefined
+                  if (isLeader) {
+                    rowBg = 'rgba(255, 223, 0, 0.08)'
+                  } else if (isCurrentUser) {
+                    rowBg = 'rgba(0, 156, 59, 0.08)'
+                  }
+
+                  // Cor do nome — amarelo (líder) prevalece sobre verde (usuário atual)
+                  const nameColor = isLeader
+                    ? 'var(--color-accent)'
+                    : isCurrentUser
+                      ? 'var(--color-primary)'
                       : 'var(--color-text)'
 
+                  // Cor e tamanho dos pontos do líder
+                  const ptsStyle = isLeader
+                    ? { fontSize: '15px', fontWeight: 'bold' as const, color: 'var(--color-accent)' }
+                    : {}
+
                   return (
-                    <tr key={entry.user_id}>
+                    <tr key={entry.user_id} style={rowBg ? { backgroundColor: rowBg } : {}}>
                       <td style={{ ...S.td, color: isLeader ? 'var(--color-accent)' : 'var(--color-muted)' }}>
                         {idx + 1}
                       </td>
@@ -341,7 +372,7 @@ export function RecapBottomSheet({ data, currentUserId, isOpen, onClose }: Recap
                         {entry.participant_name}
                         {isCurrentUser ? ' (você)' : ''}
                       </td>
-                      <td style={{ ...S.tdRight, color: isLeader ? 'var(--color-accent)' : 'var(--color-text)', fontWeight: isLeader ? 'bold' : 'normal' }}>
+                      <td style={{ ...S.tdRight, ...ptsStyle }}>
                         {entry.points_yesterday}
                       </td>
                       <td style={{ ...S.tdRight, paddingLeft: '0.75rem', color: 'var(--color-muted)' }}>
