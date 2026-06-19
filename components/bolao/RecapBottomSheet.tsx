@@ -125,67 +125,51 @@ const S = {
 // ---------------------------------------------------------------------------
 
 function RecapGameCard({ game }: { game: RecapGame }) {
+  const teamStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    fontFamily: FONT,
+    fontSize: '11px',
+    fontWeight: 'bold',
+    color: 'var(--color-muted)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+  }
   return (
     <div
       style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr auto 1fr',
+        display: 'flex',
         alignItems: 'center',
+        justifyContent: 'space-between',
         border: '1px solid var(--color-border)',
-        padding: '0.25rem 0.5rem',
-        marginBottom: '0.25rem',
+        padding: '0.2rem 0.5rem',
+        marginBottom: '0.2rem',
         backgroundColor: 'var(--color-bg)',
+        gap: '4px',
       }}
     >
-      {/* Coluna esquerda: time da casa */}
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '16px', lineHeight: 1 }}>
-          {getTeamFlag(game.home_team_code)}
-        </div>
-        <div
-          style={{
-            fontFamily: FONT,
-            fontSize: '11px',
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          {game.home_team_code}
-        </div>
+      <div style={teamStyle}>
+        <span style={{ fontSize: '14px', lineHeight: 1 }}>{getTeamFlag(game.home_team_code)}</span>
+        {game.home_team_code}
       </div>
 
-      {/* Coluna central: placar */}
       <div
         style={{
-          textAlign: 'center',
-          minWidth: '44px',
           fontFamily: FONT,
-          fontSize: '14px',
+          fontSize: '12px',
           fontWeight: 'bold',
           color: 'var(--color-accent)',
-          letterSpacing: '0.05em',
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
         }}
       >
         {game.home_score} × {game.away_score}
       </div>
 
-      {/* Coluna direita: time visitante */}
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '16px', lineHeight: 1 }}>
-          {getTeamFlag(game.away_team_code)}
-        </div>
-        <div
-          style={{
-            fontFamily: FONT,
-            fontSize: '11px',
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          {game.away_team_code}
-        </div>
+      <div style={{ ...teamStyle, flexDirection: 'row-reverse' }}>
+        <span style={{ fontSize: '14px', lineHeight: 1 }}>{getTeamFlag(game.away_team_code)}</span>
+        {game.away_team_code}
       </div>
     </div>
   )
