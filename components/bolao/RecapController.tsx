@@ -2,8 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useDailyRecap } from '@/lib/hooks/useDailyRecap'
-import { RecapFooterButton } from './RecapFooterButton'
+import { useLiveTodayRanking } from '@/lib/hooks/useLiveTodayRanking'
+import { DualFooterBar } from './DualFooterBar'
 import { RecapBottomSheet } from './RecapBottomSheet'
+import { LiveTodayBottomSheet } from './LiveTodayBottomSheet'
 
 // ---------------------------------------------------------------------------
 // Helper: chave do localStorage em BRT
@@ -33,19 +35,22 @@ interface RecapControllerProps {
 
 export function RecapController({ groupId, currentUserId }: RecapControllerProps) {
   const [forceOpen, setForceOpen] = useState(false)
+  const [liveTodayOpen, setLiveTodayOpen] = useState(false)
   const { loading, hasData, data } = useDailyRecap(groupId)
+  const { hasGamesToday } = useLiveTodayRanking(groupId)
   const decidedRef = useRef(false)
 
   // Expõe a altura do footer ao GroupChatWidget via CSS custom property
   useEffect(() => {
+    const barVisible = (hasData && !loading) || hasGamesToday
     document.documentElement.style.setProperty(
       '--recap-footer-h',
-      hasData && !loading ? '60px' : '0px'
+      barVisible ? '60px' : '0px'
     )
     return () => {
       document.documentElement.style.setProperty('--recap-footer-h', '0px')
     }
-  }, [hasData, loading])
+  }, [hasData, loading, hasGamesToday])
 
   // Abertura automática no primeiro acesso do dia (via localStorage)
   useEffect(() => {
@@ -65,16 +70,24 @@ export function RecapController({ groupId, currentUserId }: RecapControllerProps
 
   return (
     <>
-      <RecapFooterButton
-        loading={loading}
-        hasData={hasData}
-        onOpen={() => setForceOpen(true)}
+      <DualFooterBar
+        recapLoading={loading}
+        recapHasData={hasData}
+        onOpenRecap={() => setForceOpen(true)}
+        todayHasGames={hasGamesToday}
+        onOpenToday={() => setLiveTodayOpen(true)}
       />
       <RecapBottomSheet
         data={data}
         currentUserId={currentUserId}
         isOpen={forceOpen}
         onClose={() => setForceOpen(false)}
+      />
+      <LiveTodayBottomSheet
+        groupId={groupId}
+        currentUserId={currentUserId}
+        isOpen={liveTodayOpen}
+        onClose={() => setLiveTodayOpen(false)}
       />
     </>
   )
