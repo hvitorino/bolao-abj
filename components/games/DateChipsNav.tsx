@@ -54,13 +54,16 @@ export default function DateChipsNav({
   useEffect(() => {
     let startX = 0
     let startY = 0
+    let ignoredSwipe = false
 
     function onTouchStart(e: TouchEvent) {
       startX = e.touches[0].clientX
       startY = e.touches[0].clientY
+      ignoredSwipe = !!(e.target as Element)?.closest('.date-chips-scroll')
     }
 
     function onTouchEnd(e: TouchEvent) {
+      if (ignoredSwipe) return
       const deltaX = e.changedTouches[0].clientX - startX
       const deltaY = e.changedTouches[0].clientY - startY
       if (Math.abs(deltaX) < 50 || Math.abs(deltaY) > Math.abs(deltaX)) return
