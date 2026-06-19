@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [dual-footer-bar] — Barra Dupla no Rodapé (Rolou ontem / Tá rolando) — 2026-06-19
+
+- `RecapFooterButton.tsx` deletado; nenhum import restante no repositório
+- `components/bolao/DualFooterBar.tsx` criado: dois botões lado a lado (`flex: 1`) — "ROLOU ONTEM" (ponto amarelo, `color-accent`) e "TÁ ROLANDO" (ponto vermelho, `color-live`); quando apenas um tem conteúdo ocupa 100%; quando nenhum tem conteúdo retorna `null`; hover individual por botão com fundo `#007a2e`; divisor `1px solid color-border` quando ambos visíveis; safe-area iOS; `zIndex: 50`
+- `lib/hooks/useLiveTodayRanking.ts` criado: busca jogos de hoje em BRT, calcula pontos oficiais (tabela `scores`, jogos `finished`) e pontos parciais (client-side via `calculateLiveScore`, jogos `live`), aplica RANK() com empates, assina canais Realtime `live-today-games-${groupId}` (UPDATE em `games`) e `live-today-scores-${groupId}` (evento `*` em `scores` com filtro `group_id`), debounce 1000ms; retorna `{ entries, loading, hasGamesToday }`
+- `components/bolao/LiveTodayBottomSheet.tsx` criado: bottom sheet animado (`slideUp`/`slideDown`) com ranking ao vivo do dia; cabeçalho verde/amarelo; tabela `#` | `PARTICIPANTE` | `PTS`; líder em `color-accent` bold com `►`; usuário atual em `color-primary`; pontos parciais em `color-live` com sufixo `*`; legenda `* PARCIAL — AO VIVO`; estados: loading, sem palpites, sem pontuação; backdrop semitransparente, trava de scroll, safe-area iOS; `zIndex: 201`
+- `components/bolao/RecapController.tsx` modificado: importa `DualFooterBar` e `LiveTodayBottomSheet`; adiciona estado `liveTodayOpen`; instancia `useLiveTodayRanking(groupId)` para `hasGamesToday`; atualiza `useEffect` de `--recap-footer-h` para `barVisible = (hasData && !loading) || hasGamesToday`
+- Nenhuma migration de banco necessária — feature 100% client-side usando tabelas existentes `games`, `predictions`, `scores`, `group_members`
+
 ## [mcp-scoring-rules] — Tool MCP: Consultar Regras de Pontuação — 2026-06-19
 
 - `lib/mcp/tools/scoring-rules.ts` criado com `registerScoringRulesTools(server: McpServer): void` registrando a tool `consultar_regras_pontuacao`
