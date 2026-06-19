@@ -59,9 +59,26 @@ Nenhuma alteração. A feature é transparente para o frontend: dados replicados
 
 ---
 
+## Correções Fix 1
+
+### Problema corrigido
+
+**`v_pred predictions%ROWTYPE` com SELECT parcial causa mapeamento incorreto de colunas** (severidade: crítico)
+
+A função `copy_predictions_to_group` declarava `v_pred predictions%ROWTYPE`, mas o cursor `FOR ... IN SELECT` retornava apenas 5 colunas (`user_id, game_id, home_score, away_score, submitted_at`) de uma tabela com 7 colunas. Em PostgreSQL, `%ROWTYPE` com SELECT parcial usa mapeamento por posição — os valores ficavam nos campos errados (ex: `user_id` mapeado para `id`, `game_id` mapeado para `user_id`, etc.), causando erros de cast `uuid↔int` ou valores incorretos no INSERT.
+
+**Correção aplicada:** substituída a declaração de `v_pred predictions%ROWTYPE` por `v_pred RECORD` em ambos os arquivos de migration. Com `RECORD`, o PostgreSQL mapeia por nome de coluna, e o SELECT parcial funciona corretamente. O padrão `RECORD` é o correto para cursores com SELECT parcial; `%ROWTYPE` é adequado apenas quando o SELECT retorna todas as colunas (como em `calculate_scores_for_game`, que usa `SELECT *`).
+
+**Arquivos corrigidos:**
+- `supabase/migrations/20260619000001_copy_predictions_on_join.sql` — linha 31
+- `db/migrations/20260619_copy_predictions_on_join.sql` — linha 31
+
+---
+
 ## Commits realizados
 
 ```
 c7ad3bc chore(group-member-history): adiciona plano de implementação
 819467d feat(group-member-history): adiciona trigger de cópia de palpites ao entrar em grupo
+6d08620 fix(group-member-history): corrige mapeamento de colunas em copy_predictions_to_group
 ```
