@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDailyRecap } from '@/lib/hooks/useDailyRecap'
 
 // ---------------------------------------------------------------------------
@@ -14,6 +14,9 @@ const MENSAGENS = [
   'Resultado final do dia anterior. Sem spoiler — a tabela abaixo já é o spoiler.',
   'Resumo do ontem: alguns palpites brilharam, outros foram criativos.',
 ]
+
+// Pré-computar mensagem aleatória fora do componente (módulo inicializa uma vez)
+const OPENING_MSG = MENSAGENS[Math.floor(Math.random() * MENSAGENS.length)]
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -192,31 +195,27 @@ interface DailyRecapModalProps {
 export function DailyRecapModal({ groupId, currentUserId }: DailyRecapModalProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { data, loading, hasData } = useDailyRecap(groupId)
-
-  // Mensagem de abertura determinística por sessão
-  const openingMsg = useMemo(
-    () => MENSAGENS[Math.floor(Math.random() * MENSAGENS.length)],
-    []
-  )
+  const decidedRef = useRef(false)
 
   useEffect(() => {
     if (loading) return
+    // Executar a decisão de abertura apenas uma vez por montagem
+    if (decidedRef.current) return
+    decidedRef.current = true
 
     const key = getRecapKey()
 
     // Se já foi exibido hoje, não abrir — independente de ter dados
-    if (typeof window !== 'undefined' && localStorage.getItem(key) === 'shown') {
+    if (localStorage.getItem(key) === 'shown') {
       return
     }
 
     // Gravar chave independente de hasData (não re-verificar depois)
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(key, 'shown')
-    }
+    localStorage.setItem(key, 'shown')
 
-    // Só abrir se houver dados
+    // Só abrir se houver dados — diferir para evitar setState síncrono no effect
     if (hasData) {
-      setIsOpen(true)
+      queueMicrotask(() => setIsOpen(true))
     }
   }, [loading, hasData])
 
@@ -245,7 +244,7 @@ export function DailyRecapModal({ groupId, currentUserId }: DailyRecapModalProps
         <div style={S.title}>RESUMO DO DIA — {data.yesterdayLabel}</div>
 
         {/* Mensagem lúdica */}
-        <p style={S.openingMsg}>{openingMsg}</p>
+        <p style={S.openingMsg}>{OPENING_MSG}</p>
 
         {/* ----------------------------------------------------------------
             Seção: JOGOS DE ONTEM

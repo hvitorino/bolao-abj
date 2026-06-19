@@ -123,8 +123,7 @@ interface RawPrediction {
 
 function calcBadges(
   rankingDay: RankingDayEntry[],
-  scores: RawScore[],
-  _predictions: RawPrediction[]
+  scores: RawScore[]
 ): RecapBadge[] {
   const badges: RecapBadge[] = []
 
@@ -264,13 +263,13 @@ export function useDailyRecap(groupId: string): {
   loading: boolean
   hasData: boolean
 } {
+  // Se não há groupId, inicia já sem loading
   const [data, setData] = useState<DailyRecapData | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!!groupId)
   const [hasData, setHasData] = useState(false)
 
   useEffect(() => {
     if (!groupId) {
-      setLoading(false)
       return
     }
 
@@ -385,7 +384,7 @@ export function useDailyRecap(groupId: string): {
         .sort((a, b) => b.points_yesterday - a.points_yesterday)
 
       // 4. Badges
-      const badges = calcBadges(rankingDay, scoresRaw, predictions)
+      const badges = calcBadges(rankingDay, scoresRaw)
 
       // 5. Montar RecapGame
       const games: RecapGame[] = gamesRaw.map((g) => ({
