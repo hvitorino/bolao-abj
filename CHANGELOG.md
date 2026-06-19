@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [recap-cache-visual] — Cache LocalStorage e Visual Aprimorado do Recap — 2026-06-19
+
+- `lib/hooks/useDailyRecap.ts`: adicionada função `getRecapCacheKey()` gerando chave `bolao_recap_data_YYYY-MM-DD` em BRT; lógica de cache hit (exibição instantânea + background sync silencioso) e cache miss (fetch normal com loading); cache salvo apenas quando `games.length > 0`; assinatura pública `{ data, loading, hasData }` preservada
+- `components/bolao/RecapFooterButton.tsx`: container com `backgroundColor: var(--color-primary)` (verde), `borderTop: 2px solid var(--color-accent)` (amarelo); texto `color: var(--color-bg)` (preto, alto contraste); ponto animado 7×7px amarelo com `animation: blink 1s step-end infinite` antes do texto; hover aplicado no container via `useState` alterando para `#007a2e`
+- `components/bolao/RecapBottomSheet.tsx`: handle de arrasto renderiza antes do cabeçalho colorido; faixa verde com título `color-accent` 15px bold e `OPENING_MSG` como subtítulo integrado; `<p>` de abertura removido do corpo; `RANKING DO DIA` e `DESTAQUES` em `color-text`; `JOGOS DE ONTEM` mantido em `color-muted`; `<th>` com `borderBottom`; linha líder com fundo amarelo `rgba(255,223,0,0.08)` e pontos 15px bold accent; linha usuário atual (não líder) com fundo verde `rgba(0,156,59,0.08)`; quando usuário atual é líder, amarelo prevalece (`isLeader` verificado antes de `isCurrentUser`); badges com `borderLeft: 2px solid var(--color-primary)`, `badgeRecipient` 15px bold accent
+- `app/globals.css`: keyframe `@keyframes blink` adicionado (`0%/100% opacity:1`, `50% opacity:0`, `step-end`)
+- Feature 100% frontend — sem novos endpoints, sem migrations, sem alterações de schema
+
 ## [recap-bottom-sheet] — Botão Fixo no Rodapé com Bottom Sheet de Resumo — 2026-06-19
 
 - `RecapFloatingButton.tsx` removido; `DailyRecapModal.tsx` removido — substituídos integralmente pelos novos componentes
