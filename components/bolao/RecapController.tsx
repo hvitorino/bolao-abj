@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useDailyRecap } from '@/lib/hooks/useDailyRecap'
 import { RecapFloatingButton } from './RecapFloatingButton'
 import { DailyRecapModal } from './DailyRecapModal'
 
@@ -11,12 +12,13 @@ interface RecapControllerProps {
 
 export function RecapController({ groupId, currentUserId }: RecapControllerProps) {
   const [forceOpen, setForceOpen] = useState(false)
+  const { loading, hasData } = useDailyRecap(groupId)
 
   return (
     <>
       <RecapFloatingButton
-        groupId={groupId}
-        currentUserId={currentUserId}
+        loading={loading}
+        hasData={hasData}
         onOpen={() => setForceOpen(true)}
       />
       <DailyRecapModal

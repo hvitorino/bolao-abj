@@ -1,18 +1,14 @@
 'use client'
 
-import { useDailyRecap } from '@/lib/hooks/useDailyRecap'
-
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
 interface RecapFloatingButtonProps {
-  groupId: string
-  currentUserId: string
+  loading: boolean
+  hasData: boolean
   onOpen: () => void
 }
 
-export function RecapFloatingButton({ groupId, onOpen }: RecapFloatingButtonProps) {
-  const { loading, hasData } = useDailyRecap(groupId)
-
+export function RecapFloatingButton({ loading, hasData, onOpen }: RecapFloatingButtonProps) {
   if (loading || !hasData) return null
 
   return (
