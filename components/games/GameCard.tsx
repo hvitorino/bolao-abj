@@ -470,21 +470,41 @@ export default function GameCard({
             color: 'var(--color-bg)',
             textTransform: 'uppercase',
             letterSpacing: '0.08em',
+            transition: 'background-color 150ms ease',
           }}
         >
-          {isParticipantsExpanded ? 'OCULTAR PALPITES ▴' : 'VER PALPITES ▾'}
+          {isParticipantsExpanded ? 'OCULTAR PALPITES' : 'VER PALPITES'}
+          <span
+            style={{
+              display: 'inline-block',
+              transform: isParticipantsExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 250ms ease',
+            }}
+          >
+            ▾
+          </span>
         </button>
       )}
 
       {/* Seção de palpites de todos os participantes — exibida sob demanda via toggle */}
-      {liveParticipants.length > 0 && isParticipantsExpanded && (
-        <div id={`participants-${liveGame.id}`}>
-          <GameParticipantsList
-            participants={liveParticipants}
-            gameStatus={liveGame.status as 'pending' | 'live' | 'finished'}
-            currentUserId={userId}
-            liveGame={{ home_score: liveGame.home_score, away_score: liveGame.away_score }}
-          />
+      {liveParticipants.length > 0 && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateRows: isParticipantsExpanded ? '1fr' : '0fr',
+            transition: 'grid-template-rows 300ms ease',
+          }}
+        >
+          <div style={{ overflow: 'hidden' }}>
+            <div id={`participants-${liveGame.id}`}>
+              <GameParticipantsList
+                participants={liveParticipants}
+                gameStatus={liveGame.status as 'pending' | 'live' | 'finished'}
+                currentUserId={userId}
+                liveGame={{ home_score: liveGame.home_score, away_score: liveGame.away_score }}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>
