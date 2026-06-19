@@ -342,7 +342,14 @@ export function DailyRecapModal({ groupId, currentUserId, forceOpen, onClose }: 
               <div key={badge.key} style={S.badgeBlock}>
                 <div style={S.badgeLabel}>[{badge.label}]</div>
                 <div style={S.badgeRecipient}>{badge.recipient}</div>
-                <div style={S.badgeDesc}>{badge.description}</div>
+                {badge.key === 'mae_dina' && badge.secondaryDescription ? (
+                  <>
+                    <div style={S.badgeDesc}>{badge.description}</div>
+                    <div style={{ ...S.badgeDesc, marginTop: '0.15rem' }}>{badge.secondaryDescription}</div>
+                  </>
+                ) : (
+                  <div style={S.badgeDesc}>{badge.description}</div>
+                )}
               </div>
             ))}
           </>

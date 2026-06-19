@@ -6,6 +6,18 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [daily-recap-modal-refactor] — Refatoração do Daily Recap Modal — 2026-06-19
+
+- `RecapButton` removido da barra de navegação (`nav-links.tsx`); props `groupId` e `currentUserId` removidas da interface `NavLinksProps`
+- Novo componente `components/bolao/RecapFloatingButton.tsx`: chip fixo em `position: fixed`, `bottom: 1.5rem`, `left: 1.5rem`, retorna `null` quando `loading || !hasData`, abre o modal via callback `onOpen`
+- Novo componente `components/bolao/RecapController.tsx`: gerencia estado `forceOpen`, eleva `useDailyRecap(groupId)` (evitando double-fetch), renderiza `RecapFloatingButton` + `DailyRecapModal` em instância única
+- `app/(dashboard)/layout.tsx` substitui `<DailyRecapModal>` direto por `<RecapController groupId currentUserId>`; dupla instância do modal eliminada
+- `lib/hooks/useDailyRecap.ts`: `calcBadges` refatorada de 5 para 3 badges — **Craque do Dia**, **Mãe Diná** (fusão de Vidente + artilharia de palpites) e **Pé-frio**; badges Artilheiro e Apostador removidos
+- Badge Mãe Diná: critério primário é acertos de placar exato; critério secundário é maior soma de gols apostados (`home_score + away_score`); fallback para artilharia quando ninguém acerta o placar
+- Tipo `RecapBadge` recebeu campo opcional `secondaryDescription?: string`; `DailyRecapModal` renderiza dois `<div>` separados para o badge `mae_dina`
+- Query de `predictions` expandida para incluir `home_score, away_score`; tipo `RawPrediction` atualizado
+- Feature 100% frontend — sem novos endpoints, sem migrations
+
 ## [daily-recap-on-demand] — Resumo Diário sob Demanda — 2026-06-19
 
 - Botão `RESUMO DE ONTEM` adicionado à barra de navegação do dashboard via novo componente `components/bolao/RecapButton.tsx`

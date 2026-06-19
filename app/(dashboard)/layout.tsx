@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { NavLinks } from './nav-links'
 import { GroupMenu } from './group-switcher'
 import { GroupChatWidget } from '@/components/bolao/GroupChatWidget'
-import { DailyRecapModal } from '@/components/bolao/DailyRecapModal'
+import { RecapController } from '@/components/bolao/RecapController'
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
@@ -98,7 +98,7 @@ export default async function DashboardLayout({
 
           {/* Linha 2: navegação */}
           <div style={{ borderTop: '1px solid var(--color-border)' }}>
-            <NavLinks groupId={activeGroup?.id ?? ''} currentUserId={user.id} />
+            <NavLinks />
           </div>
         </div>
       </header>
@@ -116,7 +116,7 @@ export default async function DashboardLayout({
       )}
 
       {activeGroup && (
-        <DailyRecapModal
+        <RecapController
           groupId={activeGroup.id}
           currentUserId={user.id}
         />

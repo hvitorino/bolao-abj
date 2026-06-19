@@ -30,6 +30,7 @@ export interface RecapBadge {
   label: string
   recipient: string
   description: string
+  secondaryDescription?: string
 }
 
 export interface DailyRecapData {
@@ -119,11 +120,14 @@ interface RawScore {
 interface RawPrediction {
   user_id: string
   game_id: string
+  home_score: number
+  away_score: number
 }
 
 function calcBadges(
   rankingDay: RankingDayEntry[],
-  scores: RawScore[]
+  scores: RawScore[],
+  predictions: RawPrediction[]
 ): RecapBadge[] {
   const badges: RecapBadge[] = []
 
@@ -148,7 +152,9 @@ function calcBadges(
     }
   }
 
-  // --- Badge 2: VIDENTE DO DIA ---
+  // --- Badge 2: MAE DINA (substitui VIDENTE DO DIA + artilharia de palpites) ---
+
+  // Critério primário: acertos de placar exato
   const exactCountByUser = scores.reduce(
     (acc, s) => {
       if (s.breakdown?.exact > 0) acc[s.user_id] = (acc[s.user_id] ?? 0) + 1
@@ -166,75 +172,83 @@ function calcBadges(
     }))
     .sort((a, b) => b.count - a.count)
 
-  if (videntes.length > 0) {
-    // Agrupa todos os videntes em um único badge
-    const names = videntes.map((v) => v.name).join(' e ')
-    const topCount = videntes[0].count
-    const description =
-      videntes.length === 1
-        ? topCount === 1
-          ? `${names} tem poderes. Acertou o placar exato.`
-          : `${names} está em outro nível. ${topCount} placares exatos ontem.`
-        : `${names} com ${topCount}+ acerto(s) de placar exato. Classe.`
-    badges.push({
-      key: 'vidente',
-      label: 'VIDENTE DO DIA',
-      recipient: names,
-      description,
-    })
-  }
-
-  // --- Badge 3: ARTILHEIRO DO DIA ---
-  // Conta acertos de vencedor (winner > 0) por usuário
-  const winnerCountByUser = scores.reduce(
-    (acc, s) => {
-      if (s.breakdown?.winner > 0) acc[s.user_id] = (acc[s.user_id] ?? 0) + 1
+  // Critério secundário: artilharia de palpites (soma home_score + away_score)
+  const goalsByUser = predictions.reduce(
+    (acc, p) => {
+      const total = (p.home_score ?? 0) + (p.away_score ?? 0)
+      acc[p.user_id] = (acc[p.user_id] ?? 0) + total
       return acc
     },
     {} as Record<string, number>
   )
 
-  const artilheiroEntries = Object.entries(winnerCountByUser)
-    .filter(([, count]) => count >= 2)
-    .sort(([, a], [, b]) => b - a)
+  const artilheiroEntries = Object.entries(goalsByUser)
+    .map(([userId, total]) => ({
+      userId,
+      total,
+      name: nameByUserId[userId] ?? userId,
+    }))
+    .sort((a, b) => b.total - a.total)
 
-  if (artilheiroEntries.length > 0) {
-    const maxWins = artilheiroEntries[0][1]
-    const tops = artilheiroEntries
-      .filter(([, c]) => c === maxWins)
-      .map(([uid]) => nameByUserId[uid] ?? uid)
-    const names = tops.join(' e ')
-    badges.push({
-      key: 'artilheiro',
-      label: 'ARTILHEIRO DO DIA',
-      recipient: names,
-      description: `${names} manda no diagnóstico: ${maxWins} acertos de resultado.`,
-    })
-  }
+  if (videntes.length > 0 || artilheiroEntries.length > 0) {
+    let recipient: string
+    let description: string
+    let secondaryDescription: string | undefined
 
-  // --- Badge 4: APOSTADOR DO DIA ---
-  const quemPalpitou = rankingDay.filter((r) => r.games_predicted > 0)
-  if (quemPalpitou.length > 1) {
-    const maxPredicted = Math.max(...quemPalpitou.map((r) => r.games_predicted))
-    if (maxPredicted >= 2) {
-      const apostadores = quemPalpitou.filter(
-        (r) => r.games_predicted === maxPredicted
-      )
-      // Só exibir se há distinção (não todos com o mesmo número)
-      const minPredicted = Math.min(...quemPalpitou.map((r) => r.games_predicted))
-      if (maxPredicted > minPredicted) {
-        const names = apostadores.map((r) => r.participant_name).join(' e ')
-        badges.push({
-          key: 'apostador',
-          label: 'APOSTADOR DO DIA',
-          recipient: names,
-          description: `${names} não perdeu nem um jogo ontem. ${maxPredicted} palpites feitos.`,
-        })
+    if (videntes.length > 0) {
+      // Recipient baseado no líder de acertos exatos
+      const topCount = videntes[0].count
+      const topVidentes = videntes.filter((v) => v.count === topCount)
+      const videnteNames = topVidentes.map((v) => v.name).join(' e ')
+      recipient = videnteNames
+      description =
+        topCount === 1
+          ? `${videnteNames} acertou 1 placar exato. Poderes sobrenaturais.`
+          : `${videnteNames} acertou ${topCount} placar(es) exato(s). Poderes sobrenaturais.`
+
+      // Dado secundário de artilharia
+      if (artilheiroEntries.length > 0) {
+        const topGoals = artilheiroEntries[0].total
+        const topArtilheiros = artilheiroEntries.filter(
+          (a) => a.total === topGoals
+        )
+        const artNames = topArtilheiros.map((a) => a.name).join(' e ')
+        secondaryDescription =
+          topArtilheiros.length === 1
+            ? `Artilharia dos palpites: ${artNames} apostou ${topGoals} gols no total.`
+            : `Artilharia dos palpites: ${artNames} apostaram ${topGoals} gols no total.`
       }
+    } else if (artilheiroEntries.length > 0) {
+      // Fallback: ninguém acertou placar exato — badge baseado só na artilharia
+      const topGoals = artilheiroEntries[0].total
+      const topArtilheiros = artilheiroEntries.filter(
+        (a) => a.total === topGoals
+      )
+      const artNames = topArtilheiros.map((a) => a.name).join(' e ')
+      recipient = artNames
+      description =
+        topArtilheiros.length === 1
+          ? `Ninguém acertou o placar exato. Mas ${artNames} apostou alto: ${topGoals} gols no total.`
+          : `Ninguém acertou o placar exato. Mas ${artNames} apostaram alto: ${topGoals} gols no total.`
+    } else {
+      // Edge case: sem dados suficientes — não emitir badge
+      recipient = ''
+      description = ''
+    }
+
+    if (recipient) {
+      badges.push({
+        key: 'mae_dina',
+        label: 'MAE DINA',
+        recipient,
+        description,
+        ...(secondaryDescription ? { secondaryDescription } : {}),
+      })
     }
   }
 
-  // --- Badge 5: PÉ-FRIO DO DIA ---
+  // --- Badge 3: PE-FRIO ---
+  const quemPalpitou = rankingDay.filter((r) => r.games_predicted > 0)
   if (quemPalpitou.length > 1) {
     const minPts = Math.min(...quemPalpitou.map((r) => r.points_yesterday))
     const maxPts = Math.max(...quemPalpitou.map((r) => r.points_yesterday))
@@ -244,7 +258,7 @@ function calcBadges(
       const names = peFrios.map((r) => r.participant_name).join(' e ')
       badges.push({
         key: 'pe_frio',
-        label: 'PÉ-FRIO DO DIA',
+        label: 'PE-FRIO',
         recipient: names,
         description: `${names} foi generoso: deixou os pontos pra turma.`,
       })
@@ -313,7 +327,7 @@ export function useDailyRecap(groupId: string): {
           .eq('group_id', groupId),
         supabase
           .from('predictions')
-          .select('user_id, game_id')
+          .select('user_id, game_id, home_score, away_score')
           .in('game_id', gameIds)
           .eq('group_id', groupId),
       ])
@@ -341,6 +355,8 @@ export function useDailyRecap(groupId: string): {
         (p: any) => ({
           user_id: p.user_id,
           game_id: p.game_id,
+          home_score: p.home_score ?? 0,
+          away_score: p.away_score ?? 0,
         })
       )
 
@@ -384,7 +400,7 @@ export function useDailyRecap(groupId: string): {
         .sort((a, b) => b.points_yesterday - a.points_yesterday)
 
       // 4. Badges
-      const badges = calcBadges(rankingDay, scoresRaw)
+      const badges = calcBadges(rankingDay, scoresRaw, predictions)
 
       // 5. Montar RecapGame
       const games: RecapGame[] = gamesRaw.map((g) => ({
