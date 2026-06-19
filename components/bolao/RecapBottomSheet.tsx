@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { DailyRecapData } from '@/lib/hooks/useDailyRecap'
+import type { DailyRecapData, RecapGame } from '@/lib/hooks/useDailyRecap'
+import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 // ---------------------------------------------------------------------------
 // Mensagens lúdicas de abertura
@@ -37,20 +38,6 @@ const S = {
     color: 'var(--color-text)',
     letterSpacing: '0.12em',
     marginBottom: '0.5rem',
-  },
-  gameRow: {
-    fontFamily: FONT,
-    fontSize: '13px',
-    color: 'var(--color-muted)',
-    display: 'flex',
-    gap: '0.5rem',
-    alignItems: 'center',
-    marginBottom: '0.25rem',
-    paddingTop: '0.5rem',
-  },
-  gameScore: {
-    fontWeight: 'bold',
-    color: 'var(--color-accent)',
   },
   table: {
     width: '100%',
@@ -131,6 +118,77 @@ const S = {
     letterSpacing: '0.1em',
     fontWeight: 'bold',
   },
+}
+
+// ---------------------------------------------------------------------------
+// Sub-componente: Card visual de jogo
+// ---------------------------------------------------------------------------
+
+function RecapGameCard({ game }: { game: RecapGame }) {
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr auto 1fr',
+        alignItems: 'center',
+        border: '1px solid var(--color-border)',
+        padding: '0.5rem 0.75rem',
+        marginBottom: '0.5rem',
+        backgroundColor: 'var(--color-bg)',
+      }}
+    >
+      {/* Coluna esquerda: time da casa */}
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: '22px', lineHeight: 1 }}>
+          {getTeamFlag(game.home_team_code)}
+        </div>
+        <div
+          style={{
+            fontFamily: FONT,
+            fontSize: '11px',
+            color: 'var(--color-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          {game.home_team_code}
+        </div>
+      </div>
+
+      {/* Coluna central: placar */}
+      <div
+        style={{
+          textAlign: 'center',
+          minWidth: '60px',
+          fontFamily: FONT,
+          fontSize: '18px',
+          fontWeight: 'bold',
+          color: 'var(--color-accent)',
+          letterSpacing: '0.05em',
+        }}
+      >
+        {game.home_score} × {game.away_score}
+      </div>
+
+      {/* Coluna direita: time visitante */}
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: '22px', lineHeight: 1 }}>
+          {getTeamFlag(game.away_team_code)}
+        </div>
+        <div
+          style={{
+            fontFamily: FONT,
+            fontSize: '11px',
+            color: 'var(--color-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          {game.away_team_code}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 // ---------------------------------------------------------------------------
@@ -309,17 +367,7 @@ export function RecapBottomSheet({ data, currentUserId, isOpen, onClose }: Recap
             <div style={{ ...S.sectionLabel, color: 'var(--color-muted)' }}>JOGOS DE ONTEM</div>
 
             {data.games.map((g) => (
-              <div key={g.id} style={S.gameRow}>
-                <span style={{ color: 'var(--color-muted)', minWidth: '3ch', textAlign: 'right' }}>
-                  {g.home_team_code}
-                </span>
-                <span style={S.gameScore}>
-                  {g.home_score} × {g.away_score}
-                </span>
-                <span style={{ color: 'var(--color-muted)' }}>
-                  {g.away_team_code}
-                </span>
-              </div>
+              <RecapGameCard key={g.id} game={g} />
             ))}
 
             {/* ----------------------------------------------------------------
