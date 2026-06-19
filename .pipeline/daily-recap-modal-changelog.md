@@ -3,7 +3,7 @@
 **Slug:** daily-recap-modal
 **Branch:** feature/daily-recap-modal
 **Data:** 2026-06-19
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
