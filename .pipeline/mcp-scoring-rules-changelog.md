@@ -3,7 +3,7 @@
 **Slug:** mcp-scoring-rules
 **Branch:** feature/mcp-scoring-rules
 **Data:** 2026-06-19
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
