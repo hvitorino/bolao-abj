@@ -1,6 +1,7 @@
 # Relatório Final — Bolão da Copa
 
 Data de conclusão: 2026-06-19
+Total de features concluídas: 42
 
 ## Features Implementadas
 
@@ -43,6 +44,9 @@ Data de conclusão: 2026-06-19
 37. [mcp-bolao] — Servidor MCP Remoto do Bolão — 2026-06-18
 38. [mcp-group-scope] — Suporte a Múltiplos Grupos no Servidor MCP — 2026-06-19
 39. [daily-recap-modal] — Modal de Resumo Diário — 2026-06-19
+40. [daily-recap-on-demand] — Resumo Diário sob Demanda — 2026-06-19
+41. [daily-recap-modal-refactor] — Refatoração do Daily Recap Modal — 2026-06-19
+42. [recap-bottom-sheet] — Botão Fixo no Rodapé com Bottom Sheet de Resumo — 2026-06-19
 
 ## Resumo
 
@@ -74,7 +78,9 @@ As quatro features finais completaram o produto. `group-chat` (item 34) criou um
 
 As últimas duas features completaram o produto. `mcp-group-scope` (item 38) corrigiu o servidor MCP para operar corretamente em contextos multi-grupo: adicionou a tool `listar_grupos` — que retorna os grupos do usuário autenticado com id, nome e role — e introduziu o parâmetro `group_id` opcional (com fallback para o primeiro grupo por `joined_at ASC` e validação de membership se informado) nas tools `fazer_palpite`, `meus_palpites` e `ver_ranking`, garantindo que clientes MCP como Claude Desktop e Claude.ai consigam palpitar e consultar o ranking em qualquer grupo específico sem depender do grupo padrão. `daily-recap-modal` (item 39) fechou o roadmap com uma feature de engajamento lúdica: um modal que aparece automaticamente no primeiro acesso do dia (controle via localStorage, não reaparece após fechar) exibindo pontuações e ranking do dia anterior com tom bem-humorado em português brasileiro, pelo menos três badges temáticos (craque do dia, pé-frio do dia, vidente do dia) e respeito à regra de não exibir quando não há jogos finalizados no dia anterior; visual em monospace, paleta verde/amarelo/azul, seguindo DESIGN.md rigorosamente.
 
-Com isso, todas as 39 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 33 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
+As últimas três features finalizaram o produto com foco em engajamento e experiência diária. `daily-recap-on-demand` (item 40) adicionou um ponto de entrada visível para reabertura do resumo do dia anterior a qualquer momento, independentemente de já ter sido visto hoje — o comportamento automático do primeiro acesso continuou funcionando normalmente, e o botão fica oculto quando não há jogos finalizados no dia anterior. `daily-recap-modal-refactor` (item 41) reposicionou o controle de acesso ao resumo: o RecapButton foi removido do menu de navegação superior e substituído por um elemento fixo no rodapé da tela, mais proeminente e contextual; os badges do modal foram revisados para exibir exatamente três — Craque do Dia, Mãe Diná (absorvendo os dados de artilharia de palpites) e Pé-frio — descartando Artilheiro do Dia e Apostador do Dia. Por fim, `recap-bottom-sheet` (item 42) substituiu o FloatingActionButton (FAB no canto inferior esquerdo) por um botão fixo de largura total no rodapé, que ao ser clicado abre o conteúdo do resumo em um bottom sheet com animação de slide-up suave e fecha com slide-down ao clicar no backdrop ou no botão de fechar; safe-area do iOS respeitada e layout correto em mobile e desktop; o comportamento automático do primeiro acesso do dia continua abrindo o bottom sheet diretamente.
+
+Com isso, todas as 42 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 36 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
 
 ## Próximos passos sugeridos
 
