@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [mcp-scoring-rules] — Tool MCP: Consultar Regras de Pontuação — 2026-06-19
+
+- `lib/mcp/tools/scoring-rules.ts` criado com `registerScoringRulesTools(server: McpServer): void` registrando a tool `consultar_regras_pontuacao`
+- Schema Zod de entrada vazio `{}` — tool sem parâmetros
+- Retorna texto hardcoded com os 6 eventos de pontuação, pontuação máxima (9 pts), regras de cumulatividade, tratamento de empate e 5 exemplos concretos de cálculo
+- `lib/mcp/server.ts` atualizado com import e chamada `registerScoringRulesTools(server)` sem `userId` (tool stateless, sem acesso ao Supabase)
+- Nenhum endpoint novo, nenhum componente React, nenhuma migration de banco
+
 ## [recap-game-cards] — Cards Visuais de Jogos no Recap — 2026-06-19
 
 - `components/bolao/RecapBottomSheet.tsx`: seção "JOGOS DE ONTEM" migrada de linhas de texto simples (`home_team_code × away_team_code`) para cards visuais compactos com layout grid `1fr auto 1fr`
