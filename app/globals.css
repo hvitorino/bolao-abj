@@ -31,6 +31,16 @@
   animation: shake 0.35s ease-in-out;
 }
 
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+
 html,
 body {
   background-color: var(--color-bg);
