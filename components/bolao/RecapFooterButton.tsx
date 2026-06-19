@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
 interface RecapFooterButtonProps {
@@ -9,6 +11,8 @@ interface RecapFooterButtonProps {
 }
 
 export function RecapFooterButton({ loading, hasData, onOpen }: RecapFooterButtonProps) {
+  const [hovered, setHovered] = useState(false)
+
   if (loading || !hasData) return null
 
   return (
@@ -23,9 +27,12 @@ export function RecapFooterButton({ loading, hasData, onOpen }: RecapFooterButto
         paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
         paddingLeft: '1rem',
         paddingRight: '1rem',
-        backgroundColor: 'var(--color-surface)',
-        borderTop: '1px solid var(--color-border)',
+        backgroundColor: hovered ? '#007a2e' : 'var(--color-primary)',
+        borderTop: '2px solid var(--color-accent)',
+        transition: 'background-color 0.15s ease',
       }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <div style={{ maxWidth: '960px', margin: '0 auto' }}>
         <button
@@ -33,31 +40,32 @@ export function RecapFooterButton({ loading, hasData, onOpen }: RecapFooterButto
           onClick={onOpen}
           style={{
             fontFamily: FONT,
-            fontSize: '12px',
+            fontSize: '13px',
             fontWeight: 'bold',
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
-            color: 'var(--color-muted)',
-            backgroundColor: 'var(--color-surface)',
-            border: '1px solid var(--color-border)',
+            color: 'var(--color-bg)',
+            backgroundColor: 'transparent',
+            border: 'none',
             borderRadius: 0,
             padding: '0.625rem 1rem',
             width: '100%',
             cursor: 'pointer',
             boxShadow: 'none',
-            transition: 'color 0.15s ease, border-color 0.15s ease',
-          }}
-          onMouseEnter={(e) => {
-            const el = e.currentTarget
-            el.style.color = 'var(--color-accent)'
-            el.style.borderColor = 'var(--color-accent)'
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget
-            el.style.color = 'var(--color-muted)'
-            el.style.borderColor = 'var(--color-border)'
           }}
         >
+          <span
+            style={{
+              display: 'inline-block',
+              width: '7px',
+              height: '7px',
+              borderRadius: '50%',
+              backgroundColor: 'var(--color-accent)',
+              marginRight: '0.5rem',
+              verticalAlign: 'middle',
+              animation: 'blink 1s step-end infinite',
+            }}
+          />
           ► RESUMO DE ONTEM
         </button>
       </div>
