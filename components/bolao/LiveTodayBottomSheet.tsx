@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useLiveTodayRanking } from '@/lib/hooks/useLiveTodayRanking'
+import type { LiveTodayEntry } from '@/lib/hooks/useLiveTodayRanking'
 
 // ---------------------------------------------------------------------------
 // Constantes de estilo
@@ -14,7 +14,8 @@ const FONT = "'JetBrains Mono', 'Courier New', monospace"
 // ---------------------------------------------------------------------------
 
 interface LiveTodayBottomSheetProps {
-  groupId: string
+  entries: LiveTodayEntry[]
+  loading: boolean
   currentUserId: string
   isOpen: boolean
   onClose: () => void
@@ -25,7 +26,8 @@ interface LiveTodayBottomSheetProps {
 // ---------------------------------------------------------------------------
 
 export function LiveTodayBottomSheet({
-  groupId,
+  entries,
+  loading,
   currentUserId,
   isOpen,
   onClose,
@@ -33,8 +35,6 @@ export function LiveTodayBottomSheet({
   const [visible, setVisible] = useState(false)
   const [animating, setAnimating] = useState(false)
   const [closeBtnHovered, setCloseBtnHovered] = useState(false)
-
-  const { entries, loading } = useLiveTodayRanking(groupId)
 
   // Controle de animação — mesmo padrão do RecapBottomSheet
   useEffect(() => {

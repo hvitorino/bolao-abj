@@ -37,7 +37,7 @@ export function RecapController({ groupId, currentUserId }: RecapControllerProps
   const [forceOpen, setForceOpen] = useState(false)
   const [liveTodayOpen, setLiveTodayOpen] = useState(false)
   const { loading, hasData, data } = useDailyRecap(groupId)
-  const { hasGamesToday } = useLiveTodayRanking(groupId)
+  const { hasGamesToday, entries: liveTodayEntries, loading: liveTodayLoading } = useLiveTodayRanking(groupId)
   const decidedRef = useRef(false)
 
   // Expõe a altura do footer ao GroupChatWidget via CSS custom property
@@ -84,7 +84,8 @@ export function RecapController({ groupId, currentUserId }: RecapControllerProps
         onClose={() => setForceOpen(false)}
       />
       <LiveTodayBottomSheet
-        groupId={groupId}
+        entries={liveTodayEntries}
+        loading={liveTodayLoading}
         currentUserId={currentUserId}
         isOpen={liveTodayOpen}
         onClose={() => setLiveTodayOpen(false)}
