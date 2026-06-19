@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 44 features
+- Total: 45 features
 - Concluídas: 44
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -589,3 +589,15 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Nenhuma alteração no hook `useDailyRecap`, no schema do Supabase ou nos endpoints — mudança puramente em `RecapBottomSheet.tsx`
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** recap-bottom-sheet, recap-cache-visual
+
+---
+
+### 45. mcp-scoring-rules — Tool MCP: Consultar Regras de Pontuação — em progresso
+**Objetivo:** Adicionar uma tool no servidor MCP do projeto que expõe as regras de pontuação do bolão de forma estruturada, permitindo que agentes e usuários as consultem programaticamente via qualquer cliente MCP compatível.
+**Critérios de sucesso:**
+- Uma tool MCP chamada `consultar_regras_pontuacao` está disponível no servidor MCP do projeto (registrada em `lib/mcp/server.ts`)
+- A tool retorna as regras de pontuação de forma estruturada: lista de eventos com pontos, regras de cumulatividade, tratamento de empate e pelo menos um exemplo concreto de cálculo
+- A tool não requer autenticação ou parâmetros de entrada (é pública no contexto do servidor MCP, mas ainda dentro do fluxo de auth Bearer existente)
+- A tool é documentada com descrição e schema Zod corretos seguindo o padrão dos demais tools em `lib/mcp/tools/`
+- `npm run lint` e `npm run build` passam sem erros novos
+**Dependências:** mcp-bolao
