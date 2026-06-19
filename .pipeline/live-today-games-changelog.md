@@ -3,7 +3,7 @@
 **Slug:** live-today-games
 **Branch:** feature/live-today-games
 **Data:** 2026-06-19
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

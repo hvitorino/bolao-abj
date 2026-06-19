@@ -6,6 +6,13 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [live-today-games] — Jogos do Dia no Bottom Sheet "Tá Rolando" — 2026-06-19
+
+- `lib/hooks/useLiveTodayRanking.ts`: interface `LiveTodayGame` exportada com 9 campos (`id`, `home_team`, `away_team`, `home_team_code`, `away_team_code`, `home_score`, `away_score`, `status`, `match_date`); SELECT de jogos ampliado com os 5 campos faltantes; estado `games: LiveTodayGame[]` adicionado; `setGames([])` chamado no branch sem jogos; retorno do hook atualizado para incluir `games`
+- `components/bolao/LiveTodayBottomSheet.tsx`: importa `LiveTodayGame` e `getTeamFlag`; prop `games: LiveTodayGame[]` adicionada à interface e desestruturação; sub-componente `LiveTodayGameCard` criado inline com layout horizontal time casa | placar | time visitante; badge `● AO VIVO` em `color-live` com `animation: blink 1s step-end infinite`; badge `✓ ENCERRADO` em `color-muted` sem animação; placar `— × —` (U+2014) para `pending`; keyframes `blink` injetados via `<style>` tag; seção "JOGOS DE HOJE" com separador inserida antes do ranking
+- `components/bolao/RecapController.tsx`: desestrutura `games: liveTodayGames` do hook; passa `games={liveTodayGames}` ao `LiveTodayBottomSheet`
+- Nenhuma migration de banco, nenhum endpoint novo, nenhum canal Realtime novo — feature 100% client-side usando tabelas existentes
+
 ## [dual-footer-bar] — Barra Dupla no Rodapé (Rolou ontem / Tá rolando) — 2026-06-19
 
 - `RecapFooterButton.tsx` deletado; nenhum import restante no repositório
