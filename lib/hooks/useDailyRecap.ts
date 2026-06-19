@@ -172,79 +172,19 @@ function calcBadges(
     }))
     .sort((a, b) => b.count - a.count)
 
-  // Critério secundário: artilharia de palpites (soma home_score + away_score)
-  const goalsByUser = predictions.reduce(
-    (acc, p) => {
-      const total = (p.home_score ?? 0) + (p.away_score ?? 0)
-      acc[p.user_id] = (acc[p.user_id] ?? 0) + total
-      return acc
-    },
-    {} as Record<string, number>
-  )
-
-  const artilheiroEntries = Object.entries(goalsByUser)
-    .map(([userId, total]) => ({
-      userId,
-      total,
-      name: nameByUserId[userId] ?? userId,
-    }))
-    .sort((a, b) => b.total - a.total)
-
-  if (videntes.length > 0 || artilheiroEntries.length > 0) {
-    let recipient: string
-    let description: string
-    let secondaryDescription: string | undefined
-
-    if (videntes.length > 0) {
-      // Recipient baseado no líder de acertos exatos
-      const topCount = videntes[0].count
-      const topVidentes = videntes.filter((v) => v.count === topCount)
-      const videnteNames = topVidentes.map((v) => v.name).join(' e ')
-      recipient = videnteNames
-      description =
+  if (videntes.length > 0) {
+    const topCount = videntes[0].count
+    const topVidentes = videntes.filter((v) => v.count === topCount)
+    const videnteNames = topVidentes.map((v) => v.name).join(' e ')
+    badges.push({
+      key: 'mae_dina',
+      label: 'MAE DINA',
+      recipient: videnteNames,
+      description:
         topCount === 1
           ? `${videnteNames} acertou 1 placar exato. Poderes sobrenaturais.`
-          : `${videnteNames} acertou ${topCount} placar(es) exato(s). Poderes sobrenaturais.`
-
-      // Dado secundário de artilharia
-      if (artilheiroEntries.length > 0) {
-        const topGoals = artilheiroEntries[0].total
-        const topArtilheiros = artilheiroEntries.filter(
-          (a) => a.total === topGoals
-        )
-        const artNames = topArtilheiros.map((a) => a.name).join(' e ')
-        secondaryDescription =
-          topArtilheiros.length === 1
-            ? `Artilharia dos palpites: ${artNames} apostou ${topGoals} gols no total.`
-            : `Artilharia dos palpites: ${artNames} apostaram ${topGoals} gols no total.`
-      }
-    } else if (artilheiroEntries.length > 0) {
-      // Fallback: ninguém acertou placar exato — badge baseado só na artilharia
-      const topGoals = artilheiroEntries[0].total
-      const topArtilheiros = artilheiroEntries.filter(
-        (a) => a.total === topGoals
-      )
-      const artNames = topArtilheiros.map((a) => a.name).join(' e ')
-      recipient = artNames
-      description =
-        topArtilheiros.length === 1
-          ? `Ninguém acertou o placar exato. Mas ${artNames} apostou alto: ${topGoals} gols no total.`
-          : `Ninguém acertou o placar exato. Mas ${artNames} apostaram alto: ${topGoals} gols no total.`
-    } else {
-      // Edge case: sem dados suficientes — não emitir badge
-      recipient = ''
-      description = ''
-    }
-
-    if (recipient) {
-      badges.push({
-        key: 'mae_dina',
-        label: 'MAE DINA',
-        recipient,
-        description,
-        ...(secondaryDescription ? { secondaryDescription } : {}),
-      })
-    }
+          : `${videnteNames} acertou ${topCount} placar(es) exato(s). Poderes sobrenaturais.`,
+    })
   }
 
   // --- Badge 3: PE-FRIO ---
