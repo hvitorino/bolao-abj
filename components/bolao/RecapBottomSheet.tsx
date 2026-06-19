@@ -350,11 +350,11 @@ export function RecapBottomSheet({ data, currentUserId, isOpen, onClose }: Recap
                     rowBg = 'rgba(0, 156, 59, 0.08)'
                   }
 
-                  // Cor do nome
-                  const nameColor = isCurrentUser
-                    ? 'var(--color-primary)'
-                    : isLeader
-                      ? 'var(--color-accent)'
+                  // Cor do nome — amarelo (líder) prevalece sobre verde (usuário atual)
+                  const nameColor = isLeader
+                    ? 'var(--color-accent)'
+                    : isCurrentUser
+                      ? 'var(--color-primary)'
                       : 'var(--color-text)'
 
                   // Cor e tamanho dos pontos do líder
