@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { RecapData } from '@/lib/hooks/useDailyRecap'
+import type { DailyRecapData } from '@/lib/hooks/useDailyRecap'
 
 // ---------------------------------------------------------------------------
 // Mensagens lúdicas de abertura
@@ -148,7 +148,7 @@ const S = {
 // ---------------------------------------------------------------------------
 
 interface RecapBottomSheetProps {
-  data: RecapData | null
+  data: DailyRecapData | null
   currentUserId: string
   isOpen: boolean
   onClose: () => void
