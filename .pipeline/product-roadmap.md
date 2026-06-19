@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 43 features
-- Concluídas: 42
-- Em progresso: 1
+- Concluídas: 43
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -551,7 +551,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 43. recap-cache-visual — Cache LocalStorage e Visual Aprimorado do Recap — em progresso
+### 43. recap-cache-visual — Cache LocalStorage e Visual Aprimorado do Recap — concluída
 **Objetivo:** Eliminar o delay perceptível no Daily Recap cacheando os dados no localStorage (exibição instantânea na segunda abertura) e aumentar o apelo visual do RecapFooterButton e RecapBottomSheet, tornando o CTA mais chamativo e a hierarquia visual do bottom sheet mais clara.
 **Critérios de sucesso:**
 - Segunda abertura do bottom sheet (e reloads posteriores) exibe conteúdo instantaneamente do cache
