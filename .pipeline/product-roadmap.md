@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 46 features
+- Total: 47 features
 - Concluídas: 46
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -616,3 +616,18 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Visual segue DESIGN.md rigorosamente: JetBrains Mono, paleta verde/amarelo/azul, sem border-radius excessivo, dense, sem ícones decorativos além do label de texto
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** recap-bottom-sheet, recap-cache-visual, recap-game-cards, live-scoring, group-chat
+
+---
+
+### 47. live-today-games — Jogos do Dia no Bottom Sheet "Tá Rolando" — em progresso
+**Objetivo:** Exibir os jogos do dia corrente no `LiveTodayBottomSheet`, acima do ranking ao vivo, mostrando times com bandeiras, placar atual e status de cada partida.
+**Critérios de sucesso:**
+- `useLiveTodayRanking` retorna também a lista de jogos do dia (com campos: `id`, `home_team`, `away_team`, `home_team_code`, `away_team_code`, `home_score`, `away_score`, `status`, `match_date`) além dos `entries` já existentes
+- `LiveTodayBottomSheet` exibe uma seção "JOGOS DE HOJE" acima da tabela de ranking, com um card por jogo
+- Cada card mostra: bandeira + código do time da casa, placar central (ou `— × —` se `pending`), bandeira + código do time visitante
+- Bandeiras obtidas via `getTeamFlag()` de `lib/utils/teamFlag.ts` — sem nova dependência externa
+- Status visível em cada card: `● AO VIVO` em `color-live` com animação blink para jogos `live`; `✓ ENCERRADO` em `color-muted` para `finished`; nenhum badge para `pending`
+- Atualizações de placar chegam ao componente via Realtime já implementado no hook (sem novo canal)
+- Visual segue DESIGN.md rigorosamente: JetBrains Mono, paleta verde/amarelo/azul, dense, sem border-radius excessivo
+- `npm run lint` e `npm run build` passam sem erros novos
+**Dependências:** dual-footer-bar
