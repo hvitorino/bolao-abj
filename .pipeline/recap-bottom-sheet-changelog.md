@@ -3,7 +3,7 @@
 **Slug:** recap-bottom-sheet
 **Branch:** feature/recap-bottom-sheet
 **Data:** 2026-06-19
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

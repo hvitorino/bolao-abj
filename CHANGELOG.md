@@ -6,6 +6,17 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [recap-bottom-sheet] — Botão Fixo no Rodapé com Bottom Sheet de Resumo — 2026-06-19
+
+- `RecapFloatingButton.tsx` removido; `DailyRecapModal.tsx` removido — substituídos integralmente pelos novos componentes
+- Novo `components/bolao/RecapFooterButton.tsx`: botão fixo full-width no rodapé (`position: fixed; bottom: 0; zIndex: 50`), visível apenas quando `hasData === true && !loading`, com safe-area iOS via `env(safe-area-inset-bottom)`, hover altera cor para `color-accent`
+- Novo `components/bolao/RecapBottomSheet.tsx`: bottom sheet com animação slide-up (abertura 300ms ease-out) e slide-down (fechamento 300ms ease-in) via keyframes em `globals.css`; exibe JOGOS DE ONTEM, RANKING DO DIA e DESTAQUES (Craque do Dia, Mãe Diná, Pé-frio); fecha via backdrop, botão "✕" ou botão "FECHAR"; trava `overflow: hidden` no body; safe-area iOS no padding-bottom
+- `components/bolao/RecapController.tsx` atualizado: usa `RecapFooterButton` + `RecapBottomSheet`; lógica de abertura automática (localStorage `bolao_recap_YYYY-MM-DD` em BRT) migrada do `DailyRecapModal` para cá; `data` obtido do hook e passado como prop (sem double-fetch)
+- `components/bolao/GroupChatWidget.tsx`: chip minimizado elevado de `zIndex: 50` para `zIndex: 51` para garantir visibilidade acima do botão do rodapé
+- `app/(dashboard)/layout.tsx`: `padding-bottom: calc(4rem + env(safe-area-inset-bottom))` condicional ao `<main>` quando `activeGroup` existe, evitando que conteúdo fique coberto pelo botão fixo
+- `app/globals.css`: keyframes `@keyframes slideUp` e `@keyframes slideDown` adicionados
+- Feature 100% frontend — sem novos endpoints, sem migrations
+
 ## [daily-recap-modal-refactor] — Refatoração do Daily Recap Modal — 2026-06-19
 
 - `RecapButton` removido da barra de navegação (`nav-links.tsx`); props `groupId` e `currentUserId` removidas da interface `NavLinksProps`
