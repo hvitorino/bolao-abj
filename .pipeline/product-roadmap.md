@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 38 features
+- Total: 39 features
 - Concluídas: 38
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -498,6 +498,20 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Tabela `mcp_oauth_codes` criada via migration Supabase
 - UI de onboarding na tela de perfil/configurações exibindo URL do servidor e instruções de conexão
 **Dependências:** auth, game-navigation, predictions, scoring, ranking, grupos, grupo-ativo-persistente
+
+---
+
+### 39. daily-recap-modal — Modal de Resumo Diário — em progresso
+**Objetivo:** Exibir uma janela modal automaticamente no primeiro acesso do dia, mostrando de forma lúdica e bem-humorada as pontuações e o ranking do dia anterior, com badges/medalhas para os melhores e piores desempenhos.
+**Critérios de sucesso:**
+- Modal aparece automaticamente no primeiro acesso do dia (controle via localStorage) e não reaparece após fechar
+- Modal exibe ranking do dia anterior e pontuações individuais dos jogos daquele dia
+- Modal inclui pelo menos 3 badges diferentes (ex: craque do dia, pé-frio do dia, vidente do dia)
+- Mensagens têm tom lúdico e bem-humorado em português brasileiro
+- Modal pode ser fechado pelo usuário (botão ou clique fora)
+- Não aparece se não houver jogos finalizados no dia anterior
+- Visual segue DESIGN.md rigorosamente (monospace, paleta verde/amarelo/azul, dense)
+**Dependências:** auth, scoring, ranking, grupos, grupo-ativo-persistente
 
 ---
 
