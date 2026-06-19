@@ -6,6 +6,7 @@ import { registerJogosTools } from '@/lib/mcp/tools/jogos'
 import { registerGruposTools } from '@/lib/mcp/tools/grupos'
 import { registerRankingTools } from '@/lib/mcp/tools/ranking'
 import { registerPalpitesTools } from '@/lib/mcp/tools/palpites'
+import { registerScoringRulesTools } from '@/lib/mcp/tools/scoring-rules'
 
 function createMcpServer(userId: string): McpServer {
   const server = new McpServer({
@@ -17,6 +18,7 @@ function createMcpServer(userId: string): McpServer {
   registerGruposTools(server, userId)
   registerRankingTools(server, userId)
   registerPalpitesTools(server, userId)
+  registerScoringRulesTools(server)
 
   return server
 }
