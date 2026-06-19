@@ -103,7 +103,13 @@ export default async function DashboardLayout({
         </div>
       </header>
 
-      <main style={{ padding: '1.5rem', paddingTop: 'calc(4.75rem + 1.5rem)' }}>
+      <main
+        style={{
+          padding: '1.5rem',
+          paddingTop: 'calc(4.75rem + 1.5rem)',
+          paddingBottom: activeGroup ? 'calc(4rem + env(safe-area-inset-bottom))' : '1.5rem',
+        }}
+      >
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>{children}</div>
       </main>
 

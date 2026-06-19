@@ -274,7 +274,7 @@ export function GroupChatWidget({
           position: 'fixed',
           bottom: chipBottom,
           right: '1.5rem',
-          zIndex: 50,
+          zIndex: 51,
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem',
