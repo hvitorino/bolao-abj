@@ -186,26 +186,28 @@ const S = {
 interface DailyRecapModalProps {
   groupId: string
   currentUserId: string
+  forceOpen?: boolean
+  onClose?: () => void
 }
 
 // ---------------------------------------------------------------------------
 // Componente
 // ---------------------------------------------------------------------------
 
-export function DailyRecapModal({ groupId, currentUserId }: DailyRecapModalProps) {
+export function DailyRecapModal({ groupId, currentUserId, forceOpen, onClose }: DailyRecapModalProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { data, loading, hasData } = useDailyRecap(groupId)
   const decidedRef = useRef(false)
 
+  // Effect 1: abertura automática (roda uma vez por montagem via decidedRef)
   useEffect(() => {
     if (loading) return
-    // Executar a decisão de abertura apenas uma vez por montagem
     if (decidedRef.current) return
     decidedRef.current = true
 
     const key = getRecapKey()
 
-    // Se já foi exibido hoje, não abrir — independente de ter dados
+    // Se já foi exibido hoje, não abrir
     if (localStorage.getItem(key) === 'shown') {
       return
     }
@@ -219,7 +221,22 @@ export function DailyRecapModal({ groupId, currentUserId }: DailyRecapModalProps
     }
   }, [loading, hasData])
 
-  const handleClose = () => setIsOpen(false)
+  // Effect 2: abertura sob demanda (forceOpen=true ignora localStorage)
+  // A guarda `if (isOpen) return` evita que mudanças em `loading` ou `hasData`
+  // reabram o modal caso o usuário já o tenha fechado enquanto forceOpen ainda
+  // não foi propagado como false pelo componente pai.
+  useEffect(() => {
+    if (!forceOpen) return
+    if (loading) return
+    if (!hasData) return
+    if (isOpen) return
+    queueMicrotask(() => setIsOpen(true))
+  }, [forceOpen, loading, hasData, isOpen])
+
+  const handleClose = () => {
+    setIsOpen(false)
+    onClose?.()
+  }
 
   if (!isOpen || !data) return null
 

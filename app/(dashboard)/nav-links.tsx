@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { RecapButton } from '@/components/bolao/RecapButton'
 
 const NAV_ITEMS = [
   { href: '/jogos', label: 'JOGOS' },
@@ -12,7 +13,12 @@ const NAV_ITEMS = [
   { href: '/configuracoes', label: 'CONFIG' },
 ]
 
-export function NavLinks() {
+interface NavLinksProps {
+  groupId: string
+  currentUserId: string
+}
+
+export function NavLinks({ groupId, currentUserId }: NavLinksProps) {
   const pathname = usePathname()
 
   return (
@@ -22,6 +28,7 @@ export function NavLinks() {
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: '0.5rem',
+        overflowX: 'auto',
       }}
     >
       {NAV_ITEMS.map(({ href, label }) => {
@@ -53,6 +60,7 @@ export function NavLinks() {
           </Link>
         )
       })}
+      <RecapButton groupId={groupId} currentUserId={currentUserId} />
     </nav>
   )
 }
