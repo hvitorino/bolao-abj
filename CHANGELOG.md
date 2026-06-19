@@ -6,6 +6,17 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [daily-recap-on-demand] — Resumo Diário sob Demanda — 2026-06-19
+
+- Botão `RESUMO DE ONTEM` adicionado à barra de navegação do dashboard via novo componente `components/bolao/RecapButton.tsx`
+- Botão aparece somente quando `useDailyRecap.hasData === true` (há jogos finalizados no dia anterior); renderiza `null` durante loading e quando sem dados
+- Clicar no botão abre `DailyRecapModal` com `forceOpen={true}`, ignorando o localStorage (sem gravar nem ler a chave `bolao_recap_<data>`)
+- `DailyRecapModal` refatorado para aceitar props `forceOpen?: boolean` e `onClose?: () => void`; dois effects separados controlam abertura: Effect 1 (automático, via `decidedRef`) e Effect 2 (sob demanda, com guarda `if (isOpen) return` para evitar reabertura indevida)
+- `app/(dashboard)/nav-links.tsx` estendido com props `groupId: string` e `currentUserId: string`; `overflowX: 'auto'` adicionado para compatibilidade mobile
+- `app/(dashboard)/layout.tsx` passa `groupId={activeGroup?.id ?? ''}` e `currentUserId={user.id}` para `<NavLinks>`
+- Comportamento automático do modal (primeiro acesso do dia) preservado inalterado
+- Feature 100% frontend — sem novos endpoints, sem migrations
+
 ## [daily-recap-modal] — Modal de Resumo Diário — 2026-06-19
 
 - Hook `lib/hooks/useDailyRecap.ts` criado: calcula "ontem em BRT" via `getBRTDayBounds()`, busca jogos finalizados do dia anterior, carrega scores e predictions em paralelo, agrega ranking do dia por usuário e calcula 5 badges (CRAQUE, VIDENTE, ARTILHEIRO, APOSTADOR, PÉ-FRIO)

@@ -3,7 +3,7 @@
 **Slug:** daily-recap-on-demand
 **Branch:** feature/daily-recap-on-demand
 **Data:** 2026-06-19
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
