@@ -1,6 +1,6 @@
 # Relatório Final — Bolão da Copa
 
-Data de conclusão: 2026-06-18
+Data de conclusão: 2026-06-19
 
 ## Features Implementadas
 
@@ -41,6 +41,8 @@ Data de conclusão: 2026-06-18
 35. [predict-all-groups] — Palpite para Todos os Grupos — 2026-06-18
 36. [fix-predict-edit-propagation] — Corrigir Propagação de Palpites no Modo de Edição — 2026-06-18
 37. [mcp-bolao] — Servidor MCP Remoto do Bolão — 2026-06-18
+38. [mcp-group-scope] — Suporte a Múltiplos Grupos no Servidor MCP — 2026-06-19
+39. [daily-recap-modal] — Modal de Resumo Diário — 2026-06-19
 
 ## Resumo
 
@@ -69,6 +71,10 @@ Com isso, as 6 funcionalidades centrais do `CLAUDE.md` e todas as extensões ide
 As duas features finais fecharam o ciclo de visibilidade de palpites. `prediction-visibility` (item 32) distinguiu dois estados que antes eram indiferenciados: em jogos `pending`, terceiros com palpite passaram a ver `OCULTO` em `color-muted` (cinza) e terceiros sem palpite passaram a ver `PENDENTE` em `color-error` (vermelho); o próprio usuário sempre vê seu palpite real. A query que lista participantes por jogo passou a usar cliente `service_role` server-side apenas para selecionar `user_id, game_id` de palpites em jogos pendentes — nenhum valor de palpite de terceiro chega ao cliente antes do início da partida. A decisão arquitetural de uso de `service_role` foi documentada com justificativa explícita na spec após a primeira rodada de fix (que exigiu apenas documentação, sem mudança de código). `lib/supabase/service-server.ts` centralizou o cliente `service_role` sem duplicação. Por fim, `fix-predictions-reveal-on-live` (item 33) corrigiu a regressão decorrente dessa mesma feature: quando o status de um jogo mudava para `live` via Supabase Realtime, os palpites dos demais participantes continuavam exibidos como "-" até reload manual — porque os dados de palpites eram carregados apenas no mount, sem se atualizar quando o canal Realtime notificava mudança de status. A correção fez o hook de palpites dos participantes refazer o fetch automaticamente ao detectar a transição `pending` → `live`, garantindo que todos os clientes conectados vejam os palpites revelados de forma automática e simultânea.
 
 As quatro features finais completaram o produto. `group-chat` (item 34) criou uma funcionalidade de troca de mensagens dentro de cada grupo: um chip flutuante fixo no canto inferior direito do dashboard expande em um painel de chat com histórico em tempo real (Supabase Realtime, canal `group_messages`), contador de não lidas e suporte a envio com Enter ou botão — persistindo entre páginas do dashboard, com migration criando a tabela `group_messages` com RLS escopada por grupo. `predict-all-groups` (item 35) permitiu que, ao criar ou editar um palpite, o usuário escolha propagar aquele palpite para todos os seus grupos em que o prazo ainda não expirou, com feedback de quantos grupos foram atualizados. `fix-predict-edit-propagation` (item 36) corrigiu o bug em que o `PropagatePrompt` não aparecia após salvar um palpite em modo de edição (apenas na criação), alinhando os dois fluxos. Por fim, `mcp-bolao` (item 37) expôs o Bolão ABJ como servidor MCP remoto em `/api/mcp` com Streamable HTTP transport e fluxo OAuth completo via Supabase Auth, implementando 6 tools (`listar_jogos`, `ver_jogo`, `ver_ranking`, `meus_palpites`, `ver_palpites_jogo`, `fazer_palpite`) com todas as regras de negócio (deadline, visibilidade de palpites) respeitadas — permitindo que participantes consultem e palpitem via Claude Desktop, Claude.ai, Cursor ou qualquer cliente MCP compatível.
+
+As últimas duas features completaram o produto. `mcp-group-scope` (item 38) corrigiu o servidor MCP para operar corretamente em contextos multi-grupo: adicionou a tool `listar_grupos` — que retorna os grupos do usuário autenticado com id, nome e role — e introduziu o parâmetro `group_id` opcional (com fallback para o primeiro grupo por `joined_at ASC` e validação de membership se informado) nas tools `fazer_palpite`, `meus_palpites` e `ver_ranking`, garantindo que clientes MCP como Claude Desktop e Claude.ai consigam palpitar e consultar o ranking em qualquer grupo específico sem depender do grupo padrão. `daily-recap-modal` (item 39) fechou o roadmap com uma feature de engajamento lúdica: um modal que aparece automaticamente no primeiro acesso do dia (controle via localStorage, não reaparece após fechar) exibindo pontuações e ranking do dia anterior com tom bem-humorado em português brasileiro, pelo menos três badges temáticos (craque do dia, pé-frio do dia, vidente do dia) e respeito à regra de não exibir quando não há jogos finalizados no dia anterior; visual em monospace, paleta verde/amarelo/azul, seguindo DESIGN.md rigorosamente.
+
+Com isso, todas as 39 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 33 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
 
 ## Próximos passos sugeridos
 
