@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 41 features
+- Total: 42 features
 - Concluídas: 41
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -535,6 +535,19 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Badges Artilheiro do Dia e Apostador do Dia não existem mais
 - Layout não quebra em mobile nem desktop
 **Dependências:** daily-recap-modal, daily-recap-on-demand
+
+---
+
+### 42. recap-bottom-sheet — Botão Fixo no Rodapé com Bottom Sheet de Resumo — em progresso
+**Objetivo:** Substituir o RecapFloatingButton (FAB no canto inferior esquerdo) por um botão fixo de largura total no rodapé da tela, que ao ser clicado abre o conteúdo do resumo diário em um bottom sheet com animação suave de slide-up, respeitando safe-area no iOS e seguindo DESIGN.md.
+**Critérios de sucesso:**
+- FAB (RecapFloatingButton) é removido e substituído por um elemento fixo no rodapé (full-width ou near-full-width)
+- Clicar no elemento abre um bottom sheet com animação de slide-up suave
+- O bottom sheet exibe o mesmo conteúdo que o DailyRecapModal (ranking, badges: Craque do Dia, Mãe Diná, Pé-frio)
+- Bottom sheet fecha com animação de slide-down ao clicar no backdrop ou no botão de fechar
+- Comportamento automático do primeiro acesso do dia continua funcionando (abre o bottom sheet diretamente)
+- Layout correto em mobile e desktop; safe-area respeitada no iOS
+**Dependências:** daily-recap-modal, daily-recap-on-demand, daily-recap-modal-refactor
 
 ---
 
