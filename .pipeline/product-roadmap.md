@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 42 features
+- Total: 43 features
 - Concluídas: 42
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -548,6 +548,22 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Comportamento automático do primeiro acesso do dia continua funcionando (abre o bottom sheet diretamente)
 - Layout correto em mobile e desktop; safe-area respeitada no iOS
 **Dependências:** daily-recap-modal, daily-recap-on-demand, daily-recap-modal-refactor
+
+---
+
+### 43. recap-cache-visual — Cache LocalStorage e Visual Aprimorado do Recap — em progresso
+**Objetivo:** Eliminar o delay perceptível no Daily Recap cacheando os dados no localStorage (exibição instantânea na segunda abertura) e aumentar o apelo visual do RecapFooterButton e RecapBottomSheet, tornando o CTA mais chamativo e a hierarquia visual do bottom sheet mais clara.
+**Critérios de sucesso:**
+- Segunda abertura do bottom sheet (e reloads posteriores) exibe conteúdo instantaneamente do cache
+- Cache do dia (`bolao_recap_data_YYYY-MM-DD` em BRT) é salvo após o primeiro fetch e usado imediatamente em acessos subsequentes
+- Cache é invalidado automaticamente no dia seguinte (chave diferente por data)
+- Sincronização em background silenciosa ao usar o cache (sem bloquear a UI)
+- A lógica de "já viu hoje" (`bolao_recap_YYYY-MM-DD`) não é quebrada
+- RecapFooterButton tem apelo visual maior: CTA claramente de destaque, com mais contraste
+- RecapBottomSheet tem hierarquia visual melhorada: cabeçalho destacado, badges em evidência, ranking bem estruturado
+- Visual segue DESIGN.md rigorosamente (monospace, paleta verde/amarelo/azul, sem bordas arredondadas excessivas, estilo denso)
+- Build e lint passam sem erros
+**Dependências:** recap-bottom-sheet, daily-recap-modal, daily-recap-on-demand, daily-recap-modal-refactor
 
 ---
 
