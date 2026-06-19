@@ -3,7 +3,7 @@
 **Slug:** recap-cache-visual
 **Branch:** feature/recap-cache-visual
 **Data:** 2026-06-19
-**Status:** aguardando revisão
+**Status:** aguardando revisão (pós fix-1)
 
 ---
 
@@ -59,9 +59,23 @@ Nenhuma alteração de schema.
 
 ---
 
+## Correções Fix 1
+
+### Problema corrigido
+
+**`nameColor` — precedência de amarelo quando usuário atual é o líder**
+(`components/bolao/RecapBottomSheet.tsx`, linha ~354)
+
+O ternário foi invertido para que `isLeader` seja avaliado primeiro. Com a ordem anterior, quando `isCurrentUser === true && isLeader === true`, o nome exibia em verde (`color-primary`) em vez de amarelo (`color-accent`), contrariando a spec (seção 3.4). Após a correção, amarelo sempre prevalece para líderes, independentemente de ser o usuário atual.
+
+**Commit:** `c0b544e fix(recap-cache-visual): corrige precedência de amarelo quando usuário atual é o líder`
+
+---
+
 ## Commits realizados
 
 ```
+c0b544e fix(recap-cache-visual): corrige precedência de amarelo quando usuário atual é o líder
 70de048 feat(recap-cache-visual): aprimora hierarquia visual do RecapBottomSheet
 76b2bbd feat(recap-cache-visual): atualiza visual do RecapFooterButton — fundo verde, ponto animado
 bc34412 feat(recap-cache-visual): implementa cache localStorage em useDailyRecap
