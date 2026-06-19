@@ -3,7 +3,7 @@
 **Slug:** recap-game-cards
 **Branch:** feature/recap-game-cards
 **Data:** 2026-06-19
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

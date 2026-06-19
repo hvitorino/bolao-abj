@@ -6,6 +6,17 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [recap-game-cards] — Cards Visuais de Jogos no Recap — 2026-06-19
+
+- `components/bolao/RecapBottomSheet.tsx`: seção "JOGOS DE ONTEM" migrada de linhas de texto simples (`home_team_code × away_team_code`) para cards visuais compactos com layout grid `1fr auto 1fr`
+- Sub-componente interno `RecapGameCard` definido no mesmo arquivo (sem arquivo separado, conforme spec)
+- Coluna esquerda: bandeira emoji via `getTeamFlag(home_team_code)` (22px) acima do código do time (11px, `color-muted`, uppercase)
+- Coluna central: placar `home_score × away_score` em `color-accent`, bold, 18px, centralizado
+- Coluna direita: bandeira + código do time visitante, mesmos estilos da esquerda
+- Card com `border: 1px solid var(--color-border)`, `backgroundColor: var(--color-bg)`, sem `borderRadius`, sem `boxShadow`
+- Import de `getTeamFlag` e tipo `RecapGame` adicionados; dead code (`gameRow`, `gameScore`) removido do objeto `S`
+- Feature 100% frontend — sem novos endpoints, sem migrations, sem alterações em `useDailyRecap.ts`
+
 ## [recap-cache-visual] — Cache LocalStorage e Visual Aprimorado do Recap — 2026-06-19
 
 - `lib/hooks/useDailyRecap.ts`: adicionada função `getRecapCacheKey()` gerando chave `bolao_recap_data_YYYY-MM-DD` em BRT; lógica de cache hit (exibição instantânea + background sync silencioso) e cache miss (fetch normal com loading); cache salvo apenas quando `games.length > 0`; assinatura pública `{ data, loading, hasData }` preservada
