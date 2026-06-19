@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 46 features
-- Concluídas: 45
+- Concluídas: 46
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -604,7 +604,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 46. dual-footer-bar — Barra Dupla no Rodapé (Rolou ontem / Tá rolando) — pendente
+### 46. dual-footer-bar — Barra Dupla no Rodapé (Rolou ontem / Tá rolando) — concluída
 **Objetivo:** Substituir o `RecapFooterButton` único por uma barra fixada no rodapé com dois botões lado a lado: "Rolou ontem" (reabre o bottom sheet de recap existente, renomeado) e "Tá rolando" (novo bottom sheet com ranking ao vivo dos jogos do dia corrente, atualizado via Supabase Realtime). O chip flutuante de chat permanece inalterado.
 **Critérios de sucesso:**
 - O `RecapFooterButton` existente é substituído por um componente `DualFooterBar` com dois botões de largura igual, lado a lado, fixados no rodapé em todas as páginas do dashboard
