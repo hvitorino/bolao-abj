@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [password-recovery] — Recuperação de Senha por Email — 2026-06-19
+
+- `app/auth/callback/route.ts` (Route Handler GET público): recebe `code` PKCE da query string, chama `supabase.auth.exchangeCodeForSession(code)` via cliente server-side, redireciona para `next` (padrão `/jogos`) ou `/login?error=link-invalido` em caso de erro; parâmetro `next` validado para aceitar apenas caminhos internos (inicia com `/`)
+- `app/(auth)/esqueci-senha/page.tsx` (Client Component): estados `idle | loading | enviado | error`; chama `resetPasswordForEmail` com `redirectTo` apontando para `/auth/callback?next=/nova-senha`; mensagem de confirmação não revela existência do e-mail ("Se este e-mail estiver cadastrado..."); borda do card muda para `color-error` no estado de erro
+- `app/(auth)/nova-senha/page.tsx` (Client Component): estados `idle | loading | sucesso | error | sessao-invalida`; verificação de sessão no `useEffect` do mount; validações client-side (mínimo 6 caracteres, senhas coincidem); após sucesso exibe "✓ SENHA ATUALIZADA" e redireciona para `/jogos` em 2 segundos via `router.push`; estado `sessao-invalida` exibe erro com link para `/esqueci-senha`
+- `app/(auth)/login/page.tsx` (modificado): link "Esqueceu a senha? RECUPERAR ACESSO" adicionado entre o botão de submit e o separador de cadastro, apontando para `/esqueci-senha`
+- Sem migrations SQL, sem endpoints Ruby novos — fluxo 100% via Supabase Auth SDK client-side e Route Handler Next.js
+
 ## [group-member-history] — Palpites e Pontuação ao Adicionar Participante a Grupo — 2026-06-19
 
 - `supabase/migrations/20260619000001_copy_predictions_on_join.sql` (espelhada em `db/migrations/20260619_copy_predictions_on_join.sql`) — migration com três partes:
