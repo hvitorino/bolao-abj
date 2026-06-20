@@ -1,21 +1,22 @@
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
 
 /**
- * Converte um timestamptz ISO 8601 (UTC) para data local em BRT (YYYY-MM-DD).
- * Usado para mapear match_date de games para a data do dia em que o jogo ocorre
- * no fuso de Brasília.
- */
-/**
- * Extrai a data UTC de um timestamptz ISO 8601 no formato YYYY-MM-DD.
- * Usado para agrupar match_date de games por data UTC (não local).
+ * Agrupa match_date pelo calendário US Eastern (America/New_York, UTC-4 no verão).
  *
- * Exemplos:
- *   '2026-06-19T23:30:00Z'      -> '2026-06-19'
- *   '2026-06-19T03:00:00+00:00' -> '2026-06-19'
- *   '2026-06-20T00:00:00Z'      -> '2026-06-20'
+ * A ESPN categoriza jogos pelo dia em horário Eastern, que é o fuso de referência
+ * da Copa 2026. Jogos tarde da noite no Pacífico (ex: 20h PDT = 23h EDT)
+ * ficam no mesmo dia do calendário ESPN, o que BRT (UTC-3) ou UTC não capturam
+ * corretamente quando o horário UTC cai após meia-noite.
+ *
+ * Exemplos (Copa 2026):
+ *   '2026-06-20T03:00:00Z' (TUR×PAR, 23h EDT 19/06) → '2026-06-19'
+ *   '2026-06-19T20:00:00Z' (USA×AUS, 16h EDT 19/06) → '2026-06-19'
  */
-export function matchDateToUTCDate(isoUtcString: string): string {
-  return new Date(isoUtcString).toISOString().slice(0, 10)
+export function matchDateToETDate(isoUtcString: string): string {
+  const [month, day, year] = new Date(isoUtcString)
+    .toLocaleDateString('en-US', { timeZone: 'America/New_York' })
+    .split('/')
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
 }
 
 export function matchDateToLocalDate(isoUtcString: string): string {
@@ -54,42 +55,43 @@ export function todayInBrasilia(): string {
 }
 
 /**
- * Converte um dia no fuso de Brasília (America/Sao_Paulo) para os instantes UTC
+ * Converte um dia no fuso US Eastern (America/New_York) para os instantes UTC
  * correspondentes ao início e fim desse dia.
  *
- * O offset UTC é calculado dinamicamente via Intl para lidar corretamente com
- * horário de verão (UTC-3 no inverno, UTC-2 no horário de verão brasiliense).
+ * A Copa 2026 usa Eastern Time como fuso de referência do calendário ESPN.
+ * O offset é calculado dinamicamente via Intl para lidar com DST
+ * (EDT = UTC-4 de março a novembro, que cobre todo o torneio).
  *
- * @param brasiliaDayString - Data no formato YYYY-MM-DD representando um dia em BRT
- * @returns { start, end } - ISO 8601 UTC correspondentes a 00:00:00 e 23:59:59 BRT
+ * @param etDayString - Data no formato YYYY-MM-DD representando um dia em ET
+ * @returns { start, end } - ISO 8601 UTC correspondentes a 00:00:00 e 23:59:59 ET
  */
-export function dayBoundsInUTC(brasiliaDayString: string): { start: string; end: string } {
-  const [yearStr, monthStr, dayStr] = brasiliaDayString.split('-')
+export function dayBoundsInUTC(etDayString: string): { start: string; end: string } {
+  const [yearStr, monthStr, dayStr] = etDayString.split('-')
   const year = parseInt(yearStr, 10)
   const month = parseInt(monthStr, 10) - 1 // 0-based para Date.UTC
   const day = parseInt(dayStr, 10)
 
-  // Amostramos o meio-dia UTC do dia em questão para determinar o offset BRT
+  // Amostramos o meio-dia UTC do dia em questão para determinar o offset ET
   // sem ambiguidade de transição DST (que ocorre à meia-noite local).
   const noonUTC = new Date(Date.UTC(year, month, day, 12, 0, 0))
-  const brtHour = parseInt(
-    new Intl.DateTimeFormat('pt-BR', {
-      timeZone: 'America/Sao_Paulo',
+  const etHour = parseInt(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
       hour: '2-digit',
       hour12: false,
     })
       .formatToParts(noonUTC)
-      .find((p) => p.type === 'hour')?.value ?? '9',
+      .find((p) => p.type === 'hour')?.value ?? '8',
     10,
   )
 
-  // offsetHours: quantas horas adicionar ao horário BRT para obter UTC
-  // Ex.: BRT UTC-3 → meio-dia UTC aparece como 09:00 BRT → offsetHours = 12 - 9 = 3
-  const offsetHours = 12 - brtHour
+  // offsetHours: quantas horas adicionar ao horário ET para obter UTC
+  // Ex.: EDT (UTC-4) → meio-dia UTC aparece como 08:00 ET → offsetHours = 12 - 8 = 4
+  const offsetHours = 12 - etHour
 
-  // Meia-noite BRT em UTC: dia T(offsetHours):00:00Z
+  // Meia-noite ET em UTC: dia T(offsetHours):00:00Z
   const start = new Date(Date.UTC(year, month, day, offsetHours, 0, 0))
-  // 23:59:59 BRT em UTC: dia+1 T(offsetHours):00:00Z - 1 segundo
+  // 23:59:59 ET em UTC: dia+1 T(offsetHours):00:00Z - 1 segundo
   const end = new Date(Date.UTC(year, month, day + 1, offsetHours, 0, 0) - 1000)
 
   return { start: start.toISOString(), end: end.toISOString() }
