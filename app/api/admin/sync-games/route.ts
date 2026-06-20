@@ -152,7 +152,7 @@ interface GameRecord {
   venue: string | null
 }
 
-function mapEventToGame(event: EspnEvent, espnCalendarDay: string): GameRecord {
+function mapEventToGame(event: EspnEvent): GameRecord {
   const competition = event.competitions[0]
   if (!competition) {
     throw new Error('missing competitions data')
@@ -182,8 +182,12 @@ function mapEventToGame(event: EspnEvent, espnCalendarDay: string): GameRecord {
   const round = translateRound(headline)
   const venue = competition.venue?.fullName ?? null
 
-  // Converte espnCalendarDay de YYYYMMDD → YYYY-MM-DD
-  const matchDay = `${espnCalendarDay.slice(0, 4)}-${espnCalendarDay.slice(4, 6)}-${espnCalendarDay.slice(6, 8)}`
+  // Calcula match_day em Pacific Time (PDT = UTC-7) — fuso mais a oeste
+  // dos locais da Copa 2026. Garante que jogos até 23h local fiquem no
+  // dia correto independente do venue (EDT, CDT, MDT ou PDT).
+  const matchDay = new Date(new Date(event.date).getTime() - 7 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10)
 
   return {
     espn_id: event.id,
@@ -301,7 +305,7 @@ async function syncHandler(request: Request) {
     for (const event of events) {
       let gameRecord: GameRecord
       try {
-        gameRecord = mapEventToGame(event, dateStr)
+        gameRecord = mapEventToGame(event)
       } catch (err) {
         result.errors.push({
           espn_id: event.id ?? 'unknown',
