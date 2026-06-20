@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 50 features
-- Concluídas: 49
-- Em progresso: 1
+- Concluídas: 50
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -648,7 +648,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 50. calendar-utc-fix — Corrigir Agrupamento de Jogos no Calendário para Usar UTC — em progresso
+### 50. calendar-utc-fix — Corrigir Agrupamento de Jogos no Calendário para Usar UTC — concluída
 **Objetivo:** Jogos no início da madrugada em BRT (UTC-3) estão sendo exibidos no dia seguinte ao correto porque o frontend agrupa por data local em vez de data UTC. Corrigir para que o agrupamento e exibição de dias no calendário usem sempre a data em UTC do campo `match_date`.
 **Critérios de sucesso:**
 - O jogo Turquia x Paraguai aparece no dia 19 no calendário (não no dia 20)
