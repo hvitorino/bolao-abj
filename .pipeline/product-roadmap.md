@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 49 features
+- Total: 50 features
 - Concluídas: 49
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -645,6 +645,16 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Open redirect prevenido no callback (parâmetro `next` validado para caminhos internos)
 **Dependências:** auth
 **Observação de conclusão:** aprovada sem rodada de fix em 2026-06-19; merge `feature/password-recovery` na main confirmado (commit `370246c`). Sem migrations SQL, sem endpoints Ruby — fluxo 100% via Supabase Auth SDK client-side e Route Handler Next.js. Componentes `<Button>` e `<Input>` reutilizados; design Elifoot seguido rigorosamente.
+
+---
+
+### 50. calendar-utc-fix — Corrigir Agrupamento de Jogos no Calendário para Usar UTC — em progresso
+**Objetivo:** Jogos no início da madrugada em BRT (UTC-3) estão sendo exibidos no dia seguinte ao correto porque o frontend agrupa por data local em vez de data UTC. Corrigir para que o agrupamento e exibição de dias no calendário usem sempre a data em UTC do campo `match_date`.
+**Critérios de sucesso:**
+- O jogo Turquia x Paraguai aparece no dia 19 no calendário (não no dia 20)
+- Todos os jogos são agrupados pela data em UTC do campo `match_date`
+- Nenhuma regressão nas demais funcionalidades de navegação de jogos
+**Dependências:** game-navigation, date-chips-nav
 
 ---
 
