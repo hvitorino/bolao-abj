@@ -73,7 +73,7 @@ export default function GameCard({
     game.id,
     groupId,
     participants,
-    game.status as 'pending' | 'live' | 'finished'
+    liveGame.status as 'pending' | 'live' | 'finished'
   )
 
   const isLive = liveGame.status === 'live'
