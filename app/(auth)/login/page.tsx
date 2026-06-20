@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import LoginClient from './client'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Login — Bolão da Copa',
 }
