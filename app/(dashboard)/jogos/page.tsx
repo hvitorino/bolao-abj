@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { dayBoundsInUTC, isValidDateString, matchDateToLocalDate, todayInBrasilia } from '@/lib/date'
+import { dayBoundsInUTC, isValidDateString, matchDateToUTCDate, todayInBrasilia } from '@/lib/date'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service-server'
 import { resolveActiveGroup } from '@/lib/active-group'
@@ -93,7 +93,7 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
   // Converter para datas BRT únicas e ordenadas
   const availableDates: string[] = allMatchDates
     ? Array.from(
-        new Set(allMatchDates.map((row) => matchDateToLocalDate(row.match_date)))
+        new Set(allMatchDates.map((row) => matchDateToUTCDate(row.match_date)))
       ).sort()
     : []
 

@@ -5,6 +5,19 @@ const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
  * Usado para mapear match_date de games para a data do dia em que o jogo ocorre
  * no fuso de Brasília.
  */
+/**
+ * Extrai a data UTC de um timestamptz ISO 8601 no formato YYYY-MM-DD.
+ * Usado para agrupar match_date de games por data UTC (não local).
+ *
+ * Exemplos:
+ *   '2026-06-19T23:30:00Z'      -> '2026-06-19'
+ *   '2026-06-19T03:00:00+00:00' -> '2026-06-19'
+ *   '2026-06-20T00:00:00Z'      -> '2026-06-20'
+ */
+export function matchDateToUTCDate(isoUtcString: string): string {
+  return new Date(isoUtcString).toISOString().slice(0, 10)
+}
+
 export function matchDateToLocalDate(isoUtcString: string): string {
   return new Date(isoUtcString)
     .toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })
