@@ -3,7 +3,7 @@
 **Slug:** password-recovery
 **Branch:** feature/password-recovery
 **Data:** 2026-06-19
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
