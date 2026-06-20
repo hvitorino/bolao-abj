@@ -6,6 +6,13 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [calendar-utc-fix] — Corrigir Agrupamento de Jogos no Calendário para Usar UTC — 2026-06-20
+
+- `lib/date.ts` — adicionada função `matchDateToUTCDate(isoUtcString: string): string` que extrai a data UTC de um timestamptz ISO 8601 via `new Date(isoUtcString).toISOString().slice(0, 10)`, sem conversão de fuso horário; `matchDateToLocalDate` preservada para uso por outras features
+- `app/(dashboard)/jogos/page.tsx` — import atualizado para `matchDateToUTCDate`; geração de `availableDates` substituída de `matchDateToLocalDate` para `matchDateToUTCDate`, fazendo cada chip de data representar o dia UTC do `match_date`
+- Corrige bug em que jogos com `match_date` UTC em um determinado dia apareciam em outro chip por conta da conversão para BRT (UTC-3)
+- Sem alterações em `DateChipsNav`, `GameCard`, `dayBoundsInUTC` ou banco de dados
+
 ## [password-recovery] — Recuperação de Senha por Email — 2026-06-19
 
 - `app/auth/callback/route.ts` (Route Handler GET público): recebe `code` PKCE da query string, chama `supabase.auth.exchangeCodeForSession(code)` via cliente server-side, redireciona para `next` (padrão `/jogos`) ou `/login?error=link-invalido` em caso de erro; parâmetro `next` validado para aceitar apenas caminhos internos (inicia com `/`)

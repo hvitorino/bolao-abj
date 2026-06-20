@@ -3,7 +3,7 @@
 **Slug:** calendar-utc-fix
 **Branch:** feature/calendar-utc-fix
 **Data:** 2026-06-20
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
