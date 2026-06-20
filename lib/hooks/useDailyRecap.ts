@@ -41,46 +41,49 @@ export interface DailyRecapData {
 }
 
 // ---------------------------------------------------------------------------
-// Helpers de data (BRT = UTC-3)
+// Helpers de data (ET = UTC-4, EDT vigente durante todo o torneio jun-jul)
 // ---------------------------------------------------------------------------
 
 /**
- * Retorna os limites ISO 8601 (em UTC) para "ontem em BRT".
+ * Retorna os limites ISO 8601 (em UTC) para "ontem em ET".
  *
- * Exemplo: agora = 2026-06-19T01:30Z (= 22:30 BRT de 18/06)
- *   → nowBRT = 2026-06-18T22:30  → "ontem em BRT" = 2026-06-17
- *   → yesterdayStart = 2026-06-17T03:00Z  (= 00:00 BRT de 17/06)
- *   → yesterdayEnd   = 2026-06-18T03:00Z  (= 00:00 BRT de 18/06)
+ * Usa Eastern Time (UTC-4, EDT) como referência — o mesmo fuso do calendário
+ * ESPN da Copa 2026. Jogos como TUR×PAR às 2026-06-20T03:00:00Z (23h EDT 19/06)
+ * ficam dentro do dia 19/06 ET; com BRT (UTC-3) esse jogo caía fora do limite
+ * por uma questão de boundary exato (03:00Z == fim do dia BRT).
+ *
+ * Exemplo: agora = 2026-06-20T03:30Z (= 23:30 EDT de 19/06)
+ *   → nowET = 2026-06-19T23:30  → "ontem em ET" = 2026-06-18
+ *   → yesterdayStart = 2026-06-18T04:00Z  (= 00:00 EDT de 18/06)
+ *   → yesterdayEnd   = 2026-06-19T04:00Z  (= 00:00 EDT de 19/06)
  */
-function getBRTDayBounds(): { yesterdayStart: string; yesterdayEnd: string } {
+function getETDayBounds(): { yesterdayStart: string; yesterdayEnd: string } {
   const nowUTC = new Date()
-  // Deriva a hora atual em BRT subtraindo 3h
-  const nowBRT = new Date(nowUTC.getTime() - 3 * 60 * 60 * 1000)
+  const nowET = new Date(nowUTC.getTime() - 4 * 60 * 60 * 1000)
 
-  // "Ontem" no calendário BRT
-  const yesterdayBRT = new Date(nowBRT)
-  yesterdayBRT.setUTCDate(yesterdayBRT.getUTCDate() - 1)
+  const yesterdayET = new Date(nowET)
+  yesterdayET.setUTCDate(yesterdayET.getUTCDate() - 1)
 
-  // 00:00 BRT = 03:00 UTC — início do dia de ontem em BRT (como UTC)
+  // 00:00 EDT = 04:00 UTC — início do dia de ontem em ET (como UTC)
   const ys = new Date(
     Date.UTC(
-      yesterdayBRT.getUTCFullYear(),
-      yesterdayBRT.getUTCMonth(),
-      yesterdayBRT.getUTCDate(),
-      3,
+      yesterdayET.getUTCFullYear(),
+      yesterdayET.getUTCMonth(),
+      yesterdayET.getUTCDate(),
+      4,
       0,
       0,
       0
     )
   )
 
-  // 00:00 BRT do dia seguinte = 03:00 UTC do dia seguinte (= fim do dia ontem BRT)
+  // 00:00 EDT do dia seguinte = 04:00 UTC do dia seguinte (= fim do dia ontem ET)
   const ye = new Date(
     Date.UTC(
-      yesterdayBRT.getUTCFullYear(),
-      yesterdayBRT.getUTCMonth(),
-      yesterdayBRT.getUTCDate() + 1,
-      3,
+      yesterdayET.getUTCFullYear(),
+      yesterdayET.getUTCMonth(),
+      yesterdayET.getUTCDate() + 1,
+      4,
       0,
       0,
       0
@@ -93,15 +96,15 @@ function getBRTDayBounds(): { yesterdayStart: string; yesterdayEnd: string } {
   }
 }
 
-/** Formata a data de ontem em BRT como "DD/MM/YYYY". */
-function getYesterdayLabelBRT(): string {
+/** Formata a data de ontem em ET como "DD/MM/YYYY". */
+function getYesterdayLabelET(): string {
   const nowUTC = new Date()
-  const nowBRT = new Date(nowUTC.getTime() - 3 * 60 * 60 * 1000)
-  const yBRT = new Date(nowBRT)
-  yBRT.setUTCDate(yBRT.getUTCDate() - 1)
-  const dd = String(yBRT.getUTCDate()).padStart(2, '0')
-  const mm = String(yBRT.getUTCMonth() + 1).padStart(2, '0')
-  const yyyy = yBRT.getUTCFullYear()
+  const nowET = new Date(nowUTC.getTime() - 4 * 60 * 60 * 1000)
+  const yET = new Date(nowET)
+  yET.setUTCDate(yET.getUTCDate() - 1)
+  const dd = String(yET.getUTCDate()).padStart(2, '0')
+  const mm = String(yET.getUTCMonth() + 1).padStart(2, '0')
+  const yyyy = yET.getUTCFullYear()
   return `${dd}/${mm}/${yyyy}`
 }
 
@@ -215,14 +218,14 @@ function calcBadges(
 /**
  * Retorna a chave de cache para os dados do recap do dia atual em BRT.
  * Formato: `bolao_recap_data_YYYY-MM-DD`
- * A chave muda quando a data BRT muda, invalidando o cache automaticamente.
+ * A chave muda quando a data ET muda, invalidando o cache automaticamente.
  */
 function getRecapCacheKey(): string {
   const nowUTC = new Date()
-  const nowBRT = new Date(nowUTC.getTime() - 3 * 60 * 60 * 1000)
-  const yyyy = nowBRT.getUTCFullYear()
-  const mm = String(nowBRT.getUTCMonth() + 1).padStart(2, '0')
-  const dd = String(nowBRT.getUTCDate()).padStart(2, '0')
+  const nowET = new Date(nowUTC.getTime() - 4 * 60 * 60 * 1000)
+  const yyyy = nowET.getUTCFullYear()
+  const mm = String(nowET.getUTCMonth() + 1).padStart(2, '0')
+  const dd = String(nowET.getUTCDate()).padStart(2, '0')
   return `bolao_recap_data_${yyyy}-${mm}-${dd}`
 }
 
@@ -249,9 +252,9 @@ export function useDailyRecap(groupId: string): {
 
     async function fetchFromSupabase(): Promise<DailyRecapData | null> {
       const supabase = createClient()
-      const { yesterdayStart, yesterdayEnd } = getBRTDayBounds()
+      const { yesterdayStart, yesterdayEnd } = getETDayBounds()
 
-      // 1. Jogos finalizados do dia anterior em BRT
+      // 1. Jogos finalizados do dia anterior em ET
       const { data: gamesRaw, error: gamesError } = await supabase
         .from('games')
         .select(
@@ -360,7 +363,7 @@ export function useDailyRecap(groupId: string): {
       }))
 
       return {
-        yesterdayLabel: getYesterdayLabelBRT(),
+        yesterdayLabel: getYesterdayLabelET(),
         games,
         rankingDay,
         badges,

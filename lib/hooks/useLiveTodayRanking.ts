@@ -29,27 +29,32 @@ export interface LiveTodayGame {
 }
 
 // ---------------------------------------------------------------------------
-// Helpers de data (BRT = UTC-3)
+// Helpers de data (ET = UTC-4, EDT vigente durante todo o torneio jun-jul)
 // ---------------------------------------------------------------------------
 
 /**
- * Retorna os limites ISO 8601 (em UTC) para "hoje em BRT".
+ * Retorna os limites ISO 8601 (em UTC) para "hoje em ET".
  *
- * Exemplo: agora = 2026-06-19T14:30Z (= 11:30 BRT de 19/06)
- *   → nowBRT = 2026-06-19T11:30  → "hoje em BRT" = 2026-06-19
- *   → todayStart (UTC) = 2026-06-19T03:00Z  (= 00:00 BRT de 19/06)
- *   → todayEnd   (UTC) = 2026-06-20T03:00Z  (= 00:00 BRT de 20/06)
+ * Usa Eastern Time (UTC-4, EDT) — o mesmo fuso do calendário ESPN da Copa 2026.
+ * Jogos como TUR×PAR às 2026-06-20T03:00:00Z (23h EDT 19/06) pertencem ao dia
+ * 19/06 ET; com BRT (UTC-3) esse jogo era incluído erroneamente em "hoje" (20/06 BRT)
+ * enquanto o calendário já o mostrava no dia 19.
+ *
+ * Exemplo: agora = 2026-06-19T14:30Z (= 10:30 EDT de 19/06)
+ *   → nowET = 2026-06-19T10:30  → "hoje em ET" = 2026-06-19
+ *   → todayStart (UTC) = 2026-06-19T04:00Z  (= 00:00 EDT de 19/06)
+ *   → todayEnd   (UTC) = 2026-06-20T04:00Z  (= 00:00 EDT de 20/06)
  */
-function getBRTTodayBounds(): { todayStart: string; todayEnd: string } {
+function getETTodayBounds(): { todayStart: string; todayEnd: string } {
   const nowUTC = new Date()
-  const nowBRT = new Date(nowUTC.getTime() - 3 * 60 * 60 * 1000)
+  const nowET = new Date(nowUTC.getTime() - 4 * 60 * 60 * 1000)
 
-  const year = nowBRT.getUTCFullYear()
-  const month = nowBRT.getUTCMonth()
-  const day = nowBRT.getUTCDate()
+  const year = nowET.getUTCFullYear()
+  const month = nowET.getUTCMonth()
+  const day = nowET.getUTCDate()
 
-  const todayStart = new Date(Date.UTC(year, month, day, 3, 0, 0, 0))
-  const todayEnd = new Date(Date.UTC(year, month, day + 1, 3, 0, 0, 0))
+  const todayStart = new Date(Date.UTC(year, month, day, 4, 0, 0, 0))
+  const todayEnd = new Date(Date.UTC(year, month, day + 1, 4, 0, 0, 0))
 
   return {
     todayStart: todayStart.toISOString(),
@@ -80,7 +85,7 @@ export function useLiveTodayRanking(groupId: string): {
 
     try {
       const supabase = createClient()
-      const { todayStart, todayEnd } = getBRTTodayBounds()
+      const { todayStart, todayEnd } = getETTodayBounds()
 
       // 1. Buscar jogos de hoje
       const { data: gamesRaw, error: gamesError } = await supabase

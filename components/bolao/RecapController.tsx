@@ -13,10 +13,10 @@ import { LiveTodayBottomSheet } from './LiveTodayBottomSheet'
 
 function getRecapKey(): string {
   const nowUTC = new Date()
-  const nowBRT = new Date(nowUTC.getTime() - 3 * 60 * 60 * 1000)
-  const yyyy = nowBRT.getUTCFullYear()
-  const mm = String(nowBRT.getUTCMonth() + 1).padStart(2, '0')
-  const dd = String(nowBRT.getUTCDate()).padStart(2, '0')
+  const nowET = new Date(nowUTC.getTime() - 4 * 60 * 60 * 1000)
+  const yyyy = nowET.getUTCFullYear()
+  const mm = String(nowET.getUTCMonth() + 1).padStart(2, '0')
+  const dd = String(nowET.getUTCDate()).padStart(2, '0')
   return `bolao_recap_${yyyy}-${mm}-${dd}`
 }
 
