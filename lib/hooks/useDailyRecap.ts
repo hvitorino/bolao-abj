@@ -41,71 +41,30 @@ export interface DailyRecapData {
 }
 
 // ---------------------------------------------------------------------------
-// Helpers de data (ET = UTC-4, EDT vigente durante todo o torneio jun-jul)
+// Helpers de data — baseados em match_day (dia do calendário ESPN, armazenado no DB)
 // ---------------------------------------------------------------------------
 
 /**
- * Retorna os limites ISO 8601 (em UTC) para "ontem em ET".
+ * Retorna "ontem" no calendário ESPN (UTC-5, CDT — fuso mais conservador
+ * dos locais da Copa 2026) como YYYY-MM-DD, para filtrar por match_day.
  *
- * Usa Eastern Time (UTC-4, EDT) como referência — o mesmo fuso do calendário
- * ESPN da Copa 2026. Jogos como TUR×PAR às 2026-06-20T03:00:00Z (23h EDT 19/06)
- * ficam dentro do dia 19/06 ET; com BRT (UTC-3) esse jogo caía fora do limite
- * por uma questão de boundary exato (03:00Z == fim do dia BRT).
- *
- * Exemplo: agora = 2026-06-20T03:30Z (= 23:30 EDT de 19/06)
- *   → nowET = 2026-06-19T23:30  → "ontem em ET" = 2026-06-18
- *   → yesterdayStart = 2026-06-18T04:00Z  (= 00:00 EDT de 18/06)
- *   → yesterdayEnd   = 2026-06-19T04:00Z  (= 00:00 EDT de 19/06)
+ * O filtro é .eq('match_day', yesterday), sem cálculo de bounds UTC.
  */
-function getETDayBounds(): { yesterdayStart: string; yesterdayEnd: string } {
+function getESPNYesterday(): string {
   const nowUTC = new Date()
-  const nowET = new Date(nowUTC.getTime() - 4 * 60 * 60 * 1000)
-
-  const yesterdayET = new Date(nowET)
-  yesterdayET.setUTCDate(yesterdayET.getUTCDate() - 1)
-
-  // 00:00 EDT = 04:00 UTC — início do dia de ontem em ET (como UTC)
-  const ys = new Date(
-    Date.UTC(
-      yesterdayET.getUTCFullYear(),
-      yesterdayET.getUTCMonth(),
-      yesterdayET.getUTCDate(),
-      4,
-      0,
-      0,
-      0
-    )
-  )
-
-  // 00:00 EDT do dia seguinte = 04:00 UTC do dia seguinte (= fim do dia ontem ET)
-  const ye = new Date(
-    Date.UTC(
-      yesterdayET.getUTCFullYear(),
-      yesterdayET.getUTCMonth(),
-      yesterdayET.getUTCDate() + 1,
-      4,
-      0,
-      0,
-      0
-    )
-  )
-
-  return {
-    yesterdayStart: ys.toISOString(),
-    yesterdayEnd: ye.toISOString(),
-  }
+  const nowESPN = new Date(nowUTC.getTime() - 5 * 60 * 60 * 1000)
+  const y = new Date(nowESPN)
+  y.setUTCDate(y.getUTCDate() - 1)
+  const yyyy = y.getUTCFullYear()
+  const mm = String(y.getUTCMonth() + 1).padStart(2, '0')
+  const dd = String(y.getUTCDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
 }
 
-/** Formata a data de ontem em ET como "DD/MM/YYYY". */
-function getYesterdayLabelET(): string {
-  const nowUTC = new Date()
-  const nowET = new Date(nowUTC.getTime() - 4 * 60 * 60 * 1000)
-  const yET = new Date(nowET)
-  yET.setUTCDate(yET.getUTCDate() - 1)
-  const dd = String(yET.getUTCDate()).padStart(2, '0')
-  const mm = String(yET.getUTCMonth() + 1).padStart(2, '0')
-  const yyyy = yET.getUTCFullYear()
-  return `${dd}/${mm}/${yyyy}`
+/** Formata ontem no calendário ESPN como "DD/MM/YYYY" para exibição. */
+function getYesterdayLabel(): string {
+  const d = getESPNYesterday()
+  return `${d.slice(8, 10)}/${d.slice(5, 7)}/${d.slice(0, 4)}`
 }
 
 // ---------------------------------------------------------------------------
@@ -252,17 +211,16 @@ export function useDailyRecap(groupId: string): {
 
     async function fetchFromSupabase(): Promise<DailyRecapData | null> {
       const supabase = createClient()
-      const { yesterdayStart, yesterdayEnd } = getETDayBounds()
+      const yesterday = getESPNYesterday()
 
-      // 1. Jogos finalizados do dia anterior em ET
+      // 1. Jogos finalizados do dia anterior (filtrado por match_day do calendário ESPN)
       const { data: gamesRaw, error: gamesError } = await supabase
         .from('games')
         .select(
           'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date'
         )
         .eq('status', 'finished')
-        .gte('match_date', yesterdayStart)
-        .lt('match_date', yesterdayEnd)
+        .eq('match_day', yesterday)
 
       if (gamesError || !gamesRaw || gamesRaw.length === 0) {
         return null
@@ -363,7 +321,7 @@ export function useDailyRecap(groupId: string): {
       }))
 
       return {
-        yesterdayLabel: getYesterdayLabelET(),
+        yesterdayLabel: getYesterdayLabel(),
         games,
         rankingDay,
         badges,

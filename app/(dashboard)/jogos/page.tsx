@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { dayBoundsInUTC, isValidDateString, matchDateToETDate, todayInBrasilia } from '@/lib/date'
+import { isValidDateString, todayInBrasilia } from '@/lib/date'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service-server'
 import { resolveActiveGroup } from '@/lib/active-group'
@@ -25,10 +25,6 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
   // Determinar data a exibir
   const currentDate =
     dateParam && isValidDateString(dateParam) ? dateParam : todayInBrasilia()
-
-  // Calcular limites do dia em BRT convertidos para UTC
-  // Jogos como 2026-06-12T00:00:00Z (21:00 BRT de 11/06) devem aparecer no dia 11/06 BRT
-  const { start: startOfDay, end: endOfDay } = dayBoundsInUTC(currentDate)
 
   const supabase = await createClient()
 
@@ -82,19 +78,17 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
     supabase
       .from('games')
       .select('*')
-      .gte('match_date', startOfDay)
-      .lte('match_date', endOfDay),
+      .eq('match_day', currentDate),
     supabase
       .from('games')
-      .select('match_date')
-      .order('match_date', { ascending: true }),
+      .select('match_day')
+      .not('match_day', 'is', null)
+      .order('match_day', { ascending: true }),
   ])
 
-  // Converter para datas BRT únicas e ordenadas
+  // Datas únicas ordenadas (match_day já é o dia do calendário ESPN)
   const availableDates: string[] = allMatchDates
-    ? Array.from(
-        new Set(allMatchDates.map((row) => matchDateToETDate(row.match_date)))
-      ).sort()
+    ? Array.from(new Set(allMatchDates.map((row) => row.match_day as string))).sort()
     : []
 
   const STATUS_ORDER: Record<string, number> = { live: 0, pending: 1, finished: 2 }

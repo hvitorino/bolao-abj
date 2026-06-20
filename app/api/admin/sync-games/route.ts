@@ -144,6 +144,7 @@ interface GameRecord {
   home_team_code: string
   away_team_code: string
   match_date: string
+  match_day: string  // data do calendário ESPN (YYYY-MM-DD), usada para agrupamento
   home_score: number | null
   away_score: number | null
   status: GameStatus
@@ -151,7 +152,7 @@ interface GameRecord {
   venue: string | null
 }
 
-function mapEventToGame(event: EspnEvent): GameRecord {
+function mapEventToGame(event: EspnEvent, espnCalendarDay: string): GameRecord {
   const competition = event.competitions[0]
   if (!competition) {
     throw new Error('missing competitions data')
@@ -181,6 +182,9 @@ function mapEventToGame(event: EspnEvent): GameRecord {
   const round = translateRound(headline)
   const venue = competition.venue?.fullName ?? null
 
+  // Converte espnCalendarDay de YYYYMMDD → YYYY-MM-DD
+  const matchDay = `${espnCalendarDay.slice(0, 4)}-${espnCalendarDay.slice(4, 6)}-${espnCalendarDay.slice(6, 8)}`
+
   return {
     espn_id: event.id,
     home_team: translateTeam(homeCompetitor.team.displayName),
@@ -188,6 +192,7 @@ function mapEventToGame(event: EspnEvent): GameRecord {
     home_team_code: getTeamCode(homeCompetitor.team),
     away_team_code: getTeamCode(awayCompetitor.team),
     match_date: event.date,
+    match_day: matchDay,
     home_score: homeScore,
     away_score: awayScore,
     status: gameStatus,
@@ -296,7 +301,7 @@ async function syncHandler(request: Request) {
     for (const event of events) {
       let gameRecord: GameRecord
       try {
-        gameRecord = mapEventToGame(event)
+        gameRecord = mapEventToGame(event, dateStr)
       } catch (err) {
         result.errors.push({
           espn_id: event.id ?? 'unknown',
