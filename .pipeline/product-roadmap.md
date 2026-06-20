@@ -3,8 +3,8 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 48 features
-- Concluídas: 48
+- Total: 49 features
+- Concluídas: 49
 - Em progresso: 0
 - Pendentes: 0
 
@@ -631,6 +631,20 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Visual segue DESIGN.md rigorosamente: JetBrains Mono, paleta verde/amarelo/azul, dense, sem border-radius excessivo
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** dual-footer-bar
+
+---
+
+### 49. password-recovery — Recuperação de Senha por Email — concluída
+**Objetivo:** Adicionar o fluxo completo de recuperação de senha ao bolão, integrado ao Supabase Auth. O usuário que esqueceu a senha pode solicitar um link de redefinição informando o e-mail cadastrado; o Supabase envia o e-mail automaticamente; ao clicar no link, o usuário é redirecionado para uma tela dentro do produto onde define a nova senha.
+**Critérios de sucesso:**
+- Link "Esqueceu a senha?" na tela de login apontando para `/esqueci-senha`
+- Tela `/esqueci-senha` com formulário de e-mail, estados de loading/confirmação/erro
+- Mensagem de confirmação não revela se o e-mail existe (segurança por padrão)
+- Route Handler `/auth/callback` que troca o code PKCE por sessão e redireciona para `/nova-senha`
+- Tela `/nova-senha` com validação client-side, verificação de sessão e redirect automático após sucesso
+- Open redirect prevenido no callback (parâmetro `next` validado para caminhos internos)
+**Dependências:** auth
+**Observação de conclusão:** aprovada sem rodada de fix em 2026-06-19; merge `feature/password-recovery` na main confirmado (commit `370246c`). Sem migrations SQL, sem endpoints Ruby — fluxo 100% via Supabase Auth SDK client-side e Route Handler Next.js. Componentes `<Button>` e `<Input>` reutilizados; design Elifoot seguido rigorosamente.
 
 ---
 
