@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 55 features
-- Concluídas: 54
+- Concluídas: 55
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -716,7 +716,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 55. perfil-com-estatisticas — Perfil com Estatísticas — pendente
+### 55. perfil-com-estatisticas — Perfil com Estatísticas — concluída
 **Objetivo:** Página `/perfil` com histórico de desempenho do participante: taxa de acerto de vencedor, taxa de placares exatos, média de pontos por jogo, sequência atual, melhor sequência histórica, palpites feitos vs jogos disponíveis.
 **Critérios de sucesso:**
 - Página `/perfil` acessível pelo usuário logado
