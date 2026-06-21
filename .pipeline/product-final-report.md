@@ -1,7 +1,7 @@
 # Relatório Final — Bolão da Copa
 
-Data de conclusão: 2026-06-19
-Total de features concluídas: 46
+Data de conclusão: 2026-06-21
+Total de features concluídas: 52
 
 ## Features Implementadas
 
@@ -50,7 +50,13 @@ Total de features concluídas: 46
 43. [recap-cache-visual] — Cache LocalStorage e Visual Aprimorado do Recap — 2026-06-19
 44. [recap-game-cards] — Cards Visuais de Jogos no Recap — 2026-06-19
 45. [mcp-scoring-rules] — Tool MCP: Consultar Regras de Pontuação — 2026-06-19
-46. [dual-footer-bar] — Barra Dupla no Rodapé (Rolou ontem / Tá rolando) — 2026-06-19
+46. [dual-footer-bar] — Barra Dupla no Rodapé (Rolou ontem / Tá rolando) — 2026-06-20
+47. [live-today-games] — Jogos do Dia no Bottom Sheet "Tá Rolando" — 2026-06-20
+48. [group-member-history] — Palpites e Pontuação ao Adicionar Participante a Grupo — 2026-06-21
+49. [password-recovery] — Recuperação de Senha por Email — 2026-06-19
+50. [calendar-utc-fix] — Corrigir Agrupamento de Jogos no Calendário para Usar UTC — 2026-06-21
+51. [ranking-predictions-count] — Total de Palpites no Ranking — 2026-06-21
+52. [ranking-scouts] — Scouts no Ranking — 2026-06-21
 
 ## Resumo
 
@@ -86,7 +92,9 @@ As últimas três features finalizaram o produto com foco em engajamento e exper
 
 As quatro features finais completaram o produto com foco em experiência e acessibilidade via MCP. `recap-cache-visual` (item 43) eliminou o delay perceptível na segunda abertura do bottom sheet: dados do recap são cacheados no localStorage com chave por data em BRT (`bolao_recap_data_YYYY-MM-DD`), exibidos instantaneamente em acessos subsequentes com sincronização em background silenciosa; além disso, o `RecapFooterButton` ganhou maior destaque e o `RecapBottomSheet` teve sua hierarquia visual aprimorada (cabeçalho em evidência, badges mais destacados, ranking mais legível). `recap-game-cards` (item 44) substituiu a linha de texto simples na seção "JOGOS DE ONTEM" do bottom sheet por cards compactos horizontais com bandeiras emoji (`getTeamFlag()`), código abreviado do time e placar centralizado — sem nova dependência externa e sem alteração no hook `useDailyRecap`. `mcp-scoring-rules` (item 45) adicionou a tool `consultar_regras_pontuacao` ao servidor MCP, expondo de forma estruturada todas as regras de pontuação (eventos, pontos, cumulatividade, empate e exemplo concreto) para agentes e usuários via qualquer cliente MCP compatível — sem parâmetros de entrada, seguindo o padrão de schema Zod já estabelecido pelas demais tools. Por fim, `dual-footer-bar` (item 46) substituiu o `RecapFooterButton` único por um componente `DualFooterBar` com dois botões de largura igual fixados no rodapé: "Rolou ontem" abre o `RecapBottomSheet` existente sem regressão, e "Tá rolando" abre um novo `LiveTodayBottomSheet` com ranking ao vivo dos jogos do dia corrente (jogos com `match_date` igual à data atual em BRT), atualizado em tempo real via Supabase Realtime no canal `scores`; cada botão fica oculto individualmente quando não há conteúdo relevante (sem jogos finalizados ontem / sem jogos hoje), e o chip flutuante de chat permanece inalterado.
 
-Com isso, todas as 46 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 40 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
+As seis features finais completaram o produto. `live-today-games` (item 47) enriqueceu o `LiveTodayBottomSheet` adicionando uma seção "JOGOS DE HOJE" acima do ranking ao vivo: cards compactos com bandeiras emoji (`getTeamFlag()`), códigos abreviados dos times e placar centralizado (ou `— × —` se pending), com badge `● AO VIVO` em `color-live` com animação blink para jogos em andamento e `✓ ENCERRADO` em `color-muted` para finalizados — tudo via Realtime já configurado no hook, sem novo canal. `group-member-history` (item 48) fechou uma lacuna de experiência em grupos: ao adicionar um participante via convite (nominal ou link), seus palpites e pontuações já existentes passaram a ser computados automaticamente no novo grupo, sem duplicação de dados, expandindo apenas o escopo de visualização — o ranking do grupo recém-criado reflete imediatamente o histórico completo do usuário recém-adicionado. `password-recovery` (item 49) adicionou o fluxo completo de recuperação de senha via Supabase Auth: link "Esqueceu a senha?" na tela de login, página `/esqueci-senha` com formulário, confirmação que não revela existência do e-mail (segurança por padrão), Route Handler `/auth/callback` com troca PKCE e redirect para `/nova-senha`, prevenção de open redirect e validação client-side na nova senha. `calendar-utc-fix` (item 50) corrigiu o bug em que jogos no início da madrugada em BRT (UTC-3) apareciam no dia seguinte ao correto: o agrupamento de jogos no calendário passou a usar sempre a data em UTC de `match_date`, garantindo consistência com o campo do banco. `ranking-predictions-count` (item 51) adicionou o total de palpites de cada jogador ao ranking como indicador de engajamento: a função Postgres `get_ranking()` foi recriada via migration adicionando `predictions_count bigint` por LEFT JOIN com subquery em `predictions`, e a coluna `PALP.` foi adicionada ao `RankingTable` visível em mobile, com tipos migrados de `int` para `bigint`. Por fim, `ranking-scouts` (item 52) fechou o roadmap exibindo badges de scout ao lado de cada participante no ranking: mãe diná (mais placares exatos), manja muito (mais vencedores acertados), cego em tiroteio (mais vencedores errados), sumido (menos palpites com mínimo 1) e onde está wally? (nunca palpitou) — calculados com base nos dados reais de `predictions` e `scores` em uma única query eficiente (sem N+1), com emojis representativos e tooltip explicativo, e possibilidade de múltiplos badges simultâneos por participante.
+
+Com isso, todas as 52 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 46 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
 
 ## Próximos passos sugeridos
 
@@ -109,3 +117,7 @@ Com isso, todas as 46 features do roadmap — as 6 funcionalidades centrais do `
 - **Expiração de cookie `bolao_active_group`:** validar o tempo de vida do cookie de grupo ativo e o comportamento quando o usuário é removido do grupo que está marcado como ativo (hoje coberto pelo membership check de `resolveActiveGroup()`, que retorna `forbidden`, mas vale um teste manual explícito)
 - **Referência ao exemplo bônus em "REGRAS ESPECIAIS":** `exemplos-por-regra` não alterou o bloco "REGRAS ESPECIAIS" de `/como-pontuar` para citar o novo exemplo complementar de empate (mudança opcional da spec, não aplicada para minimizar diff); revisitar se fizer sentido amarrar visualmente os dois blocos
 - **Suite de testes para `ScoringExample`/`/como-pontuar`:** a validação dos 6 exemplos isolados contra `calculateScore()` foi feita via script ad-hoc descartado após a conferência; formalizar como teste automatizado (Jest) evitaria reconferência manual a cada futura mudança em `lib/scoring.ts`
+- **Scouts em tempo real:** os badges de scout (`ranking-scouts`) são calculados via query no mount do ranking; se o grupo crescer, considerar caching server-side ou materialização dos scouts em uma view/tabela auxiliar para evitar recálculo frequente
+- **Scouts adicionais:** novos perfis de scout podem ser adicionados conforme o bolão evolui — ex: "azarado" (mais +2 acertados mas zero +5), "consistente" (menor desvio padrão de pontos por jogo), "madrugador" (mais palpites feitos com mais de 24h de antecedência)
+- **Ranking com filtro por fase:** permitir ao usuário ver o ranking restrito a uma rodada específica (ex: "Fase de Grupos", "Oitavas") sem afetar o ranking geral persistido
+- **Compartilhamento de ranking:** exportar o ranking do grupo como imagem ou texto formatado para compartilhamento em WhatsApp/Telegram, aproveitando os scouts como elemento visual diferenciador
