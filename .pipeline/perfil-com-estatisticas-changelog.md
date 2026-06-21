@@ -3,7 +3,7 @@
 **Slug:** perfil-com-estatisticas
 **Branch:** feature/perfil-com-estatisticas
 **Data:** 2026-06-21
-**Status:** aguardando revisão (pós fix-1)
+**Status:** aprovado
 
 ---
 

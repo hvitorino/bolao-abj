@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [perfil-com-estatisticas] — Perfil com Estatísticas — 2026-06-21
+
+- Cria a página `/perfil` (rota protegida no dashboard) com estatísticas pessoais do usuário no grupo ativo
+- `supabase/migrations/20260621400000_create_profile_stats_function.sql` — função `get_profile_stats(p_group_id uuid, p_user_id uuid)` com `SECURITY DEFINER STABLE`; retorna 6 métricas (`predictions_made`, `finished_games`, `winner_correct`, `exact_correct`, `total_points`, `best_streak`); lógica de `best_streak` via gaps-and-islands com dois `ROW_NUMBER()`
+- `app/api/profile/stats/route.ts` — endpoint `GET /api/profile/stats`: autenticação Bearer JWT, resolução tripla de `group_id` (query param → cookie → fallback `joined_at ASC`), verificação de membership, `Promise.all` para `get_profile_stats` + `get_streak_for_group` + `profiles` + `groups`; retorna 401/403/404/500 nos casos corretos; `user_id` sempre extraído do JWT
+- `app/(dashboard)/perfil/page.tsx` — Server Component com proteção de rota, `resolveActiveGroup()`, mensagem de erro em `color-error` se sem grupo
+- `components/bolao/ProfileStats.tsx` — Client Component com estados `loading | error | populated`; layout estilo terminal Elifoot (JetBrains Mono, `border-radius: 0`, `box-shadow: none`); percentuais em `color-win` >= 50% / `color-muted` < 50%; exibe `—` quando sem palpites; mobile-first com `flexWrap: 'wrap'`
+- `app/(dashboard)/nav-links.tsx` — item `{ href: '/perfil', label: 'PERFIL' }` adicionado como 7º item da navegação
+
 ## [streak-de-acertos] — Sequência de Acertos — 2026-06-21
 
 - Exibe no ranking a sequência atual de acertos consecutivos de cada participante como indicador `🔥×N` inline na célula PARTICIPANTE (visível apenas quando streak > 0)
