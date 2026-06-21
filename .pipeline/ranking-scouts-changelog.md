@@ -3,7 +3,7 @@
 **Slug:** ranking-scouts
 **Branch:** feature/ranking-scouts
 **Data:** 2026-06-21
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
