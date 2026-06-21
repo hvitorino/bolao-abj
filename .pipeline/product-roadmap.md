@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 56 features
+- Total: 57 features
 - Concluídas: 56
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -735,3 +735,17 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Exibe estatísticas pessoais do grupo ativo
 - Estilo visual consistente com DESIGN.md (terminal/monospace)
 **Dependências:** auth, ranking, predictions, scoring, grupos, streak-de-acertos
+
+---
+
+### 57. fix-perfil-stats-trophies — Correção: Estatísticas e Troféus na Aba de Perfil — pendente
+**Objetivo:** Corrigir os cálculos de estatísticas na aba de Perfil para considerar apenas jogos `finished` ou `live` (excluindo `pending`) e redesenhar a exibição de troféus para que todos sejam visíveis em grid com descrição sempre exposta.
+**Critérios de sucesso:**
+- ACERTO DE VENCEDOR: taxa calculada como `winner_correct / palpites_em_jogos_finished_ou_live`, excluindo palpites em jogos `pending` do denominador
+- PLACAR EXATO: idem — denominador apenas com palpites em jogos `finished` ou `live`
+- MÉDIA DE PONTOS: `total_points / palpites_em_jogos_finished_ou_live`, excluindo palpites em jogos `pending`
+- Nenhum troféu secreto: todos os 15 troféus visíveis independentemente de estarem desbloqueados ou não
+- Troféus desbloqueados e não-desbloqueados aparecem no mesmo grid (sem separação em seções distintas)
+- Descrição de cada troféu sempre visível (não escondida atrás de toggle, hover ou collapse)
+- `npm run lint` e `npm run build` passam sem erros novos
+**Dependências:** perfil-redesign, perfil-com-estatisticas
