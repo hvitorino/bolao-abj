@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 57 features
-- Concluídas: 56
+- Concluídas: 57
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -738,7 +738,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 57. fix-perfil-stats-trophies — Correção: Estatísticas e Troféus na Aba de Perfil — pendente
+### 57. fix-perfil-stats-trophies — Correção: Estatísticas e Troféus na Aba de Perfil — concluída
 **Objetivo:** Corrigir os cálculos de estatísticas na aba de Perfil para considerar apenas jogos `finished` ou `live` (excluindo `pending`) e redesenhar a exibição de troféus para que todos sejam visíveis em grid com descrição sempre exposta.
 **Critérios de sucesso:**
 - ACERTO DE VENCEDOR: taxa calculada como `winner_correct / palpites_em_jogos_finished_ou_live`, excluindo palpites em jogos `pending` do denominador
