@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 58 features
-- Concluídas: 57
+- Concluídas: 58
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -752,7 +752,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 58. trophy-contributing-games — Confrontos Contribuintes por Troféu — pendente
+### 58. trophy-contributing-games — Confrontos Contribuintes por Troféu — concluída
 **Objetivo:** Dentro do card de cada troféu na aba de perfil, exibir abaixo da descrição a lista de jogos finalizados que efetivamente contribuíram para o progresso daquele troféu, no formato: Bandeira [Placar] x [Placar] Bandeira.
 **Critérios de sucesso:**
 - Cada card de troféu exibe, abaixo da descrição, a lista de confrontos que contaram para aquele troféu
