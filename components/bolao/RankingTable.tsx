@@ -1,10 +1,9 @@
 'use client'
 
+import { useRankingRealtime } from '@/lib/hooks/useRankingRealtime'
 import { useLivePointsByUser } from '@/lib/hooks/useLivePointsByUser'
-import { useRoundRanking } from '@/lib/hooks/useRoundRanking'
 import type { RankingEntry } from '@/lib/types/ranking'
 import { RankingRow } from './RankingRow'
-import { RoundChips } from './RoundChips'
 import { SCOUT_META } from './ScoutBadges'
 
 interface RankingTableProps {
@@ -54,110 +53,63 @@ const MONO: React.CSSProperties = {
 }
 
 export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
-  const {
-    selectedRound,
-    setSelectedRound,
-    availableRounds,
-    roundsLoading,
-    ranking,
-    loading,
-    error,
-    lastUpdatedAt,
-  } = useRoundRanking(groupId)
-
+  const { ranking, loading, error, lastUpdatedAt } = useRankingRealtime(groupId)
   const { livePoints, loading: livePointsLoading } = useLivePointsByUser(groupId)
 
-  const isRoundMode = selectedRound !== 'GERAL'
+  const hasLivePoints = Object.values(livePoints).some((points) => points > 0)
+  const adjustedRanking = applyLivePoints(ranking, livePoints)
 
-  // Live points só se aplicam no modo GERAL
-  const adjustedRanking = isRoundMode
-    ? ranking
-    : applyLivePoints(ranking, livePoints)
-
-  const hasLivePoints = !isRoundMode && Object.values(livePoints).some((pts) => pts > 0)
-
-  // Enquanto carrega no modo GERAL, aguarda também live points
-  const isLoading = loading || (!isRoundMode && livePointsLoading)
-
-  if (isLoading) {
+  if (loading || livePointsLoading) {
     return (
-      <>
-        {/* Chips ficam visíveis mesmo durante o loading */}
-        {!roundsLoading && (
-          <RoundChips
-            rounds={availableRounds}
-            selectedRound={selectedRound}
-            onSelect={setSelectedRound}
-          />
-        )}
-        <div
-          style={{
-            ...MONO,
-            padding: '2rem',
-            textAlign: 'center',
-            fontSize: '14px',
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-          }}
-        >
-          CARREGANDO RANKING...
-        </div>
-      </>
+      <div
+        style={{
+          padding: '2rem',
+          textAlign: 'center',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          fontSize: '14px',
+          color: 'var(--color-muted)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+        }}
+      >
+        CARREGANDO RANKING...
+      </div>
     )
   }
 
   if (error) {
     return (
-      <>
-        {!roundsLoading && (
-          <RoundChips
-            rounds={availableRounds}
-            selectedRound={selectedRound}
-            onSelect={setSelectedRound}
-          />
-        )}
-        <div
-          style={{
-            ...MONO,
-            padding: '2rem',
-            textAlign: 'center',
-            fontSize: '14px',
-            color: 'var(--color-error)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-          }}
-        >
-          ✗ {error}
-        </div>
-      </>
+      <div
+        style={{
+          padding: '2rem',
+          textAlign: 'center',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          fontSize: '14px',
+          color: 'var(--color-error)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+        }}
+      >
+        ✗ {error}
+      </div>
     )
   }
 
   if (ranking.length === 0) {
     return (
-      <>
-        {!roundsLoading && (
-          <RoundChips
-            rounds={availableRounds}
-            selectedRound={selectedRound}
-            onSelect={setSelectedRound}
-          />
-        )}
-        <div
-          style={{
-            ...MONO,
-            padding: '2rem',
-            textAlign: 'center',
-            fontSize: '14px',
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-          }}
-        >
-          NENHUM PARTICIPANTE NO RANKING AINDA
-        </div>
-      </>
+      <div
+        style={{
+          padding: '2rem',
+          textAlign: 'center',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          fontSize: '14px',
+          color: 'var(--color-muted)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+        }}
+      >
+        NENHUM PARTICIPANTE NO RANKING AINDA
+      </div>
     )
   }
 
@@ -172,244 +124,117 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
   }
 
   return (
-    <>
-      {/* Chips de fase — fora do border da tabela */}
-      {!roundsLoading && (
-        <RoundChips
-          rounds={availableRounds}
-          selectedRound={selectedRound}
-          onSelect={setSelectedRound}
-        />
-      )}
+    <div
+      style={{
+        border: '1px solid var(--color-border)',
+        backgroundColor: 'var(--color-surface)',
+      }}
+    >
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr
+            style={{
+              backgroundColor: 'var(--color-surface)',
+              borderBottom: '2px solid var(--color-border)',
+            }}
+          >
+            <th style={{ ...thStyle, textAlign: 'right', width: '3rem' }}>#</th>
+            <th style={{ ...thStyle, textAlign: 'left' }}>PARTICIPANTE</th>
+            <th style={{ ...thStyle, textAlign: 'center', minWidth: '5rem' }}>PONTOS</th>
+            <th style={{ ...thStyle, textAlign: 'center', minWidth: '4.5rem' }}>PALP.</th>
+            <th
+              className="hidden md:table-cell"
+              style={{ ...thStyle, textAlign: 'center', minWidth: '5rem' }}
+            >
+              APROVEIT.
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {adjustedRanking.map((entry) => (
+            <RankingRow
+              key={entry.user_id}
+              entry={entry}
+              isCurrentUser={entry.user_id === currentUserId}
+              isLeader={entry.rank_position === 1 && entry.total_points > 0}
+            />
+          ))}
+        </tbody>
+      </table>
 
+      {/* Rodapé com legenda */}
       <div
         style={{
-          border: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-surface)',
+          padding: '0.5rem 1rem',
+          borderTop: '1px solid var(--color-border)',
+          display: 'flex',
+          gap: '1.5rem',
+          flexWrap: 'wrap',
+          alignItems: 'center',
         }}
       >
-        {/* Cabeçalho descritivo da fase selecionada */}
-        {isRoundMode && (
-          <div
-            style={{
-              padding: '0.4rem 0.75rem',
-              borderBottom: '1px solid var(--color-border)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.1rem',
-            }}
-          >
-            <span
-              style={{
-                ...MONO,
-                fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                color: 'var(--color-text)',
-                fontWeight: 'bold',
-              }}
-            >
-              RANKING — BOLÃO DA COPA
-            </span>
-            <span
-              style={{
-                ...MONO,
-                fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                color: 'var(--color-muted)',
-              }}
-            >
-              FASE: {selectedRound.toUpperCase()}
-            </span>
-          </div>
+        <span style={{ ...MONO, fontSize: '11px', color: 'var(--color-accent)' }}>► LÍDER</span>
+        <span style={{ ...MONO, fontSize: '11px', color: 'var(--color-primary)' }}>■ VOCÊ</span>
+        <span style={{ ...MONO, fontSize: '11px', color: 'var(--color-muted)' }}>
+          {ranking.length} PARTICIPANTE{ranking.length !== 1 ? 'S' : ''}
+        </span>
+        {hasLivePoints && (
+          <span style={{ ...MONO, fontSize: '11px', color: 'var(--color-live)' }}>
+            ██ AO VIVO
+          </span>
         )}
+        {lastUpdatedAt && (
+          <span
+            style={{ ...MONO, fontSize: '11px', color: 'var(--color-muted)', marginLeft: 'auto' }}
+          >
+            ⏱{' '}
+            {lastUpdatedAt.toLocaleTimeString('pt-BR', {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            })}
+          </span>
+        )}
+      </div>
 
-        {/* Tabela principal */}
-        <table
+      {/* Legenda dos scouts e streak */}
+      <div
+        style={{
+          padding: '0.5rem 1rem 0.75rem',
+          borderTop: '1px solid var(--color-border)',
+          display: 'flex',
+          gap: '1rem',
+          flexWrap: 'wrap',
+        }}
+      >
+        <span
           style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-          }}
-        >
-          {/* Thead */}
-          <thead>
-            <tr
-              style={{
-                backgroundColor: 'var(--color-surface)',
-                borderBottom: '2px solid var(--color-border)',
-              }}
-            >
-              <th
-                style={{
-                  ...thStyle,
-                  textAlign: 'right',
-                  width: '3rem',
-                }}
-              >
-                #
-              </th>
-              <th
-                style={{
-                  ...thStyle,
-                  textAlign: 'left',
-                }}
-              >
-                PARTICIPANTE
-              </th>
-              <th
-                style={{
-                  ...thStyle,
-                  textAlign: 'center',
-                  minWidth: '5rem',
-                }}
-              >
-                PONTOS
-              </th>
-              {/* Coluna PALP. oculta no modo por rodada */}
-              {!isRoundMode && (
-                <th
-                  style={{
-                    ...thStyle,
-                    textAlign: 'center',
-                    minWidth: '4.5rem',
-                  }}
-                >
-                  PALP.
-                </th>
-              )}
-              <th
-                className="hidden md:table-cell"
-                style={{
-                  ...thStyle,
-                  textAlign: 'center',
-                  minWidth: '5rem',
-                }}
-              >
-                APROVEIT.
-              </th>
-            </tr>
-          </thead>
-
-          {/* Tbody */}
-          <tbody>
-            {adjustedRanking.map((entry) => (
-              <RankingRow
-                key={entry.user_id}
-                entry={entry}
-                isCurrentUser={entry.user_id === currentUserId}
-                isLeader={entry.rank_position === 1 && entry.total_points > 0}
-                hideScouts={isRoundMode}
-                hidePalpites={isRoundMode}
-              />
-            ))}
-          </tbody>
-        </table>
-
-        {/* Rodapé com legenda */}
-        <div
-          style={{
-            padding: '0.5rem 1rem',
-            borderTop: '1px solid var(--color-border)',
-            display: 'flex',
-            gap: '1.5rem',
-            flexWrap: 'wrap',
+            ...MONO,
+            fontSize: '11px',
+            color: 'var(--color-win)',
+            display: 'inline-flex',
             alignItems: 'center',
+            gap: '0.25rem',
           }}
         >
+          🔥 SEQUÊNCIA DE ACERTOS
+        </span>
+        {Object.entries(SCOUT_META).map(([key, { emoji, label }]) => (
           <span
-            style={{
-              ...MONO,
-              fontSize: '11px',
-              color: 'var(--color-accent)',
-            }}
-          >
-            ► LÍDER
-          </span>
-          <span
-            style={{
-              ...MONO,
-              fontSize: '11px',
-              color: 'var(--color-primary)',
-            }}
-          >
-            ■ VOCÊ
-          </span>
-          <span
+            key={key}
             style={{
               ...MONO,
               fontSize: '11px',
               color: 'var(--color-muted)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.25rem',
             }}
           >
-            {ranking.length} PARTICIPANTE{ranking.length !== 1 ? 'S' : ''}
+            {emoji} {label}
           </span>
-          {hasLivePoints && !isRoundMode && (
-            <span
-              style={{
-                ...MONO,
-                fontSize: '11px',
-                color: 'var(--color-live)',
-              }}
-            >
-              ██ AO VIVO
-            </span>
-          )}
-          {lastUpdatedAt && !isRoundMode && (
-            <span
-              style={{
-                ...MONO,
-                fontSize: '11px',
-                color: 'var(--color-muted)',
-                marginLeft: 'auto',
-              }}
-            >
-              ⏱ {lastUpdatedAt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-            </span>
-          )}
-        </div>
-
-        {/* Legenda dos scouts e streak — apenas no modo GERAL */}
-        {!isRoundMode && (
-          <div
-            style={{
-              padding: '0.5rem 1rem 0.75rem',
-              borderTop: '1px solid var(--color-border)',
-              display: 'flex',
-              gap: '1rem',
-              flexWrap: 'wrap',
-            }}
-          >
-            <span
-              style={{
-                ...MONO,
-                fontSize: '11px',
-                color: 'var(--color-win)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.25rem',
-              }}
-            >
-              🔥 SEQUÊNCIA DE ACERTOS
-            </span>
-            {Object.entries(SCOUT_META).map(([key, { emoji, label }]) => (
-              <span
-                key={key}
-                style={{
-                  ...MONO,
-                  fontSize: '11px',
-                  color: 'var(--color-muted)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.25rem',
-                }}
-              >
-                {emoji} {label}
-              </span>
-            ))}
-          </div>
-        )}
+        ))}
       </div>
-    </>
+    </div>
   )
 }
