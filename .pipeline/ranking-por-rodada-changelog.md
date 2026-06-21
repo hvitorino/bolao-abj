@@ -3,7 +3,7 @@
 **Slug:** ranking-por-rodada
 **Branch:** feature/ranking-por-rodada
 **Data:** 2026-06-21
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

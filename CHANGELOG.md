@@ -6,6 +6,17 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [ranking-por-rodada] — Ranking por Rodada — 2026-06-21
+
+- Adiciona filtro de fase na tela `/ranking`: faixa de chips acima da tabela com "GERAL" padrão e chips por fase (Grupos A–L, Oitavas, Quartas, Semi, Final)
+- `supabase/migrations/20260621200000_ranking_by_round.sql` — funções `get_ranking_by_round(uuid, text)` e `get_available_rounds(uuid)`; predicado `AND (s.game_id IS NULL OR g.round = p_round)` garante que membros com 0 pontos na fase apareçam
+- `app/api/ranking/rounds/route.ts` — novo endpoint `GET /api/ranking/rounds?group_id=`; JWT + membership; retorna `{ rounds: string[] }` via RPC `get_available_rounds`
+- `app/api/ranking/route.ts` — suporte a query param `round`; modo por rodada chama `get_ranking_by_round`, omite scouts e `predictions_count`; modo GERAL preservado intacto
+- `components/bolao/RoundChips.tsx` — novo componente; chip "GERAL" fixo + chips de fase; ordenação lógica da Copa; scroll horizontal sem barra visível; estilo Elifoot (borderRadius 0, monospace 11px uppercase)
+- `lib/hooks/useRoundRanking.ts` — novo hook; modo GERAL delega ao `useRankingRealtime` (Realtime ativo); modo por rodada faz fetch estático sem Realtime; guard `__noop__` impede fetch desnecessário no mount
+- `components/bolao/RankingTable.tsx` — integra `RoundChips` acima da tabela; subtítulo "FASE: X" no modo por rodada; oculta coluna PALP. e scouts no modo por rodada; ignora live points no modo por rodada
+- `components/bolao/RankingRow.tsx` — props `hideScouts?` e `hidePalpites?` para controle contextual
+
 ## [ranking-scouts] — Scouts no Ranking — 2026-06-21
 
 - Exibe badges de "scout" ao lado do nome de cada participante no ranking, identificando perfis de comportamento no bolão (mãe diná, manja muito, cego em tiroteio, sumido, onde está wally?)
