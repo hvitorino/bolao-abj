@@ -9,6 +9,14 @@ function isValidUUID(str: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str)
 }
 
+interface ContributingGame {
+  game_id: string
+  home_team_code: string
+  away_team_code: string
+  home_score: number
+  away_score: number
+}
+
 interface TrophyResult {
   id: string
   name: string
@@ -16,6 +24,7 @@ interface TrophyResult {
   unlocked_at: string | null
   progress: number | null
   progress_max: number | null
+  contributing_games: ContributingGame[]
 }
 
 const TROPHY_NAMES: Record<string, string> = {
@@ -40,7 +49,8 @@ function makeTrophy(
   id: string,
   unlockedAt: string | null,
   progress: number | null = null,
-  progressMax: number | null = null
+  progressMax: number | null = null,
+  contributingGames: ContributingGame[] = []
 ): TrophyResult {
   return {
     id,
@@ -49,6 +59,7 @@ function makeTrophy(
     unlocked_at: unlockedAt,
     progress,
     progress_max: progressMax,
+    contributing_games: contributingGames,
   }
 }
 
@@ -65,6 +76,31 @@ function extractMatchDate(row: unknown): string | null {
   }
   const g = games as Record<string, unknown>
   return (g.match_date as string) ?? null
+}
+
+// Extrai um ContributingGame de uma row com join em games
+// Retorna null se game_id ausente ou se home_score/away_score forem null
+function extractContributingGame(row: unknown): ContributingGame | null {
+  if (!row || typeof row !== 'object') return null
+  const r = row as Record<string, unknown>
+  const gameId = r.game_id as string | undefined
+  if (!gameId) return null
+  const games = r.games
+  if (!games) return null
+  const g = Array.isArray(games)
+    ? (games[0] as Record<string, unknown>)
+    : (games as Record<string, unknown>)
+  if (!g) return null
+  const homeScore = g.home_score as number | null | undefined
+  const awayScore = g.away_score as number | null | undefined
+  if (homeScore === null || homeScore === undefined || awayScore === null || awayScore === undefined) return null
+  return {
+    game_id: gameId,
+    home_team_code: g.home_team_code as string,
+    away_team_code: g.away_team_code as string,
+    home_score: homeScore,
+    away_score: awayScore,
+  }
 }
 
 async function calcTrophies(
@@ -88,10 +124,10 @@ async function calcTrophies(
     totalWinnerRes,
     rankingRes,
   ] = await Promise.all([
-    // estreia: primeiro palpite
+    // estreia: primeiro palpite (com join em games para contributing_games)
     sc
       .from('predictions')
-      .select('submitted_at')
+      .select('submitted_at, game_id, games(home_team_code, away_team_code, home_score, away_score)')
       .eq('user_id', userId)
       .eq('group_id', groupId)
       .order('submitted_at', { ascending: true })
@@ -101,7 +137,7 @@ async function calcTrophies(
     // abriu_o_placar: primeiro score com winner > 0
     sc
       .from('scores')
-      .select('game_id, games(match_date)')
+      .select('game_id, games(match_date, home_team_code, away_team_code, home_score, away_score)')
       .eq('user_id', userId)
       .eq('group_id', groupId)
       .filter('breakdown->>winner', 'gt', '0')
@@ -109,10 +145,10 @@ async function calcTrophies(
       .limit(1)
       .maybeSingle(),
 
-    // cravada: todos placares exatos (para count e primeiro)
+    // cravada: todos placares exatos (para count e contributing_games)
     sc
       .from('scores')
-      .select('game_id, games(match_date)')
+      .select('game_id, games(match_date, home_team_code, away_team_code, home_score, away_score)')
       .eq('user_id', userId)
       .eq('group_id', groupId)
       .filter('breakdown->>exact', 'gt', '0')
@@ -121,7 +157,7 @@ async function calcTrophies(
     // rei_da_goleada: primeiro bônus de goleada
     sc
       .from('scores')
-      .select('game_id, games(match_date)')
+      .select('game_id, games(match_date, home_team_code, away_team_code, home_score, away_score)')
       .eq('user_id', userId)
       .eq('group_id', groupId)
       .filter('breakdown->>goleada', 'gt', '0')
@@ -135,27 +171,26 @@ async function calcTrophies(
     // profeta: primeiros 5 placares exatos em ordem cronológica
     sc
       .from('scores')
-      .select('game_id, games(match_date)')
+      .select('game_id, games(match_date, home_team_code, away_team_code, home_score, away_score)')
       .eq('user_id', userId)
       .eq('group_id', groupId)
       .filter('breakdown->>exact', 'gt', '0')
       .order('calculated_at', { ascending: true })
       .limit(5),
 
-    // vidente: primeiros 25 acertos de vencedor
+    // vidente: todos acertos de vencedor (sem limit para contributing_games completo)
     sc
       .from('scores')
-      .select('game_id, games(match_date)')
+      .select('game_id, games(match_date, home_team_code, away_team_code, home_score, away_score)')
       .eq('user_id', userId)
       .eq('group_id', groupId)
       .filter('breakdown->>winner', 'gt', '0')
-      .order('calculated_at', { ascending: true })
-      .limit(25),
+      .order('calculated_at', { ascending: true }),
 
-    // artilheiro: todos scores em ordem cronológica (para running sum)
+    // artilheiro: todos scores em ordem cronológica (para running sum e contributing_games)
     sc
       .from('scores')
-      .select('game_id, points, games(match_date)')
+      .select('game_id, points, games(match_date, home_team_code, away_team_code, home_score, away_score)')
       .eq('user_id', userId)
       .eq('group_id', groupId)
       .order('calculated_at', { ascending: true }),
@@ -196,17 +231,26 @@ async function calcTrophies(
 
   // --- Estreia ---
   const estreiaAt = (estreiaRes.data as { submitted_at: string } | null)?.submitted_at ?? null
+  const estreiaGame = extractContributingGame(estreiaRes.data)
+  const estreiaGames = estreiaGame ? [estreiaGame] : []
 
   // --- Abriu o placar ---
   const abrioAt = extractMatchDate(abrioRes.data)
+  const abrioGame = extractContributingGame(abrioRes.data)
+  const abrioGames = abrioGame ? [abrioGame] : []
 
   // --- Cravada ---
   const cravadaItems = (cravadaRes.data ?? []) as unknown[]
   const cravadaCount = cravadaItems.length
   const cravadaAt = cravadaCount > 0 ? extractMatchDate(cravadaItems[0]) : null
+  const cravadaGames = cravadaItems
+    .map(extractContributingGame)
+    .filter((g): g is ContributingGame => g !== null)
 
   // --- Rei da goleada ---
   const goleadaAt = goleadaRes.data ? extractMatchDate(goleadaRes.data) : null
+  const goleadaGame = extractContributingGame(goleadaRes.data)
+  const goleadaGames = goleadaGame ? [goleadaGame] : []
 
   // --- Sequências ---
   const statsRow = (streakStatsRes.data as Array<Record<string, unknown>> | null)?.[0]
@@ -215,7 +259,7 @@ async function calcTrophies(
   // Buscar histórico completo de scores em ordem cronológica para reconstruir sequência
   const { data: streakHistory } = await sc
     .from('scores')
-    .select('game_id, breakdown, games(match_date)')
+    .select('game_id, breakdown, games(match_date, home_team_code, away_team_code, home_score, away_score)')
     .eq('user_id', userId)
     .eq('group_id', groupId)
     .order('calculated_at', { ascending: true })
@@ -238,18 +282,46 @@ async function calcTrophies(
     return null
   }
 
+  function findStreakContributingGames(threshold: number): ContributingGame[] {
+    if (!streakHistory || bestStreak < threshold) return []
+    let current: ContributingGame[] = []
+    for (const row of streakHistory as Array<Record<string, unknown>>) {
+      const bd = row.breakdown as Record<string, number> | null
+      const winner = Number(bd?.winner ?? 0)
+      if (winner > 0) {
+        const game = extractContributingGame(row)
+        if (game) current.push(game)
+        if (current.length >= threshold) {
+          return current.slice(-threshold)
+        }
+      } else {
+        current = []
+      }
+    }
+    return []
+  }
+
   const embaladoAt = findStreakUnlockDate(3)
   const emChamasAt = findStreakUnlockDate(5)
   const imparavelAt = findStreakUnlockDate(8)
 
+  const embaladoGames = findStreakContributingGames(3)
+  const emChamasGames = findStreakContributingGames(5)
+  const imparavelGames = findStreakContributingGames(8)
+
   // --- Profeta (5º placar exato) ---
   const profetaItems = (profetaRes.data ?? []) as unknown[]
   const profetaAt = profetaItems.length >= 5 ? extractMatchDate(profetaItems[4]) : null
+  // profeta reutiliza os mesmos jogos de cravada (todos os placares exatos)
+  const profetaGames = cravadaGames
 
   // --- Vidente (25º acerto de vencedor) ---
   const videnteItems = (videnteRes.data ?? []) as unknown[]
   const videnteAt = videnteItems.length >= 25 ? extractMatchDate(videnteItems[24]) : null
   const totalWinnerCount = (totalWinnerRes as { count?: number | null }).count ?? 0
+  const videnteGames = videnteItems
+    .map(extractContributingGame)
+    .filter((g): g is ContributingGame => g !== null)
 
   // --- Artilheiro ---
   const artItems = (artilheiroRes.data ?? []) as Array<Record<string, unknown>>
@@ -262,9 +334,14 @@ async function calcTrophies(
     }
   }
   const totalPointsVal = artItems.reduce((sum, r) => sum + Number(r.points ?? 0), 0)
+  const artilheiroGames = artItems
+    .filter((r) => Number(r.points ?? 0) > 0)
+    .map(extractContributingGame)
+    .filter((g): g is ContributingGame => g !== null)
 
   // --- Perfeito na rodada (query manual) ---
   let perfeitaAt: string | null = null
+  let perfeitaGames: ContributingGame[] = []
   const { data: perfeitaDays } = await sc
     .from('games')
     .select('match_day')
@@ -292,12 +369,31 @@ async function calcTrophies(
     )
     if (allCorrect) {
       perfeitaAt = day
+      // Buscar dados completos dos jogos do dia perfeito para contributing_games
+      const { data: perfeitaDayDetails } = await sc
+        .from('games')
+        .select('id, home_team_code, away_team_code, home_score, away_score')
+        .eq('match_day', day)
+        .eq('status', 'finished')
+      perfeitaGames = (perfeitaDayDetails ?? [])
+        .filter(
+          (g: { home_score: number | null; away_score: number | null }) =>
+            g.home_score !== null && g.away_score !== null
+        )
+        .map((g: { id: string; home_team_code: string; away_team_code: string; home_score: number; away_score: number }) => ({
+          game_id: g.id,
+          home_team_code: g.home_team_code,
+          away_team_code: g.away_team_code,
+          home_score: g.home_score,
+          away_score: g.away_score,
+        }))
       break
     }
   }
 
   // --- Fiel (query manual) ---
   let fielAt: string | null = null
+  let fielGames: ContributingGame[] = []
   for (const day of perfeitaDaySet) {
     const { data: dayGames } = await sc
       .from('games')
@@ -314,6 +410,24 @@ async function calcTrophies(
       .in('game_id', gameIds)
     if ((predCount ?? 0) >= gameIds.length) {
       fielAt = day
+      // Buscar dados completos dos jogos do dia fiel para contributing_games
+      const { data: fielDayDetails } = await sc
+        .from('games')
+        .select('id, home_team_code, away_team_code, home_score, away_score')
+        .eq('match_day', day)
+        .eq('status', 'finished')
+      fielGames = (fielDayDetails ?? [])
+        .filter(
+          (g: { home_score: number | null; away_score: number | null }) =>
+            g.home_score !== null && g.away_score !== null
+        )
+        .map((g: { id: string; home_team_code: string; away_team_code: string; home_score: number; away_score: number }) => ({
+          game_id: g.id,
+          home_team_code: g.home_team_code,
+          away_team_code: g.away_team_code,
+          home_score: g.home_score,
+          away_score: g.away_score,
+        }))
       break
     }
   }
@@ -330,9 +444,10 @@ async function calcTrophies(
 
   // --- Zebreiro (query manual) ---
   let zebreiroAt: string | null = null
+  let zebreiroGames: ContributingGame[] = []
   const { data: userWins } = await sc
     .from('scores')
-    .select('game_id, games(match_date)')
+    .select('game_id, games(match_date, home_team_code, away_team_code, home_score, away_score)')
     .eq('user_id', userId)
     .eq('group_id', groupId)
     .filter('breakdown->>winner', 'gt', '0')
@@ -358,6 +473,8 @@ async function calcTrophies(
     const errors = total - correct
     if (total > 0 && errors / total > 0.5) {
       zebreiroAt = extractMatchDate(win)
+      const zebreiroGame = extractContributingGame(win)
+      if (zebreiroGame) zebreiroGames = [zebreiroGame]
       break
     }
   }
@@ -369,21 +486,21 @@ async function calcTrophies(
 
   // --- Montar array de troféus ---
   const trophies: TrophyResult[] = [
-    makeTrophy('estreia', estreiaAt),
-    makeTrophy('abriu_o_placar', abrioAt),
-    makeTrophy('cravada', cravadaAt, cravadaCount, 5),
-    makeTrophy('rei_da_goleada', goleadaAt),
-    makeTrophy('embalado', embaladoAt, Math.min(bestStreak, 3), 3),
-    makeTrophy('em_chamas', emChamasAt, Math.min(bestStreak, 5), 5),
-    makeTrophy('imparavel', imparavelAt, Math.min(bestStreak, 8), 8),
-    makeTrophy('profeta', profetaAt, Math.min(cravadaCount, 5), 5),
-    makeTrophy('vidente', videnteAt, totalWinnerCount, 25),
-    makeTrophy('artilheiro', artilheiroAt, Math.min(totalPointsVal, 100), 100),
-    makeTrophy('perfeito_na_rodada', perfeitaAt),
-    makeTrophy('fiel', fielAt),
-    makeTrophy('cartola', cartolaAt),
-    makeTrophy('zebreiro', zebreiroAt),
-    makeTrophy('podio', podioAt),
+    makeTrophy('estreia', estreiaAt, null, null, estreiaGames),
+    makeTrophy('abriu_o_placar', abrioAt, null, null, abrioGames),
+    makeTrophy('cravada', cravadaAt, cravadaCount, 5, cravadaGames),
+    makeTrophy('rei_da_goleada', goleadaAt, null, null, goleadaGames),
+    makeTrophy('embalado', embaladoAt, Math.min(bestStreak, 3), 3, embaladoGames),
+    makeTrophy('em_chamas', emChamasAt, Math.min(bestStreak, 5), 5, emChamasGames),
+    makeTrophy('imparavel', imparavelAt, Math.min(bestStreak, 8), 8, imparavelGames),
+    makeTrophy('profeta', profetaAt, Math.min(cravadaCount, 5), 5, profetaGames),
+    makeTrophy('vidente', videnteAt, totalWinnerCount, 25, videnteGames),
+    makeTrophy('artilheiro', artilheiroAt, Math.min(totalPointsVal, 100), 100, artilheiroGames),
+    makeTrophy('perfeito_na_rodada', perfeitaAt, null, null, perfeitaGames),
+    makeTrophy('fiel', fielAt, null, null, fielGames),
+    makeTrophy('cartola', cartolaAt, null, null, []),
+    makeTrophy('zebreiro', zebreiroAt, null, null, zebreiroGames),
+    makeTrophy('podio', podioAt, null, null, []),
   ]
 
   // Ordenar: desbloqueados primeiro (por data), depois locked
