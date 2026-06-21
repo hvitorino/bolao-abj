@@ -56,9 +56,26 @@
 
 ---
 
+## Correções Fix 1
+
+### Problema 1: `__noop__` causava fetch desnecessário no mount
+**Arquivo:** `lib/hooks/useRoundRanking.ts`
+
+Duas alterações no hook interno `useRankingByRound`:
+- Estado `loading` iniciado como `false` (era `true`), pois no modo GERAL o hook nunca busca dados e não faz sentido sinalizar loading desde o início.
+- Adicionado guard `if (round === '__noop__') return` no `useEffect`, impedindo que qualquer fetch seja disparado quando o hook é instanciado no modo GERAL. A dependência `round` também foi adicionada ao array de deps do efeito para consistência.
+
+### Problema 2: Prop `selectedRound` dead code em `RankingTableProps`
+**Arquivo:** `components/bolao/RankingTable.tsx`
+
+Removida a prop `selectedRound?: string` da interface `RankingTableProps`. A prop nunca era desestruturada nem utilizada pela função `RankingTable`; o estado interno sempre inicia em `'GERAL'` via `useRoundRanking`.
+
+---
+
 ## Commits realizados
 
 ```
+257935d fix(ranking-por-rodada): elimina fetch desnecessário com __noop__ e remove prop dead code
 3c3da50 feat(ranking-por-rodada): integra RoundChips e useRoundRanking no RankingTable
 b6bbc01 feat(ranking-por-rodada): cria componente RoundChips
 846f9be feat(ranking-por-rodada): implementa hook useRoundRanking
