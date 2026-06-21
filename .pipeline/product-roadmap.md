@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 51 features
-- Concluídas: 50
+- Concluídas: 51
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -670,7 +670,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 51. ranking-predictions-count — Total de Palpites no Ranking — pendente
+### 51. ranking-predictions-count — Total de Palpites no Ranking — concluída
 **Objetivo:** Exibir o total de palpites registrados por cada jogador na tela de ranking, como indicador de engajamento complementar à pontuação, com layout responsivo (mobile-first).
 **Critérios de sucesso:**
 - Cada linha do ranking exibe o total de palpites do jogador (ex: "12 palpites")
@@ -678,3 +678,4 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Não quebra a ordenação atual por pontuação
 - Nenhum dado sensível de outros usuários é exposto além do que já é público no ranking
 **Dependências:** auth, ranking, predictions, grupos
+**Observação de conclusão:** aprovada sem rodada de fix em 2026-06-21; merge `feature/ranking-predictions-count` na main confirmado. Migration `20260621000000_ranking_add_predictions_count.sql` recria `get_ranking()` via `CREATE OR REPLACE` adicionando `predictions_count bigint` via LEFT JOIN com subquery em `predictions`; coluna `PALP.` adicionada ao `RankingTable` (visível em mobile); célula correspondente em `RankingRow` com `color-muted` sem bold. Tipos de retorno da função migrados de `int` para `bigint`. `npm run build` e lint passaram sem erros novos.
