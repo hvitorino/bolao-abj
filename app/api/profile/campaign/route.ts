@@ -98,7 +98,13 @@ export async function GET(request: NextRequest) {
   const leaderPoints = leaderRow ? Number(leaderRow.total_points) : null
 
   let nextAbovePoints: number | null = null
-  if (!isLeader) {
+  if (isLeader) {
+    // Para o líder, "próximo" é o 2º colocado
+    const secondRow = ranking.find(
+      (r: { rank_position: number }) => Number(r.rank_position) === 2
+    )
+    nextAbovePoints = secondRow ? Number(secondRow.total_points) : null
+  } else {
     const above = ranking.find(
       (r: { rank_position: number }) => Number(r.rank_position) === currentPosition - 1
     )
@@ -137,7 +143,7 @@ export async function GET(request: NextRequest) {
     total_points: totalPoints,
     participant_count: participantCount,
     leader_points: isLeader ? null : leaderPoints,
-    next_above_points: isLeader ? null : nextAbovePoints,
+    next_above_points: nextAbovePoints,
     position_delta: positionDelta,
     position_delta_label: positionDeltaLabel,
     is_leader: isLeader,

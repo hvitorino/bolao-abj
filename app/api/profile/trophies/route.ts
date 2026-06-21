@@ -400,7 +400,7 @@ async function calcTrophies(
     makeTrophy('embalado', embaladoAt, Math.min(bestStreak, 3), 3),
     makeTrophy('em_chamas', emChamasAt, Math.min(bestStreak, 5), 5),
     makeTrophy('imparavel', imparavelAt, Math.min(bestStreak, 8), 8),
-    makeTrophy('profeta', profetaAt, cravadaCount, 5),
+    makeTrophy('profeta', profetaAt, Math.min(cravadaCount, 5), 5),
     makeTrophy('vidente', videnteAt, totalWinnerCount, 25),
     makeTrophy('artilheiro', artilheiroAt, Math.min(totalPointsVal, 100), 100),
     makeTrophy('perfeito_na_rodada', perfeitaAt),
