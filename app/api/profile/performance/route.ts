@@ -79,15 +79,16 @@ export async function GET(request: NextRequest) {
   }
 
   const predictionsMade = Number(stats.predictions_made)
+  const activePredictionsMade = Number(stats.active_predictions_made)
   const finishedGames = Number(stats.finished_games)
   const winnerCorrect = Number(stats.winner_correct)
   const exactCorrect = Number(stats.exact_correct)
   const totalPoints = Number(stats.total_points)
   const bestStreak = Number(stats.best_streak)
 
-  const winnerRate = predictionsMade > 0 ? winnerCorrect / predictionsMade : 0
-  const exactRate = predictionsMade > 0 ? exactCorrect / predictionsMade : 0
-  const avgPoints = predictionsMade > 0 ? totalPoints / predictionsMade : 0
+  const winnerRate = activePredictionsMade > 0 ? winnerCorrect / activePredictionsMade : 0
+  const exactRate = activePredictionsMade > 0 ? exactCorrect / activePredictionsMade : 0
+  const avgPoints = activePredictionsMade > 0 ? totalPoints / activePredictionsMade : 0
 
   // Streak atual via get_streak_for_group
   const streakRow = (streakResult.data ?? []).find(
@@ -104,6 +105,7 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     predictions_made: predictionsMade,
+    active_predictions_made: activePredictionsMade,
     finished_games: finishedGames,
     winner_correct: winnerCorrect,
     exact_correct: exactCorrect,

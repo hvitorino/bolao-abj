@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import type { SectionState } from './PerfilDashboard'
 
 export interface Trophy {
@@ -19,17 +18,6 @@ export interface TrophiesData {
 
 interface TrophiesPanelProps {
   state: SectionState<TrophiesData>
-}
-
-const TROPHY_HINTS: Record<string, string> = {
-  cravada: 'placares exatos',
-  embalado: 'sequência de acertos',
-  em_chamas: 'sequência de acertos',
-  imparavel: 'sequência de acertos',
-  profeta: 'placares exatos',
-  vidente: 'acertos de vencedor',
-  artilheiro: 'pts acumulados',
-  fiel: 'palpitou em todos os jogos do dia',
 }
 
 const TROPHY_CRITERIA: Record<string, string> = {
@@ -73,8 +61,6 @@ const PANEL: React.CSSProperties = {
 }
 
 export function TrophiesPanel({ state }: TrophiesPanelProps) {
-  const [expandedId, setExpandedId] = useState<string | null>(null)
-
   if (state.status === 'loading') {
     return (
       <div style={PANEL}>
@@ -111,94 +97,6 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
 
   const { trophies } = state.data
   const unlocked = trophies.filter((t) => t.status === 'unlocked')
-  const locked = trophies.filter((t) => t.status === 'locked')
-  const secret = trophies.filter((t) => t.status === 'secret')
-
-  const toggle = (id: string) => setExpandedId((prev) => (prev === id ? null : id))
-
-  function TrophyRow({ trophy }: { trophy: Trophy }) {
-    const isExpanded = expandedId === trophy.id
-    const baseStyle: React.CSSProperties = {
-      padding: '0.4rem 1rem',
-      cursor: 'pointer',
-      borderBottom: '1px solid var(--color-border)',
-      fontSize: '12px',
-    }
-
-    if (trophy.status === 'unlocked') {
-      return (
-        <div
-          style={baseStyle}
-          onClick={() => toggle(trophy.id)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && toggle(trophy.id)}
-        >
-          <span style={{ color: 'var(--color-win)' }}>✓ {trophy.name}</span>
-          {isExpanded && (
-            <div style={{ marginTop: '0.25rem', fontSize: '11px', color: 'var(--color-muted)' }}>
-              {TROPHY_CRITERIA[trophy.id] ?? ''}
-              {trophy.unlocked_at && (
-                <span style={{ color: 'var(--color-win)' }}>
-                  {' · '}{formatDate(trophy.unlocked_at)}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-      )
-    }
-
-    if (trophy.status === 'locked') {
-      const rate =
-        trophy.progress !== null && trophy.progress_max
-          ? trophy.progress / trophy.progress_max
-          : 0
-      return (
-        <div
-          style={baseStyle}
-          onClick={() => toggle(trophy.id)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && toggle(trophy.id)}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <span style={{ color: 'var(--color-muted)' }}>✗ {trophy.name}</span>
-            {trophy.progress !== null && trophy.progress_max && (
-              <span style={{ fontSize: '11px', color: 'var(--color-muted)' }}>
-                {trophy.progress}/{trophy.progress_max}{' '}
-                <span style={{ letterSpacing: '0.05em' }}>{renderBar(rate)}</span>
-                {' '}{TROPHY_HINTS[trophy.id] ?? ''}
-              </span>
-            )}
-          </div>
-          {isExpanded && (
-            <div style={{ marginTop: '0.25rem', fontSize: '11px', color: 'var(--color-muted)' }}>
-              {TROPHY_CRITERIA[trophy.id] ?? ''}
-            </div>
-          )}
-        </div>
-      )
-    }
-
-    // secret
-    return (
-      <div
-        style={baseStyle}
-        onClick={() => toggle(trophy.id)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && toggle(trophy.id)}
-      >
-        <span style={{ color: 'var(--color-muted)' }}>🔒 ???</span>
-        {isExpanded && (
-          <div style={{ marginTop: '0.25rem', fontSize: '11px', color: 'var(--color-muted)' }}>
-            troféu secreto — desbloqueie para descobrir
-          </div>
-        )}
-      </div>
-    )
-  }
 
   return (
     <div style={PANEL}>
@@ -215,75 +113,63 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
         </span>
       </div>
 
-      {/* Grid de desbloqueados (2 colunas) */}
-      {unlocked.length > 0 && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            borderBottom: '1px solid var(--color-border)',
-          }}
-        >
-          {unlocked.map((t) => (
-            <div
-              key={t.id}
-              onClick={() => toggle(t.id)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && toggle(t.id)}
-              style={{
-                padding: '0.4rem 1rem',
-                cursor: 'pointer',
-                fontSize: '12px',
-                borderRight: '1px solid var(--color-border)',
-                borderBottom: '1px solid var(--color-border)',
-              }}
-            >
-              <span style={{ color: 'var(--color-win)' }}>✓ {t.name}</span>
-              {expandedId === t.id && (
-                <div style={{ fontSize: '11px', color: 'var(--color-muted)', marginTop: '0.2rem' }}>
-                  {TROPHY_CRITERIA[t.id] ?? ''}
-                  {t.unlocked_at && (
-                    <span style={{ color: 'var(--color-win)' }}>
-                      {' · '}{formatDate(t.unlocked_at)}
+      {/* Grid vertical único — todos os troféus */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
+        {trophies.map((trophy, index) => {
+          const isLast = index === trophies.length - 1
+          const itemStyle: React.CSSProperties = {
+            padding: '0.5rem 1rem',
+            cursor: 'default',
+            borderBottom: isLast ? 'none' : '1px solid var(--color-border)',
+            fontSize: '12px',
+          }
+
+          if (trophy.status === 'unlocked') {
+            return (
+              <div key={trophy.id} style={itemStyle}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
+                  <span style={{ color: 'var(--color-win)', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                    ✓ {trophy.name}
+                  </span>
+                  {trophy.unlocked_at && (
+                    <span style={{ fontSize: '11px', color: 'var(--color-win)' }}>
+                      {formatDate(trophy.unlocked_at)}
                     </span>
                   )}
                 </div>
-              )}
+                <div style={{ marginTop: '0.2rem', fontSize: '11px', color: 'var(--color-muted)' }}>
+                  {TROPHY_CRITERIA[trophy.id] ?? ''}
+                </div>
+              </div>
+            )
+          }
+
+          // locked ou secret — tratados da mesma forma
+          const rate =
+            trophy.progress !== null && trophy.progress_max
+              ? trophy.progress / trophy.progress_max
+              : 0
+
+          return (
+            <div key={trophy.id} style={itemStyle}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
+                <span style={{ color: 'var(--color-muted)', textTransform: 'uppercase' }}>
+                  ✗ {trophy.name}
+                </span>
+                {trophy.progress !== null && trophy.progress_max && (
+                  <span style={{ fontSize: '11px', color: 'var(--color-muted)' }}>
+                    {trophy.progress}/{trophy.progress_max}{' '}
+                    <span style={{ letterSpacing: '0.05em' }}>{renderBar(rate)}</span>
+                  </span>
+                )}
+              </div>
+              <div style={{ marginTop: '0.2rem', fontSize: '11px', color: 'var(--color-muted)' }}>
+                {TROPHY_CRITERIA[trophy.id] ?? ''}
+              </div>
             </div>
-          ))}
-        </div>
-      )}
-
-      {/* Separador */}
-      {(locked.length > 0 || secret.length > 0) && (
-        <div style={{
-          padding: '0.25rem 1rem',
-          fontSize: '11px',
-          color: 'var(--color-border)',
-          borderBottom: '1px solid var(--color-border)',
-          letterSpacing: '0.05em',
-        }}>
-          {'─'.repeat(44)}
-        </div>
-      )}
-
-      {/* Locked com progresso */}
-      {locked.map((t) => (
-        <TrophyRow key={t.id} trophy={t} />
-      ))}
-
-      {/* Secretos */}
-      {secret.map((t, i) => (
-        <div
-          key={t.id}
-          style={{
-            borderBottom: i < secret.length - 1 ? '1px solid var(--color-border)' : 'none',
-          }}
-        >
-          <TrophyRow trophy={t} />
-        </div>
-      ))}
+          )
+        })}
+      </div>
     </div>
   )
 }

@@ -4,6 +4,7 @@ import type { SectionState } from './PerfilDashboard'
 
 export interface PerformanceData {
   predictions_made: number
+  active_predictions_made: number
   finished_games: number
   winner_correct: number
   exact_correct: number
@@ -100,7 +101,7 @@ export function PerformancePanel({ state }: PerformancePanelProps) {
   }
 
   const { data } = state
-  const hasData = data.predictions_made > 0
+  const hasData = data.active_predictions_made > 0
 
   const winnerBarColor =
     data.winner_rate >= 0.5 ? 'var(--color-win)' : 'var(--color-muted)'
@@ -142,7 +143,7 @@ export function PerformancePanel({ state }: PerformancePanelProps) {
           )}
           {hasData && (
             <span style={{ color: 'var(--color-muted)', fontSize: '11px' }}>
-              ({data.winner_correct}/{data.predictions_made})
+              ({data.winner_correct}/{data.active_predictions_made})
             </span>
           )}
         </div>
@@ -162,7 +163,7 @@ export function PerformancePanel({ state }: PerformancePanelProps) {
           )}
           {hasData && (
             <span style={{ color: 'var(--color-muted)', fontSize: '11px' }}>
-              ({data.exact_correct}/{data.predictions_made})
+              ({data.exact_correct}/{data.active_predictions_made})
             </span>
           )}
         </div>

@@ -6,6 +6,17 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-perfil-stats-trophies] — Correção: Estatísticas e Troféus na Aba de Perfil — 2026-06-21
+
+- Corrige denominador das taxas de acerto: `winner_rate`, `exact_rate` e `avg_points` passam a dividir por `active_predictions_made` (palpites em jogos `finished` ou `live`), excluindo jogos `pending` cujo resultado é desconhecido
+- Migration `20260622000005_fix_profile_stats_active_denominator.sql` recria `get_profile_stats` via `CREATE OR REPLACE` adicionando campo `active_predictions_made bigint` à assinatura de retorno; campo `predictions_made` mantido como métrica de engajamento
+- `GET /api/profile/performance` e `GET /api/profile/stats` extraem `active_predictions_made` do RPC e usam no cálculo das três taxas; ambos incluem o novo campo no JSON de resposta
+- `PerformanceData` recebe campo `active_predictions_made: number`; `PerformancePanel` usa o novo campo em `hasData` e nas frações `(winner_correct/active_predictions_made)` e `(exact_correct/active_predictions_made)`
+- `TrophiesPanel` refatorado: removidos `expandedId`, `toggle`, `TrophyRow`, `TROPHY_HINTS`, separação em três listas e grid de 2 colunas; substituídos por grid vertical único (`1fr`) com todos os troféus na ordem da API
+- Troféus `secret` tratados como `locked`: exibem nome e descrição reais sem ocultação; `cursor: default` em todos os itens (não clicáveis)
+- Descrição de cada troféu (`TROPHY_CRITERIA[trophy.id]`) sempre visível sem clique; desbloqueados exibem ✓ em `color-win` + data de desbloqueio alinhada à direita; não-desbloqueados exibem ✗ em `color-muted` + barra de progresso quando disponível
+- `npm run lint` e `npm run build` passam sem erros novos introduzidos pela feature
+
 ## [perfil-redesign] — Redesign da Aba de Perfil — 2026-06-21
 
 - Substitui a página `/perfil` (6 estatísticas secas) por um painel rico com 4 seções empilhadas: SUA CAMPANHA, DESEMPENHO, TROFÉUS, HISTÓRICO
