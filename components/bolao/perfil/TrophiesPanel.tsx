@@ -271,7 +271,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
             padding: '0.5rem 1rem',
             borderBottom: '1px solid var(--color-border)',
           }}>
-            CONQUISTAS IMPROVÁVEIS
+            GALERIA DO VEXAME
           </div>
 
           {/* Card Anti-Platina — exibido somente quando todos os 9 negativos estão desbloqueados */}
