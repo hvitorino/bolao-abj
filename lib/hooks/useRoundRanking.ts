@@ -80,7 +80,10 @@ function useRankingByRound(groupId: string, round: string): {
   }, [groupId, round])
 
   useEffect(() => {
-    void fetchRankingByRound()
+    const timer = window.setTimeout(() => {
+      void fetchRankingByRound()
+    }, 0)
+    return () => window.clearTimeout(timer)
   }, [fetchRankingByRound])
 
   return { ranking, loading, error }
@@ -138,10 +141,13 @@ export function useRoundRanking(groupId: string): UseRoundRankingResult {
       }
     }
 
-    void fetchRounds()
+    const timer = window.setTimeout(() => {
+      void fetchRounds()
+    }, 0)
 
     return () => {
       cancelled = true
+      window.clearTimeout(timer)
     }
   }, [groupId])
 

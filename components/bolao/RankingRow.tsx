@@ -5,9 +5,11 @@ interface RankingRowProps {
   entry: RankingEntry
   isCurrentUser: boolean
   isLeader: boolean
+  hideScouts?: boolean
+  hidePalpites?: boolean
 }
 
-export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) {
+export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false, hidePalpites = false }: RankingRowProps) {
   // Determinar cor do texto da linha
   let rowColor = 'var(--color-text)'
   if (isLeader) {
@@ -73,7 +75,7 @@ export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) 
             (VOCÊ)
           </span>
         )}
-        <ScoutBadges scouts={entry.scouts ?? []} />
+        {!hideScouts && <ScoutBadges scouts={entry.scouts ?? []} />}
       </td>
 
       {/* Pontos */}
@@ -90,19 +92,21 @@ export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) 
         {entry.total_points}
       </td>
 
-      {/* Palpites */}
-      <td
-        style={{
-          padding: '0.35rem 0.5rem',
-          textAlign: 'center',
-          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-          fontSize: '13px',
-          color: 'var(--color-muted)',
-          minWidth: '4.5rem',
-        }}
-      >
-        {entry.predictions_count}
-      </td>
+      {/* Palpites — oculto no modo por rodada */}
+      {!hidePalpites && (
+        <td
+          style={{
+            padding: '0.35rem 0.5rem',
+            textAlign: 'center',
+            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+            fontSize: '13px',
+            color: 'var(--color-muted)',
+            minWidth: '4.5rem',
+          }}
+        >
+          {entry.predictions_count}
+        </td>
+      )}
 
       {/* Aproveitamento */}
       <td
