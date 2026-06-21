@@ -6,6 +6,25 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [trofeus-negativos] — Troféus Negativos e Anti-Platina — 2026-06-21
+
+- 9 troféus negativos adicionados: `placar_espelhado`, `ultima_hora`, `trono_de_papel`, `quase`, `solitario_do_erro`, `dia_ruim`, `naufragando`, `a_deriva`, `sem_volta`
+- Endpoint `GET /api/profile/trophies` passa a retornar `{ trophies, negativeTrophies }` — resposta aditiva, sem quebra de compatibilidade
+- Nova função `calcNegativeTrophies(sc, groupId, userId, streakHistory)` em `app/api/profile/trophies/route.ts`
+- `streakHistory` extraído para o handler `GET` e compartilhado com `calcTrophies` e `calcNegativeTrophies` via `Promise.all` — elimina query duplicada
+- Helpers de sequência negativa: `calcBestNegativeStreak`, `findNegativeStreakUnlockDate`, `findNegativeStreakContributingGames`
+- Três troféus progressivos (`naufragando`/`a_deriva`/`sem_volta`) com `progress`/`progress_max` (thresholds 3, 5 e 8 erros consecutivos)
+- `TrophiesPanel.tsx`: interface `TrophiesData` expandida com `negativeTrophies: Trophy[]`
+- Header do painel atualizado para `TROFÉUS N/15 · VERGONHA N/9`
+- Seção "CONQUISTAS IMPROVÁVEIS" renderizada abaixo dos troféus positivos com divisor e header em `color-error`
+- Card "COLECIONADOR DO CAOS" (Anti-Platina) exibido no topo da seção negativa somente quando todos os 9 negativos estão desbloqueados; borda `color-error` e fundo levemente tingido
+- Troféus negativos desbloqueados: prefixo `✗`, nome em `color-error`; bloqueados: prefixo `○`, cor `color-muted`
+- `ContributingGameLine` nos negativos sempre com `unlocked={false}` (borda `color-border`, texto `color-muted`)
+- Barra de progresso nos progressivos via `renderBar` em cor `color-muted`
+- Backward compat: `negativeTrophies ?? []` protege contra cache antigo sem o campo
+- Nenhuma migração de banco — todos os troféus calculados a partir de tabelas existentes
+- `npm run lint` e `npm run build` passam sem erros novos introduzidos pela feature
+
 ## [trophy-contributing-games] — Confrontos Contribuintes por Troféu — 2026-06-21
 
 - Adiciona campo `contributing_games: ContributingGame[]` à resposta do endpoint `GET /api/profile/trophies`, presente em todos os 15 troféus
