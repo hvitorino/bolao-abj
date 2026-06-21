@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 51 features
+- Total: 52 features
 - Concluídas: 51
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -667,6 +667,19 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - O ranking do novo grupo exibe o usuário recém-adicionado com sua pontuação histórica atualizada imediatamente após a entrada
 - Regressão zero: usuários já membros de grupos não têm palpites ou pontuações alterados
 **Dependências:** auth, predictions, scoring, grupos, convites-nominais
+
+---
+
+### 52. ranking-scouts — Scouts no Ranking — em progresso
+**Objetivo:** Exibir badges de "scout" ao lado do nome de cada participante no ranking, identificando conquistas/perfis calculados com base nos dados reais de palpites e pontuação — mãe diná (mais placares exatos), manja muito (mais vencedores acertados), cego em tiroteio (mais vencedores errados), sumido (menos palpites, mín. 1) e onde está wally? (nunca palpitou).
+**Critérios de sucesso:**
+- Cada scout é calculado com base nos dados reais de `predictions` e `scores` do Supabase
+- Os badges são exibidos no componente de ranking ao lado do nome do participante
+- Participantes sem nenhum palpite recebem apenas "onde está wally?", não "sumido"
+- O cálculo dos scouts ocorre de forma eficiente (sem N+1 queries)
+- Os badges têm ícones/emojis representativos e tooltip explicativo
+- Um participante pode ter mais de um badge simultaneamente
+**Dependências:** ranking, ranking-predictions-count
 
 ---
 
