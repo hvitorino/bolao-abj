@@ -1,0 +1,232 @@
+'use client'
+
+import type { SectionState } from './PerfilDashboard'
+import type { Trophy } from './TrophiesPanel'
+
+export interface HistoryItem {
+  game_id: string
+  match_day: string
+  home_team: string
+  away_team: string
+  home_score: number
+  away_score: number
+  pred_home: number | null
+  pred_away: number | null
+  points: number
+  breakdown: Record<string, number> | null
+  is_miss: boolean
+  trophy_unlocked_id: string | null
+}
+
+export interface HistoryData {
+  items: HistoryItem[]
+  total: number
+  has_more: boolean
+}
+
+interface HistoryPanelProps {
+  state: SectionState<HistoryData>
+  onLoadMore: () => void
+  loadingMore: boolean
+  trophies: Trophy[]
+}
+
+const TROPHY_NAMES: Record<string, string> = {
+  estreia: 'ESTREIA',
+  abriu_o_placar: 'ABRIU O PLACAR',
+  cravada: 'CRAVADA',
+  rei_da_goleada: 'REI DA GOLEADA',
+  embalado: 'EMBALADO',
+  em_chamas: 'EM CHAMAS',
+  imparavel: 'IMPARÁVEL',
+  profeta: 'PROFETA',
+  vidente: 'VIDENTE',
+  artilheiro: 'ARTILHEIRO',
+  perfeito_na_rodada: 'PERFEITO NA RODADA',
+  fiel: 'FIEL',
+  cartola: 'CARTOLA',
+  zebreiro: 'ZEBREIRO',
+  podio: 'PÓDIO',
+}
+
+function formatDayHeader(matchDay: string): string {
+  const d = new Date(matchDay + 'T12:00:00')
+  return d
+    .toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+    .toUpperCase()
+    .replace(/\./g, '')
+}
+
+function teamCode(team: string): string {
+  return team.slice(0, 3).toUpperCase()
+}
+
+function groupByDay(items: HistoryItem[]): [string, HistoryItem[]][] {
+  const map = new Map<string, HistoryItem[]>()
+  for (const item of items) {
+    if (!map.has(item.match_day)) {
+      map.set(item.match_day, [])
+    }
+    map.get(item.match_day)!.push(item)
+  }
+  return [...map.entries()]
+}
+
+const PANEL: React.CSSProperties = {
+  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+  backgroundColor: 'var(--color-surface)',
+  border: '1px solid var(--color-border)',
+  borderRadius: 0,
+  boxShadow: 'none',
+}
+
+const HEADER: React.CSSProperties = {
+  fontSize: '11px',
+  fontWeight: 'bold',
+  textTransform: 'uppercase',
+  letterSpacing: '0.1em',
+  color: 'var(--color-accent)',
+  padding: '0.5rem 1rem',
+  borderBottom: '1px solid var(--color-border)',
+}
+
+export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelProps) {
+  if (state.status === 'loading') {
+    return (
+      <div style={PANEL}>
+        <div style={HEADER}>HISTÓRICO</div>
+        <div style={{ padding: '1.5rem 1rem', fontSize: '12px', color: 'var(--color-muted)', textTransform: 'uppercase' }}>
+          CARREGANDO...
+        </div>
+      </div>
+    )
+  }
+
+  if (state.status === 'error') {
+    return (
+      <div style={PANEL}>
+        <div style={HEADER}>HISTÓRICO</div>
+        <div style={{ padding: '1.5rem 1rem', fontSize: '12px', color: 'var(--color-error)', textTransform: 'uppercase' }}>
+          ✗ ERRO AO CARREGAR HISTÓRICO
+        </div>
+      </div>
+    )
+  }
+
+  const { items, has_more } = state.data
+  const days = groupByDay(items)
+
+  return (
+    <div style={PANEL}>
+      <div style={HEADER}>HISTÓRICO</div>
+
+      {items.length === 0 && (
+        <div style={{ padding: '1.5rem 1rem', fontSize: '12px', color: 'var(--color-muted)', textTransform: 'uppercase' }}>
+          NENHUM JOGO ENCERRADO AINDA
+        </div>
+      )}
+
+      {days.map(([day, dayItems]) => (
+        <div key={day}>
+          {/* Cabeçalho do dia */}
+          <div
+            style={{
+              padding: '0.35rem 1rem',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              color: 'var(--color-accent)',
+              backgroundColor: 'var(--color-bg)',
+              borderBottom: '1px solid var(--color-border)',
+              letterSpacing: '0.05em',
+            }}
+          >
+            ▼ {formatDayHeader(day)}
+          </div>
+
+          {/* Jogos do dia */}
+          {dayItems.map((item, idx) => (
+            <div
+              key={item.game_id}
+              style={{
+                padding: '0.4rem 1rem',
+                borderBottom: idx < dayItems.length - 1 ? '1px solid var(--color-border)' : 'none',
+                fontSize: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                flexWrap: 'wrap',
+              }}
+            >
+              {/* Resultado real */}
+              <span style={{ color: 'var(--color-text)', minWidth: '9rem' }}>
+                {teamCode(item.home_team)} {item.home_score}×{item.away_score} {teamCode(item.away_team)}
+              </span>
+
+              {item.is_miss ? (
+                /* Jogo furado */
+                <span style={{ color: 'var(--color-error)', fontSize: '11px' }}>
+                  -- FUROU --
+                </span>
+              ) : (
+                <>
+                  {/* Palpite */}
+                  <span style={{ color: 'var(--color-muted)', fontSize: '11px' }}>
+                    vc {item.pred_home}×{item.pred_away}
+                  </span>
+
+                  {/* Pontos */}
+                  <span
+                    style={{
+                      color: item.points > 0 ? 'var(--color-win)' : 'var(--color-muted)',
+                      fontWeight: item.points > 0 ? 'bold' : 'normal',
+                      minWidth: '2.5rem',
+                    }}
+                  >
+                    +{item.points}
+                  </span>
+
+                  {/* Troféu inline */}
+                  {item.trophy_unlocked_id && (
+                    <span style={{ color: 'var(--color-win)', fontSize: '11px' }}>
+                      ✓ {TROPHY_NAMES[item.trophy_unlocked_id] ?? item.trophy_unlocked_id}
+                    </span>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+
+          {/* Borda inferior de separação entre dias */}
+          <div style={{ borderBottom: '1px solid var(--color-border)' }} />
+        </div>
+      ))}
+
+      {/* Botão VER MAIS */}
+      {has_more && (
+        <div style={{ padding: '0.75rem 1rem' }}>
+          <button
+            onClick={onLoadMore}
+            disabled={loadingMore}
+            style={{
+              width: '100%',
+              padding: '0.5rem',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              fontSize: '12px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              backgroundColor: 'transparent',
+              color: loadingMore ? 'var(--color-muted)' : 'var(--color-primary)',
+              border: `1px solid ${loadingMore ? 'var(--color-border)' : 'var(--color-primary)'}`,
+              borderRadius: 0,
+              cursor: loadingMore ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {loadingMore ? 'CARREGANDO...' : 'VER MAIS'}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
