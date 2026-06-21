@@ -184,6 +184,21 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
               PONTOS
             </th>
             <th
+              style={{
+                padding: '0.35rem 0.5rem',
+                textAlign: 'center',
+                minWidth: '4.5rem',
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                color: 'var(--color-muted)',
+                fontWeight: 'normal',
+              }}
+            >
+              PALP.
+            </th>
+            <th
               className="hidden md:table-cell"
               style={{
                 padding: '0.35rem 0.5rem',
