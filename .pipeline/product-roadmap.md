@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 52 features
+- Total: 55 features
 - Concluídas: 52
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 3
 
 ## Features Priorizadas
 
@@ -692,3 +692,34 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Nenhum dado sensível de outros usuários é exposto além do que já é público no ranking
 **Dependências:** auth, ranking, predictions, grupos
 **Observação de conclusão:** aprovada sem rodada de fix em 2026-06-21; merge `feature/ranking-predictions-count` na main confirmado. Migration `20260621000000_ranking_add_predictions_count.sql` recria `get_ranking()` via `CREATE OR REPLACE` adicionando `predictions_count bigint` via LEFT JOIN com subquery em `predictions`; coluna `PALP.` adicionada ao `RankingTable` (visível em mobile); célula correspondente em `RankingRow` com `color-muted` sem bold. Tipos de retorno da função migrados de `int` para `bigint`. `npm run build` e lint passaram sem erros novos.
+
+---
+
+### 53. ranking-por-rodada — Ranking por Rodada — pendente
+**Objetivo:** Na tela de ranking, adicionar um seletor de fase (chips) que filtra a pontuação acumulada apenas nos jogos daquela rodada, respondendo "Quem está mandando nas Oitavas?", sem alterar o ranking geral.
+**Critérios de sucesso:**
+- Chips de seleção de fase aparecem acima da tabela de ranking
+- "Geral" é o padrão selecionado
+- Ao selecionar uma fase, o ranking reflete apenas pontos daquela fase
+- Fases disponíveis são derivadas dos jogos reais do grupo
+**Dependências:** auth, ranking, scoring, grupos
+
+---
+
+### 54. streak-de-acertos — Sequência de Acertos — pendente
+**Objetivo:** Exibir no ranking a sequência atual de jogos consecutivos em que o participante acertou pelo menos o vencedor (ex: "5 em sequência"). A sequência reseta quando há erro ou ausência de palpite em jogo encerrado.
+**Critérios de sucesso:**
+- Streak atual visível no ranking ao lado do nome ou na coluna de pontos
+- Streak conta apenas jogos com status `finished` onde o participante fez palpite
+- Streak reseta quando o participante erra o vencedor ou não fez palpite num jogo encerrado
+**Dependências:** auth, ranking, predictions, scoring, grupos
+
+---
+
+### 55. perfil-com-estatisticas — Perfil com Estatísticas — pendente
+**Objetivo:** Página `/perfil` com histórico de desempenho do participante: taxa de acerto de vencedor, taxa de placares exatos, média de pontos por jogo, sequência atual, melhor sequência histórica, palpites feitos vs jogos disponíveis.
+**Critérios de sucesso:**
+- Página `/perfil` acessível pelo usuário logado
+- Exibe estatísticas pessoais do grupo ativo
+- Estilo visual consistente com DESIGN.md (terminal/monospace)
+**Dependências:** auth, ranking, predictions, scoring, grupos, streak-de-acertos
