@@ -128,6 +128,7 @@ export async function GET(request: NextRequest) {
     miss_count: number
     pred_active: number
     pred_total: number
+    pred_last_two_rounds: number
   }
 
   const scoutsData: ScoutRow[] = (scoutsResult.data ?? []).map((r: ScoutRow) => ({
@@ -137,28 +138,23 @@ export async function GET(request: NextRequest) {
     miss_count: Number(r.miss_count),
     pred_active: Number(r.pred_active),
     pred_total: Number(r.pred_total),
+    pred_last_two_rounds: Number(r.pred_last_two_rounds),
   }))
-
-  // Participantes com ao menos 1 palpite total (wally excluído)
-  const nonWally = scoutsData.filter(r => r.pred_total >= 1)
 
   const maxExact  = scoutsData.length ? Math.max(...scoutsData.map(r => r.exact_count))  : 0
   const maxWinner = scoutsData.length ? Math.max(...scoutsData.map(r => r.winner_count)) : 0
   const maxMiss   = scoutsData.length ? Math.max(...scoutsData.map(r => r.miss_count))   : 0
-
-  // min_active só considera participantes com pred_total >= 1
-  const activeValues = nonWally.map(r => r.pred_active)
-  const minActive = activeValues.length ? Math.min(...activeValues) : 0
 
   const scoutsByUser: Record<string, string[]> = {}
   for (const row of scoutsData) {
     const badges: string[] = []
 
     if (row.pred_total === 0) {
+      // nunca palpitou neste grupo
       badges.push('onde_esta_wally')
     } else {
-      // sumido: mínimo de palpites ativos > 0 (se min=0, ninguém é "sumido" ainda)
-      if (minActive > 0 && row.pred_active === minActive) {
+      // sumido: palpitou alguma vez mas não deu palpite nas 2 últimas rodadas
+      if (row.pred_last_two_rounds === 0) {
         badges.push('sumido')
       }
       if (maxExact > 0 && row.exact_count === maxExact) {
