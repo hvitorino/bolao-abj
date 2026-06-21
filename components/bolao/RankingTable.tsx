@@ -10,7 +10,6 @@ import { SCOUT_META } from './ScoutBadges'
 interface RankingTableProps {
   currentUserId: string
   groupId: string
-  selectedRound?: string
 }
 
 // Soma a pontuação parcial de jogos `live` à pontuação oficial e recalcula

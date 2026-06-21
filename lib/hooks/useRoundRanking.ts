@@ -37,7 +37,7 @@ function useRankingByRound(groupId: string, round: string): {
   error: string | null
 } {
   const [ranking, setRanking] = useState<RankingEntry[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const fetchRankingByRound = useCallback(async () => {
@@ -80,11 +80,12 @@ function useRankingByRound(groupId: string, round: string): {
   }, [groupId, round])
 
   useEffect(() => {
+    if (round === '__noop__') return  // guard: não faz fetch no modo GERAL
     const timer = window.setTimeout(() => {
       void fetchRankingByRound()
     }, 0)
     return () => window.clearTimeout(timer)
-  }, [fetchRankingByRound])
+  }, [fetchRankingByRound, round])
 
   return { ranking, loading, error }
 }
