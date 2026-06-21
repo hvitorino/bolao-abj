@@ -3,7 +3,7 @@
 **Slug:** streak-de-acertos
 **Branch:** feature/streak-de-acertos
 **Data:** 2026-06-21
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
