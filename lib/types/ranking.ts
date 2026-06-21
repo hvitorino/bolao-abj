@@ -6,4 +6,5 @@ export interface RankingEntry {
   games_predicted: number
   aproveitamento: number
   predictions_count: number
+  scouts: string[]
 }
