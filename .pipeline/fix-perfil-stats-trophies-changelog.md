@@ -3,7 +3,7 @@
 **Slug:** fix-perfil-stats-trophies
 **Branch:** feature/fix-perfil-stats-trophies
 **Data:** 2026-06-21
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
