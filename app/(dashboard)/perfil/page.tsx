@@ -2,9 +2,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { resolveActiveGroup } from '@/lib/active-group'
-import { PerfilDashboard } from '@/components/bolao/perfil/PerfilDashboard'
-// ProfileStats mantido (deprecado) — não remover até aprovação do Revisor
-// import { ProfileStats } from '@/components/bolao/ProfileStats'
+import { ProfileStats } from '@/components/bolao/ProfileStats'
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
@@ -56,7 +54,7 @@ export default async function PerfilPage() {
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <PerfilDashboard groupId={activeGroup.groupId} userId={user.id} />
+      <ProfileStats groupId={activeGroup.groupId} userId={user.id} />
     </div>
   )
 }

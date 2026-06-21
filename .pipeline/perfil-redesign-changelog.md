@@ -3,7 +3,7 @@
 **Slug:** `perfil-redesign`
 **Branch:** feature/perfil-redesign
 **Data:** 2026-06-21
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

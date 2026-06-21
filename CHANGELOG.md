@@ -6,6 +6,29 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [perfil-redesign] — Redesign da Aba de Perfil — 2026-06-21
+
+- Substitui a página `/perfil` (6 estatísticas secas) por um painel rico com 4 seções empilhadas: SUA CAMPANHA, DESEMPENHO, TROFÉUS, HISTÓRICO
+- Cada seção tem estado de loading/error independente — falha em uma seção não bloqueia as outras
+- **Migrations criadas:**
+  - `20260622000001_create_position_snapshots.sql` — tabela `position_snapshots` com RLS (leitura para membros do grupo) e índice por grupo/usuário/data
+  - `20260622000002_create_snapshot_functions.sql` — função `record_position_snapshots` idempotente (ON CONFLICT DO NOTHING) + trigger `trg_snapshot_on_day_close` que grava snapshot ao fechar o último jogo do dia
+  - `20260622000003_create_group_avg_points.sql` — função `get_group_avg_points` retornando média de pontos por palpite do grupo
+  - `20260622000004_create_profile_history.sql` — função `get_profile_history` com feed paginado de jogos encerrados incluindo `is_miss = true` para jogos sem palpite
+- **Endpoints criados (Next.js Route Handlers com Bearer JWT):**
+  - `GET /api/profile/campaign` — posição, pontos, distância para líder/próximo, movimento de posição (▲▼=)
+  - `GET /api/profile/performance` — taxas de acerto com barras ASCII, média vs. grupo, sequência atual e melhor
+  - `GET /api/profile/trophies` — 15 troféus calculados com 3 estados (unlocked/locked/secret), ordenados por status e data
+  - `GET /api/profile/history` — feed paginado (limit/offset) com palpite, pontos e badge de troféu por jogo
+- **Componentes criados:**
+  - `components/bolao/perfil/CampaignPanel.tsx` — posição e pontos em destaque (2.5rem), variante líder com "+N SOBRE O 2º", label de movimento colorido
+  - `components/bolao/perfil/PerformancePanel.tsx` — barras ASCII `███░░░`, comparação ▲▼= com média do grupo, pílulas `●●●●○` para sequência
+  - `components/bolao/perfil/TrophiesPanel.tsx` — grid 2 colunas para desbloqueados, lista com barra de progresso para locked, `🔒 ???` para secretos; accordion inline sem modal
+  - `components/bolao/perfil/HistoryPanel.tsx` — agrupamento por dia com `▼ DD MMM`, marcação `-- FUROU --`, badge de troféu inline, botão "VER MAIS" com paginação offset
+  - `components/bolao/perfil/PerfilDashboard.tsx` — orquestrador com fetch paralelo das 4 seções e `handleLoadMore` com concatenação de itens
+- `app/(dashboard)/perfil/page.tsx` — atualizado para usar `PerfilDashboard` em vez de `ProfileStats`
+- `ProfileStats.tsx` e `/api/profile/stats` mantidos deprecados (não removidos)
+
 ## [perfil-com-estatisticas] — Perfil com Estatísticas — 2026-06-21
 
 - Cria a página `/perfil` (rota protegida no dashboard) com estatísticas pessoais do usuário no grupo ativo
