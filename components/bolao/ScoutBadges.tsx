@@ -2,7 +2,7 @@ interface ScoutBadgesProps {
   scouts: string[]
 }
 
-const SCOUT_META: Record<string, { emoji: string; label: string }> = {
+export const SCOUT_META: Record<string, { emoji: string; label: string }> = {
   mae_dina:           { emoji: '🔮', label: 'Mãe Diná — mais placares exatos' },
   manja_muito:        { emoji: '🧠', label: 'Manja Muito — mais vencedores acertados' },
   cego_em_tiroteio:   { emoji: '🙈', label: 'Cego em Tiroteio — mais vencedores errados' },

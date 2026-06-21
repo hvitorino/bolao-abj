@@ -4,6 +4,7 @@ import { useRankingRealtime } from '@/lib/hooks/useRankingRealtime'
 import { useLivePointsByUser } from '@/lib/hooks/useLivePointsByUser'
 import type { RankingEntry } from '@/lib/types/ranking'
 import { RankingRow } from './RankingRow'
+import { SCOUT_META } from './ScoutBadges'
 
 interface RankingTableProps {
   currentUserId: string
@@ -267,6 +268,33 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
         >
           {ranking.length} PARTICIPANTE{ranking.length !== 1 ? 'S' : ''}
         </span>
+      </div>
+
+      {/* Legenda dos scouts */}
+      <div
+        style={{
+          padding: '0.5rem 1rem 0.75rem',
+          borderTop: '1px solid var(--color-border)',
+          display: 'flex',
+          gap: '1rem',
+          flexWrap: 'wrap',
+        }}
+      >
+        {Object.entries(SCOUT_META).map(([key, { emoji, label }]) => (
+          <span
+            key={key}
+            style={{
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              fontSize: '11px',
+              color: 'var(--color-muted)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+            }}
+          >
+            {emoji} {label}
+          </span>
+        ))}
       </div>
     </div>
   )
