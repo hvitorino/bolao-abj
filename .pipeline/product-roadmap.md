@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 50 features
+- Total: 51 features
 - Concluídas: 50
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -667,3 +667,14 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - O ranking do novo grupo exibe o usuário recém-adicionado com sua pontuação histórica atualizada imediatamente após a entrada
 - Regressão zero: usuários já membros de grupos não têm palpites ou pontuações alterados
 **Dependências:** auth, predictions, scoring, grupos, convites-nominais
+
+---
+
+### 51. ranking-predictions-count — Total de Palpites no Ranking — pendente
+**Objetivo:** Exibir o total de palpites registrados por cada jogador na tela de ranking, como indicador de engajamento complementar à pontuação, com layout responsivo (mobile-first).
+**Critérios de sucesso:**
+- Cada linha do ranking exibe o total de palpites do jogador (ex: "12 palpites")
+- A informação é legível em telas pequenas (mobile-first)
+- Não quebra a ordenação atual por pontuação
+- Nenhum dado sensível de outros usuários é exposto além do que já é público no ranking
+**Dependências:** auth, ranking, predictions, grupos
