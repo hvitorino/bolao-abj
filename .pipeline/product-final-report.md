@@ -1,7 +1,7 @@
 # Relatório Final — Bolão da Copa
 
 Data de conclusão: 2026-06-21
-Total de features concluídas: 52
+Total de features concluídas: 55
 
 ## Features Implementadas
 
@@ -57,6 +57,9 @@ Total de features concluídas: 52
 50. [calendar-utc-fix] — Corrigir Agrupamento de Jogos no Calendário para Usar UTC — 2026-06-21
 51. [ranking-predictions-count] — Total de Palpites no Ranking — 2026-06-21
 52. [ranking-scouts] — Scouts no Ranking — 2026-06-21
+53. [ranking-por-rodada] — Ranking por Rodada — 2026-06-21
+54. [streak-de-acertos] — Sequência de Acertos — 2026-06-21
+55. [perfil-com-estatisticas] — Perfil com Estatísticas — 2026-06-21
 
 ## Resumo
 
@@ -94,7 +97,9 @@ As quatro features finais completaram o produto com foco em experiência e acess
 
 As seis features finais completaram o produto. `live-today-games` (item 47) enriqueceu o `LiveTodayBottomSheet` adicionando uma seção "JOGOS DE HOJE" acima do ranking ao vivo: cards compactos com bandeiras emoji (`getTeamFlag()`), códigos abreviados dos times e placar centralizado (ou `— × —` se pending), com badge `● AO VIVO` em `color-live` com animação blink para jogos em andamento e `✓ ENCERRADO` em `color-muted` para finalizados — tudo via Realtime já configurado no hook, sem novo canal. `group-member-history` (item 48) fechou uma lacuna de experiência em grupos: ao adicionar um participante via convite (nominal ou link), seus palpites e pontuações já existentes passaram a ser computados automaticamente no novo grupo, sem duplicação de dados, expandindo apenas o escopo de visualização — o ranking do grupo recém-criado reflete imediatamente o histórico completo do usuário recém-adicionado. `password-recovery` (item 49) adicionou o fluxo completo de recuperação de senha via Supabase Auth: link "Esqueceu a senha?" na tela de login, página `/esqueci-senha` com formulário, confirmação que não revela existência do e-mail (segurança por padrão), Route Handler `/auth/callback` com troca PKCE e redirect para `/nova-senha`, prevenção de open redirect e validação client-side na nova senha. `calendar-utc-fix` (item 50) corrigiu o bug em que jogos no início da madrugada em BRT (UTC-3) apareciam no dia seguinte ao correto: o agrupamento de jogos no calendário passou a usar sempre a data em UTC de `match_date`, garantindo consistência com o campo do banco. `ranking-predictions-count` (item 51) adicionou o total de palpites de cada jogador ao ranking como indicador de engajamento: a função Postgres `get_ranking()` foi recriada via migration adicionando `predictions_count bigint` por LEFT JOIN com subquery em `predictions`, e a coluna `PALP.` foi adicionada ao `RankingTable` visível em mobile, com tipos migrados de `int` para `bigint`. Por fim, `ranking-scouts` (item 52) fechou o roadmap exibindo badges de scout ao lado de cada participante no ranking: mãe diná (mais placares exatos), manja muito (mais vencedores acertados), cego em tiroteio (mais vencedores errados), sumido (menos palpites com mínimo 1) e onde está wally? (nunca palpitou) — calculados com base nos dados reais de `predictions` e `scores` em uma única query eficiente (sem N+1), com emojis representativos e tooltip explicativo, e possibilidade de múltiplos badges simultâneos por participante.
 
-Com isso, todas as 52 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 46 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
+As três features finais completaram o produto. `ranking-por-rodada` (item 53) adicionou ao ranking um seletor de fase (chips) acima da tabela: "Geral" é o padrão; ao selecionar uma fase (Grupo A, Oitavas, Quartas, Semi, Final), o ranking reflete apenas os pontos acumulados nos jogos daquela rodada, respondendo "Quem está mandando nas Oitavas?" sem alterar o ranking geral — as fases disponíveis são derivadas dos jogos reais do grupo. `streak-de-acertos` (item 54) exibiu no ranking a sequência atual de jogos consecutivos em que o participante acertou pelo menos o vencedor: a streak conta apenas jogos com status `finished` onde o participante fez palpite, reseta quando há erro ou ausência de palpite num jogo encerrado, e fica visível ao lado do nome ou na coluna de pontos. Por fim, `perfil-com-estatisticas` (item 55) fechou o produto com uma página `/perfil` pessoal: taxa de acerto de vencedor, taxa de placares exatos, média de pontos por jogo, sequência atual, melhor sequência histórica e palpites feitos vs jogos disponíveis — tudo escopado ao grupo ativo, com visual em monospace/paleta verde-amarelo-azul seguindo DESIGN.md rigorosamente.
+
+Com isso, todas as 55 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 49 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
 
 ## Próximos passos sugeridos
 
@@ -119,5 +124,7 @@ Com isso, todas as 52 features do roadmap — as 6 funcionalidades centrais do `
 - **Suite de testes para `ScoringExample`/`/como-pontuar`:** a validação dos 6 exemplos isolados contra `calculateScore()` foi feita via script ad-hoc descartado após a conferência; formalizar como teste automatizado (Jest) evitaria reconferência manual a cada futura mudança em `lib/scoring.ts`
 - **Scouts em tempo real:** os badges de scout (`ranking-scouts`) são calculados via query no mount do ranking; se o grupo crescer, considerar caching server-side ou materialização dos scouts em uma view/tabela auxiliar para evitar recálculo frequente
 - **Scouts adicionais:** novos perfis de scout podem ser adicionados conforme o bolão evolui — ex: "azarado" (mais +2 acertados mas zero +5), "consistente" (menor desvio padrão de pontos por jogo), "madrugador" (mais palpites feitos com mais de 24h de antecedência)
-- **Ranking com filtro por fase:** permitir ao usuário ver o ranking restrito a uma rodada específica (ex: "Fase de Grupos", "Oitavas") sem afetar o ranking geral persistido
-- **Compartilhamento de ranking:** exportar o ranking do grupo como imagem ou texto formatado para compartilhamento em WhatsApp/Telegram, aproveitando os scouts como elemento visual diferenciador
+- **Compartilhamento de ranking:** exportar o ranking do grupo (geral ou por rodada) como imagem ou texto formatado para compartilhamento em WhatsApp/Telegram, aproveitando os scouts e streaks como elemento visual diferenciador
+- **Perfil público:** tornar a página `/perfil` acessível por link direto (ex: `/perfil/[user_id]`), permitindo que outros participantes do mesmo grupo vejam o histórico de desempenho uns dos outros
+- **Streak máxima histórica comparada:** no ranking, exibir a melhor streak histórica de cada participante em hover/tooltip para contextualizar a streak atual
+- **Notificação de streak em risco:** alertar o participante quando houver um jogo prestes a encerrar sem palpite e ele estiver em sequência positiva, para não perder o acerto por omissão
