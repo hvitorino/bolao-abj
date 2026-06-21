@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 55 features
+- Total: 56 features
 - Concluídas: 55
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -713,6 +713,18 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Streak conta apenas jogos com status `finished` onde o participante fez palpite
 - Streak reseta quando o participante erra o vencedor ou não fez palpite num jogo encerrado
 **Dependências:** auth, ranking, predictions, scoring, grupos
+
+---
+
+### 56. perfil-redesign — Redesign da Aba de Perfil — em progresso
+**Objetivo:** Transformar a aba `/perfil` de uma lista seca de 6 estatísticas em um painel rico com 4 seções empilhadas: SUA CAMPANHA (herói com posição/pontos/movimento), DESEMPENHO (barras ASCII, comparação com média do grupo, sequência em pílulas), TROFÉUS (sistema completo de 15 medalhas com 3 estados) e HISTÓRICO (feed cronológico paginado com palpites e pontos).
+**Critérios de sucesso:**
+- A aba /perfil exibe as 4 seções conforme os wireframes ASCII do documento de design em `.pipeline/perfil-redesign-design.md`
+- O movimento de posição ("▲2 desde a última rodada") usa snapshots gravados ao fechar cada dia de jogos (nova tabela `position_snapshots`)
+- O sistema de troféus deriva os 15 troféus listados no doc a partir de dados existentes + snapshots, com 3 estados: desbloqueado, bloqueado com progresso, e secreto
+- O feed histórico inicia com os últimos 20 jogos + botão "ver mais", incluindo jogos "furados" (encerrados sem palpite)
+- A estética segue DESIGN.md rigorosamente (JetBrains Mono, tokens CSS da bandeira, sem sombras, dark only)
+**Dependências:** auth, ranking, predictions, scoring, grupos, perfil-com-estatisticas, streak-de-acertos
 
 ---
 
