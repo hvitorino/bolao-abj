@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  // --- Modo por rodada: sem scouts, sem predictions_count ---
+  // --- Modo por rodada: sem scouts, sem predictions_count, sem streak ---
   if (round && round !== 'GERAL') {
     const { data: rankingByRoundData, error: rankingByRoundError } = await serviceClient.rpc(
       'get_ranking_by_round',
@@ -92,15 +92,17 @@ export async function GET(request: NextRequest) {
       aproveitamento: calcAproveitamento(Number(entry.total_points), Number(entry.games_predicted)),
       predictions_count: 0,
       scouts: [] as string[],
+      streak: 0,
     }))
 
     return NextResponse.json(rankingByRound)
   }
 
-  // --- Modo geral: comportamento original ---
-  const [rankingResult, scoutsResult] = await Promise.all([
+  // --- Modo geral: comportamento original + streak ---
+  const [rankingResult, scoutsResult, streakResult] = await Promise.all([
     serviceClient.rpc('get_ranking', { p_group_id: groupId }),
     serviceClient.rpc('get_ranking_scouts', { p_group_id: groupId }),
+    serviceClient.rpc('get_streak_for_group', { p_group_id: groupId }),
   ])
 
   if (rankingResult.error) {
@@ -111,6 +113,11 @@ export async function GET(request: NextRequest) {
   if (scoutsResult.error) {
     console.error('[api/ranking] RPC get_ranking_scouts error:', scoutsResult.error)
     return NextResponse.json({ error: 'Erro ao buscar scouts.' }, { status: 500 })
+  }
+
+  if (streakResult.error) {
+    // Não bloqueia a resposta — streak vem como 0 para todos em caso de erro
+    console.error('[api/ranking] RPC get_streak_for_group error:', streakResult.error)
   }
 
   // --- Calcular badges de scout ---
@@ -168,6 +175,12 @@ export async function GET(request: NextRequest) {
     scoutsByUser[row.user_id] = badges
   }
 
+  // --- Mapear streaks por user_id ---
+  const streakByUser: Record<string, number> = {}
+  for (const row of (streakResult.data ?? [])) {
+    streakByUser[row.user_id] = Number(row.streak)
+  }
+
   // --- Montar resposta ---
   const ranking = (rankingResult.data ?? []).map((entry: {
     rank_position: number
@@ -185,6 +198,7 @@ export async function GET(request: NextRequest) {
     aproveitamento: calcAproveitamento(Number(entry.total_points), Number(entry.games_predicted)),
     predictions_count: Number(entry.predictions_count),
     scouts: scoutsByUser[entry.user_id] ?? [],
+    streak: streakByUser[entry.user_id] ?? 0,
   }))
 
   return NextResponse.json(ranking)
