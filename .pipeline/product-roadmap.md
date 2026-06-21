@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 58 features
+- Total: 59 features
 - Concluídas: 58
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -762,3 +762,16 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Troféus sem jogos contabilizados mostram estado vazio adequado (ou nenhuma listagem)
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** fix-perfil-stats-trophies, perfil-redesign, scoring
+
+---
+
+### 59. trofeus-negativos — Troféus Negativos e Anti-Platina — pendente
+**Objetivo:** Adicionar 9 troféus negativos com tom humorístico e autoirônico ao painel de perfil, mais um achievement "Anti-Platina" (COLECIONADOR DO CAOS) para quem coletar todos os 9 negativos, sem nenhuma migração de banco.
+**Critérios de sucesso:**
+- Os 9 troféus negativos são calculados corretamente na API (`app/api/profile/trophies/route.ts`)
+- A seção "CONQUISTAS IMPROVÁVEIS" aparece no `TrophiesPanel` abaixo dos troféus positivos
+- O header do painel exibe contagem separada: `TROFÉUS 12/15 · VERGONHA 3/9`
+- Anti-platina (COLECIONADOR DO CAOS) aparece no topo da seção negativa quando todos os 9 estão desbloqueados
+- Troféus progressivos (`naufragando`/`a_deriva`/`sem_volta`) exibem barra de progresso igual aos positivos de sequência
+- `npm run lint` e `npm run build` passam sem erros novos
+**Dependências:** trophy-contributing-games, perfil-redesign, fix-perfil-stats-trophies, scoring
