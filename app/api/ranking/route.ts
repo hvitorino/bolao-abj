@@ -31,7 +31,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Autenticação requerida.' }, { status: 401 })
   }
 
-  const groupId = new URL(request.url).searchParams.get('group_id')
+  const searchParams = new URL(request.url).searchParams
+  const groupId = searchParams.get('group_id')
+  const round = searchParams.get('round') ?? undefined
+
   if (!groupId || !isValidUUID(groupId)) {
     return NextResponse.json(
       { error: 'invalid_params', message: 'group_id é obrigatório e deve ser um UUID válido.' },
@@ -62,6 +65,39 @@ export async function GET(request: NextRequest) {
     )
   }
 
+  // --- Modo por rodada: sem scouts, sem predictions_count ---
+  if (round && round !== 'GERAL') {
+    const { data: rankingByRoundData, error: rankingByRoundError } = await serviceClient.rpc(
+      'get_ranking_by_round',
+      { p_group_id: groupId, p_round: round }
+    )
+
+    if (rankingByRoundError) {
+      console.error('[api/ranking] RPC get_ranking_by_round error:', rankingByRoundError)
+      return NextResponse.json({ error: 'Erro ao buscar ranking por rodada.' }, { status: 500 })
+    }
+
+    const rankingByRound = (rankingByRoundData ?? []).map((entry: {
+      rank_position: number
+      user_id: string
+      participant_name: string
+      total_points: number
+      games_predicted: number
+    }) => ({
+      rank_position: entry.rank_position,
+      user_id: entry.user_id,
+      participant_name: entry.participant_name,
+      total_points: Number(entry.total_points),
+      games_predicted: Number(entry.games_predicted),
+      aproveitamento: calcAproveitamento(Number(entry.total_points), Number(entry.games_predicted)),
+      predictions_count: 0,
+      scouts: [] as string[],
+    }))
+
+    return NextResponse.json(rankingByRound)
+  }
+
+  // --- Modo geral: comportamento original ---
   const [rankingResult, scoutsResult] = await Promise.all([
     serviceClient.rpc('get_ranking', { p_group_id: groupId }),
     serviceClient.rpc('get_ranking_scouts', { p_group_id: groupId }),
