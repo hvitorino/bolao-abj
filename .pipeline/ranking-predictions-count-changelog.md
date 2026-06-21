@@ -3,7 +3,7 @@
 **Slug:** ranking-predictions-count
 **Branch:** feature/ranking-predictions-count
 **Data:** 2026-06-21
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

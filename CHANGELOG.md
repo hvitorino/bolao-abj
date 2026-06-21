@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [ranking-predictions-count] — Total de Palpites no Ranking — 2026-06-21
+
+- Exibe a contagem de palpites de cada participante na tabela de ranking, como indicador de engajamento complementar à pontuação
+- `supabase/migrations/20260621000000_ranking_add_predictions_count.sql` — recria `get_ranking(p_group_id uuid)` via `CREATE OR REPLACE` adicionando `predictions_count bigint` via LEFT JOIN com subquery em `predictions`; tipos de retorno padronizados para `bigint`; critério de empate `ORDER BY total_points DESC, p.name ASC` preservado
+- `app/api/ranking/route.ts` — `predictions_count` incluído no type annotation e no objeto de retorno JSON com `Number()` para serialização correta
+- `lib/types/ranking.ts` — campo `predictions_count: number` adicionado à interface `RankingEntry`
+- `components/bolao/RankingTable.tsx` — nova coluna `PALP.` no `<thead>` entre `PONTOS` e `APROVEIT.`; visível em mobile (sem `hidden md:table-cell`); `minWidth: 4.5rem`
+- `components/bolao/RankingRow.tsx` — nova célula `predictions_count` com `color-muted`, `fontSize: 13px`, sem bold; inserida entre pontos e aproveitamento
+
 ## [calendar-utc-fix] — Corrigir Agrupamento de Jogos no Calendário para Usar UTC — 2026-06-20
 
 - `lib/date.ts` — adicionada função `matchDateToUTCDate(isoUtcString: string): string` que extrai a data UTC de um timestamptz ISO 8601 via `new Date(isoUtcString).toISOString().slice(0, 10)`, sem conversão de fuso horário; `matchDateToLocalDate` preservada para uso por outras features
