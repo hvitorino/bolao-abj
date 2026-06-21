@@ -75,6 +75,7 @@ export async function GET(request: NextRequest) {
     participant_name: string
     total_points: number
     games_predicted: number
+    predictions_count: number
   }) => ({
     rank_position: entry.rank_position,
     user_id: entry.user_id,
@@ -82,6 +83,7 @@ export async function GET(request: NextRequest) {
     total_points: Number(entry.total_points),
     games_predicted: Number(entry.games_predicted),
     aproveitamento: calcAproveitamento(Number(entry.total_points), Number(entry.games_predicted)),
+    predictions_count: Number(entry.predictions_count),
   }))
 
   return NextResponse.json(ranking)
