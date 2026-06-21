@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 56 features
-- Concluídas: 55
-- Em progresso: 1
+- Concluídas: 56
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -716,7 +716,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 56. perfil-redesign — Redesign da Aba de Perfil — em progresso
+### 56. perfil-redesign — Redesign da Aba de Perfil — concluída
 **Objetivo:** Transformar a aba `/perfil` de uma lista seca de 6 estatísticas em um painel rico com 4 seções empilhadas: SUA CAMPANHA (herói com posição/pontos/movimento), DESEMPENHO (barras ASCII, comparação com média do grupo, sequência em pílulas), TROFÉUS (sistema completo de 15 medalhas com 3 estados) e HISTÓRICO (feed cronológico paginado com palpites e pontos).
 **Critérios de sucesso:**
 - A aba /perfil exibe as 4 seções conforme os wireframes ASCII do documento de design em `.pipeline/perfil-redesign-design.md`
