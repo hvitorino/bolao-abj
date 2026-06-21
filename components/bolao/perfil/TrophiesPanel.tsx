@@ -23,6 +23,7 @@ export interface Trophy {
 
 export interface TrophiesData {
   trophies: Trophy[]
+  negativeTrophies: Trophy[]
 }
 
 interface TrophiesPanelProps {
@@ -45,6 +46,18 @@ const TROPHY_CRITERIA: Record<string, string> = {
   cartola: 'já ocupou o 1º lugar do grupo',
   zebreiro: 'acertou o vencedor num jogo em que a maioria errou',
   podio: 'fechou uma rodada no top 3',
+}
+
+const NEGATIVE_TROPHY_CRITERIA: Record<string, string> = {
+  placar_espelhado:  'acertou os números, errou o lado',
+  ultima_hora:       'não é procrastinação, é estratégia',
+  trono_de_papel:    'subiu pra cair',
+  quase:             'tão perto, tão longe',
+  solitario_do_erro: 'o único que não viu',
+  dia_ruim:          'o sol não saiu hoje',
+  naufragando:       'sequência de 3 erros consecutivos',
+  a_deriva:          'sequência de 5 erros consecutivos',
+  sem_volta:         'sequência de 8 erros consecutivos',
 }
 
 function renderBar(rate: number, width: number = 5): string {
@@ -145,11 +158,15 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
   }
 
   const { trophies } = state.data
+  // Backward compat: se negativeTrophies vier undefined (cache antigo), usar []
+  const negativeTrophies = state.data.negativeTrophies ?? []
   const unlocked = trophies.filter((t) => t.status === 'unlocked')
+  const unlockedNeg = negativeTrophies.filter((t) => t.status === 'unlocked')
+  const isAntiPlatina = negativeTrophies.length > 0 && negativeTrophies.every((t) => t.status === 'unlocked')
 
   return (
     <div style={PANEL}>
-      {/* Header com contagem */}
+      {/* Header com contagem de positivos e vergonhas */}
       <div style={{
         fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase',
         letterSpacing: '0.1em', color: 'var(--color-accent)',
@@ -158,11 +175,11 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
       }}>
         <span>TROFÉUS</span>
         <span style={{ color: 'var(--color-muted)' }}>
-          {unlocked.length} / {trophies.length}
+          {unlocked.length}/{trophies.length} · VERGONHA {unlockedNeg.length}/9
         </span>
       </div>
 
-      {/* Grid vertical único — todos os troféus */}
+      {/* Grid vertical — troféus positivos */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
         {trophies.map((trophy, index) => {
           const isLast = index === trophies.length - 1
@@ -234,6 +251,118 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
           )
         })}
       </div>
+
+      {/* Seção negativa — só renderiza se houver dados */}
+      {negativeTrophies.length > 0 && (
+        <>
+          {/* Divisor entre seções */}
+          <div style={{
+            borderTop: '1px solid var(--color-border)',
+            margin: '0',
+          }} />
+
+          {/* Header da seção negativa */}
+          <div style={{
+            fontSize: '11px',
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            color: 'var(--color-error)',
+            padding: '0.5rem 1rem',
+            borderBottom: '1px solid var(--color-border)',
+          }}>
+            CONQUISTAS IMPROVÁVEIS
+          </div>
+
+          {/* Card Anti-Platina — exibido somente quando todos os 9 negativos estão desbloqueados */}
+          {isAntiPlatina && (
+            <div style={{
+              padding: '0.5rem 1rem',
+              borderBottom: '1px solid var(--color-border)',
+              border: '1px solid var(--color-error)',
+              backgroundColor: 'rgba(255, 69, 58, 0.08)',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--color-error)', fontWeight: 'bold', textTransform: 'uppercase', fontSize: '12px' }}>
+                  ✗ COLECIONADOR DO CAOS
+                </span>
+              </div>
+              <div style={{ marginTop: '0.2rem', fontSize: '11px', color: 'var(--color-error)' }}>
+                desbloqueou todos os 9 troféus negativos — parabéns, campeão do caos
+              </div>
+            </div>
+          )}
+
+          {/* Cards dos 9 troféus negativos */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
+            {negativeTrophies.map((trophy, index) => {
+              const isLast = index === negativeTrophies.length - 1
+              const itemStyle: React.CSSProperties = {
+                padding: '0.5rem 1rem',
+                cursor: 'default',
+                borderBottom: isLast ? 'none' : '1px solid var(--color-border)',
+                fontSize: '12px',
+              }
+              const games = trophy.contributing_games ?? []
+
+              if (trophy.status === 'unlocked') {
+                return (
+                  <div key={trophy.id} style={itemStyle}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
+                      <span style={{ color: 'var(--color-error)', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                        ✗ {trophy.name}
+                      </span>
+                      {trophy.unlocked_at && (
+                        <span style={{ fontSize: '11px', color: 'var(--color-error)' }}>
+                          {formatDate(trophy.unlocked_at)}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ marginTop: '0.2rem', fontSize: '11px', color: 'var(--color-muted)' }}>
+                      {NEGATIVE_TROPHY_CRITERIA[trophy.id] ?? ''}
+                    </div>
+                    {/* Barra de progresso para progressivos (muted mesmo quando desbloqueado) */}
+                    {trophy.progress !== null && trophy.progress_max && (
+                      <span style={{ fontSize: '11px', color: 'var(--color-muted)' }}>
+                        {trophy.progress}/{trophy.progress_max}{' '}
+                        <span style={{ letterSpacing: '0.05em' }}>{renderBar(trophy.progress / trophy.progress_max)}</span>
+                      </span>
+                    )}
+                    {games.length > 0 && (
+                      <div style={GAME_LIST_STYLE}>
+                        {games.map((game) => (
+                          // Negativos sempre passam unlocked={false}: borda color-border, cor muted
+                          <ContributingGameLine key={game.game_id} game={game} unlocked={false} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              }
+
+              // Troféu negativo bloqueado
+              return (
+                <div key={trophy.id} style={itemStyle}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
+                    <span style={{ color: 'var(--color-muted)', textTransform: 'uppercase' }}>
+                      ○ {trophy.name}
+                    </span>
+                    {trophy.progress !== null && trophy.progress_max && (
+                      <span style={{ fontSize: '11px', color: 'var(--color-muted)' }}>
+                        {trophy.progress}/{trophy.progress_max}{' '}
+                        <span style={{ letterSpacing: '0.05em' }}>{renderBar(trophy.progress / trophy.progress_max)}</span>
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ marginTop: '0.2rem', fontSize: '11px', color: 'var(--color-muted)' }}>
+                    {NEGATIVE_TROPHY_CRITERIA[trophy.id] ?? ''}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
     </div>
   )
 }
