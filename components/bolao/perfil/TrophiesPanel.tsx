@@ -200,7 +200,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
               <div key={trophy.id} style={itemStyle}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
                   <span style={{ color: 'var(--color-win)', fontWeight: 'bold', textTransform: 'uppercase' }}>
-                    ✓ {trophy.name}
+                    🏆 {trophy.name}
                   </span>
                   {trophy.unlocked_at && (
                     <span style={{ fontSize: '11px', color: 'var(--color-win)' }}>
@@ -231,7 +231,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
             <div key={trophy.id} style={itemStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
                 <span style={{ color: 'var(--color-muted)', textTransform: 'uppercase' }}>
-                  ✗ {trophy.name}
+                  🔒 {trophy.name}
                 </span>
                 {trophy.progress !== null && trophy.progress_max && (
                   <span style={{ fontSize: '11px', color: 'var(--color-muted)' }}>
@@ -287,7 +287,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: 'var(--color-error)', fontWeight: 'bold', textTransform: 'uppercase', fontSize: '12px' }}>
-                  ✗ COLECIONADOR DO CAOS
+                  🤡 COLECIONADOR DO CAOS
                 </span>
               </div>
               <div style={{ marginTop: '0.2rem', fontSize: '11px', color: 'var(--color-error)' }}>
@@ -313,7 +313,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                   <div key={trophy.id} style={itemStyle}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
                       <span style={{ color: 'var(--color-error)', fontWeight: 'bold', textTransform: 'uppercase' }}>
-                        ✗ {trophy.name}
+                        🤡 {trophy.name}
                       </span>
                       {trophy.unlocked_at && (
                         <span style={{ fontSize: '11px', color: 'var(--color-error)' }}>
@@ -348,7 +348,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                 <div key={trophy.id} style={itemStyle}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
                     <span style={{ color: 'var(--color-muted)', textTransform: 'uppercase' }}>
-                      ○ {trophy.name}
+                      🔒 {trophy.name}
                     </span>
                     {trophy.progress !== null && trophy.progress_max && (
                       <span style={{ fontSize: '11px', color: 'var(--color-muted)' }}>
