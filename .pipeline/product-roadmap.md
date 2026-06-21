@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 57 features
+- Total: 58 features
 - Concluídas: 57
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -749,3 +749,16 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Descrição de cada troféu sempre visível (não escondida atrás de toggle, hover ou collapse)
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** perfil-redesign, perfil-com-estatisticas
+
+---
+
+### 58. trophy-contributing-games — Confrontos Contribuintes por Troféu — pendente
+**Objetivo:** Dentro do card de cada troféu na aba de perfil, exibir abaixo da descrição a lista de jogos finalizados que efetivamente contribuíram para o progresso daquele troféu, no formato: Bandeira [Placar] x [Placar] Bandeira.
+**Critérios de sucesso:**
+- Cada card de troféu exibe, abaixo da descrição, a lista de confrontos que contaram para aquele troféu
+- Cada confronto é exibido no formato: [Bandeira do time da casa] [Placar casa] x [Placar visitante] [Bandeira do time visitante]
+- Somente jogos finalizados que efetivamente contribuíram para o critério do troféu são listados
+- A listagem é visualmente integrada ao card existente (sem quebrar o layout atual)
+- Troféus sem jogos contabilizados mostram estado vazio adequado (ou nenhuma listagem)
+- `npm run lint` e `npm run build` passam sem erros novos
+**Dependências:** fix-perfil-stats-trophies, perfil-redesign, scoring
