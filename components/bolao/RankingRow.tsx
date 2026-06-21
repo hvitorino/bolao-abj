@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import type { RankingEntry } from '@/lib/types/ranking'
 import { ScoutBadges } from '@/components/bolao/ScoutBadges'
 
@@ -80,18 +79,16 @@ export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false,
           </span>
         )}
         {isCurrentUser && (
-          <Link
-            href="/perfil"
+          <span
             style={{
               fontSize: '11px',
               color: 'var(--color-primary)',
               marginLeft: '0.5rem',
               fontWeight: 'normal',
-              textDecoration: 'none',
             }}
           >
             (VOCÊ)
-          </Link>
+          </span>
         )}
         {!hideScouts && <ScoutBadges scouts={entry.scouts ?? []} />}
       </td>
