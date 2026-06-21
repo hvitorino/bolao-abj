@@ -7,4 +7,5 @@ export interface RankingEntry {
   aproveitamento: number
   predictions_count: number
   scouts: string[]
+  streak: number
 }
