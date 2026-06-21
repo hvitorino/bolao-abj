@@ -31,9 +31,9 @@ const HEADER: React.CSSProperties = {
   fontWeight: 'bold',
   textTransform: 'uppercase',
   letterSpacing: '0.1em',
-  color: 'var(--color-accent)',
+  color: 'var(--color-bg)',
+  backgroundColor: 'var(--color-primary)',
   padding: '0.5rem 1rem',
-  borderBottom: '1px solid var(--color-border)',
 }
 
 export function CampaignPanel({ state }: CampaignPanelProps) {

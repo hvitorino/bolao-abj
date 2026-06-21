@@ -128,8 +128,9 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
       <div style={PANEL}>
         <div style={{
           fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase',
-          letterSpacing: '0.1em', color: 'var(--color-accent)',
-          padding: '0.5rem 1rem', borderBottom: '1px solid var(--color-border)',
+          letterSpacing: '0.1em', color: 'var(--color-bg)',
+          backgroundColor: 'var(--color-primary)',
+          padding: '0.5rem 1rem',
         }}>
           TROFÉUS
         </div>
@@ -145,8 +146,9 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
       <div style={PANEL}>
         <div style={{
           fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase',
-          letterSpacing: '0.1em', color: 'var(--color-accent)',
-          padding: '0.5rem 1rem', borderBottom: '1px solid var(--color-border)',
+          letterSpacing: '0.1em', color: 'var(--color-bg)',
+          backgroundColor: 'var(--color-primary)',
+          padding: '0.5rem 1rem',
         }}>
           TROFÉUS
         </div>
@@ -169,12 +171,13 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
       {/* Header com contagem de positivos e vergonhas */}
       <div style={{
         fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase',
-        letterSpacing: '0.1em', color: 'var(--color-accent)',
-        padding: '0.5rem 1rem', borderBottom: '1px solid var(--color-border)',
+        letterSpacing: '0.1em', color: 'var(--color-bg)',
+        backgroundColor: 'var(--color-primary)',
+        padding: '0.5rem 1rem',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
         <span>TROFÉUS</span>
-        <span style={{ color: 'var(--color-muted)' }}>
+        <span style={{ color: 'rgba(10, 14, 26, 0.65)' }}>
           {unlocked.length}/{trophies.length} · VERGONHA {unlockedNeg.length}/9
         </span>
       </div>
@@ -267,9 +270,9 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
             fontWeight: 'bold',
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
-            color: 'var(--color-error)',
+            color: 'var(--color-bg)',
+            backgroundColor: 'var(--color-error)',
             padding: '0.5rem 1rem',
-            borderBottom: '1px solid var(--color-border)',
           }}>
             GALERIA DO VEXAME
           </div>
