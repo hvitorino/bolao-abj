@@ -1,4 +1,5 @@
 import type { RankingEntry } from '@/lib/types/ranking'
+import { ScoutBadges } from '@/components/bolao/ScoutBadges'
 
 interface RankingRowProps {
   entry: RankingEntry
@@ -72,6 +73,7 @@ export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) 
             (VOCÊ)
           </span>
         )}
+        <ScoutBadges scouts={entry.scouts ?? []} />
       </td>
 
       {/* Pontos */}

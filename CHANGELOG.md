@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [ranking-scouts] — Scouts no Ranking — 2026-06-21
+
+- Exibe badges de "scout" ao lado do nome de cada participante no ranking, identificando perfis de comportamento no bolão (mãe diná, manja muito, cego em tiroteio, sumido, onde está wally?)
+- `supabase/migrations/20260621100000_create_ranking_scouts_function.sql` — função `get_ranking_scouts(p_group_id uuid)` via `CREATE OR REPLACE SECURITY DEFINER STABLE`; retorna por participante `exact_count`, `winner_count`, `miss_count`, `pred_active`, `pred_total` cruzando `group_members`, `profiles`, `scores`, `predictions` e `games`
+- `app/api/ranking/route.ts` — executa `get_ranking` e `get_ranking_scouts` em paralelo via `Promise.all`; calcula badges server-side com thresholds máx/mín, exclusão mútua wally/sumido e `minActive > 0`; adiciona campo `scouts: string[]` em cada entrada do JSON de resposta
+- `lib/types/ranking.ts` — campo `scouts: string[]` adicionado à interface `RankingEntry`
+- `components/bolao/ScoutBadges.tsx` — novo componente; renderiza `<span title=...>emoji</span>` por scout com tooltip nativo; retorna `null` para arrays vazios; `display: inline-flex`, `flexShrink: 0`
+- `components/bolao/RankingRow.tsx` — importa `ScoutBadges` e insere na célula PARTICIPANTE após nome e sufixo "(VOCÊ)"
+
 ## [ranking-predictions-count] — Total de Palpites no Ranking — 2026-06-21
 
 - Exibe a contagem de palpites de cada participante na tabela de ranking, como indicador de engajamento complementar à pontuação
