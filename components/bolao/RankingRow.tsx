@@ -88,6 +88,20 @@ export function RankingRow({ entry, isCurrentUser, isLeader }: RankingRowProps) 
         {entry.total_points}
       </td>
 
+      {/* Palpites */}
+      <td
+        style={{
+          padding: '0.35rem 0.5rem',
+          textAlign: 'center',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          fontSize: '13px',
+          color: 'var(--color-muted)',
+          minWidth: '4.5rem',
+        }}
+      >
+        {entry.predictions_count}
+      </td>
+
       {/* Aproveitamento */}
       <td
         className="hidden md:table-cell"

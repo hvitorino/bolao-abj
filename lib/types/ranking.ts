@@ -5,4 +5,5 @@ export interface RankingEntry {
   total_points: number
   games_predicted: number
   aproveitamento: number
+  predictions_count: number
 }
