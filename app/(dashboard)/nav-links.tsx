@@ -19,6 +19,17 @@ const MAIS_ITEMS = [
 
 const MONO = "'JetBrains Mono', 'Courier New', monospace"
 
+const baseLinkStyle: React.CSSProperties = {
+  fontFamily: MONO,
+  fontSize: '11px',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  textDecoration: 'none',
+  padding: '0.5rem 0',
+  whiteSpace: 'nowrap',
+  lineHeight: 1,
+}
+
 export function NavLinks() {
   const pathname = usePathname()
   const [maisOpen, setMaisOpen] = useState(false)
@@ -38,57 +49,65 @@ export function NavLinks() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const linkStyle = (isActive: boolean): React.CSSProperties => ({
-    fontFamily: MONO,
-    fontSize: '11px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    textDecoration: 'none',
-    color: isActive ? 'var(--color-primary)' : 'var(--color-muted)',
-    borderBottom: isActive ? '2px solid var(--color-primary)' : '2px solid transparent',
-    padding: '0.5rem 0',
-    transition: 'color 0.15s ease, border-color 0.15s ease',
-    display: 'inline-block',
-    whiteSpace: 'nowrap',
-  })
-
   return (
     <nav
       style={{
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'center',
         gap: '0.5rem',
-        overflowX: 'auto',
       }}
     >
-      {NAV_ITEMS.map(({ href, label }) => {
-        const isActive =
-          pathname === href ||
-          pathname.startsWith(href + '?') ||
-          pathname.startsWith(href + '/')
-        return (
-          <Link key={href} href={href} style={linkStyle(isActive)}>
-            {label}
-          </Link>
-        )
-      })}
+      {/* Itens principais — scroll horizontal em telas muito pequenas */}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          overflowX: 'auto',
+        }}
+      >
+        {NAV_ITEMS.map(({ href, label }) => {
+          const isActive =
+            pathname === href ||
+            pathname.startsWith(href + '?') ||
+            pathname.startsWith(href + '/')
+          return (
+            <Link
+              key={href}
+              href={href}
+              style={{
+                ...baseLinkStyle,
+                color: isActive ? 'var(--color-primary)' : 'var(--color-muted)',
+                borderBottom: isActive
+                  ? '2px solid var(--color-primary)'
+                  : '2px solid transparent',
+                display: 'inline-block',
+              }}
+            >
+              {label}
+            </Link>
+          )
+        })}
+      </div>
 
-      {/* Menu MAIS */}
-      <div ref={maisRef} style={{ position: 'relative' }}>
+      {/* MAIS — fora do container scrollável para o dropdown não gerar scroll */}
+      <div ref={maisRef} style={{ position: 'relative', flexShrink: 0 }}>
         <button
           onClick={() => setMaisOpen((o) => !o)}
           style={{
-            ...linkStyle(maisActive),
+            ...baseLinkStyle,
             background: 'none',
             border: 'none',
             borderBottom: maisActive
               ? '2px solid var(--color-primary)'
               : '2px solid transparent',
+            color: maisActive ? 'var(--color-primary)' : 'var(--color-muted)',
             cursor: 'pointer',
-            padding: '0.5rem 0',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '0.2rem',
+            margin: 0,
           }}
         >
           MAIS {maisOpen ? '▲' : '▼'}
@@ -103,7 +122,7 @@ export function NavLinks() {
               backgroundColor: 'var(--color-surface)',
               border: '1px solid var(--color-border)',
               minWidth: '120px',
-              zIndex: 50,
+              zIndex: 100,
             }}
           >
             {MAIS_ITEMS.map(({ href, label }) => {
