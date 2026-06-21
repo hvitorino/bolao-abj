@@ -226,6 +226,8 @@ export async function GET(request: NextRequest) {
       match_day: string
       home_team: string
       away_team: string
+      home_team_code: string
+      away_team_code: string
       home_score: number
       away_score: number
       pred_home: number | null

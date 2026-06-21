@@ -1,5 +1,6 @@
 'use client'
 
+import { getTeamFlag } from '@/lib/utils/teamFlag'
 import type { SectionState } from './PerfilDashboard'
 import type { Trophy } from './TrophiesPanel'
 
@@ -8,6 +9,8 @@ export interface HistoryItem {
   match_day: string
   home_team: string
   away_team: string
+  home_team_code: string
+  away_team_code: string
   home_score: number
   away_score: number
   pred_home: number | null
@@ -57,8 +60,50 @@ function formatDayHeader(matchDay: string): string {
     .replace(/\./g, '')
 }
 
-function teamCode(team: string): string {
-  return team.slice(0, 3).toUpperCase()
+function HistoryGameCard({
+  home_team_code,
+  away_team_code,
+  home_score,
+  away_score,
+  variant,
+}: {
+  home_team_code: string
+  away_team_code: string
+  home_score: number
+  away_score: number
+  variant: 'win' | 'neutral' | 'miss'
+}) {
+  const color =
+    variant === 'win'
+      ? 'var(--color-win)'
+      : variant === 'miss'
+        ? 'var(--color-error)'
+        : 'var(--color-muted)'
+
+  return (
+    <div
+      style={{
+        fontSize: '11px',
+        color,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.3rem',
+        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+        border: `1px solid ${color}`,
+        borderRadius: '4px',
+        padding: '0.2rem 0.4rem',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      <span>{getTeamFlag(home_team_code)}</span>
+      <span>{home_team_code}</span>
+      <span>{home_score}</span>
+      <span>×</span>
+      <span>{away_score}</span>
+      <span>{away_team_code}</span>
+      <span>{getTeamFlag(away_team_code)}</span>
+    </div>
+  )
 }
 
 function groupByDay(items: HistoryItem[]): [string, HistoryItem[]][] {
@@ -158,13 +203,16 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
                 flexWrap: 'wrap',
               }}
             >
-              {/* Resultado real */}
-              <span style={{ color: 'var(--color-text)', minWidth: '9rem' }}>
-                {teamCode(item.home_team)} {item.home_score}×{item.away_score} {teamCode(item.away_team)}
-              </span>
+              {/* Resultado real — mini-card com bandeira */}
+              <HistoryGameCard
+                home_team_code={item.home_team_code}
+                away_team_code={item.away_team_code}
+                home_score={item.home_score}
+                away_score={item.away_score}
+                variant={item.is_miss ? 'miss' : item.points > 0 ? 'win' : 'neutral'}
+              />
 
               {item.is_miss ? (
-                /* Jogo furado */
                 <span style={{ color: 'var(--color-error)', fontSize: '11px' }}>
                   -- FUROU --
                 </span>
