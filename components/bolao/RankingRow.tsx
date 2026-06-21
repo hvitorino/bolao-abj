@@ -63,6 +63,21 @@ export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false,
       >
         {isLeader ? '► ' : '   '}
         {entry.participant_name}
+        {entry.streak > 0 && (
+          <span
+            title={`${entry.streak} acerto${entry.streak !== 1 ? 's' : ''} consecutivo${entry.streak !== 1 ? 's' : ''}`}
+            style={{
+              fontSize: '11px',
+              color: 'var(--color-win)',
+              marginLeft: '0.4rem',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              fontWeight: 'bold',
+              flexShrink: 0,
+            }}
+          >
+            🔥×{entry.streak}
+          </span>
+        )}
         {isCurrentUser && (
           <span
             style={{
