@@ -70,10 +70,10 @@ const PANEL: React.CSSProperties = {
 }
 
 const GAME_LIST_STYLE: React.CSSProperties = {
-  marginTop: '0.3rem',
+  marginTop: '0.4rem',
   display: 'flex',
-  flexDirection: 'column',
-  gap: '1px',
+  flexWrap: 'wrap',
+  gap: '0.3rem',
 }
 
 function ContributingGameLine({
@@ -92,6 +92,10 @@ function ContributingGameLine({
         alignItems: 'center',
         gap: '0.3rem',
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+        border: `1px solid ${unlocked ? 'var(--color-win)' : 'var(--color-border)'}`,
+        borderRadius: '4px',
+        padding: '0.2rem 0.4rem',
+        whiteSpace: 'nowrap',
       }}
     >
       <span>{getTeamFlag(game.home_team_code)}</span>
