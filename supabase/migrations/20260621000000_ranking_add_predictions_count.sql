@@ -12,6 +12,8 @@
 --   - Membros com 0 pontos aparecem (LEFT JOIN + COALESCE)
 --   - Escopo por grupo: WHERE gm.group_id = p_group_id
 
+DROP FUNCTION IF EXISTS get_ranking(uuid);
+
 CREATE OR REPLACE FUNCTION get_ranking(p_group_id uuid)
 RETURNS TABLE (
   rank_position     bigint,
