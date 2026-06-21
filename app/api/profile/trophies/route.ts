@@ -12,22 +12,11 @@ function isValidUUID(str: string): boolean {
 interface TrophyResult {
   id: string
   name: string
-  status: 'unlocked' | 'locked' | 'secret'
+  status: 'unlocked' | 'locked'
   unlocked_at: string | null
   progress: number | null
   progress_max: number | null
-  secret: boolean
 }
-
-const SECRET_TROPHIES = new Set([
-  'estreia',
-  'abriu_o_placar',
-  'rei_da_goleada',
-  'perfeito_na_rodada',
-  'cartola',
-  'zebreiro',
-  'podio',
-])
 
 const TROPHY_NAMES: Record<string, string> = {
   estreia: 'ESTREIA',
@@ -53,37 +42,13 @@ function makeTrophy(
   progress: number | null = null,
   progressMax: number | null = null
 ): TrophyResult {
-  const isSecret = SECRET_TROPHIES.has(id)
-  if (unlockedAt) {
-    return {
-      id,
-      name: TROPHY_NAMES[id],
-      status: 'unlocked',
-      unlocked_at: unlockedAt,
-      progress,
-      progress_max: progressMax,
-      secret: isSecret,
-    }
-  }
-  if (isSecret) {
-    return {
-      id,
-      name: '???',
-      status: 'secret',
-      unlocked_at: null,
-      progress: null,
-      progress_max: null,
-      secret: true,
-    }
-  }
   return {
     id,
     name: TROPHY_NAMES[id],
-    status: 'locked',
-    unlocked_at: null,
+    status: unlockedAt ? 'unlocked' : 'locked',
+    unlocked_at: unlockedAt,
     progress,
     progress_max: progressMax,
-    secret: false,
   }
 }
 
@@ -410,9 +375,9 @@ async function calcTrophies(
     makeTrophy('podio', podioAt),
   ]
 
-  // Ordenar: desbloqueados primeiro (por data), depois locked, depois secretos
+  // Ordenar: desbloqueados primeiro (por data), depois locked
   return trophies.sort((a, b) => {
-    const order = { unlocked: 0, locked: 1, secret: 2 }
+    const order = { unlocked: 0, locked: 1 }
     if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status]
     if (a.status === 'unlocked' && b.status === 'unlocked') {
       return (a.unlocked_at ?? '').localeCompare(b.unlocked_at ?? '')

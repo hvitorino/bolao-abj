@@ -5,11 +5,10 @@ import type { SectionState } from './PerfilDashboard'
 export interface Trophy {
   id: string
   name: string
-  status: 'unlocked' | 'locked' | 'secret'
+  status: 'unlocked' | 'locked'
   unlocked_at: string | null
   progress: number | null
   progress_max: number | null
-  secret: boolean
 }
 
 export interface TrophiesData {
@@ -144,7 +143,6 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
             )
           }
 
-          // locked ou secret — tratados da mesma forma
           const rate =
             trophy.progress !== null && trophy.progress_max
               ? trophy.progress / trophy.progress_max
