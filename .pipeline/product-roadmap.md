@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 55 features
-- Concluídas: 53
+- Concluídas: 54
 - Em progresso: 0
-- Pendentes: 2
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -706,7 +706,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 54. streak-de-acertos — Sequência de Acertos — pendente
+### 54. streak-de-acertos — Sequência de Acertos — concluída
 **Objetivo:** Exibir no ranking a sequência atual de jogos consecutivos em que o participante acertou pelo menos o vencedor (ex: "5 em sequência"). A sequência reseta quando há erro ou ausência de palpite em jogo encerrado.
 **Critérios de sucesso:**
 - Streak atual visível no ranking ao lado do nome ou na coluna de pontos
