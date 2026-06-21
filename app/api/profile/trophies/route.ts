@@ -86,6 +86,7 @@ async function calcTrophies(
     cartolaTRes,
     podioRes,
     totalWinnerRes,
+    rankingRes,
   ] = await Promise.all([
     // estreia: primeiro palpite
     sc
@@ -188,6 +189,9 @@ async function calcTrophies(
       .eq('user_id', userId)
       .eq('group_id', groupId)
       .filter('breakdown->>winner', 'gt', '0'),
+
+    // ranking atual — fallback para cartola e pódio quando não há snapshots históricos
+    sc.rpc('get_ranking', { p_group_id: groupId }),
   ])
 
   // --- Estreia ---
@@ -314,9 +318,15 @@ async function calcTrophies(
     }
   }
 
+  // --- Ranking atual (fallback para cartola e pódio) ---
+  const rankingRows = (rankingRes.data as Array<{ user_id: string; rank_position: number }> | null) ?? []
+  const currentRank = rankingRows.find((r) => r.user_id === userId)?.rank_position ?? null
+  const nowIso = new Date().toISOString()
+
   // --- Cartola ---
   const cartolaAt =
-    (cartolaTRes.data as { snapshot_at: string } | null)?.snapshot_at ?? null
+    (cartolaTRes.data as { snapshot_at: string } | null)?.snapshot_at
+    ?? (currentRank === 1 ? nowIso : null)
 
   // --- Zebreiro (query manual) ---
   let zebreiroAt: string | null = null
@@ -354,7 +364,8 @@ async function calcTrophies(
 
   // --- Pódio ---
   const podioAt =
-    (podioRes.data as { snapshot_at: string } | null)?.snapshot_at ?? null
+    (podioRes.data as { snapshot_at: string } | null)?.snapshot_at
+    ?? (currentRank !== null && currentRank <= 3 ? nowIso : null)
 
   // --- Montar array de troféus ---
   const trophies: TrophyResult[] = [
