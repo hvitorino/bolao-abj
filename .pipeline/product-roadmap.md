@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 52 features
-- Concluídas: 51
-- Em progresso: 1
+- Concluídas: 52
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -670,7 +670,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 52. ranking-scouts — Scouts no Ranking — em progresso
+### 52. ranking-scouts — Scouts no Ranking — concluída
 **Objetivo:** Exibir badges de "scout" ao lado do nome de cada participante no ranking, identificando conquistas/perfis calculados com base nos dados reais de palpites e pontuação — mãe diná (mais placares exatos), manja muito (mais vencedores acertados), cego em tiroteio (mais vencedores errados), sumido (menos palpites, mín. 1) e onde está wally? (nunca palpitou).
 **Critérios de sucesso:**
 - Cada scout é calculado com base nos dados reais de `predictions` e `scores` do Supabase
