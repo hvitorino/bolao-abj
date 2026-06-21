@@ -62,14 +62,78 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  const { data, error } = await serviceClient.rpc('get_ranking', { p_group_id: groupId })
+  const [rankingResult, scoutsResult] = await Promise.all([
+    serviceClient.rpc('get_ranking', { p_group_id: groupId }),
+    serviceClient.rpc('get_ranking_scouts', { p_group_id: groupId }),
+  ])
 
-  if (error) {
-    console.error('[api/ranking] RPC error:', error)
+  if (rankingResult.error) {
+    console.error('[api/ranking] RPC get_ranking error:', rankingResult.error)
     return NextResponse.json({ error: 'Erro ao buscar ranking.' }, { status: 500 })
   }
 
-  const ranking = (data ?? []).map((entry: {
+  if (scoutsResult.error) {
+    console.error('[api/ranking] RPC get_ranking_scouts error:', scoutsResult.error)
+    return NextResponse.json({ error: 'Erro ao buscar scouts.' }, { status: 500 })
+  }
+
+  // --- Calcular badges de scout ---
+  type ScoutRow = {
+    user_id: string
+    exact_count: number
+    winner_count: number
+    miss_count: number
+    pred_active: number
+    pred_total: number
+  }
+
+  const scoutsData: ScoutRow[] = (scoutsResult.data ?? []).map((r: ScoutRow) => ({
+    user_id: r.user_id,
+    exact_count: Number(r.exact_count),
+    winner_count: Number(r.winner_count),
+    miss_count: Number(r.miss_count),
+    pred_active: Number(r.pred_active),
+    pred_total: Number(r.pred_total),
+  }))
+
+  // Participantes com ao menos 1 palpite total (wally excluído)
+  const nonWally = scoutsData.filter(r => r.pred_total >= 1)
+
+  const maxExact  = scoutsData.length ? Math.max(...scoutsData.map(r => r.exact_count))  : 0
+  const maxWinner = scoutsData.length ? Math.max(...scoutsData.map(r => r.winner_count)) : 0
+  const maxMiss   = scoutsData.length ? Math.max(...scoutsData.map(r => r.miss_count))   : 0
+
+  // min_active só considera participantes com pred_total >= 1
+  const activeValues = nonWally.map(r => r.pred_active)
+  const minActive = activeValues.length ? Math.min(...activeValues) : 0
+
+  const scoutsByUser: Record<string, string[]> = {}
+  for (const row of scoutsData) {
+    const badges: string[] = []
+
+    if (row.pred_total === 0) {
+      badges.push('onde_esta_wally')
+    } else {
+      // sumido: mínimo de palpites ativos > 0 (se min=0, ninguém é "sumido" ainda)
+      if (minActive > 0 && row.pred_active === minActive) {
+        badges.push('sumido')
+      }
+      if (maxExact > 0 && row.exact_count === maxExact) {
+        badges.push('mae_dina')
+      }
+      if (maxWinner > 0 && row.winner_count === maxWinner) {
+        badges.push('manja_muito')
+      }
+      if (maxMiss > 0 && row.miss_count === maxMiss) {
+        badges.push('cego_em_tiroteio')
+      }
+    }
+
+    scoutsByUser[row.user_id] = badges
+  }
+
+  // --- Montar resposta ---
+  const ranking = (rankingResult.data ?? []).map((entry: {
     rank_position: number
     user_id: string
     participant_name: string
@@ -84,6 +148,7 @@ export async function GET(request: NextRequest) {
     games_predicted: Number(entry.games_predicted),
     aproveitamento: calcAproveitamento(Number(entry.total_points), Number(entry.games_predicted)),
     predictions_count: Number(entry.predictions_count),
+    scouts: scoutsByUser[entry.user_id] ?? [],
   }))
 
   return NextResponse.json(ranking)
