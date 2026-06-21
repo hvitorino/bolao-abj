@@ -4,6 +4,9 @@
 -- passa a ser apenas palpites em jogos com status 'finished' ou 'live',
 -- excluindo jogos 'pending' cujo resultado ainda não é conhecido.
 
+-- DROP necessário pois o tipo de retorno mudou (adição de active_predictions_made)
+DROP FUNCTION IF EXISTS get_profile_stats(uuid, uuid);
+
 CREATE OR REPLACE FUNCTION get_profile_stats(p_group_id uuid, p_user_id uuid)
 RETURNS TABLE (
   predictions_made        bigint,
