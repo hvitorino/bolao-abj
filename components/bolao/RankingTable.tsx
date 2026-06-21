@@ -369,7 +369,7 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
           )}
         </div>
 
-        {/* Legenda dos scouts — apenas no modo GERAL */}
+        {/* Legenda dos scouts e streak — apenas no modo GERAL */}
         {!isRoundMode && (
           <div
             style={{
@@ -380,6 +380,18 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
               flexWrap: 'wrap',
             }}
           >
+            <span
+              style={{
+                ...MONO,
+                fontSize: '11px',
+                color: 'var(--color-win)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+              }}
+            >
+              🔥 SEQUÊNCIA DE ACERTOS
+            </span>
             {Object.entries(SCOUT_META).map(([key, { emoji, label }]) => (
               <span
                 key={key}

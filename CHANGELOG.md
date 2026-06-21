@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [streak-de-acertos] — Sequência de Acertos — 2026-06-21
+
+- Exibe no ranking a sequência atual de acertos consecutivos de cada participante como indicador `🔥×N` inline na célula PARTICIPANTE (visível apenas quando streak > 0)
+- `supabase/migrations/20260621300000_create_streak_function.sql` — função `get_streak_for_group(p_group_id uuid)` via `CREATE OR REPLACE SECURITY DEFINER STABLE`; usa `ROW_NUMBER() OVER (ORDER BY match_date DESC)`, CROSS JOIN membros × jogos encerrados e cálculo de `first_miss` para derivar o streak sem nova tabela
+- `app/api/ranking/route.ts` — modo GERAL chama `get_streak_for_group` em paralelo via `Promise.all`; erro não-bloqueante (streak fallback = 0); campo `streak: number` em cada entrada; modo por rodada retorna `streak: 0` sem nova RPC
+- `lib/types/ranking.ts` — campo `streak: number` adicionado à interface `RankingEntry`
+- `components/bolao/RankingRow.tsx` — renderiza `🔥×N` em `color-win` com tooltip nativo após o nome, antes de `(VOCÊ)` e dos scout badges; invisível quando `streak = 0`
+- `components/bolao/RankingTable.tsx` — legenda `🔥 SEQUÊNCIA DE ACERTOS` adicionada no rodapé (modo GERAL apenas)
+
 ## [ranking-por-rodada] — Ranking por Rodada — 2026-06-21
 
 - Adiciona filtro de fase na tela `/ranking`: faixa de chips acima da tabela com "GERAL" padrão e chips por fase (Grupos A–L, Oitavas, Quartas, Semi, Final)
