@@ -3,7 +3,7 @@
 **Slug:** perfil-com-estatisticas
 **Branch:** feature/perfil-com-estatisticas
 **Data:** 2026-06-21
-**Status:** aguardando revisão
+**Status:** aguardando revisão (pós fix-1)
 
 ---
 
@@ -40,9 +40,17 @@
 
 ---
 
+## Correções Fix 1
+
+- `components/bolao/ProfileStats.tsx` linha 205 — label corrigido de `ACERTO VENCEDOR` para `ACERTO DE VENCEDOR`, conforme exigido pela spec (seção "Layout de exibição") e critério de aceite CA6.
+
+---
+
 ## Commits realizados
 
 ```
+bb6e5f2 fix(perfil-com-estatisticas): corrige label para ACERTO DE VENCEDOR conforme spec
+be2f27e chore(perfil-com-estatisticas): adiciona changelog da implementação
 4cab3f4 feat(perfil-com-estatisticas): adiciona link PERFIL na navegação
 dfeb539 feat(perfil-com-estatisticas): cria página /perfil (Server Component)
 ecf0ed0 feat(perfil-com-estatisticas): cria componente ProfileStats
