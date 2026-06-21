@@ -10,7 +10,6 @@ const NAV_ITEMS = [
   { href: '/grupos', label: 'GRUPOS' },
   { href: '/como-pontuar', label: 'REGRAS' },
   { href: '/configuracoes', label: 'CONFIG' },
-  { href: '/perfil', label: 'PERFIL' },
 ]
 
 export function NavLinks() {
