@@ -1,6 +1,15 @@
 'use client'
 
 import type { SectionState } from './PerfilDashboard'
+import { getTeamFlag } from '@/lib/utils/teamFlag'
+
+export interface ContributingGame {
+  game_id: string
+  home_team_code: string
+  away_team_code: string
+  home_score: number
+  away_score: number
+}
 
 export interface Trophy {
   id: string
@@ -9,6 +18,7 @@ export interface Trophy {
   unlocked_at: string | null
   progress: number | null
   progress_max: number | null
+  contributing_games: ContributingGame[]
 }
 
 export interface TrophiesData {
@@ -57,6 +67,42 @@ const PANEL: React.CSSProperties = {
   borderRadius: 0,
   boxShadow: 'none',
   marginBottom: '1px',
+}
+
+const GAME_LIST_STYLE: React.CSSProperties = {
+  marginTop: '0.3rem',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1px',
+}
+
+function ContributingGameLine({
+  game,
+  unlocked,
+}: {
+  game: ContributingGame
+  unlocked: boolean
+}) {
+  return (
+    <div
+      style={{
+        fontSize: '11px',
+        color: unlocked ? 'var(--color-win)' : 'var(--color-muted)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.3rem',
+        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+      }}
+    >
+      <span>{getTeamFlag(game.home_team_code)}</span>
+      <span>{game.home_team_code}</span>
+      <span>{game.home_score}</span>
+      <span>×</span>
+      <span>{game.away_score}</span>
+      <span>{game.away_team_code}</span>
+      <span>{getTeamFlag(game.away_team_code)}</span>
+    </div>
+  )
 }
 
 export function TrophiesPanel({ state }: TrophiesPanelProps) {
@@ -123,6 +169,8 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
             fontSize: '12px',
           }
 
+          const games = trophy.contributing_games ?? []
+
           if (trophy.status === 'unlocked') {
             return (
               <div key={trophy.id} style={itemStyle}>
@@ -139,6 +187,13 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                 <div style={{ marginTop: '0.2rem', fontSize: '11px', color: 'var(--color-muted)' }}>
                   {TROPHY_CRITERIA[trophy.id] ?? ''}
                 </div>
+                {games.length > 0 && (
+                  <div style={GAME_LIST_STYLE}>
+                    {games.map((game) => (
+                      <ContributingGameLine key={game.game_id} game={game} unlocked={true} />
+                    ))}
+                  </div>
+                )}
               </div>
             )
           }
@@ -164,6 +219,13 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
               <div style={{ marginTop: '0.2rem', fontSize: '11px', color: 'var(--color-muted)' }}>
                 {TROPHY_CRITERIA[trophy.id] ?? ''}
               </div>
+              {games.length > 0 && (
+                <div style={GAME_LIST_STYLE}>
+                  {games.map((game) => (
+                    <ContributingGameLine key={game.game_id} game={game} unlocked={false} />
+                  ))}
+                </div>
+              )}
             </div>
           )
         })}
