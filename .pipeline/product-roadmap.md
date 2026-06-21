@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 55 features
-- Concluídas: 52
+- Concluídas: 53
 - Em progresso: 0
-- Pendentes: 3
+- Pendentes: 2
 
 ## Features Priorizadas
 
@@ -695,7 +695,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 53. ranking-por-rodada — Ranking por Rodada — pendente
+### 53. ranking-por-rodada — Ranking por Rodada — concluída
 **Objetivo:** Na tela de ranking, adicionar um seletor de fase (chips) que filtra a pontuação acumulada apenas nos jogos daquela rodada, respondendo "Quem está mandando nas Oitavas?", sem alterar o ranking geral.
 **Critérios de sucesso:**
 - Chips de seleção de fase aparecem acima da tabela de ranking
