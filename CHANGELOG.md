@@ -6,6 +6,19 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [trophy-contributing-games] — Confrontos Contribuintes por Troféu — 2026-06-21
+
+- Adiciona campo `contributing_games: ContributingGame[]` à resposta do endpoint `GET /api/profile/trophies`, presente em todos os 15 troféus
+- Nova interface `ContributingGame` com `game_id`, `home_team_code`, `away_team_code`, `home_score`, `away_score`
+- Nova função auxiliar `extractContributingGame` omite silenciosamente jogos sem placar finalizado (`home_score/away_score null`)
+- Nova função `findStreakContributingGames(threshold)` retorna a janela exata de N jogos consecutivos que atingiu o limiar de sequência (`embalado`, `em_chamas`, `imparavel`)
+- Queries de `abriu_o_placar`, `cravada`, `rei_da_goleada`, `profeta`, `vidente`, `artilheiro` e `streakHistory` atualizadas com join `games(home_team_code, away_team_code, home_score, away_score)`
+- Query de `estreia` ampliada com `game_id` e join em `games`; `videnteRes` sem `.limit(25)` para buscar todos os acertos
+- Troféus `perfeito_na_rodada` e `fiel`: query adicional após encontrar o dia contribuinte para buscar detalhes dos jogos
+- Troféus `cartola` e `podio` sempre retornam `contributing_games: []` (baseados em snapshots de posição, sem jogo associável)
+- `TrophiesPanel.tsx`: novo componente interno `ContributingGameLine` renderiza `[Flag] [COD] [Score] × [Score] [COD] [Flag]` em 11px/JetBrains Mono; cor `color-win` para desbloqueados, `color-muted` para locked; seção omitida silenciosamente quando lista vazia
+- `npm run lint` e `npm run build` passam sem erros novos introduzidos pela feature
+
 ## [fix-perfil-stats-trophies] — Correção: Estatísticas e Troféus na Aba de Perfil — 2026-06-21
 
 - Corrige denominador das taxas de acerto: `winner_rate`, `exact_rate` e `avg_points` passam a dividir por `active_predictions_made` (palpites em jogos `finished` ou `live`), excluindo jogos `pending` cujo resultado é desconhecido

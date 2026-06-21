@@ -3,7 +3,7 @@
 **Slug:** trophy-contributing-games
 **Branch:** feature/trophy-contributing-games
 **Data:** 2026-06-21
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
