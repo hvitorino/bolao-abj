@@ -202,7 +202,7 @@ export function ProfileStats({ groupId, userId }: ProfileStatsProps) {
 
         {/* Acerto de vencedor */}
         <div style={ROW_STYLE}>
-          <span style={LABEL_STYLE}>ACERTO VENCEDOR</span>
+          <span style={LABEL_STYLE}>ACERTO DE VENCEDOR</span>
           <span
             style={{
               ...VALUE_STYLE,
