@@ -1,10 +1,9 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { NavLinks } from './nav-links'
 import { GroupMenu } from './group-switcher'
-import { GroupChatWidget } from '@/components/bolao/GroupChatWidget'
-import { RecapController } from '@/components/bolao/RecapController'
+import { TabBar } from '@/components/bolao/TabBar'
+import { SidePanelContainer } from '@/components/bolao/SidePanelContainer'
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
@@ -62,69 +61,59 @@ export default async function DashboardLayout({
           zIndex: 50,
           backgroundColor: 'var(--color-surface)',
           borderBottom: '1px solid var(--color-border)',
-          padding: '0.625rem 1.5rem 0',
+          paddingTop: 'env(safe-area-inset-top)',
         }}
       >
-        <div style={{ maxWidth: '960px', margin: '0 auto' }}>
-          {/* Linha 1: logo à esquerda, menu de grupo à direita */}
-          <div
+        <div
+          style={{
+            maxWidth: '960px',
+            margin: '0 auto',
+            padding: '0 1.5rem',
+            height: '44px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingBottom: '0.5rem',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              fontSize: '14px',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              color: 'var(--color-accent)',
             }}
           >
-            <span
-              style={{
-                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                fontSize: '14px',
-                fontWeight: 'bold',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                color: 'var(--color-accent)',
-              }}
-            >
-              BOLÃO DA COPA
-            </span>
+            BOLÃO DA COPA
+          </span>
 
-            <GroupMenu
-              groups={groups}
-              activeGroupId={activeGroup?.id}
-              pendingInvitesCount={pendingInvitesCount ?? 0}
-              userName={profile?.name ?? user.email ?? ''}
-            />
-          </div>
-
-          {/* Linha 2: navegação */}
-          <div style={{ borderTop: '1px solid var(--color-border)' }}>
-            <NavLinks />
-          </div>
+          <GroupMenu
+            groups={groups}
+            activeGroupId={activeGroup?.id}
+            pendingInvitesCount={pendingInvitesCount ?? 0}
+            userName={profile?.name ?? user.email ?? ''}
+          />
         </div>
       </header>
 
       <main
         style={{
           padding: '1.5rem',
-          paddingTop: 'calc(4.75rem + 1.5rem)',
-          paddingBottom: activeGroup ? 'calc(4rem + env(safe-area-inset-bottom))' : '1.5rem',
+          paddingTop: 'calc(44px + env(safe-area-inset-top) + 1.5rem)',
+          paddingBottom: 'calc(52px + env(safe-area-inset-bottom) + 1.5rem)',
         }}
       >
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>{children}</div>
       </main>
 
-      {activeGroup && (
-        <GroupChatWidget
-          activeGroupId={activeGroup.id}
-          activeGroupName={activeGroup.name}
-          currentUserId={user.id}
-        />
-      )}
+      <TabBar />
 
       {activeGroup && (
-        <RecapController
+        <SidePanelContainer
           groupId={activeGroup.id}
           currentUserId={user.id}
+          activeGroupName={activeGroup.name}
         />
       )}
     </div>
