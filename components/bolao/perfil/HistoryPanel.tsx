@@ -149,7 +149,8 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
         setExpandedDays(new Set([days[0][0]]))
       }
     }
-  }, [state])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.status])
 
   function toggleDay(day: string) {
     setExpandedDays((prev) => {
