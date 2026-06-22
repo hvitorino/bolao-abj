@@ -2,9 +2,16 @@ import { cookies } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service-server'
 import { resolveActiveGroup } from '@/lib/active-group'
 import MatchupStatsCard, { TeamStats } from '@/components/bolao/MatchupStatsCard'
 import RecentGamesSection, { RecentGame } from '@/components/bolao/RecentGamesSection'
+import GameCard from '@/components/games/GameCard'
+import { Game } from '@/lib/types/game'
+import { Prediction } from '@/lib/types/prediction'
+import { Score } from '@/lib/types/score'
+import type { ScoreBreakdown } from '@/lib/types/score'
+import { ParticipantEntry } from '@/lib/types/participant'
 
 export const revalidate = 60
 
@@ -189,6 +196,99 @@ export default async function AnalisePage({ params }: PageProps) {
 
   const games: GameRow[] = allTeamGames ?? []
 
+  const supabaseService = createServiceClient()
+  const activeGroupId = activeGroup.groupId
+
+  // Queries paralelas: palpite do usuário, score, membros, todos os palpites, existência
+  const [
+    { data: existingPrediction },
+    { data: myScore },
+    { data: groupMembers },
+    { data: allPredictions },
+    { data: allScores },
+    { data: predictionExistence },
+  ] = await Promise.all([
+    supabase
+      .from('predictions')
+      .select('id, user_id, game_id, home_score, away_score, submitted_at')
+      .eq('game_id', gameId)
+      .eq('user_id', authUser.id)
+      .eq('group_id', activeGroupId)
+      .maybeSingle(),
+
+    supabase
+      .from('scores')
+      .select('*')
+      .eq('game_id', gameId)
+      .eq('user_id', authUser.id)
+      .eq('group_id', activeGroupId)
+      .maybeSingle(),
+
+    supabase
+      .from('group_members')
+      .select('user_id, profiles(id, name)')
+      .eq('group_id', activeGroupId),
+
+    supabase
+      .from('predictions')
+      .select('id, game_id, user_id, home_score, away_score, submitted_at')
+      .eq('group_id', activeGroupId)
+      .eq('game_id', gameId),
+
+    supabase
+      .from('scores')
+      .select('*')
+      .eq('group_id', activeGroupId)
+      .eq('game_id', gameId),
+
+    supabaseService
+      .from('predictions')
+      .select('user_id, game_id')
+      .eq('group_id', activeGroupId)
+      .eq('game_id', gameId),
+  ])
+
+  const initialPrediction: Prediction | null = existingPrediction ?? null
+  const initialScore: Score | null = myScore ?? null
+
+  // Montar participants
+  type GroupMemberRow = {
+    user_id: string
+    profiles: { id: string; name: string } | { id: string; name: string }[] | null
+  }
+  const memberProfiles = ((groupMembers ?? []) as GroupMemberRow[])
+    .map((row) => {
+      const profile = Array.isArray(row.profiles) ? row.profiles[0] : row.profiles
+      return profile ? { id: profile.id, name: profile.name } : null
+    })
+    .filter((p): p is { id: string; name: string } => p !== null)
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+
+  const predByUser: Record<string, { home_score: number; away_score: number }> = {}
+  for (const p of allPredictions ?? []) {
+    predByUser[p.user_id] = { home_score: p.home_score, away_score: p.away_score }
+  }
+  const scoreByUser: Record<string, { points: number; breakdown: ScoreBreakdown }> = {}
+  for (const s of (allScores ?? []) as Score[]) {
+    scoreByUser[s.user_id] = { points: s.points, breakdown: s.breakdown }
+  }
+  const hasPredictionSet = new Set<string>(
+    (predictionExistence ?? []).map((r) => r.user_id)
+  )
+
+  const participants: ParticipantEntry[] = memberProfiles.map((profile) => {
+    const prediction = predByUser[profile.id] ?? null
+    const scoreEntry = prediction !== null ? (scoreByUser[profile.id] ?? null) : null
+    return {
+      userId: profile.id,
+      name: profile.name,
+      prediction,
+      points: scoreEntry?.points ?? null,
+      breakdown: scoreEntry?.breakdown ?? null,
+      hasPrediction: hasPredictionSet.has(profile.id),
+    }
+  })
+
   // Calcular stats em memória
   const homeStats = calculateTeamStats(games, game.home_team_code)
   const awayStats = calculateTeamStats(games, game.away_team_code)
@@ -200,9 +300,6 @@ export default async function AnalisePage({ params }: PageProps) {
   // URL de volta para o dia do jogo
   const backDate = game.match_day ?? game.match_date?.slice(0, 10)
   const backUrl = backDate ? `/jogos?date=${backDate}` : '/jogos'
-
-  // Formatar a data do jogo para o header
-  const matchDateFormatted = formatDate(game.match_date)
 
   return (
     <div
@@ -232,158 +329,17 @@ export default async function AnalisePage({ params }: PageProps) {
         </Link>
       </div>
 
-      {/* Header da análise */}
-      <div
-        style={{
-          border: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-surface)',
-          marginBottom: '1rem',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Barra de título */}
-        <div
-          style={{
-            borderBottom: '1px solid var(--color-border)',
-            padding: '0.5rem 0.75rem',
-            backgroundColor: 'var(--color-primary)',
-            fontSize: '11px',
-            fontWeight: 'bold',
-            color: 'var(--color-bg)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <span>ANÁLISE DE CONFRONTO</span>
-          <span style={{ fontSize: '10px', fontWeight: 'normal', color: 'var(--color-bg)', opacity: 0.8 }}>
-            {game.round ?? 'COPA 2026'}
-          </span>
-        </div>
-
-        {/* Confronto principal */}
-        <div
-          style={{
-            padding: '1rem 0.75rem',
-            display: 'grid',
-            gridTemplateColumns: '1fr auto 1fr',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
-          {/* Time da casa */}
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                fontSize: '20px',
-                fontWeight: 'bold',
-                color: 'var(--color-text)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {game.home_team}
-            </div>
-            <div
-              style={{
-                fontSize: '10px',
-                color: 'var(--color-muted)',
-                textTransform: 'uppercase',
-                marginTop: '0.1rem',
-              }}
-            >
-              {game.home_team_code}
-            </div>
-          </div>
-
-          {/* Separador e data */}
-          <div style={{ textAlign: 'center', padding: '0 0.5rem' }}>
-            <div
-              style={{
-                fontSize: '22px',
-                fontWeight: 'bold',
-                color: 'var(--color-accent)',
-              }}
-            >
-              ×
-            </div>
-            <div
-              style={{
-                fontSize: '10px',
-                color: 'var(--color-muted)',
-                textTransform: 'uppercase',
-                marginTop: '0.1rem',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {matchDateFormatted}
-            </div>
-          </div>
-
-          {/* Time visitante */}
-          <div style={{ textAlign: 'center' }}>
-            <div
-              style={{
-                fontSize: '20px',
-                fontWeight: 'bold',
-                color: 'var(--color-text)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {game.away_team}
-            </div>
-            <div
-              style={{
-                fontSize: '10px',
-                color: 'var(--color-muted)',
-                textTransform: 'uppercase',
-                marginTop: '0.1rem',
-              }}
-            >
-              {game.away_team_code}
-            </div>
-          </div>
-        </div>
-
-        {/* Status do jogo */}
-        <div
-          style={{
-            borderTop: '1px dashed var(--color-border)',
-            padding: '0.4rem 0.75rem',
-            fontSize: '10px',
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            textAlign: 'center',
-          }}
-        >
-          {game.status === 'pending' && '⏱ JOGO AINDA NÃO INICIADO'}
-          {game.status === 'live' && (
-            <span style={{ color: 'var(--color-live)', fontWeight: 'bold' }}>
-              ■ AO VIVO —{' '}
-              {game.home_score !== null && game.away_score !== null
-                ? `${game.home_score} × ${game.away_score}`
-                : '0 × 0'}
-            </span>
-          )}
-          {game.status === 'finished' && (
-            <span>
-              □ ENCERRADO —{' '}
-              {game.home_score !== null && game.away_score !== null
-                ? `${game.home_score} × ${game.away_score}`
-                : '- × -'}
-            </span>
-          )}
-        </div>
+      {/* GameCard completo — palpite, edição, VER PALPITES, realtime */}
+      <div style={{ marginBottom: '1rem' }}>
+        <GameCard
+          game={game as unknown as Game}
+          prediction={initialPrediction}
+          score={initialScore}
+          participants={participants}
+          userId={authUser.id}
+          groupId={activeGroupId}
+          hideAnalysisLink
+        />
       </div>
 
       {/* Card de estatísticas comparativas */}
@@ -401,8 +357,6 @@ export default async function AnalisePage({ params }: PageProps) {
       {/* Seção de últimos 3 jogos */}
       <div style={{ marginBottom: '1.5rem' }}>
         <RecentGamesSection
-          homeTeam={game.home_team}
-          awayTeam={game.away_team}
           homeTeamCode={game.home_team_code}
           awayTeamCode={game.away_team_code}
           homeRecentGames={homeRecentGames}

@@ -1,5 +1,7 @@
 'use client'
 
+import { getTeamFlag } from '@/lib/flags'
+
 export type TeamStats = {
   wins: number
   draws: number
@@ -100,10 +102,10 @@ export default function MatchupStatsCard({
         style={{
           borderBottom: '1px solid var(--color-border)',
           padding: '0.5rem 0.75rem',
-          backgroundColor: 'var(--color-secondary)',
+          backgroundColor: 'var(--color-primary)',
           fontSize: '11px',
           fontWeight: 'bold',
-          color: 'var(--color-text)',
+          color: 'var(--color-bg)',
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
         }}
@@ -115,7 +117,7 @@ export default function MatchupStatsCard({
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '1fr auto 1fr',
+          gridTemplateColumns: '1fr 1fr 1fr',
           borderBottom: '1px solid var(--color-border)',
           padding: '0.75rem',
           gap: '0.5rem',
@@ -124,23 +126,15 @@ export default function MatchupStatsCard({
       >
         {/* Time da casa */}
         <div style={{ textAlign: 'center' }}>
-          <div
-            style={{
-              fontSize: '13px',
-              fontWeight: 'bold',
-              color: 'var(--color-text)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-            }}
-          >
-            {homeTeam}
+          <div style={{ fontSize: '28px', lineHeight: 1 }}>
+            {getTeamFlag(homeTeamCode)}
           </div>
           <div
             style={{
               fontSize: '10px',
               color: 'var(--color-muted)',
               textTransform: 'uppercase',
-              marginTop: '0.1rem',
+              marginTop: '0.25rem',
             }}
           >
             {homeTeamCode} · {totalGames(homeStats)} jogo{totalGames(homeStats) !== 1 ? 's' : ''}
@@ -161,23 +155,15 @@ export default function MatchupStatsCard({
 
         {/* Time visitante */}
         <div style={{ textAlign: 'center' }}>
-          <div
-            style={{
-              fontSize: '13px',
-              fontWeight: 'bold',
-              color: 'var(--color-text)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-            }}
-          >
-            {awayTeam}
+          <div style={{ fontSize: '28px', lineHeight: 1 }}>
+            {getTeamFlag(awayTeamCode)}
           </div>
           <div
             style={{
               fontSize: '10px',
               color: 'var(--color-muted)',
               textTransform: 'uppercase',
-              marginTop: '0.1rem',
+              marginTop: '0.25rem',
             }}
           >
             {awayTeamCode} · {totalGames(awayStats)} jogo{totalGames(awayStats) !== 1 ? 's' : ''}
@@ -191,7 +177,7 @@ export default function MatchupStatsCard({
           key={row.label}
           style={{
             display: 'grid',
-            gridTemplateColumns: '1fr auto 1fr',
+            gridTemplateColumns: '1fr 1fr 1fr',
             alignItems: 'center',
             padding: '0.45rem 0.75rem',
             borderBottom:
@@ -203,7 +189,9 @@ export default function MatchupStatsCard({
           {/* Valor do time da casa */}
           <div
             style={{
-              textAlign: 'center',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
               fontSize: '13px',
               fontWeight: row.highlightHome ? 'bold' : 'normal',
               color: row.highlightHome ? 'var(--color-win)' : 'var(--color-text)',
@@ -230,7 +218,9 @@ export default function MatchupStatsCard({
           {/* Valor do time visitante */}
           <div
             style={{
-              textAlign: 'center',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
               fontSize: '13px',
               fontWeight: row.highlightAway ? 'bold' : 'normal',
               color: row.highlightAway ? 'var(--color-win)' : 'var(--color-text)',

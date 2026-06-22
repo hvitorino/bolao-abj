@@ -23,6 +23,7 @@ interface GameCardProps {
   participants?: ParticipantEntry[]
   userId?: string // necessário para filtrar Realtime por usuário
   groupId: string // grupo ativo — enviado no POST/PATCH de predictions
+  hideAnalysisLink?: boolean
 }
 
 // Formata horário do jogo para exibição em BRT (UTC-3)
@@ -46,6 +47,7 @@ export default function GameCard({
   participants = [],
   userId,
   groupId,
+  hideAnalysisLink = false,
 }: GameCardProps) {
   // Estado local da prediction — permite atualizar após edição sem reload
   const [currentPrediction, setCurrentPrediction] = useState<Prediction | null>(
@@ -450,31 +452,33 @@ export default function GameCard({
         )}
       </div>
 
-      {/* Link de análise — visível para todos os jogos */}
-      <div
-        style={{
-          borderTop: '1px dashed var(--color-border)',
-          padding: '0.45rem 0.75rem',
-          display: 'flex',
-          justifyContent: 'flex-end',
-        }}
-      >
-        <Link
-          href={`/jogos/${liveGame.id}/analise`}
+      {/* Link de análise — visível para todos os jogos, exceto quando já na análise */}
+      {!hideAnalysisLink && (
+        <div
           style={{
-            fontSize: '10px',
-            color: 'var(--color-muted)',
-            textDecoration: 'none',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.25rem',
+            borderTop: '1px dashed var(--color-border)',
+            padding: '0.45rem 0.75rem',
+            display: 'flex',
+            justifyContent: 'flex-end',
           }}
         >
-          ► VER ANÁLISE
-        </Link>
-      </div>
+          <Link
+            href={`/jogos/${liveGame.id}/analise`}
+            style={{
+              fontSize: '10px',
+              color: 'var(--color-muted)',
+              textDecoration: 'none',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.25rem',
+            }}
+          >
+            ► VER ANÁLISE
+          </Link>
+        </div>
+      )}
 
       {/* Toggle de expansão — só aparece quando há participantes para mostrar */}
       {liveParticipants.length > 0 && (

@@ -16,6 +16,7 @@ interface PredictionFormProps {
   initialPrediction?: Prediction | null
   onCancelEdit?: () => void // Se presente, exibir botão "CANCELAR" no modo edição
   onSuccess?: (updated: Prediction) => void // Callback chamado após submit bem-sucedido
+  embedded?: boolean // Quando true, remove borda/fundo do wrapper (uso dentro de outro card)
 }
 
 type FormStatus = 'idle' | 'loading' | 'success' | 'propagating' | 'error'
@@ -45,6 +46,7 @@ export default function PredictionForm({
   initialPrediction,
   onCancelEdit,
   onSuccess,
+  embedded = false,
 }: PredictionFormProps) {
   const [homeScore, setHomeScore] = useState<string>(
     initialPrediction != null ? String(initialPrediction.home_score) : ''
@@ -257,8 +259,8 @@ export default function PredictionForm({
   return (
     <div
       style={{
-        border: '1px solid var(--color-border)',
-        backgroundColor: 'var(--color-surface)',
+        border: embedded ? 'none' : '1px solid var(--color-border)',
+        backgroundColor: embedded ? 'transparent' : 'var(--color-surface)',
         padding: '0.75rem',
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
       }}

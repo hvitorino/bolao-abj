@@ -1,5 +1,7 @@
 'use client'
 
+import { getTeamFlag } from '@/lib/flags'
+
 export type RecentGame = {
   date: string       // formatado: "14 JUN"
   placar: string     // "3×1"
@@ -8,8 +10,6 @@ export type RecentGame = {
 }
 
 interface RecentGamesSectionProps {
-  homeTeam: string
-  awayTeam: string
   homeTeamCode: string
   awayTeamCode: string
   homeRecentGames: RecentGame[]
@@ -59,16 +59,25 @@ function GameRow({ game }: { game: RecentGame }) {
       {/* Adversário */}
       <div
         style={{
-          fontSize: '11px',
-          color: 'var(--color-muted)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.3rem',
           overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
         }}
       >
-        vs {game.adversario}
+        <span style={{ fontSize: '16px', lineHeight: 1 }}>
+          {getTeamFlag(game.adversario)}
+        </span>
+        <span
+          style={{
+            fontSize: '10px',
+            color: 'var(--color-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          {game.adversario}
+        </span>
       </div>
 
       {/* Placar */}
@@ -100,11 +109,9 @@ function GameRow({ game }: { game: RecentGame }) {
 
 function TeamColumn({
   teamCode,
-  teamName,
   recentGames,
 }: {
   teamCode: string
-  teamName: string
   recentGames: RecentGame[]
 }) {
   return (
@@ -123,28 +130,18 @@ function TeamColumn({
           padding: '0.45rem 0.6rem',
           fontSize: '10px',
           fontWeight: 'bold',
-          color: 'var(--color-text)',
+          color: 'var(--color-bg)',
           textTransform: 'uppercase',
           letterSpacing: '0.08em',
-          backgroundColor: 'var(--color-secondary)',
+          backgroundColor: 'var(--color-primary)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
         <span>{teamCode}</span>
-        <span
-          style={{
-            fontSize: '9px',
-            color: 'var(--color-muted)',
-            fontWeight: 'normal',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            maxWidth: '120px',
-          }}
-        >
-          {teamName}
+        <span style={{ fontSize: '20px', lineHeight: 1 }}>
+          {getTeamFlag(teamCode)}
         </span>
       </div>
 
@@ -168,8 +165,6 @@ function TeamColumn({
 }
 
 export default function RecentGamesSection({
-  homeTeam,
-  awayTeam,
   homeTeamCode,
   awayTeamCode,
   homeRecentGames,
@@ -186,11 +181,11 @@ export default function RecentGamesSection({
         style={{
           border: '1px solid var(--color-border)',
           borderBottom: 'none',
-          backgroundColor: 'var(--color-secondary)',
+          backgroundColor: 'var(--color-primary)',
           padding: '0.5rem 0.75rem',
           fontSize: '11px',
           fontWeight: 'bold',
-          color: 'var(--color-text)',
+          color: 'var(--color-bg)',
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
         }}
@@ -208,12 +203,10 @@ export default function RecentGamesSection({
       >
         <TeamColumn
           teamCode={homeTeamCode}
-          teamName={homeTeam}
           recentGames={homeRecentGames}
         />
         <TeamColumn
           teamCode={awayTeamCode}
-          teamName={awayTeam}
           recentGames={awayRecentGames}
         />
       </div>
