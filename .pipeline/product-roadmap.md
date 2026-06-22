@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 59 features
+- Total: 60 features
 - Concluídas: 58
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 1
 
 ## Features Priorizadas
@@ -762,6 +762,22 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Troféus sem jogos contabilizados mostram estado vazio adequado (ou nenhuma listagem)
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** fix-perfil-stats-trophies, perfil-redesign, scoring
+
+---
+
+### 60. analise-confronto — Análise de Confronto — em progresso
+**Objetivo:** Fornecer análise comparativa dos dois times que se enfrentam em um jogo específico, com stats agregadas e histórico recente, para auxiliar o usuário a tomar melhores decisões nos palpites.
+**Critérios de sucesso:**
+- Página `/jogos/[gameId]/analise` renderiza com dados corretos
+- Stats agregadas calculadas corretamente para ambos os times
+- Últimos 3 jogos exibidos em ordem recente (desc by date)
+- Resultados com cores apropriadas (V verde, E muted, D vermelho)
+- Link "Voltar ao Palpite" navega corretamente
+- Autenticação e autorização validadas
+- Sem pré-cálculos (queries em tempo real)
+- Performance aceitável (<1s de carregamento)
+- Responsivo em mobile (coluna única, mobile-first)
+**Dependências:** auth, game-navigation, predictions
 
 ---
 
