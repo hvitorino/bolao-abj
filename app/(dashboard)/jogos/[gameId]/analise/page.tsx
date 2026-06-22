@@ -8,6 +8,7 @@ import RecentGamesSection, { RecentGame } from '@/components/bolao/RecentGamesSe
 import GameCard from '@/components/games/GameCard'
 import BackButton from '@/components/bolao/BackButton'
 import NextGameLink from '@/components/bolao/NextGameLink'
+import AnaliseSwipeNav from '@/components/bolao/AnaliseSwipeNav'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
@@ -210,6 +211,7 @@ export default async function AnalisePage({ params }: PageProps) {
     { data: allScores },
     { data: predictionExistence },
     { data: nextGame },
+    { data: prevGame },
   ] = await Promise.all([
     supabase
       .from('predictions')
@@ -255,6 +257,14 @@ export default async function AnalisePage({ params }: PageProps) {
       .select('id')
       .gt('match_date', game.match_date)
       .order('match_date', { ascending: true })
+      .limit(1)
+      .maybeSingle(),
+
+    supabase
+      .from('games')
+      .select('id')
+      .lt('match_date', game.match_date)
+      .order('match_date', { ascending: false })
       .limit(1)
       .maybeSingle(),
   ])
@@ -368,6 +378,13 @@ export default async function AnalisePage({ params }: PageProps) {
         <BackButton fallbackHref={backUrl} />
         {nextGame?.id && <NextGameLink nextGameId={nextGame.id} />}
       </div>
+
+      {/* Swipe horizontal: ← jogo anterior | próximo jogo → */}
+      <AnaliseSwipeNav
+        backUrl={backUrl}
+        nextHref={nextGame?.id ? `/jogos/${nextGame.id}/analise` : null}
+        prevHref={prevGame?.id ? `/jogos/${prevGame.id}/analise` : null}
+      />
 
       {/* Rodapé com aviso de atualização */}
       <div
