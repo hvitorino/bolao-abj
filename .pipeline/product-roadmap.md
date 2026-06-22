@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 62 features
-- Concluídas: 61
+- Concluídas: 62
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -804,7 +804,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 62. next-game-navigation — Navegação para o Próximo Jogo na Análise — pendente
+### 62. next-game-navigation — Navegação para o Próximo Jogo na Análise — concluída
 **Objetivo:** Na página de análise de um jogo (/jogos/{id}/analise), o usuário deve poder navegar diretamente para /jogos/{next_id}/analise do próximo jogo cronológico, sem precisar voltar à listagem.
 **Critérios de sucesso:**
 - Botão/link visível na página de análise que leva para /jogos/{id}/analise do próximo jogo cronológico (pelo match_date ASC)
