@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 62 features
+- Total: 63 features
 - Concluídas: 62
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -801,6 +801,23 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Clicar em qualquer jogo na aba "Palpites" navega para a página daquele jogo
 - O botão Voltar na página do jogo retorna para a página de onde o usuário veio (última rota visitada dentro do app), não para um destino fixo
 **Dependências:** game-navigation, predictions, analise-confronto
+
+---
+
+### 63. menu-redesign — Redesign da Navegação (Header + Tab Bar + Pull Tabs) — em progresso
+**Objetivo:** Reformular completamente a navegação do Bolão da Copa em três camadas — header compacto de uma linha, tab bar fixa no rodapé e pull tabs laterais para acesso contextual a ONTEM, AO VIVO e CHAT.
+**Critérios de sucesso:**
+- Header ocupa uma linha única em qualquer largura de tela
+- Tab bar fixa no rodapé com 4 itens (CAMPANHA, JOGOS, RANKING, MAIS), fonte 13px, altura 52px
+- MAIS abre popover com GRUPOS, REGRAS, CONFIG
+- Pull tabs visíveis na borda direita com texto vertical e cores corretas
+- ONTEM e AO VIVO aparecem apenas quando há dados relevantes
+- Painel abre com slide da direita em 250ms, fecha ao toque fora
+- Abertura automática do recap no primeiro acesso do dia mantida
+- DualFooterBar e GroupChatWidget (flutuante) removidos
+- padding-bottom do main ajustado para não ficar atrás da tab bar
+- Safe area respeitada em iOS
+**Dependências:** auth, game-navigation, grupo-ativo-persistente, daily-recap-modal, dual-footer-bar, group-chat
 
 ---
 
