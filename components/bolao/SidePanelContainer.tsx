@@ -114,8 +114,6 @@ export function SidePanelContainer({
     pointerEvents: 'auto',
     width: '28px',
     backgroundColor: 'var(--color-surface)',
-    borderLeft: '1px solid var(--color-border)',
-    borderBottom: '1px solid var(--color-border)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -244,6 +242,8 @@ export function SidePanelContainer({
 
       {/* ── PAINEL LATERAL ────────────────────────────────────────────────── */}
       <div
+        role="region"
+        aria-label={openPanel !== null ? panelTitles[openPanel] : 'Painel lateral'}
         aria-hidden={openPanel === null}
         style={{
           position: 'fixed',
