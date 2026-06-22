@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 import type { SectionState } from './PerfilDashboard'
@@ -137,6 +138,28 @@ const HEADER: React.CSSProperties = {
 }
 
 export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelProps) {
+  const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set())
+  const defaultSetRef = useRef(false)
+
+  useEffect(() => {
+    if (state.status === 'populated' && !defaultSetRef.current) {
+      const days = groupByDay(state.data.items)
+      if (days.length > 0) {
+        defaultSetRef.current = true
+        setExpandedDays(new Set([days[0][0]]))
+      }
+    }
+  }, [state])
+
+  function toggleDay(day: string) {
+    setExpandedDays((prev) => {
+      const next = new Set(prev)
+      if (next.has(day)) next.delete(day)
+      else next.add(day)
+      return next
+    })
+  }
+
   if (state.status === 'loading') {
     return (
       <div style={PANEL}>
@@ -172,11 +195,15 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
         </div>
       )}
 
-      {days.map(([day, dayItems]) => (
+      {days.map(([day, dayItems]) => {
+        const expanded = expandedDays.has(day)
+        return (
         <div key={day}>
-          {/* Cabeçalho do dia */}
-          <div
+          {/* Cabeçalho do dia — clicável para expandir/recolher */}
+          <button
+            onClick={() => toggleDay(day)}
             style={{
+              width: '100%',
               padding: '0.35rem 1rem',
               fontSize: '11px',
               fontWeight: 'bold',
@@ -185,13 +212,26 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
               backgroundColor: 'var(--color-bg)',
               borderBottom: '1px solid var(--color-border)',
               letterSpacing: '0.05em',
+              fontFamily: 'inherit',
+              border: 'none',
+              textAlign: 'left',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
             }}
           >
-            ▼ {formatDayHeader(day)}
-          </div>
+            <span>{expanded ? '▼' : '▶'}</span>
+            <span>{formatDayHeader(day)}</span>
+            {!expanded && (
+              <span style={{ color: 'var(--color-muted)', fontWeight: 'normal' }}>
+                ({dayItems.length} {dayItems.length === 1 ? 'jogo' : 'jogos'})
+              </span>
+            )}
+          </button>
 
-          {/* Jogos do dia */}
-          {dayItems.map((item, idx) => (
+          {/* Jogos do dia — só renderiza quando expandido */}
+          {expanded && dayItems.map((item, idx) => (
             <Link
               key={item.game_id}
               href={`/jogos/${item.game_id}/analise`}
@@ -253,7 +293,8 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
           {/* Borda inferior de separação entre dias */}
           <div style={{ borderBottom: '1px solid var(--color-border)' }} />
         </div>
-      ))}
+        )
+      })}
 
       {/* Botão VER MAIS */}
       {has_more && (

@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import type { SectionState } from './PerfilDashboard'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
@@ -127,6 +128,17 @@ function ContributingGameLine({
 }
 
 export function TrophiesPanel({ state }: TrophiesPanelProps) {
+  const [expandedGames, setExpandedGames] = useState<Set<string>>(new Set())
+
+  function toggleGames(trophyId: string) {
+    setExpandedGames((prev) => {
+      const next = new Set(prev)
+      if (next.has(trophyId)) next.delete(trophyId)
+      else next.add(trophyId)
+      return next
+    })
+  }
+
   if (state.status === 'loading') {
     return (
       <div style={PANEL}>
@@ -200,6 +212,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
           const games = trophy.contributing_games ?? []
 
           if (trophy.status === 'unlocked') {
+            const expanded = expandedGames.has(trophy.id)
             return (
               <div key={trophy.id} style={itemStyle}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
@@ -216,11 +229,32 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                   {TROPHY_CRITERIA[trophy.id] ?? ''}
                 </div>
                 {games.length > 0 && (
-                  <div style={GAME_LIST_STYLE}>
-                    {games.map((game) => (
-                      <ContributingGameLine key={game.game_id} game={game} unlocked={true} />
-                    ))}
-                  </div>
+                  <>
+                    <button
+                      onClick={() => toggleGames(trophy.id)}
+                      style={{
+                        marginTop: '0.4rem',
+                        fontSize: '10px',
+                        color: 'var(--color-muted)',
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      {expanded ? `▲ ocultar jogos` : `▼ ver jogos (${games.length})`}
+                    </button>
+                    {expanded && (
+                      <div style={GAME_LIST_STYLE}>
+                        {games.map((game) => (
+                          <ContributingGameLine key={game.game_id} game={game} unlocked={true} />
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             )
@@ -247,13 +281,6 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
               <div style={{ marginTop: '0.2rem', fontSize: '11px', color: 'var(--color-muted)' }}>
                 {TROPHY_CRITERIA[trophy.id] ?? ''}
               </div>
-              {games.length > 0 && (
-                <div style={GAME_LIST_STYLE}>
-                  {games.map((game) => (
-                    <ContributingGameLine key={game.game_id} game={game} unlocked={false} />
-                  ))}
-                </div>
-              )}
             </div>
           )
         })}
@@ -313,6 +340,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
               const games = trophy.contributing_games ?? []
 
               if (trophy.status === 'unlocked') {
+                const expanded = expandedGames.has(trophy.id)
                 return (
                   <div key={trophy.id} style={itemStyle}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
@@ -336,12 +364,33 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                       </span>
                     )}
                     {games.length > 0 && (
-                      <div style={GAME_LIST_STYLE}>
-                        {games.map((game) => (
-                          // Negativos sempre passam unlocked={false}: borda color-border, cor muted
-                          <ContributingGameLine key={game.game_id} game={game} unlocked={false} />
-                        ))}
-                      </div>
+                      <>
+                        <button
+                          onClick={() => toggleGames(trophy.id)}
+                          style={{
+                            marginTop: '0.4rem',
+                            fontSize: '10px',
+                            color: 'var(--color-muted)',
+                            background: 'none',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                            fontFamily: 'inherit',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            display: 'block',
+                          }}
+                        >
+                          {expanded ? `▲ ocultar jogos` : `▼ ver jogos (${games.length})`}
+                        </button>
+                        {expanded && (
+                          <div style={GAME_LIST_STYLE}>
+                            {games.map((game) => (
+                              <ContributingGameLine key={game.game_id} game={game} unlocked={false} />
+                            ))}
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 )
