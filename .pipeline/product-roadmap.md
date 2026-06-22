@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 61 features
-- Concluídas: 59
+- Concluídas: 60
 - Em progresso: 0
-- Pendentes: 2
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -794,7 +794,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 61. game-detail-navigation — Navegação para Detalhe do Jogo — pendente
+### 61. game-detail-navigation — Navegação para Detalhe do Jogo — concluída
 **Objetivo:** Tornar todos os jogos clicáveis nas abas "Campanha" e "Palpites", redirecionando para a página individual de cada jogo já existente; e ajustar o botão Voltar na página do jogo para retornar à última rota visitada dentro do app em vez de um destino fixo.
 **Critérios de sucesso:**
 - Clicar em qualquer jogo na aba "Campanha" navega para a página daquele jogo
