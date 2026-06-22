@@ -121,6 +121,7 @@ export function SidePanelContainer({
     padding: '0.75rem 0',
     writingMode: 'vertical-rl',
     textOrientation: 'mixed',
+    transform: 'rotate(180deg)',
     fontFamily: FONT,
     fontSize: '10px',
     textTransform: 'uppercase',
@@ -175,7 +176,7 @@ export function SidePanelContainer({
               borderTop: showRecapTab ? 'none' : '1px solid var(--color-border)',
             }}
           >
-            <span style={{ animation: 'blink 1s step-end infinite' }}>AO VIVO</span>
+            AO VIVO
           </button>
         )}
 
@@ -249,8 +250,8 @@ export function SidePanelContainer({
           position: 'fixed',
           top: 'var(--header-h, 44px)',
           bottom: 'var(--tabbar-h, 52px)',
-          right: 0,
-          width: '85vw',
+          right: '28px',
+          width: 'calc(85vw - 28px)',
           zIndex: 150,
           backgroundColor: 'var(--color-surface)',
           borderLeft: '1px solid var(--color-border)',
