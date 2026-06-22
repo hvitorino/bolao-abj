@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 60 features
-- Concluídas: 58
-- Em progresso: 1
+- Concluídas: 59
+- Em progresso: 0
 - Pendentes: 1
 
 ## Features Priorizadas
@@ -765,7 +765,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 60. analise-confronto — Análise de Confronto — em progresso
+### 60. analise-confronto — Análise de Confronto — concluída
 **Objetivo:** Fornecer análise comparativa dos dois times que se enfrentam em um jogo específico, com stats agregadas e histórico recente, para auxiliar o usuário a tomar melhores decisões nos palpites.
 **Critérios de sucesso:**
 - Página `/jogos/[gameId]/analise` renderiza com dados corretos
