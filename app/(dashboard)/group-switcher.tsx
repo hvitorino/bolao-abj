@@ -9,7 +9,7 @@ const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
 const MONO: React.CSSProperties = {
   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-  fontSize: '11px',
+  fontSize: '13px',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
 }
