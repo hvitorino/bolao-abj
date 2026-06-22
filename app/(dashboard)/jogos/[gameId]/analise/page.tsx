@@ -1,12 +1,12 @@
 import { cookies } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service-server'
 import { resolveActiveGroup } from '@/lib/active-group'
 import MatchupStatsCard, { TeamStats } from '@/components/bolao/MatchupStatsCard'
 import RecentGamesSection, { RecentGame } from '@/components/bolao/RecentGamesSection'
 import GameCard from '@/components/games/GameCard'
+import BackButton from '@/components/bolao/BackButton'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
@@ -310,25 +310,6 @@ export default async function AnalisePage({ params }: PageProps) {
         margin: '0 auto',
       }}
     >
-      {/* Botão de voltar */}
-      <div style={{ marginBottom: '1rem' }}>
-        <Link
-          href={backUrl}
-          style={{
-            fontSize: '11px',
-            color: 'var(--color-muted)',
-            textDecoration: 'none',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-          }}
-        >
-          ← VOLTAR AO PALPITE
-        </Link>
-      </div>
-
       {/* GameCard completo — palpite, edição, VER PALPITES, realtime */}
       <div style={{ marginBottom: '1rem' }}>
         <GameCard
@@ -364,12 +345,18 @@ export default async function AnalisePage({ params }: PageProps) {
         />
       </div>
 
+      {/* Botão de voltar */}
+      <div style={{ marginTop: '1rem' }}>
+        <BackButton fallbackHref={backUrl} />
+      </div>
+
       {/* Rodapé com aviso de atualização */}
       <div
         style={{
           fontSize: '10px',
           color: 'var(--color-muted)',
           textAlign: 'center',
+          paddingTop: '0.75rem',
           paddingBottom: '1rem',
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
