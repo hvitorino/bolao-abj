@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import type { SectionState } from './PerfilDashboard'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 
@@ -97,7 +98,8 @@ function ContributingGameLine({
   unlocked: boolean
 }) {
   return (
-    <div
+    <Link
+      href={`/jogos/${game.game_id}/analise`}
       style={{
         fontSize: '11px',
         color: unlocked ? 'var(--color-win)' : 'var(--color-muted)',
@@ -109,6 +111,8 @@ function ContributingGameLine({
         borderRadius: '4px',
         padding: '0.2rem 0.4rem',
         whiteSpace: 'nowrap',
+        textDecoration: 'none',
+        cursor: 'pointer',
       }}
     >
       <span>{getTeamFlag(game.home_team_code)}</span>
@@ -118,7 +122,7 @@ function ContributingGameLine({
       <span>{game.away_score}</span>
       <span>{game.away_team_code}</span>
       <span>{getTeamFlag(game.away_team_code)}</span>
-    </div>
+    </Link>
   )
 }
 
