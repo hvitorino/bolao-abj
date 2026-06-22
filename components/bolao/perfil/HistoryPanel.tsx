@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 import type { SectionState } from './PerfilDashboard'
 import type { Trophy } from './TrophiesPanel'
@@ -191,8 +192,9 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
 
           {/* Jogos do dia */}
           {dayItems.map((item, idx) => (
-            <div
+            <Link
               key={item.game_id}
+              href={`/jogos/${item.game_id}/analise`}
               style={{
                 padding: '0.4rem 1rem',
                 borderBottom: idx < dayItems.length - 1 ? '1px solid var(--color-border)' : 'none',
@@ -201,6 +203,9 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
                 alignItems: 'center',
                 gap: '0.5rem',
                 flexWrap: 'wrap',
+                textDecoration: 'none',
+                color: 'inherit',
+                cursor: 'pointer',
               }}
             >
               {/* Resultado real — mini-card com bandeira */}
@@ -242,7 +247,7 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
                   )}
                 </>
               )}
-            </div>
+            </Link>
           ))}
 
           {/* Borda inferior de separação entre dias */}
