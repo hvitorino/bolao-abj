@@ -102,6 +102,7 @@ export default async function DashboardLayout({
           padding: '1.5rem',
           paddingTop: 'calc(44px + env(safe-area-inset-top) + 1.5rem)',
           paddingBottom: 'calc(52px + env(safe-area-inset-bottom) + 1.5rem)',
+          paddingLeft: 'calc(28px + 1.5rem)',
         }}
       >
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>{children}</div>
