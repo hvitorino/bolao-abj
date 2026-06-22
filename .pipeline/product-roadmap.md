@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 61 features
+- Total: 62 features
 - Concluídas: 61
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -801,3 +801,13 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Clicar em qualquer jogo na aba "Palpites" navega para a página daquele jogo
 - O botão Voltar na página do jogo retorna para a página de onde o usuário veio (última rota visitada dentro do app), não para um destino fixo
 **Dependências:** game-navigation, predictions, analise-confronto
+
+---
+
+### 62. next-game-navigation — Navegação para o Próximo Jogo na Análise — pendente
+**Objetivo:** Na página de análise de um jogo (/jogos/{id}/analise), o usuário deve poder navegar diretamente para /jogos/{next_id}/analise do próximo jogo cronológico, sem precisar voltar à listagem.
+**Critérios de sucesso:**
+- Botão/link visível na página de análise que leva para /jogos/{id}/analise do próximo jogo cronológico (pelo match_date ASC)
+- Se não houver próximo jogo, o controle deve estar desabilitado ou oculto
+- A navegação deve respeitar a ordem cronológica dos jogos (match_date ASC)
+**Dependências:** game-navigation, predictions, live-scores, scoring, ranking, analise-confronto, game-detail-navigation
