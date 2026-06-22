@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import Image from 'next/image'
 import { GroupMenu } from './group-switcher'
 import { TabBar } from '@/components/bolao/TabBar'
 import { SidePanelContainer } from '@/components/bolao/SidePanelContainer'
@@ -75,18 +76,21 @@ export default async function DashboardLayout({
             justifyContent: 'space-between',
           }}
         >
-          <span
-            style={{
-              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-              fontSize: '14px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              color: 'var(--color-accent)',
-            }}
-          >
-            BOLÃO DA COPA
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Image src="/favicon.ico" alt="" width={24} height={24} priority />
+            <span
+              style={{
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '14px',
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+                color: 'var(--color-accent)',
+              }}
+            >
+              BOLÃO DA COPA
+            </span>
+          </div>
 
           <GroupMenu
             groups={groups}
