@@ -62,7 +62,7 @@ export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false,
         }}
       >
         {isLeader ? '► ' : '   '}
-        {entry.participant_name}
+        {entry.participant_name.split(' ')[0]}
         {entry.streak > 0 && (
           <span
             title={`${entry.streak} acerto${entry.streak !== 1 ? 's' : ''} consecutivo${entry.streak !== 1 ? 's' : ''}`}

@@ -99,17 +99,12 @@ export default async function DashboardLayout({
 
       <main
         style={{
-          display: 'flex',
-          alignItems: 'flex-start',
+          padding: '1.5rem',
           paddingTop: 'calc(44px + env(safe-area-inset-top) + 1.5rem)',
           paddingBottom: 'calc(52px + env(safe-area-inset-bottom) + 1.5rem)',
-          paddingLeft: '1.5rem',
         }}
       >
-        <div style={{ flex: 1, minWidth: 0, paddingRight: '1.5rem' }}>
-          <div style={{ maxWidth: '960px', margin: '0 auto' }}>{children}</div>
-        </div>
-        {activeGroup && <div style={{ width: '28px', flexShrink: 0 }} />}
+        <div style={{ maxWidth: '960px', margin: '0 auto' }}>{children}</div>
       </main>
 
       <TabBar />
