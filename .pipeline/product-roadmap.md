@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 61 features
-- Concluídas: 60
+- Concluídas: 61
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -781,7 +781,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 59. trofeus-negativos — Troféus Negativos e Anti-Platina — pendente
+### 59. trofeus-negativos — Troféus Negativos e Anti-Platina — concluída
 **Objetivo:** Adicionar 9 troféus negativos com tom humorístico e autoirônico ao painel de perfil, mais um achievement "Anti-Platina" (COLECIONADOR DO CAOS) para quem coletar todos os 9 negativos, sem nenhuma migração de banco.
 **Critérios de sucesso:**
 - Os 9 troféus negativos são calculados corretamente na API (`app/api/profile/trophies/route.ts`)
