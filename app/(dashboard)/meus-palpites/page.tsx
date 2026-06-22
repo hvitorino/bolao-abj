@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { resolveActiveGroup } from '@/lib/active-group'
 import { Game } from '@/lib/types/game'
@@ -240,26 +241,42 @@ export default async function MeusPalpitesPage({ searchParams }: MeusPalpitesPag
                   <tr key={prediction.id} style={{ backgroundColor: rowBg }}>
                     {/* JOGO */}
                     <td style={{ padding: '0.6rem 0.75rem', borderTop: cellBorder, textAlign: 'center' }}>
-                      <div
-                        style={{
-                          fontWeight: 'bold',
-                          fontSize: '16px',
-                          color: 'var(--color-text)',
-                          letterSpacing: '0.05em',
-                        }}
+                      <Link
+                        href={`/jogos/${game.id}/analise`}
+                        style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
                       >
-                        {getTeamFlag(game.home_team_code)} × {getTeamFlag(game.away_team_code)}
-                      </div>
-                      <div
-                        style={{
-                          fontSize: '10px',
-                          color: 'var(--color-muted)',
-                          marginTop: '0.2rem',
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {formatRound(game.round)} · {formatDate(game.match_date)}
-                      </div>
+                        <div
+                          style={{
+                            fontWeight: 'bold',
+                            fontSize: '16px',
+                            color: 'var(--color-text)',
+                            letterSpacing: '0.05em',
+                          }}
+                        >
+                          {getTeamFlag(game.home_team_code)} × {getTeamFlag(game.away_team_code)}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '10px',
+                            color: 'var(--color-muted)',
+                            marginTop: '0.2rem',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {formatRound(game.round)} · {formatDate(game.match_date)}
+                        </div>
+                        <div
+                          style={{
+                            fontSize: '9px',
+                            color: 'var(--color-primary)',
+                            textTransform: 'uppercase',
+                            marginTop: '0.2rem',
+                            letterSpacing: '0.08em',
+                          }}
+                        >
+                          ► VER ANÁLISE
+                        </div>
+                      </Link>
                     </td>
 
                     {/* PALPITE */}
