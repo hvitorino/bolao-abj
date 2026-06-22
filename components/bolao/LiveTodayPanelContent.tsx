@@ -116,7 +116,7 @@ export function LiveTodayPanelContent({
   games,
   loading,
   currentUserId,
-  onClose,
+  onClose: _onClose,
 }: LiveTodayPanelContentProps) {
   const hasAnyLiveGame = entries.some((e) => e.hasLiveGame)
   const allZero = entries.length > 0 && entries.every((e) => e.points === 0 && !e.hasLiveGame)
@@ -127,47 +127,6 @@ export function LiveTodayPanelContent({
       aria-label="Ranking ao vivo do dia"
       style={{ fontFamily: FONT, padding: '1rem' }}
     >
-      {/* Cabeçalho interno do painel */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '1rem',
-          paddingBottom: '0.75rem',
-          borderBottom: '1px solid var(--color-border)',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: FONT,
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--color-text)',
-          }}
-        >
-          AO VIVO
-        </span>
-        <button
-          type="button"
-          onClick={onClose}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: FONT,
-            fontSize: '13px',
-            color: 'var(--color-muted)',
-            padding: '0 0.25rem',
-          }}
-          aria-label="Fechar painel"
-        >
-          [ FECHAR ]
-        </button>
-      </div>
-
       {/* Sublegenda */}
       <div
         style={{
