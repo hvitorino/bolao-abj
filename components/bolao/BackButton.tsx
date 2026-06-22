@@ -7,7 +7,7 @@ interface BackButtonProps {
   label?: string
 }
 
-export default function BackButton({ fallbackHref, label = '← VOLTAR AO PALPITE' }: BackButtonProps) {
+export default function BackButton({ fallbackHref, label = '← VOLTAR' }: BackButtonProps) {
   const router = useRouter()
 
   function handleBack() {

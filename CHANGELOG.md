@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [game-detail-navigation] — Navegação para Detalhe do Jogo — 2026-06-22
+
+- `components/bolao/BackButton.tsx`: label padrão alterado de `← VOLTAR AO PALPITE` para `← VOLTAR`; comportamento de `router.back()` / `router.push(fallbackHref)` inalterado
+- `components/bolao/perfil/HistoryPanel.tsx`: cada item do feed HISTÓRICO convertido de `<div>` para `<Link href={/jogos/${item.game_id}/analise}>`, tornando jogos encerrados clicáveis na aba Campanha do perfil
+- `app/(dashboard)/meus-palpites/page.tsx`: coluna JOGO de cada linha envolvida com `<Link href={/jogos/${game.id}/analise}>` com `display: block`; adicionado indicador `► VER ANÁLISE` em `color-primary` abaixo dos metadados
+- Nenhuma alteração de backend, banco de dados ou endpoints
+- Feature puramente de navegação: reutiliza a rota `/jogos/[gameId]/analise` já existente
+
 ## [trofeus-negativos] — Troféus Negativos e Anti-Platina — 2026-06-21
 
 - 9 troféus negativos adicionados: `placar_espelhado`, `ultima_hora`, `trono_de_papel`, `quase`, `solitario_do_erro`, `dia_ruim`, `naufragando`, `a_deriva`, `sem_volta`
