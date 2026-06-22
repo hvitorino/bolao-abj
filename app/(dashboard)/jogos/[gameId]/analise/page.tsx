@@ -1,0 +1,382 @@
+import { cookies } from 'next/headers'
+import { notFound, redirect } from 'next/navigation'
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service-server'
+import { resolveActiveGroup } from '@/lib/active-group'
+import MatchupStatsCard, { TeamStats } from '@/components/bolao/MatchupStatsCard'
+import RecentGamesSection, { RecentGame } from '@/components/bolao/RecentGamesSection'
+import GameCard from '@/components/games/GameCard'
+import { Game } from '@/lib/types/game'
+import { Prediction } from '@/lib/types/prediction'
+import { Score } from '@/lib/types/score'
+import type { ScoreBreakdown } from '@/lib/types/score'
+import { ParticipantEntry } from '@/lib/types/participant'
+
+export const revalidate = 60
+
+const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
+
+interface PageProps {
+  params: Promise<{ gameId: string }>
+}
+
+type GameRow = {
+  id: string
+  home_team: string
+  away_team: string
+  home_team_code: string
+  away_team_code: string
+  home_score: number | null
+  away_score: number | null
+  match_date: string
+  match_day: string | null
+  status: string
+  round: string | null
+}
+
+function calculateTeamStats(games: GameRow[], teamCode: string): TeamStats {
+  let wins = 0,
+    draws = 0,
+    losses = 0
+  let goalsFor = 0,
+    goalsAgainst = 0
+  let cleanSheets = 0,
+    gamesScored = 0
+
+  for (const game of games) {
+    const isHome = game.home_team_code === teamCode
+    const isAway = game.away_team_code === teamCode
+
+    if (!isHome && !isAway) continue
+
+    // Jogos sem placar ainda não contribuem para as stats
+    if (game.home_score === null || game.away_score === null) continue
+
+    const myScore = isHome ? game.home_score : game.away_score
+    const oppScore = isHome ? game.away_score : game.home_score
+
+    if (myScore > oppScore) wins++
+    else if (myScore === oppScore) draws++
+    else losses++
+
+    goalsFor += myScore
+    goalsAgainst += oppScore
+    if (oppScore === 0) cleanSheets++
+    if (myScore > 0) gamesScored++
+  }
+
+  return {
+    wins,
+    draws,
+    losses,
+    goalsFor,
+    goalsAgainst,
+    goalDifference: goalsFor - goalsAgainst,
+    cleanSheets,
+    gamesScored,
+  }
+}
+
+function formatDate(isoDate: string): string {
+  const d = new Date(isoDate)
+  return d
+    .toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: 'short',
+      timeZone: 'America/Sao_Paulo',
+    })
+    .replace('.', '')
+    .toUpperCase()
+}
+
+function getRecentGames(games: GameRow[], teamCode: string): RecentGame[] {
+  // Filtrar apenas jogos com placar definido (encerrados ou ao vivo com placar)
+  const teamGames = games
+    .filter(
+      (g) =>
+        (g.home_team_code === teamCode || g.away_team_code === teamCode) &&
+        g.home_score !== null &&
+        g.away_score !== null
+    )
+    // Ordenar do mais recente ao mais antigo
+    .sort((a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime())
+    // Pegar os 3 mais recentes
+    .slice(0, 3)
+
+  return teamGames.map((game) => {
+    const isHome = game.home_team_code === teamCode
+    const myScore = isHome ? game.home_score! : game.away_score!
+    const oppScore = isHome ? game.away_score! : game.home_score!
+    const adversario = isHome ? game.away_team_code : game.home_team_code
+
+    let resultado: 'V' | 'E' | 'D'
+    if (myScore > oppScore) resultado = 'V'
+    else if (myScore === oppScore) resultado = 'E'
+    else resultado = 'D'
+
+    return {
+      date: formatDate(game.match_date),
+      placar: `${myScore}×${oppScore}`,
+      adversario,
+      resultado,
+    }
+  })
+}
+
+export default async function AnalisePage({ params }: PageProps) {
+  const { gameId } = await params
+
+  const supabase = await createClient()
+
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser()
+
+  if (!authUser) {
+    redirect('/login')
+  }
+
+  // Verificar autorização do grupo (mesma lógica da página /jogos)
+  const cookieStore = await cookies()
+  const cookieGroupId = cookieStore.get(ACTIVE_GROUP_COOKIE)?.value
+
+  const activeGroup = await resolveActiveGroup(
+    supabase,
+    authUser.id,
+    undefined,
+    '/jogos',
+    {},
+    cookieGroupId
+  )
+
+  if ('error' in activeGroup) {
+    return (
+      <div
+        style={{
+          maxWidth: '480px',
+          margin: '0 auto',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          border: '1px solid var(--color-error)',
+          backgroundColor: 'var(--color-surface)',
+          padding: '1.5rem',
+          textAlign: 'center',
+          color: 'var(--color-error)',
+          fontSize: '13px',
+        }}
+      >
+        ✗ VOCÊ NÃO PARTICIPA DESTE GRUPO
+      </div>
+    )
+  }
+
+  // Query 1: buscar o jogo específico
+  const { data: game, error: gameError } = await supabase
+    .from('games')
+    .select(
+      'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date, match_day, status, round'
+    )
+    .eq('id', gameId)
+    .single()
+
+  if (gameError || !game) {
+    notFound()
+  }
+
+  // Query 2: buscar todos os jogos dos dois times na Copa 2026
+  const { data: allTeamGames } = await supabase
+    .from('games')
+    .select(
+      'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date, match_day, status, round'
+    )
+    .or(
+      `home_team_code.eq.${game.home_team_code},away_team_code.eq.${game.home_team_code},home_team_code.eq.${game.away_team_code},away_team_code.eq.${game.away_team_code}`
+    )
+    .order('match_date', { ascending: true })
+
+  const games: GameRow[] = allTeamGames ?? []
+
+  const supabaseService = createServiceClient()
+  const activeGroupId = activeGroup.groupId
+
+  // Queries paralelas: palpite do usuário, score, membros, todos os palpites, existência
+  const [
+    { data: existingPrediction },
+    { data: myScore },
+    { data: groupMembers },
+    { data: allPredictions },
+    { data: allScores },
+    { data: predictionExistence },
+  ] = await Promise.all([
+    supabase
+      .from('predictions')
+      .select('id, user_id, game_id, home_score, away_score, submitted_at')
+      .eq('game_id', gameId)
+      .eq('user_id', authUser.id)
+      .eq('group_id', activeGroupId)
+      .maybeSingle(),
+
+    supabase
+      .from('scores')
+      .select('*')
+      .eq('game_id', gameId)
+      .eq('user_id', authUser.id)
+      .eq('group_id', activeGroupId)
+      .maybeSingle(),
+
+    supabase
+      .from('group_members')
+      .select('user_id, profiles(id, name)')
+      .eq('group_id', activeGroupId),
+
+    supabase
+      .from('predictions')
+      .select('id, game_id, user_id, home_score, away_score, submitted_at')
+      .eq('group_id', activeGroupId)
+      .eq('game_id', gameId),
+
+    supabase
+      .from('scores')
+      .select('*')
+      .eq('group_id', activeGroupId)
+      .eq('game_id', gameId),
+
+    supabaseService
+      .from('predictions')
+      .select('user_id, game_id')
+      .eq('group_id', activeGroupId)
+      .eq('game_id', gameId),
+  ])
+
+  const initialPrediction: Prediction | null = existingPrediction ?? null
+  const initialScore: Score | null = myScore ?? null
+
+  // Montar participants
+  type GroupMemberRow = {
+    user_id: string
+    profiles: { id: string; name: string } | { id: string; name: string }[] | null
+  }
+  const memberProfiles = ((groupMembers ?? []) as GroupMemberRow[])
+    .map((row) => {
+      const profile = Array.isArray(row.profiles) ? row.profiles[0] : row.profiles
+      return profile ? { id: profile.id, name: profile.name } : null
+    })
+    .filter((p): p is { id: string; name: string } => p !== null)
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
+
+  const predByUser: Record<string, { home_score: number; away_score: number }> = {}
+  for (const p of allPredictions ?? []) {
+    predByUser[p.user_id] = { home_score: p.home_score, away_score: p.away_score }
+  }
+  const scoreByUser: Record<string, { points: number; breakdown: ScoreBreakdown }> = {}
+  for (const s of (allScores ?? []) as Score[]) {
+    scoreByUser[s.user_id] = { points: s.points, breakdown: s.breakdown }
+  }
+  const hasPredictionSet = new Set<string>(
+    (predictionExistence ?? []).map((r) => r.user_id)
+  )
+
+  const participants: ParticipantEntry[] = memberProfiles.map((profile) => {
+    const prediction = predByUser[profile.id] ?? null
+    const scoreEntry = prediction !== null ? (scoreByUser[profile.id] ?? null) : null
+    return {
+      userId: profile.id,
+      name: profile.name,
+      prediction,
+      points: scoreEntry?.points ?? null,
+      breakdown: scoreEntry?.breakdown ?? null,
+      hasPrediction: hasPredictionSet.has(profile.id),
+    }
+  })
+
+  // Calcular stats em memória
+  const homeStats = calculateTeamStats(games, game.home_team_code)
+  const awayStats = calculateTeamStats(games, game.away_team_code)
+
+  // Calcular últimos 3 jogos por time
+  const homeRecentGames = getRecentGames(games, game.home_team_code)
+  const awayRecentGames = getRecentGames(games, game.away_team_code)
+
+  // URL de volta para o dia do jogo
+  const backDate = game.match_day ?? game.match_date?.slice(0, 10)
+  const backUrl = backDate ? `/jogos?date=${backDate}` : '/jogos'
+
+  return (
+    <div
+      style={{
+        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+        color: 'var(--color-text)',
+        maxWidth: '960px',
+        margin: '0 auto',
+      }}
+    >
+      {/* Botão de voltar */}
+      <div style={{ marginBottom: '1rem' }}>
+        <Link
+          href={backUrl}
+          style={{
+            fontSize: '11px',
+            color: 'var(--color-muted)',
+            textDecoration: 'none',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.3rem',
+          }}
+        >
+          ← VOLTAR AO PALPITE
+        </Link>
+      </div>
+
+      {/* GameCard completo — palpite, edição, VER PALPITES, realtime */}
+      <div style={{ marginBottom: '1rem' }}>
+        <GameCard
+          game={game as unknown as Game}
+          prediction={initialPrediction}
+          score={initialScore}
+          participants={participants}
+          userId={authUser.id}
+          groupId={activeGroupId}
+          hideAnalysisLink
+        />
+      </div>
+
+      {/* Card de estatísticas comparativas */}
+      <div style={{ marginBottom: '1rem' }}>
+        <MatchupStatsCard
+          homeTeam={game.home_team}
+          awayTeam={game.away_team}
+          homeTeamCode={game.home_team_code}
+          awayTeamCode={game.away_team_code}
+          homeStats={homeStats}
+          awayStats={awayStats}
+        />
+      </div>
+
+      {/* Seção de últimos 3 jogos */}
+      <div style={{ marginBottom: '1.5rem' }}>
+        <RecentGamesSection
+          homeTeamCode={game.home_team_code}
+          awayTeamCode={game.away_team_code}
+          homeRecentGames={homeRecentGames}
+          awayRecentGames={awayRecentGames}
+        />
+      </div>
+
+      {/* Rodapé com aviso de atualização */}
+      <div
+        style={{
+          fontSize: '10px',
+          color: 'var(--color-muted)',
+          textAlign: 'center',
+          paddingBottom: '1rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+        }}
+      >
+        ⏱ DADOS ATUALIZADOS A CADA 60S · COPA DO MUNDO FIFA 2026
+      </div>
+    </div>
+  )
+}
