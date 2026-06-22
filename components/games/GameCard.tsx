@@ -26,13 +26,20 @@ interface GameCardProps {
   hideAnalysisLink?: boolean
 }
 
-// Formata horário do jogo para exibição em BRT (UTC-3)
+// Formata data e horário do jogo para exibição em BRT (UTC-3)
 function formatMatchTime(matchDate: string): string {
-  return new Date(matchDate).toLocaleTimeString('pt-BR', {
+  const d = new Date(matchDate)
+  const date = d.toLocaleDateString('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    day: '2-digit',
+    month: '2-digit',
+  })
+  const time = d.toLocaleTimeString('pt-BR', {
     timeZone: 'America/Sao_Paulo',
     hour: '2-digit',
     minute: '2-digit',
   })
+  return `${date} · ${time}`
 }
 
 function isDeadlinePassed(matchDate: string): boolean {
