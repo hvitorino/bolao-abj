@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 60 features
+- Total: 61 features
 - Concluídas: 59
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 2
 
 ## Features Priorizadas
 
@@ -791,3 +791,13 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Troféus progressivos (`naufragando`/`a_deriva`/`sem_volta`) exibem barra de progresso igual aos positivos de sequência
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** trophy-contributing-games, perfil-redesign, fix-perfil-stats-trophies, scoring
+
+---
+
+### 61. game-detail-navigation — Navegação para Detalhe do Jogo — pendente
+**Objetivo:** Tornar todos os jogos clicáveis nas abas "Campanha" e "Palpites", redirecionando para a página individual de cada jogo já existente; e ajustar o botão Voltar na página do jogo para retornar à última rota visitada dentro do app em vez de um destino fixo.
+**Critérios de sucesso:**
+- Clicar em qualquer jogo na aba "Campanha" navega para a página daquele jogo
+- Clicar em qualquer jogo na aba "Palpites" navega para a página daquele jogo
+- O botão Voltar na página do jogo retorna para a página de onde o usuário veio (última rota visitada dentro do app), não para um destino fixo
+**Dependências:** game-navigation, predictions, analise-confronto
