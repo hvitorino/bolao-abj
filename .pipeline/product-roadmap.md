@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 63 features
-- Concluídas: 62
-- Em progresso: 1
+- Concluídas: 63
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -804,7 +804,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 63. menu-redesign — Redesign da Navegação (Header + Tab Bar + Pull Tabs) — em progresso
+### 63. menu-redesign — Redesign da Navegação (Header + Tab Bar + Pull Tabs) — concluída
 **Objetivo:** Reformular completamente a navegação do Bolão da Copa em três camadas — header compacto de uma linha, tab bar fixa no rodapé e pull tabs laterais para acesso contextual a ONTEM, AO VIVO e CHAT.
 **Critérios de sucesso:**
 - Header ocupa uma linha única em qualquer largura de tela
