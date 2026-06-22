@@ -3,7 +3,7 @@
 **Slug:** next-game-navigation
 **Branch:** feature/next-game-navigation
 **Data:** 2026-06-22
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
