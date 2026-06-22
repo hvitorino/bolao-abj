@@ -128,9 +128,10 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
       style={{
         border: '1px solid var(--color-border)',
         backgroundColor: 'var(--color-surface)',
+        overflow: 'hidden',
       }}
     >
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <thead>
           <tr
             style={{
@@ -138,13 +139,13 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
               borderBottom: '2px solid var(--color-border)',
             }}
           >
-            <th style={{ ...thStyle, textAlign: 'right', width: '3rem' }}>#</th>
+            <th style={{ ...thStyle, textAlign: 'right', width: '2.5rem' }}>#</th>
             <th style={{ ...thStyle, textAlign: 'left' }}>PARTICIPANTE</th>
-            <th style={{ ...thStyle, textAlign: 'center', minWidth: '5rem' }}>PONTOS</th>
-            <th style={{ ...thStyle, textAlign: 'center', minWidth: '4.5rem' }}>PALP.</th>
+            <th style={{ ...thStyle, textAlign: 'center', width: '4.5rem' }}>PONTOS</th>
+            <th style={{ ...thStyle, textAlign: 'center', width: '3.5rem' }}>PALP.</th>
             <th
               className="hidden md:table-cell"
-              style={{ ...thStyle, textAlign: 'center', minWidth: '5rem' }}
+              style={{ ...thStyle, textAlign: 'center', width: '5rem' }}
             >
               APROVEIT.
             </th>

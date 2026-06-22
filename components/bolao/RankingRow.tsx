@@ -52,45 +52,43 @@ export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false,
         className="ranking-name-cell"
         style={{
           padding: '0.35rem 0.5rem',
+          overflow: 'hidden',
+        }}
+      >
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.3rem',
+          overflow: 'hidden',
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
-          maxWidth: '200px',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
-        }}
-      >
-        {isLeader ? '► ' : '   '}
-        {entry.participant_name.split(' ')[0]}
-        {entry.streak > 0 && (
-          <span
-            title={`${entry.streak} acerto${entry.streak !== 1 ? 's' : ''} consecutivo${entry.streak !== 1 ? 's' : ''}`}
-            style={{
-              fontSize: '11px',
-              color: 'var(--color-win)',
-              marginLeft: '0.4rem',
-              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-              fontWeight: 'bold',
-              flexShrink: 0,
-            }}
-          >
-            🔥×{entry.streak}
+        }}>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', flexShrink: 1, minWidth: 0 }}>
+            {isLeader ? '► ' : ''}{entry.participant_name.split(' ')[0]}
           </span>
-        )}
-        {isCurrentUser && (
-          <span
-            style={{
-              fontSize: '11px',
-              color: 'var(--color-primary)',
-              marginLeft: '0.5rem',
-              fontWeight: 'normal',
-            }}
-          >
-            (VOCÊ)
-          </span>
-        )}
-        {!hideScouts && <ScoutBadges scouts={entry.scouts ?? []} />}
+          {entry.streak > 0 && (
+            <span
+              title={`${entry.streak} acerto${entry.streak !== 1 ? 's' : ''} consecutivo${entry.streak !== 1 ? 's' : ''}`}
+              style={{
+                fontSize: '11px',
+                color: 'var(--color-win)',
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontWeight: 'bold',
+                flexShrink: 0,
+              }}
+            >
+              🔥×{entry.streak}
+            </span>
+          )}
+          {isCurrentUser && (
+            <span style={{ fontSize: '11px', color: 'var(--color-primary)', fontWeight: 'normal', flexShrink: 0 }}>
+              (VOCÊ)
+            </span>
+          )}
+          {!hideScouts && <ScoutBadges scouts={entry.scouts ?? []} />}
+        </div>
       </td>
 
       {/* Pontos */}
