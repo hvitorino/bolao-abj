@@ -3,7 +3,7 @@
 **Slug:** menu-redesign
 **Branch:** feature/menu-redesign
 **Data:** 2026-06-22
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

@@ -6,6 +6,17 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [menu-redesign] — Redesign da Navegação (Header + Tab Bar + Pull Tabs) — 2026-06-22
+
+- `components/bolao/TabBar.tsx` criado: tab bar fixa no rodapé com 4 itens (CAMPANHA, JOGOS, RANKING, MAIS), fonte 13px JetBrains Mono uppercase, altura 52px + `env(safe-area-inset-bottom)`, item ativo com `borderTop: 2px solid var(--color-primary)`, popover MAIS abre para cima com GRUPOS/REGRAS/CONFIG
+- `components/bolao/SidePanelContainer.tsx` criado: orquestrador dos pull tabs laterais (ONTEM, AO VIVO, CHAT) e do painel deslizante; animação `translateX` 250ms ease-out/in; abertura automática do recap via localStorage; lazy-mount do chat; badge de não-lidas no pull tab CHAT
+- `components/bolao/RecapPanelContent.tsx` criado: conteúdo do painel ONTEM extraído do `RecapBottomSheet`, sem wrapper `position: fixed`
+- `components/bolao/LiveTodayPanelContent.tsx` criado: conteúdo do painel AO VIVO extraído do `LiveTodayBottomSheet`, sem wrapper posicionado
+- `components/bolao/ChatPanelContent.tsx` criado: conteúdo do chat extraído do `GroupChatWidget`; mantém subscription Realtime, `unreadCount` exposto via callback, scroll automático ao abrir
+- `app/(dashboard)/layout.tsx` refatorado: header de uma linha (44px + safe-area-inset-top), remoção de `NavLinks`/`GroupChatWidget`/`RecapController`, `paddingBottom` do `<main>` fixo em `calc(52px + env(safe-area-inset-bottom) + 1.5rem)`
+- `app/(dashboard)/group-switcher.tsx`: `fontSize` do objeto `MONO` alterado de 11px para 13px
+- `DualFooterBar`, `RecapController` e chip flutuante do `GroupChatWidget` removidos do DOM (arquivos mantidos no repositório)
+
 ## [next-game-navigation] — Navegação para o Próximo Jogo na Análise — 2026-06-22
 
 - Componente `NextGameLink` criado em `components/bolao/NextGameLink.tsx`: Client Component com `<Link>` para `/jogos/[nextGameId]/analise`, texto `PRÓXIMO JOGO ►`, JetBrains Mono 12px bold uppercase, cor `var(--color-primary)`, sem sublinhado, sem borda, sem background
