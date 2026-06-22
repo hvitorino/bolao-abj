@@ -35,7 +35,8 @@ type GameRow = {
   round: string | null
 }
 
-function calculateTeamStats(games: GameRow[], teamCode: string): TeamStats {
+function calculateTeamStats(games: GameRow[], teamCode: string, beforeDate: string): TeamStats {
+  const cutoff = new Date(beforeDate).getTime()
   let wins = 0,
     draws = 0,
     losses = 0
@@ -50,8 +51,9 @@ function calculateTeamStats(games: GameRow[], teamCode: string): TeamStats {
 
     if (!isHome && !isAway) continue
 
-    // Jogos sem placar ainda não contribuem para as stats
     if (game.home_score === null || game.away_score === null) continue
+
+    if (new Date(game.match_date).getTime() >= cutoff) continue
 
     const myScore = isHome ? game.home_score : game.away_score
     const oppScore = isHome ? game.away_score : game.home_score
@@ -90,18 +92,17 @@ function formatDate(isoDate: string): string {
     .toUpperCase()
 }
 
-function getRecentGames(games: GameRow[], teamCode: string): RecentGame[] {
-  // Filtrar apenas jogos com placar definido (encerrados ou ao vivo com placar)
+function getRecentGames(games: GameRow[], teamCode: string, beforeDate: string): RecentGame[] {
+  const cutoff = new Date(beforeDate).getTime()
   const teamGames = games
     .filter(
       (g) =>
         (g.home_team_code === teamCode || g.away_team_code === teamCode) &&
         g.home_score !== null &&
-        g.away_score !== null
+        g.away_score !== null &&
+        new Date(g.match_date).getTime() < cutoff
     )
-    // Ordenar do mais recente ao mais antigo
     .sort((a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime())
-    // Pegar os 3 mais recentes
     .slice(0, 3)
 
   return teamGames.map((game) => {
@@ -290,12 +291,12 @@ export default async function AnalisePage({ params }: PageProps) {
   })
 
   // Calcular stats em memória
-  const homeStats = calculateTeamStats(games, game.home_team_code)
-  const awayStats = calculateTeamStats(games, game.away_team_code)
+  const homeStats = calculateTeamStats(games, game.home_team_code, game.match_date)
+  const awayStats = calculateTeamStats(games, game.away_team_code, game.match_date)
 
   // Calcular últimos 3 jogos por time
-  const homeRecentGames = getRecentGames(games, game.home_team_code)
-  const awayRecentGames = getRecentGames(games, game.away_team_code)
+  const homeRecentGames = getRecentGames(games, game.home_team_code, game.match_date)
+  const awayRecentGames = getRecentGames(games, game.away_team_code, game.match_date)
 
   // URL de volta para o dia do jogo
   const backDate = game.match_day ?? game.match_date?.slice(0, 10)
