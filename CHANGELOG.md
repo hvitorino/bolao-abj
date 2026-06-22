@@ -6,6 +6,13 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [next-game-navigation] — Navegação para o Próximo Jogo na Análise — 2026-06-22
+
+- Componente `NextGameLink` criado em `components/bolao/NextGameLink.tsx`: Client Component com `<Link>` para `/jogos/[nextGameId]/analise`, texto `PRÓXIMO JOGO ►`, JetBrains Mono 12px bold uppercase, cor `var(--color-primary)`, sem sublinhado, sem borda, sem background
+- `AnalisePage` (`app/(dashboard)/jogos/[gameId]/analise/page.tsx`): query de próximo jogo adicionada ao `Promise.all` existente via `.from('games').select('id').gt('match_date', ...).order('match_date', { ascending: true }).limit(1).maybeSingle()`
+- Seção "Botão de voltar" substituída por faixa de navegação flex com `justify-content: space-between`: `BackButton` à esquerda e `NextGameLink` à direita (omitido quando não há próximo jogo)
+- Nenhuma alteração de backend, banco de dados, migrations ou endpoints
+
 ## [game-detail-navigation] — Navegação para Detalhe do Jogo — 2026-06-22
 
 - `components/bolao/BackButton.tsx`: label padrão alterado de `← VOLTAR AO PALPITE` para `← VOLTAR`; comportamento de `router.back()` / `router.push(fallbackHref)` inalterado
