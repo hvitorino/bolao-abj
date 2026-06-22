@@ -99,13 +99,13 @@ export function SidePanelContainer({
   // Posicionamento vertical dos pull tabs (container centrado entre header e tab bar)
   const pullTabContainerStyle: React.CSSProperties = {
     position: 'fixed',
-    right: 0,
+    left: 0,
     top: 'var(--header-h, 44px)',
     bottom: 'var(--tabbar-h, 52px)',
     zIndex: 160,
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
     justifyContent: 'center',
     pointerEvents: 'none',
   }
@@ -121,7 +121,6 @@ export function SidePanelContainer({
     padding: '0.75rem 0',
     writingMode: 'vertical-rl',
     textOrientation: 'mixed',
-    transform: 'rotate(180deg)',
     fontFamily: FONT,
     fontSize: '10px',
     textTransform: 'uppercase',
@@ -151,10 +150,10 @@ export function SidePanelContainer({
               ...pullTabBaseStyle,
               background: 'var(--color-surface)',
               color: 'var(--color-accent)',
-              borderLeft: '1px solid var(--color-border)',
+              borderRight: '1px solid var(--color-border)',
               borderTop: '1px solid var(--color-border)',
               borderBottom: '1px solid var(--color-border)',
-              borderRight: 'none',
+              borderLeft: 'none',
             }}
           >
             ONTEM
@@ -170,9 +169,9 @@ export function SidePanelContainer({
               ...pullTabBaseStyle,
               background: 'var(--color-surface)',
               color: 'var(--color-live)',
-              borderLeft: '1px solid var(--color-border)',
+              borderRight: '1px solid var(--color-border)',
               borderBottom: '1px solid var(--color-border)',
-              borderRight: 'none',
+              borderLeft: 'none',
               borderTop: showRecapTab ? 'none' : '1px solid var(--color-border)',
             }}
           >
@@ -189,9 +188,9 @@ export function SidePanelContainer({
               ...pullTabBaseStyle,
               background: 'var(--color-surface)',
               color: 'var(--color-primary)',
-              borderLeft: '1px solid var(--color-border)',
+              borderRight: '1px solid var(--color-border)',
               borderBottom: '1px solid var(--color-border)',
-              borderRight: 'none',
+              borderLeft: 'none',
               borderTop: (!showRecapTab && !showLiveTab) ? '1px solid var(--color-border)' : 'none',
             }}
           >
@@ -201,7 +200,7 @@ export function SidePanelContainer({
                 style={{
                   position: 'absolute',
                   top: '4px',
-                  left: '2px',
+                  right: '2px',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -232,8 +231,8 @@ export function SidePanelContainer({
           position: 'fixed',
           top: 'var(--header-h, 44px)',
           bottom: 'var(--tabbar-h, 52px)',
-          left: 0,
-          right: '85vw',
+          left: '85vw',
+          right: 0,
           zIndex: 149,
           background: 'transparent',
           display: openPanel !== null ? 'block' : 'none',
@@ -250,13 +249,13 @@ export function SidePanelContainer({
           position: 'fixed',
           top: 'var(--header-h, 44px)',
           bottom: 'var(--tabbar-h, 52px)',
-          right: '28px',
+          left: '28px',
           width: 'calc(85vw - 28px)',
           zIndex: 150,
           backgroundColor: 'var(--color-surface)',
-          borderLeft: '1px solid var(--color-border)',
+          borderRight: '1px solid var(--color-border)',
           overflowY: 'auto',
-          transform: openPanel !== null ? 'translateX(0)' : 'translateX(100%)',
+          transform: openPanel !== null ? 'translateX(0)' : 'translateX(-100%)',
           transition: openPanel !== null
             ? 'transform 250ms ease-out'
             : 'transform 250ms ease-in',
