@@ -253,8 +253,18 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         </div>
       )}
 
-      {/* Navegador de dias */}
-      <div style={{ marginBottom: '1.25rem' }}>
+      {/* Navegador de dias — fixado abaixo do header ao rolar */}
+      <div
+        style={{
+          position: 'sticky',
+          top: 'calc(44px + env(safe-area-inset-top))',
+          zIndex: 40,
+          backgroundColor: 'var(--color-bg)',
+          marginBottom: '1.25rem',
+          paddingTop: '1.5rem',
+          marginTop: '-1.5rem',
+        }}
+      >
         <DateChipsNav
           currentDate={currentDate}
           availableDates={availableDates}
