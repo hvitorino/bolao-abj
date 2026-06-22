@@ -1,7 +1,7 @@
 # Relatório Final — Bolão da Copa
 
-Data de conclusão: 2026-06-21
-Total de features concluídas: 55
+Data de conclusão: 2026-06-22
+Total de features concluídas: 61
 
 ## Features Implementadas
 
@@ -60,6 +60,12 @@ Total de features concluídas: 55
 53. [ranking-por-rodada] — Ranking por Rodada — 2026-06-21
 54. [streak-de-acertos] — Sequência de Acertos — 2026-06-21
 55. [perfil-com-estatisticas] — Perfil com Estatísticas — 2026-06-21
+56. [perfil-redesign] — Redesign da Aba de Perfil — 2026-06-21
+57. [fix-perfil-stats-trophies] — Correção: Estatísticas e Troféus na Aba de Perfil — 2026-06-21
+58. [trophy-contributing-games] — Confrontos Contribuintes por Troféu — 2026-06-21
+59. [trofeus-negativos] — Troféus Negativos e Anti-Platina — 2026-06-21
+60. [analise-confronto] — Análise de Confronto — 2026-06-22
+61. [game-detail-navigation] — Navegação para Detalhe do Jogo — 2026-06-22
 
 ## Resumo
 
@@ -99,7 +105,9 @@ As seis features finais completaram o produto. `live-today-games` (item 47) enri
 
 As três features finais completaram o produto. `ranking-por-rodada` (item 53) adicionou ao ranking um seletor de fase (chips) acima da tabela: "Geral" é o padrão; ao selecionar uma fase (Grupo A, Oitavas, Quartas, Semi, Final), o ranking reflete apenas os pontos acumulados nos jogos daquela rodada, respondendo "Quem está mandando nas Oitavas?" sem alterar o ranking geral — as fases disponíveis são derivadas dos jogos reais do grupo. `streak-de-acertos` (item 54) exibiu no ranking a sequência atual de jogos consecutivos em que o participante acertou pelo menos o vencedor: a streak conta apenas jogos com status `finished` onde o participante fez palpite, reseta quando há erro ou ausência de palpite num jogo encerrado, e fica visível ao lado do nome ou na coluna de pontos. Por fim, `perfil-com-estatisticas` (item 55) fechou o produto com uma página `/perfil` pessoal: taxa de acerto de vencedor, taxa de placares exatos, média de pontos por jogo, sequência atual, melhor sequência histórica e palpites feitos vs jogos disponíveis — tudo escopado ao grupo ativo, com visual em monospace/paleta verde-amarelo-azul seguindo DESIGN.md rigorosamente.
 
-Com isso, todas as 55 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 49 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
+As seis features finais completaram o produto. `perfil-redesign` (item 56) transformou a aba `/perfil` de uma lista seca de estatísticas num painel rico com 4 seções empilhadas: SUA CAMPANHA (herói com posição/pontos/movimento), DESEMPENHO (barras ASCII, comparação com média do grupo, sequência em pílulas), TROFÉUS (sistema completo de 15 medalhas com 3 estados) e HISTÓRICO (feed cronológico paginado com palpites e pontos), com nova tabela `position_snapshots` para o indicador de movimento de posição. `fix-perfil-stats-trophies` (item 57) corrigiu os cálculos de estatísticas para considerar apenas jogos `finished` ou `live` (excluindo `pending` dos denominadores) e redesenhou a exibição de troféus: todos os 15 visíveis em grid com descrição sempre exposta, sem separação entre desbloqueados e bloqueados, sem segredos. `trophy-contributing-games` (item 58) enriqueceu cada card de troféu com a lista de jogos finalizados que efetivamente contribuíram para o progresso daquele troféu, no formato `[Bandeira] [Placar] x [Placar] [Bandeira]`, lendo dados já existentes sem migration adicional. `trofeus-negativos` (item 59) adicionou 9 troféus negativos com tom humorístico e autoirônico ao painel de perfil: PLACAR ESPELHADO, ÚLTIMA HORA, TRONO DE PAPEL, QUASE, SOLITÁRIO DO ERRO, DIA RUIM, NAUFRAGANDO, À DERIVA e SEM VOLTA — todos calculados a partir das tabelas existentes (`scores`, `predictions`, `games`, `position_snapshots`), com seção dedicada "CONQUISTAS IMPROVÁVEIS" no `TrophiesPanel`, header com contagem separada `TROFÉUS N/15 · VERGONHA N/9` e achievement "Anti-Platina" (COLECIONADOR DO CAOS) quando todos os 9 negativos estão desbloqueados. `analise-confronto` (item 60) adicionou página `/jogos/[gameId]/analise` com análise comparativa dos dois times: stats agregadas calculadas em tempo real (sem pré-cálculos) e últimos 3 jogos de cada time em ordem cronológica decrescente, com resultados coloridos (V verde, E muted, D vermelho), responsiva em mobile. Por fim, `game-detail-navigation` (item 61) tornou todos os jogos clicáveis nas abas "Campanha" e "Palpites" do perfil, redirecionando para a página individual de cada jogo, e ajustou o botão Voltar na página do jogo para retornar à última rota visitada dentro do app em vez de um destino fixo.
+
+Com isso, todas as 61 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 55 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
 
 ## Próximos passos sugeridos
 
