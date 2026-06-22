@@ -7,6 +7,7 @@ import MatchupStatsCard, { TeamStats } from '@/components/bolao/MatchupStatsCard
 import RecentGamesSection, { RecentGame } from '@/components/bolao/RecentGamesSection'
 import GameCard from '@/components/games/GameCard'
 import BackButton from '@/components/bolao/BackButton'
+import NextGameLink from '@/components/bolao/NextGameLink'
 import { Game } from '@/lib/types/game'
 import { Prediction } from '@/lib/types/prediction'
 import { Score } from '@/lib/types/score'
@@ -200,7 +201,7 @@ export default async function AnalisePage({ params }: PageProps) {
   const supabaseService = createServiceClient()
   const activeGroupId = activeGroup.groupId
 
-  // Queries paralelas: palpite do usuário, score, membros, todos os palpites, existência
+  // Queries paralelas: palpite do usuário, score, membros, todos os palpites, existência, próximo jogo
   const [
     { data: existingPrediction },
     { data: myScore },
@@ -208,6 +209,7 @@ export default async function AnalisePage({ params }: PageProps) {
     { data: allPredictions },
     { data: allScores },
     { data: predictionExistence },
+    { data: nextGame },
   ] = await Promise.all([
     supabase
       .from('predictions')
@@ -247,6 +249,14 @@ export default async function AnalisePage({ params }: PageProps) {
       .select('user_id, game_id')
       .eq('group_id', activeGroupId)
       .eq('game_id', gameId),
+
+    supabase
+      .from('games')
+      .select('id')
+      .gt('match_date', game.match_date)
+      .order('match_date', { ascending: true })
+      .limit(1)
+      .maybeSingle(),
   ])
 
   const initialPrediction: Prediction | null = existingPrediction ?? null
@@ -346,9 +356,17 @@ export default async function AnalisePage({ params }: PageProps) {
         />
       </div>
 
-      {/* Botão de voltar */}
-      <div style={{ marginTop: '1rem' }}>
+      {/* Faixa de navegação: ← VOLTAR | PRÓXIMO JOGO ► */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: '1rem',
+        }}
+      >
         <BackButton fallbackHref={backUrl} />
+        {nextGame?.id && <NextGameLink nextGameId={nextGame.id} />}
       </div>
 
       {/* Rodapé com aviso de atualização */}
