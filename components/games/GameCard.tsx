@@ -452,76 +452,76 @@ export default function GameCard({
         )}
       </div>
 
-      {/* Link de análise — visível para todos os jogos, exceto quando já na análise */}
-      {!hideAnalysisLink && (
-        <div
-          style={{
-            borderTop: '1px dashed var(--color-border)',
-            padding: '0.45rem 0.75rem',
-            display: 'flex',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <Link
-            href={`/jogos/${liveGame.id}/analise`}
-            style={{
-              fontSize: '10px',
-              color: 'var(--color-muted)',
-              textDecoration: 'none',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-            }}
-          >
-            ► VER ANÁLISE
-          </Link>
-        </div>
-      )}
+      {/* Barra de ações: VER ANÁLISE (esquerda) | VER PALPITES (direita) */}
+      {(!hideAnalysisLink || liveParticipants.length > 0) && (
+        <div style={{ display: 'flex', borderTop: '1px solid var(--color-primary)' }}>
+          {!hideAnalysisLink && (
+            <Link
+              href={`/jogos/${liveGame.id}/analise`}
+              style={{
+                flex: 1,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.6rem 0.75rem',
+                backgroundColor: 'var(--color-primary)',
+                color: 'var(--color-bg)',
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '11px',
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                textDecoration: 'none',
+              }}
+            >
+              ► VER ANÁLISE
+            </Link>
+          )}
 
-      {/* Toggle de expansão — só aparece quando há participantes para mostrar */}
-      {liveParticipants.length > 0 && (
-        <button
-          type="button"
-          onClick={() => setIsParticipantsExpanded((prev) => !prev)}
-          onMouseEnter={() => setIsHoveringToggle(true)}
-          onMouseLeave={() => setIsHoveringToggle(false)}
-          aria-expanded={isParticipantsExpanded}
-          aria-controls={`participants-${liveGame.id}`}
-          style={{
-            width: '100%',
-            border: 'none',
-            borderTop: '1px solid var(--color-primary)',
-            backgroundColor: isHoveringToggle
-              ? 'rgba(0, 156, 59, 0.75)'
-              : 'var(--color-primary)',
-            padding: '0.6rem 0.75rem',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '0.4rem',
-            cursor: 'pointer',
-            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '11px',
-            fontWeight: 'bold',
-            color: 'var(--color-bg)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            transition: 'background-color 150ms ease',
-          }}
-        >
-          {isParticipantsExpanded ? 'OCULTAR PALPITES' : 'VER PALPITES'}
-          <span
-            style={{
-              display: 'inline-block',
-              transform: isParticipantsExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-              transition: 'transform 250ms ease',
-            }}
-          >
-            ▾
-          </span>
-        </button>
+          {liveParticipants.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setIsParticipantsExpanded((prev) => !prev)}
+              onMouseEnter={() => setIsHoveringToggle(true)}
+              onMouseLeave={() => setIsHoveringToggle(false)}
+              aria-expanded={isParticipantsExpanded}
+              aria-controls={`participants-${liveGame.id}`}
+              style={{
+                flex: 1,
+                border: 'none',
+                borderLeft: !hideAnalysisLink ? '1px solid var(--color-primary)' : 'none',
+                backgroundColor: isHoveringToggle
+                  ? 'rgba(0, 156, 59, 0.75)'
+                  : 'var(--color-primary)',
+                padding: '0.6rem 0.75rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '0.4rem',
+                cursor: 'pointer',
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '11px',
+                fontWeight: 'bold',
+                color: 'var(--color-bg)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                transition: 'background-color 150ms ease',
+              }}
+            >
+              {isParticipantsExpanded ? 'OCULTAR PALPITES' : 'VER PALPITES'}
+              <span
+                style={{
+                  display: 'inline-block',
+                  transform: isParticipantsExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 250ms ease',
+                }}
+              >
+                ▾
+              </span>
+            </button>
+          )}
+        </div>
       )}
 
       {/* Seção de palpites de todos os participantes — exibida sob demanda via toggle */}
