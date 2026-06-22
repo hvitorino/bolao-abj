@@ -59,8 +59,6 @@ export default function GameCard({
   const [isParticipantsExpanded, setIsParticipantsExpanded] = useState(false)
   // Estado de expansão do breakdown de pontuação — colapsado por padrão
   const [isScoreExpanded, setIsScoreExpanded] = useState(false)
-  // Estado de hover do toggle — inverte cores para reforçar que é clicável
-  const [isHoveringToggle, setIsHoveringToggle] = useState(false)
 
   // Subscreve ao canal Realtime do Supabase para este jogo específico.
   const { game: liveGame } = useGameRealtime(game.id, game)
@@ -483,17 +481,13 @@ export default function GameCard({
             <button
               type="button"
               onClick={() => setIsParticipantsExpanded((prev) => !prev)}
-              onMouseEnter={() => setIsHoveringToggle(true)}
-              onMouseLeave={() => setIsHoveringToggle(false)}
               aria-expanded={isParticipantsExpanded}
               aria-controls={`participants-${liveGame.id}`}
               style={{
                 flex: 1,
                 border: 'none',
                 borderLeft: !hideAnalysisLink ? '1px solid var(--color-primary)' : 'none',
-                backgroundColor: isHoveringToggle
-                  ? 'rgba(0, 156, 59, 0.75)'
-                  : 'var(--color-primary)',
+                backgroundColor: 'var(--color-primary)',
                 padding: '0.6rem 0.75rem',
                 display: 'flex',
                 justifyContent: 'center',
@@ -506,7 +500,6 @@ export default function GameCard({
                 color: 'var(--color-bg)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.08em',
-                transition: 'background-color 150ms ease',
               }}
             >
               {isParticipantsExpanded ? 'OCULTAR PALPITES' : 'VER PALPITES'}
