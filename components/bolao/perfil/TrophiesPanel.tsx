@@ -129,6 +129,8 @@ function ContributingGameLine({
 
 export function TrophiesPanel({ state }: TrophiesPanelProps) {
   const [expandedGames, setExpandedGames] = useState<Set<string>>(new Set())
+  const [trophiesOpen, setTrophiesOpen] = useState(true)
+  const [vexamesOpen, setVexamesOpen] = useState(true)
 
   function toggleGames(trophyId: string) {
     setExpandedGames((prev) => {
@@ -185,21 +187,27 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
   return (
     <div style={PANEL}>
       {/* Header com contagem de positivos e vergonhas */}
-      <div style={{
-        fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase',
-        letterSpacing: '0.1em', color: 'var(--color-bg)',
-        backgroundColor: 'var(--color-primary)',
-        padding: '0.5rem 1rem',
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      }}>
-        <span>TROFÉUS</span>
+      <button
+        type="button"
+        onClick={() => setTrophiesOpen((v) => !v)}
+        style={{
+          width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer',
+          fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase',
+          letterSpacing: '0.1em', color: 'var(--color-bg)',
+          backgroundColor: 'var(--color-primary)',
+          padding: '0.5rem 1rem',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+        }}
+      >
+        <span>{trophiesOpen ? '▼' : '▶'} TROFÉUS</span>
         <span style={{ color: 'rgba(10, 14, 26, 0.65)' }}>
           {unlocked.length}/{trophies.length} · VERGONHA {unlockedNeg.length}/9
         </span>
-      </div>
+      </button>
 
       {/* Grid vertical — troféus positivos */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
+      {trophiesOpen && <div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
         {trophies.map((trophy, index) => {
           const isLast = index === trophies.length - 1
           const itemStyle: React.CSSProperties = {
@@ -284,7 +292,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
             </div>
           )
         })}
-      </div>
+      </div>}
 
       {/* Seção negativa — só renderiza se houver dados */}
       {negativeTrophies.length > 0 && (
@@ -296,20 +304,23 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
           }} />
 
           {/* Header da seção negativa */}
-          <div style={{
-            fontSize: '11px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--color-bg)',
-            backgroundColor: 'var(--color-error)',
-            padding: '0.5rem 1rem',
-          }}>
-            GALERIA DO VEXAME
-          </div>
+          <button
+            type="button"
+            onClick={() => setVexamesOpen((v) => !v)}
+            style={{
+              width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer',
+              fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase',
+              letterSpacing: '0.1em', color: 'var(--color-bg)',
+              backgroundColor: 'var(--color-error)',
+              padding: '0.5rem 1rem',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+            }}
+          >
+            {vexamesOpen ? '▼' : '▶'} GALERIA DO VEXAME
+          </button>
 
           {/* Card Anti-Platina — exibido somente quando todos os 9 negativos estão desbloqueados */}
-          {isAntiPlatina && (
+          {vexamesOpen && isAntiPlatina && (
             <div style={{
               padding: '0.5rem 1rem',
               borderBottom: '1px solid var(--color-border)',
@@ -328,7 +339,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
           )}
 
           {/* Cards dos 9 troféus negativos */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
+          {vexamesOpen && <div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
             {negativeTrophies.map((trophy, index) => {
               const isLast = index === negativeTrophies.length - 1
               const itemStyle: React.CSSProperties = {
@@ -416,7 +427,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                 </div>
               )
             })}
-          </div>
+          </div>}
         </>
       )}
     </div>
