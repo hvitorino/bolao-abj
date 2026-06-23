@@ -15,6 +15,8 @@ const FIFA_FLAG: Record<string, string> = {
   MAR: '🇲🇦', SEN: '🇸🇳', NGA: '🇳🇬', EGY: '🇪🇬', CIV: '🇨🇮',
   CMR: '🇨🇲', GHA: '🇬🇭', TUN: '🇹🇳', RSA: '🇿🇦', ALG: '🇩🇿',
   MLI: '🇲🇱', ANG: '🇦🇴', MOZ: '🇲🇿', ZIM: '🇿🇼',
+  COD: '🇨🇩', COG: '🇨🇬', TAN: '🇹🇿', ZAM: '🇿🇲', UGA: '🇺🇬',
+  COM: '🇰🇲', BFA: '🇧🇫', GUI: '🇬🇳', GAB: '🇬🇦', BEN: '🇧🇯',
   // Ásia / Oceania
   JPN: '🇯🇵', KOR: '🇰🇷', SAU: '🇸🇦', IRN: '🇮🇷', AUS: '🇦🇺',
   QAT: '🇶🇦', NZL: '🇳🇿', BIH: '🇧🇦', JOR: '🇯🇴', TJK: '🇹🇯',
