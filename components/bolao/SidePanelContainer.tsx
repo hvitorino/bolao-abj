@@ -148,11 +148,11 @@ export function SidePanelContainer({
             aria-label="Abrir resumo de ontem"
             style={{
               ...pullTabBaseStyle,
-              background: 'var(--color-surface)',
-              color: 'var(--color-accent)',
-              borderRight: '1px solid var(--color-border)',
-              borderTop: '1px solid var(--color-border)',
-              borderBottom: '1px solid var(--color-border)',
+              background: 'var(--color-secondary)',
+              color: '#f0f4f8',
+              borderRight: '2px solid var(--color-accent)',
+              borderTop: 'none',
+              borderBottom: 'none',
               borderLeft: 'none',
             }}
           >
@@ -167,12 +167,12 @@ export function SidePanelContainer({
             aria-label="Abrir ranking ao vivo"
             style={{
               ...pullTabBaseStyle,
-              background: 'var(--color-surface)',
-              color: 'var(--color-live)',
-              borderRight: '1px solid var(--color-border)',
-              borderBottom: '1px solid var(--color-border)',
+              background: 'var(--color-live)',
+              color: '#ffffff',
+              borderRight: '2px solid rgba(255,255,255,0.3)',
+              borderBottom: 'none',
               borderLeft: 'none',
-              borderTop: showRecapTab ? 'none' : '1px solid var(--color-border)',
+              borderTop: showRecapTab ? '1px solid rgba(255,255,255,0.15)' : 'none',
             }}
           >
             AO VIVO
@@ -186,12 +186,12 @@ export function SidePanelContainer({
             aria-label={`Abrir chat do grupo${chatUnreadCount > 0 ? ` (${chatUnreadCount} não lidas)` : ''}`}
             style={{
               ...pullTabBaseStyle,
-              background: 'var(--color-surface)',
-              color: 'var(--color-primary)',
-              borderRight: '1px solid var(--color-border)',
-              borderBottom: '1px solid var(--color-border)',
+              background: 'var(--color-primary)',
+              color: '#0a0e1a',
+              borderRight: '2px solid rgba(0,0,0,0.2)',
+              borderBottom: 'none',
               borderLeft: 'none',
-              borderTop: (!showRecapTab && !showLiveTab) ? '1px solid var(--color-border)' : 'none',
+              borderTop: (!showRecapTab && !showLiveTab) ? 'none' : '1px solid rgba(0,0,0,0.2)',
             }}
           >
             CHAT
@@ -207,8 +207,8 @@ export function SidePanelContainer({
                   minWidth: '14px',
                   height: '14px',
                   padding: '0 2px',
-                  backgroundColor: 'var(--color-accent)',
-                  color: '#0a0e1a',
+                  backgroundColor: '#0a0e1a',
+                  color: '#FFDF00',
                   fontSize: '9px',
                   fontWeight: 'bold',
                   fontFamily: FONT,
