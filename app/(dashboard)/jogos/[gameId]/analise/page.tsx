@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
@@ -16,6 +17,19 @@ import type { ScoreBreakdown } from '@/lib/types/score'
 import { ParticipantEntry } from '@/lib/types/participant'
 
 export const revalidate = 60
+
+export async function generateMetadata({ params }: { params: Promise<{ gameId: string }> }): Promise<Metadata> {
+  const { gameId } = await params
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('games')
+    .select('home_team, away_team')
+    .eq('id', gameId)
+    .maybeSingle()
+  return {
+    title: data ? `${data.home_team} × ${data.away_team} — Bolão da Copa` : 'Análise — Bolão da Copa',
+  }
+}
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 

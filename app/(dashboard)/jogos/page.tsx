@@ -1,6 +1,11 @@
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { isValidDateString, todayInBrasilia } from '@/lib/date'
 import { createClient } from '@/lib/supabase/server'
+
+export const metadata: Metadata = {
+  title: 'Jogos — Bolão da Copa',
+}
 import { createServiceClient } from '@/lib/supabase/service-server'
 import { resolveActiveGroup } from '@/lib/active-group'
 import { redirect } from 'next/navigation'

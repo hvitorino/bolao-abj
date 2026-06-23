@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -9,6 +10,13 @@ import { DeleteGroupButton } from '@/components/bolao/DeleteGroupButton'
 import { MembersList } from '@/components/bolao/MembersList'
 import type { GroupMemberEntry } from '@/lib/types/group'
 import type { GroupInviteSent } from '@/lib/types/group-invite'
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+  const { data } = await supabase.from('groups').select('name').eq('id', id).maybeSingle()
+  return { title: data?.name ? `${data.name} — Bolão da Copa` : 'Grupo — Bolão da Copa' }
+}
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
