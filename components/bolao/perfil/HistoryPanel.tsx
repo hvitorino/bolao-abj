@@ -8,6 +8,7 @@ import type { Trophy } from './TrophiesPanel'
 
 export interface HistoryItem {
   game_id: string
+  match_date: string
   match_day: string
   home_team: string
   away_team: string
@@ -60,6 +61,11 @@ function formatDayHeader(matchDay: string): string {
     .toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
     .toUpperCase()
     .replace(/\./g, '')
+}
+
+function formatMatchTime(matchDate: string): string {
+  const d = new Date(matchDate)
+  return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })
 }
 
 function HistoryGameCard({
@@ -265,6 +271,11 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
                 cursor: 'pointer',
               }}
             >
+              {/* Hora do jogo */}
+              <span style={{ color: 'var(--color-muted)', fontSize: '11px', minWidth: '2.5rem' }}>
+                {formatMatchTime(item.match_date)}
+              </span>
+
               {/* Resultado real — mini-card com bandeira */}
               <HistoryGameCard
                 home_team_code={item.home_team_code}
