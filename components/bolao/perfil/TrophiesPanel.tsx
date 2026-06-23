@@ -133,6 +133,8 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
   const [expandedGames, setExpandedGames] = useState<Set<string>>(new Set())
   const [trophiesOpen, setTrophiesOpen] = useState(false)
   const [vexamesOpen, setVexamesOpen] = useState(false)
+  const [platinaFlipped, setPlatinaFlipped] = useState(false)
+  const [sadimFlipped, setSadimFlipped] = useState(false)
 
   function toggleGames(trophyId: string) {
     setExpandedGames((prev) => {
@@ -213,7 +215,9 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
         {trophies.map((trophy, index) => {
           // Card especial para o troféu Platina
           if (trophy.id === 'platina') {
-            const isUnlocked = trophy.status === 'unlocked'
+            const isUnlocked = platinaFlipped
+              ? trophy.status !== 'unlocked'
+              : trophy.status === 'unlocked'
             const rate =
               trophy.progress !== null && trophy.progress_max
                 ? trophy.progress / trophy.progress_max
@@ -221,10 +225,12 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
             return (
               <div
                 key="platina"
+                onClick={() => setPlatinaFlipped((v) => !v)}
                 style={{
                   padding: '0.5rem 1rem',
                   borderBottom: '1px solid var(--color-border)',
                   fontSize: '12px',
+                  cursor: 'pointer',
                   background: isUnlocked
                     ? 'linear-gradient(90deg, rgba(192,160,60,0.15) 0%, transparent 100%)'
                     : undefined,
@@ -358,9 +364,11 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
           {/* Cards dos troféus negativos */}
           {vexamesOpen && <div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
             {negativeTrophies.map((trophy, index) => {
-              // Card especial para Colecionador do Caos
+              // Card especial para Sadim
               if (trophy.id === 'colecionador_do_caos') {
-                const isUnlocked = trophy.status === 'unlocked'
+                const isUnlocked = sadimFlipped
+                  ? trophy.status !== 'unlocked'
+                  : trophy.status === 'unlocked'
                 const rate =
                   trophy.progress !== null && trophy.progress_max
                     ? trophy.progress / trophy.progress_max
@@ -368,10 +376,12 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                 return (
                   <div
                     key="colecionador_do_caos"
+                    onClick={() => setSadimFlipped((v) => !v)}
                     style={{
                       padding: '0.5rem 1rem',
                       borderBottom: '1px solid var(--color-border)',
                       fontSize: '12px',
+                      cursor: 'pointer',
                       background: isUnlocked
                         ? 'linear-gradient(90deg, rgba(255,69,58,0.15) 0%, transparent 100%)'
                         : undefined,
