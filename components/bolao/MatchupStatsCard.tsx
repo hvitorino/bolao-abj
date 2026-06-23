@@ -144,10 +144,12 @@ export default function MatchupStatsCard({
         {/* Separador central */}
         <div
           style={{
-            fontSize: '11px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '22px',
             color: 'var(--color-muted)',
             fontWeight: 'bold',
-            padding: '0 0.5rem',
           }}
         >
           ×
