@@ -219,12 +219,14 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                 key="platina"
                 style={{
                   padding: '0.75rem 1rem',
-                  borderBottom: '1px solid var(--color-border)',
                   fontSize: '12px',
                   background: isUnlocked
                     ? 'linear-gradient(135deg, rgba(192,160,60,0.18) 0%, rgba(255,223,0,0.10) 100%)'
                     : 'transparent',
-                  border: isUnlocked ? '1px solid #C0A03C' : undefined,
+                  borderTop: isUnlocked ? '1px solid #C0A03C' : 'none',
+                  borderLeft: isUnlocked ? '1px solid #C0A03C' : 'none',
+                  borderRight: isUnlocked ? '1px solid #C0A03C' : 'none',
+                  borderBottom: '1px solid var(--color-border)',
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
