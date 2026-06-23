@@ -129,8 +129,8 @@ function ContributingGameLine({
 
 export function TrophiesPanel({ state }: TrophiesPanelProps) {
   const [expandedGames, setExpandedGames] = useState<Set<string>>(new Set())
-  const [trophiesOpen, setTrophiesOpen] = useState(true)
-  const [vexamesOpen, setVexamesOpen] = useState(true)
+  const [trophiesOpen, setTrophiesOpen] = useState(false)
+  const [vexamesOpen, setVexamesOpen] = useState(false)
 
   function toggleGames(trophyId: string) {
     setExpandedGames((prev) => {

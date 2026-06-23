@@ -138,7 +138,7 @@ const HEADER: React.CSSProperties = {
 }
 
 export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelProps) {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set())
   const defaultSetRef = useRef(false)
 
