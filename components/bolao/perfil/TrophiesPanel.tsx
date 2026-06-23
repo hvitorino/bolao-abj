@@ -59,9 +59,9 @@ const NEGATIVE_TROPHY_CRITERIA: Record<string, string> = {
   quase:             'errou por 1 gol... tão perto, mas tão longe',
   solitario_do_erro: 'errou sozinho o vencedor... parabéns!',
   dia_ruim:          'errou todos os vencedores. toma teu troféu!',
-  naufragando:       'sequência de 3 erros consecutivos',
-  a_deriva:          'sequência de 5 erros consecutivos',
-  sem_volta:         'sequência de 8 erros consecutivos',
+  naufragando:       'errou o vencedor 3 vezes',
+  a_deriva:          'errou o vencedor 6 vezes',
+  sem_volta:         'errou o vencedor 10 vezes',
 }
 
 function renderBar(rate: number, width: number = 5): string {
