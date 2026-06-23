@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
@@ -24,7 +24,10 @@ export default async function DashboardLayout({
   } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login')
+    const isCrawler = (await headers()).get('x-crawler') === '1'
+    if (!isCrawler) redirect('/login')
+    // Crawler sem sessão: renderiza só o children para que generateMetadata chegue ao <head>
+    return <>{children}</>
   }
 
   const [{ data: groupRows }, { data: profile }] = await Promise.all([

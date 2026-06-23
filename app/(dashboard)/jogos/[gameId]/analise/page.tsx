@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service-server'
@@ -151,7 +151,10 @@ export default async function AnalisePage({ params }: PageProps) {
   } = await supabase.auth.getUser()
 
   if (!authUser) {
-    redirect('/login')
+    const isCrawler = (await headers()).get('x-crawler') === '1'
+    if (!isCrawler) redirect('/login')
+    // Crawler: body vazio — generateMetadata já colocou o título no <head>
+    return <div />
   }
 
   // Verificar autorização do grupo (mesma lógica da página /jogos)
