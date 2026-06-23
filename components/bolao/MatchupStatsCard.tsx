@@ -60,14 +60,14 @@ function buildRows(home: TeamStats, away: TeamStats): StatRow[] {
       highlightAway: away.goalDifference > home.goalDifference,
     },
     {
-      label: 'CLEAN SHEETS',
+      label: 'S/ GOLS SOFRIDOS',
       home: home.cleanSheets,
       away: away.cleanSheets,
       highlightHome: home.cleanSheets > away.cleanSheets,
       highlightAway: away.cleanSheets > home.cleanSheets,
     },
     {
-      label: 'JGS C/ GOL',
+      label: 'C/ GOL MARCADO',
       home: home.gamesScored,
       away: away.gamesScored,
       highlightHome: home.gamesScored > away.gamesScored,
