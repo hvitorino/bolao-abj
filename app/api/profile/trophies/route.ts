@@ -135,54 +135,35 @@ function extractContributingGame(row: unknown): ContributingGame | null {
   }
 }
 
-// --- Helpers para sequências negativas ---
+// --- Helpers para troféus negativos por contagem total ---
 
-function calcBestNegativeStreak(history: Array<Record<string, unknown>>): number {
-  let best = 0
-  let current = 0
-  for (const row of history) {
+function countNegative(history: Array<Record<string, unknown>>): number {
+  return history.filter((row) => {
     const bd = row.breakdown as Record<string, number> | null
-    const winner = Number(bd?.winner ?? 0)
-    if (winner === 0) {
-      current++
-      if (current > best) best = current
-    } else {
-      current = 0
-    }
-  }
-  return best
+    return Number(bd?.winner ?? 0) === 0
+  }).length
 }
 
-function findNegativeStreakUnlockDate(history: Array<Record<string, unknown>>, threshold: number): string | null {
-  let current = 0
+function findNegativeCountUnlockDate(history: Array<Record<string, unknown>>, threshold: number): string | null {
+  let count = 0
   for (const row of history) {
     const bd = row.breakdown as Record<string, number> | null
-    const winner = Number(bd?.winner ?? 0)
-    if (winner === 0) {
-      current++
-      if (current >= threshold) {
-        return extractMatchDate(row)
-      }
-    } else {
-      current = 0
+    if (Number(bd?.winner ?? 0) === 0) {
+      count++
+      if (count >= threshold) return extractMatchDate(row)
     }
   }
   return null
 }
 
-function findNegativeStreakContributingGames(history: Array<Record<string, unknown>>, threshold: number): ContributingGame[] {
-  let current: ContributingGame[] = []
+function findNegativeCountContributingGames(history: Array<Record<string, unknown>>, threshold: number): ContributingGame[] {
+  const games: ContributingGame[] = []
   for (const row of history) {
     const bd = row.breakdown as Record<string, number> | null
-    const winner = Number(bd?.winner ?? 0)
-    if (winner === 0) {
+    if (Number(bd?.winner ?? 0) === 0) {
       const game = extractContributingGame(row)
-      if (game) current.push(game)
-      if (current.length >= threshold) {
-        return current.slice(-threshold)
-      }
-    } else {
-      current = []
+      if (game) games.push(game)
+      if (games.length >= threshold) return games
     }
   }
   return []
@@ -879,17 +860,17 @@ async function calcNegativeTrophies(
     }
   }
 
-  // --- Sequências negativas (reutiliza streakHistory) ---
-  const bestNeg = calcBestNegativeStreak(streakHistory)
+  // --- Troféus negativos por contagem total de erros de vencedor ---
+  const totalNeg = countNegative(streakHistory)
 
-  const naufragandoAt = findNegativeStreakUnlockDate(streakHistory, 3)
-  const naufragandoGames = findNegativeStreakContributingGames(streakHistory, 3)
+  const naufragandoAt = findNegativeCountUnlockDate(streakHistory, 3)
+  const naufragandoGames = findNegativeCountContributingGames(streakHistory, 3)
 
-  const aDerivaAt = findNegativeStreakUnlockDate(streakHistory, 5)
-  const aDerivaGames = findNegativeStreakContributingGames(streakHistory, 5)
+  const aDerivaAt = findNegativeCountUnlockDate(streakHistory, 6)
+  const aDerivaGames = findNegativeCountContributingGames(streakHistory, 6)
 
-  const semVoltaAt = findNegativeStreakUnlockDate(streakHistory, 8)
-  const semVoltaGames = findNegativeStreakContributingGames(streakHistory, 8)
+  const semVoltaAt = findNegativeCountUnlockDate(streakHistory, 10)
+  const semVoltaGames = findNegativeCountContributingGames(streakHistory, 10)
 
   // Montar os 9 troféus negativos
   const negativeTrophies = [
@@ -899,9 +880,9 @@ async function calcNegativeTrophies(
     makeNegativeTrophy('quase', quaseAt, null, null, quaseGames),
     makeNegativeTrophy('solitario_do_erro', solitarioAt, null, null, solitarioGames),
     makeNegativeTrophy('dia_ruim', diaRuimAt, null, null, diaRuimGames),
-    makeNegativeTrophy('naufragando', naufragandoAt, Math.min(bestNeg, 3), 3, naufragandoGames),
-    makeNegativeTrophy('a_deriva', aDerivaAt, Math.min(bestNeg, 5), 5, aDerivaGames),
-    makeNegativeTrophy('sem_volta', semVoltaAt, Math.min(bestNeg, 8), 8, semVoltaGames),
+    makeNegativeTrophy('naufragando', naufragandoAt, Math.min(totalNeg, 3), 3, naufragandoGames),
+    makeNegativeTrophy('a_deriva', aDerivaAt, Math.min(totalNeg, 6), 6, aDerivaGames),
+    makeNegativeTrophy('sem_volta', semVoltaAt, Math.min(totalNeg, 10), 10, semVoltaGames),
   ]
 
   // Colecionador do Caos: desbloqueado quando todos os 9 negativos estão desbloqueados
