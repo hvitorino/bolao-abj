@@ -47,7 +47,7 @@ const TROPHY_NAMES: Record<string, string> = {
 }
 
 const NEGATIVE_TROPHY_NAMES: Record<string, string> = {
-  colecionador_do_caos: 'SADIM',
+  colecionador_do_caos: 'SADIM — MIDAS AO CONTRÁRIO',
   placar_espelhado:  'PLACAR ESPELHADO',
   ultima_hora:       'ÚLTIMA HORA',
   trono_de_papel:    'TRONO DE PAPEL',
