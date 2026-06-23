@@ -52,7 +52,7 @@ const TROPHY_CRITERIA: Record<string, string> = {
 }
 
 const NEGATIVE_TROPHY_CRITERIA: Record<string, string> = {
-  colecionador_do_caos: 'desbloqueou todos os 9 vexames — Midas ao contrário',
+  colecionador_do_caos: 'desbloqueou todos os 9 vexames',
   placar_espelhado:  'acertou os números, errou o lado',
   ultima_hora:       'não é procrastinação, é estratégia',
   trono_de_papel:    'passeou na liderança mas a alegria logo se foi',
