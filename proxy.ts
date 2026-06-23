@@ -3,7 +3,20 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 const publicRoutes = ['/login', '/cadastro', '/esqueci-senha', '/nova-senha', '/auth/callback']
 
+const CRAWLER_RE =
+  /whatsapp|telegrambot|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|linkedinbot|googlebot|bingbot/i
+
 export async function proxy(request: NextRequest) {
+  const ua = request.headers.get('user-agent') ?? ''
+  const isCrawler = CRAWLER_RE.test(ua)
+
+  // Crawlers sociais: injeta header e passa sem verificar auth (para generateMetadata funcionar)
+  if (isCrawler) {
+    const reqHeaders = new Headers(request.headers)
+    reqHeaders.set('x-crawler', '1')
+    return NextResponse.next({ request: { headers: reqHeaders } })
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })
