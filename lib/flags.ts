@@ -1,6 +1,7 @@
 const FIFA_FLAG: Record<string, string> = {
   // CONCACAF
   USA: '🇺🇸', MEX: '🇲🇽', CAN: '🇨🇦', CRC: '🇨🇷', JAM: '🇯🇲', HON: '🇭🇳', PAN: '🇵🇦',
+  CUR: '🇨🇼', HAI: '🇭🇹',
   // CONMEBOL
   BRA: '🇧🇷', ARG: '🇦🇷', URU: '🇺🇾', COL: '🇨🇴', ECU: '🇪🇨', VEN: '🇻🇪',
   CHI: '🇨🇱', PAR: '🇵🇾', BOL: '🇧🇴', PER: '🇵🇪',
@@ -18,8 +19,9 @@ const FIFA_FLAG: Record<string, string> = {
   COD: '🇨🇩', COG: '🇨🇬', TAN: '🇹🇿', ZAM: '🇿🇲', UGA: '🇺🇬',
   COM: '🇰🇲', BFA: '🇧🇫', GUI: '🇬🇳', GAB: '🇬🇦', BEN: '🇧🇯',
   // Ásia / Oceania
-  JPN: '🇯🇵', KOR: '🇰🇷', SAU: '🇸🇦', IRN: '🇮🇷', AUS: '🇦🇺',
+  JPN: '🇯🇵', KOR: '🇰🇷', SAU: '🇸🇦', KSA: '🇸🇦', IRN: '🇮🇷', AUS: '🇦🇺',
   QAT: '🇶🇦', NZL: '🇳🇿', BIH: '🇧🇦', JOR: '🇯🇴', TJK: '🇹🇯',
+  UAE: '🇦🇪', CPV: '🇨🇻',
   UZB: '🇺🇿', KGZ: '🇰🇬', IDN: '🇮🇩', IND: '🇮🇳', IRQ: '🇮🇶',
   CHN: '🇨🇳', VIE: '🇻🇳', THA: '🇹🇭', SYR: '🇸🇾',
 }
