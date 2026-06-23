@@ -214,45 +214,37 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
           // Card especial para o troféu Platina
           if (trophy.id === 'platina') {
             const isUnlocked = trophy.status === 'unlocked'
+            const rate =
+              trophy.progress !== null && trophy.progress_max
+                ? trophy.progress / trophy.progress_max
+                : 0
             return (
               <div
                 key="platina"
                 style={{
-                  padding: '1.25rem 1rem',
-                  fontSize: '13px',
-                  textAlign: 'center',
+                  padding: '0.5rem 1rem',
+                  borderBottom: '1px solid var(--color-border)',
+                  fontSize: '12px',
                   background: isUnlocked
-                    ? 'linear-gradient(135deg, rgba(192,160,60,0.28) 0%, rgba(255,223,0,0.14) 100%)'
-                    : 'linear-gradient(135deg, rgba(192,160,60,0.08) 0%, rgba(255,223,0,0.04) 100%)',
-                  borderTop: `1px solid ${isUnlocked ? '#C0A03C' : '#5a4a1a'}`,
-                  borderLeft: `1px solid ${isUnlocked ? '#C0A03C' : '#5a4a1a'}`,
-                  borderRight: `1px solid ${isUnlocked ? '#C0A03C' : '#5a4a1a'}`,
-                  borderBottom: `1px solid ${isUnlocked ? '#C0A03C' : 'var(--color-border)'}`,
+                    ? 'linear-gradient(90deg, rgba(192,160,60,0.15) 0%, transparent 100%)'
+                    : undefined,
                 }}
               >
-                <div style={{
-                  fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                  fontSize: '16px',
-                  color: isUnlocked ? '#FFDF00' : '#8a6a20',
-                  letterSpacing: '0.12em',
-                  marginBottom: '0.3rem',
-                }}>
-                  {isUnlocked ? '✦' : '◇'} {trophy.name} {isUnlocked ? '✦' : '◇'}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
+                  <span style={{ color: isUnlocked ? '#FFDF00' : 'var(--color-muted)', fontWeight: isUnlocked ? 'bold' : undefined, textTransform: 'uppercase' }}>
+                    {isUnlocked ? '🏆' : '🔒'} {trophy.name}
+                  </span>
+                  <span style={{ fontSize: '11px', color: isUnlocked ? '#C0A03C' : 'var(--color-muted)' }}>
+                    {isUnlocked && trophy.unlocked_at
+                      ? formatDate(trophy.unlocked_at)
+                      : trophy.progress !== null && trophy.progress_max
+                        ? <>{trophy.progress}/{trophy.progress_max}{' '}<span style={{ letterSpacing: '0.05em' }}>{renderBar(rate)}</span></>
+                        : null}
+                  </span>
                 </div>
-                <div style={{ fontSize: '11px', color: isUnlocked ? '#C0A03C' : '#6a5018', marginBottom: '0.3rem' }}>
+                <div style={{ marginTop: '0.2rem', fontSize: '11px', color: isUnlocked ? '#C0A03C' : 'var(--color-muted)' }}>
                   {TROPHY_CRITERIA['platina']}
                 </div>
-                {isUnlocked && trophy.unlocked_at && (
-                  <div style={{ fontSize: '11px', color: '#C0A03C' }}>
-                    {formatDate(trophy.unlocked_at)}
-                  </div>
-                )}
-                {!isUnlocked && trophy.progress !== null && trophy.progress_max && (
-                  <div style={{ fontSize: '11px', color: '#8a6a20' }}>
-                    {trophy.progress}/{trophy.progress_max} {renderBar(trophy.progress / trophy.progress_max, 8)}
-                  </div>
-                )}
               </div>
             )
           }
@@ -369,45 +361,37 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
               // Card especial para Colecionador do Caos
               if (trophy.id === 'colecionador_do_caos') {
                 const isUnlocked = trophy.status === 'unlocked'
+                const rate =
+                  trophy.progress !== null && trophy.progress_max
+                    ? trophy.progress / trophy.progress_max
+                    : 0
                 return (
                   <div
                     key="colecionador_do_caos"
                     style={{
-                      padding: '1.25rem 1rem',
-                      fontSize: '13px',
-                      textAlign: 'center',
+                      padding: '0.5rem 1rem',
+                      borderBottom: '1px solid var(--color-border)',
+                      fontSize: '12px',
                       background: isUnlocked
-                        ? 'linear-gradient(135deg, rgba(255,69,58,0.22) 0%, rgba(180,30,20,0.12) 100%)'
-                        : 'linear-gradient(135deg, rgba(255,69,58,0.07) 0%, rgba(180,30,20,0.04) 100%)',
-                      borderTop: `1px solid ${isUnlocked ? 'var(--color-error)' : '#5a1a1a'}`,
-                      borderLeft: `1px solid ${isUnlocked ? 'var(--color-error)' : '#5a1a1a'}`,
-                      borderRight: `1px solid ${isUnlocked ? 'var(--color-error)' : '#5a1a1a'}`,
-                      borderBottom: `1px solid ${isUnlocked ? 'var(--color-error)' : 'var(--color-border)'}`,
+                        ? 'linear-gradient(90deg, rgba(255,69,58,0.15) 0%, transparent 100%)'
+                        : undefined,
                     }}
                   >
-                    <div style={{
-                      fontWeight: 'bold',
-                      textTransform: 'uppercase',
-                      fontSize: '16px',
-                      color: isUnlocked ? 'var(--color-error)' : '#7a2020',
-                      letterSpacing: '0.12em',
-                      marginBottom: '0.3rem',
-                    }}>
-                      {isUnlocked ? '✦' : '◇'} {trophy.name} {isUnlocked ? '✦' : '◇'}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
+                      <span style={{ color: isUnlocked ? 'var(--color-error)' : 'var(--color-muted)', fontWeight: isUnlocked ? 'bold' : undefined, textTransform: 'uppercase' }}>
+                        {isUnlocked ? '🤡' : '🔒'} {trophy.name}
+                      </span>
+                      <span style={{ fontSize: '11px', color: isUnlocked ? '#cc4040' : 'var(--color-muted)' }}>
+                        {isUnlocked && trophy.unlocked_at
+                          ? formatDate(trophy.unlocked_at)
+                          : trophy.progress !== null && trophy.progress_max
+                            ? <>{trophy.progress}/{trophy.progress_max}{' '}<span style={{ letterSpacing: '0.05em' }}>{renderBar(rate)}</span></>
+                            : null}
+                      </span>
                     </div>
-                    <div style={{ fontSize: '11px', color: isUnlocked ? '#cc4040' : '#5a1a1a', marginBottom: '0.3rem' }}>
+                    <div style={{ marginTop: '0.2rem', fontSize: '11px', color: isUnlocked ? '#cc4040' : 'var(--color-muted)' }}>
                       {NEGATIVE_TROPHY_CRITERIA['colecionador_do_caos']}
                     </div>
-                    {isUnlocked && trophy.unlocked_at && (
-                      <div style={{ fontSize: '11px', color: '#cc4040' }}>
-                        {formatDate(trophy.unlocked_at)}
-                      </div>
-                    )}
-                    {!isUnlocked && trophy.progress !== null && trophy.progress_max && (
-                      <div style={{ fontSize: '11px', color: '#7a2020' }}>
-                        {trophy.progress}/{trophy.progress_max} {renderBar(trophy.progress / trophy.progress_max, 8)}
-                      </div>
-                    )}
                   </div>
                 )
               }
