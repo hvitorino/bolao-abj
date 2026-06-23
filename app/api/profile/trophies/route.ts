@@ -47,6 +47,7 @@ const TROPHY_NAMES: Record<string, string> = {
 }
 
 const NEGATIVE_TROPHY_NAMES: Record<string, string> = {
+  colecionador_do_caos: 'COLECIONADOR DO CAOS',
   placar_espelhado:  'PLACAR ESPELHADO',
   ultima_hora:       'ÚLTIMA HORA',
   trono_de_papel:    'TRONO DE PAPEL',
@@ -890,8 +891,8 @@ async function calcNegativeTrophies(
   const semVoltaAt = findNegativeStreakUnlockDate(streakHistory, 8)
   const semVoltaGames = findNegativeStreakContributingGames(streakHistory, 8)
 
-  // Retornar em ordem fixa conforme spec
-  return [
+  // Montar os 9 troféus negativos
+  const negativeTrophies = [
     makeNegativeTrophy('placar_espelhado', espelhadoAt, null, null, espelhadoGames),
     makeNegativeTrophy('ultima_hora', ultimaHoraAt, null, null, ultimaHoraGames),
     makeNegativeTrophy('trono_de_papel', tronoPapelAt, null, null, []),
@@ -902,6 +903,18 @@ async function calcNegativeTrophies(
     makeNegativeTrophy('a_deriva', aDerivaAt, Math.min(bestNeg, 5), 5, aDerivaGames),
     makeNegativeTrophy('sem_volta', semVoltaAt, Math.min(bestNeg, 8), 8, semVoltaGames),
   ]
+
+  // Colecionador do Caos: desbloqueado quando todos os 9 negativos estão desbloqueados
+  const negUnlockedCount = negativeTrophies.filter((t) => t.status === 'unlocked').length
+  const caosAt = negUnlockedCount === 9
+    ? negativeTrophies
+        .map((t) => t.unlocked_at)
+        .filter(Boolean)
+        .sort()
+        .at(-1) ?? null
+    : null
+
+  return [makeNegativeTrophy('colecionador_do_caos', caosAt, negUnlockedCount, 9, []), ...negativeTrophies]
 }
 
 export async function GET(request: NextRequest) {

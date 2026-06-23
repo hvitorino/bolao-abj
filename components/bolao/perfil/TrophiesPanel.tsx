@@ -52,6 +52,7 @@ const TROPHY_CRITERIA: Record<string, string> = {
 }
 
 const NEGATIVE_TROPHY_CRITERIA: Record<string, string> = {
+  colecionador_do_caos: 'desbloqueou todos os 9 troféus negativos',
   placar_espelhado:  'acertou os números, errou o lado',
   ultima_hora:       'não é procrastinação, é estratégia',
   trono_de_papel:    'passeou na liderança mas a alegria logo se foi',
@@ -183,7 +184,6 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
   const negativeTrophies = state.data.negativeTrophies ?? []
   const unlocked = trophies.filter((t) => t.status === 'unlocked')
   const unlockedNeg = negativeTrophies.filter((t) => t.status === 'unlocked')
-  const isAntiPlatina = negativeTrophies.length > 0 && negativeTrophies.every((t) => t.status === 'unlocked')
 
   return (
     <>
@@ -360,31 +360,58 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
             }}
           >
             <span>{vexamesOpen ? '▼' : '▶'} GALERIA DO VEXAME</span>
-            <span style={{ color: 'rgba(10,14,26,0.65)' }}>{unlockedNeg.length}/9</span>
+            <span style={{ color: 'rgba(10,14,26,0.65)' }}>{unlockedNeg.length}/{negativeTrophies.length}</span>
           </button>
 
-          {/* Card Anti-Platina — exibido somente quando todos os 9 negativos estão desbloqueados */}
-          {vexamesOpen && isAntiPlatina && (
-            <div style={{
-              padding: '0.5rem 1rem',
-              borderBottom: '1px solid var(--color-border)',
-              border: '1px solid var(--color-error)',
-              backgroundColor: 'rgba(255, 69, 58, 0.08)',
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: 'var(--color-error)', fontWeight: 'bold', textTransform: 'uppercase', fontSize: '12px' }}>
-                  🤡 COLECIONADOR DO CAOS
-                </span>
-              </div>
-              <div style={{ marginTop: '0.2rem', fontSize: '11px', color: 'var(--color-error)' }}>
-                desbloqueou todos os 9 troféus negativos — parabéns, campeão do caos
-              </div>
-            </div>
-          )}
-
-          {/* Cards dos 9 troféus negativos */}
+          {/* Cards dos troféus negativos */}
           {vexamesOpen && <div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
             {negativeTrophies.map((trophy, index) => {
+              // Card especial para Colecionador do Caos
+              if (trophy.id === 'colecionador_do_caos') {
+                const isUnlocked = trophy.status === 'unlocked'
+                return (
+                  <div
+                    key="colecionador_do_caos"
+                    style={{
+                      padding: '1.25rem 1rem',
+                      fontSize: '13px',
+                      textAlign: 'center',
+                      background: isUnlocked
+                        ? 'linear-gradient(135deg, rgba(255,69,58,0.22) 0%, rgba(180,30,20,0.12) 100%)'
+                        : 'linear-gradient(135deg, rgba(255,69,58,0.07) 0%, rgba(180,30,20,0.04) 100%)',
+                      borderTop: `1px solid ${isUnlocked ? 'var(--color-error)' : '#5a1a1a'}`,
+                      borderLeft: `1px solid ${isUnlocked ? 'var(--color-error)' : '#5a1a1a'}`,
+                      borderRight: `1px solid ${isUnlocked ? 'var(--color-error)' : '#5a1a1a'}`,
+                      borderBottom: `1px solid ${isUnlocked ? 'var(--color-error)' : 'var(--color-border)'}`,
+                    }}
+                  >
+                    <div style={{
+                      fontWeight: 'bold',
+                      textTransform: 'uppercase',
+                      fontSize: '16px',
+                      color: isUnlocked ? 'var(--color-error)' : '#7a2020',
+                      letterSpacing: '0.12em',
+                      marginBottom: '0.3rem',
+                    }}>
+                      {isUnlocked ? '✦' : '◇'} {trophy.name} {isUnlocked ? '✦' : '◇'}
+                    </div>
+                    <div style={{ fontSize: '11px', color: isUnlocked ? '#cc4040' : '#5a1a1a', marginBottom: '0.3rem' }}>
+                      {NEGATIVE_TROPHY_CRITERIA['colecionador_do_caos']}
+                    </div>
+                    {isUnlocked && trophy.unlocked_at && (
+                      <div style={{ fontSize: '11px', color: '#cc4040' }}>
+                        {formatDate(trophy.unlocked_at)}
+                      </div>
+                    )}
+                    {!isUnlocked && trophy.progress !== null && trophy.progress_max && (
+                      <div style={{ fontSize: '11px', color: '#7a2020' }}>
+                        {trophy.progress}/{trophy.progress_max} {renderBar(trophy.progress / trophy.progress_max, 8)}
+                      </div>
+                    )}
+                  </div>
+                )
+              }
+
               const isLast = index === negativeTrophies.length - 1
               const itemStyle: React.CSSProperties = {
                 padding: '0.5rem 1rem',
