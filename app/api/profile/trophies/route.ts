@@ -28,6 +28,7 @@ interface TrophyResult {
 }
 
 const TROPHY_NAMES: Record<string, string> = {
+  platina: 'PLATINA',
   estreia: 'ESTREIA',
   abriu_o_placar: 'ABRIU O PLACAR',
   cravada: 'CRAVADA',
@@ -580,7 +581,7 @@ async function calcTrophies(
   ]
 
   // Ordenar: desbloqueados primeiro (por data), depois locked
-  return trophies.sort((a, b) => {
+  const sorted = trophies.sort((a, b) => {
     const order = { unlocked: 0, locked: 1 }
     if (order[a.status] !== order[b.status]) return order[a.status] - order[b.status]
     if (a.status === 'unlocked' && b.status === 'unlocked') {
@@ -588,6 +589,19 @@ async function calcTrophies(
     }
     return 0
   })
+
+  // Platina: desbloqueada quando todos os 15 outros troféus estão desbloqueados
+  const unlockedCount = sorted.filter((t) => t.status === 'unlocked').length
+  const platinaAt = unlockedCount === 15
+    ? sorted
+        .map((t) => t.unlocked_at)
+        .filter(Boolean)
+        .sort()
+        .at(-1) ?? null
+    : null
+
+  const platina = makeTrophy('platina', platinaAt, unlockedCount, 15, [])
+  return [platina, ...sorted]
 }
 
 async function calcNegativeTrophies(

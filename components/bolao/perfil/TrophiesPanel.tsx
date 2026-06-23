@@ -33,6 +33,7 @@ interface TrophiesPanelProps {
 }
 
 const TROPHY_CRITERIA: Record<string, string> = {
+  platina: 'desbloqueou todos os 15 troféus',
   estreia: 'primeiro palpite enviado',
   abriu_o_placar: 'primeiro acerto de vencedor',
   cravada: 'primeiro placar exato',
@@ -210,6 +211,49 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
       {/* Grid vertical — troféus positivos */}
       {trophiesOpen && <div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
         {trophies.map((trophy, index) => {
+          // Card especial para o troféu Platina
+          if (trophy.id === 'platina') {
+            const isUnlocked = trophy.status === 'unlocked'
+            return (
+              <div
+                key="platina"
+                style={{
+                  padding: '0.75rem 1rem',
+                  borderBottom: '1px solid var(--color-border)',
+                  fontSize: '12px',
+                  background: isUnlocked
+                    ? 'linear-gradient(135deg, rgba(192,160,60,0.18) 0%, rgba(255,223,0,0.10) 100%)'
+                    : 'transparent',
+                  border: isUnlocked ? '1px solid #C0A03C' : undefined,
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
+                  <span style={{
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    fontSize: '13px',
+                    color: isUnlocked ? '#FFDF00' : 'var(--color-muted)',
+                    letterSpacing: '0.08em',
+                  }}>
+                    {isUnlocked ? '✦' : '🔒'} {trophy.name}
+                  </span>
+                  {isUnlocked && trophy.unlocked_at && (
+                    <span style={{ fontSize: '11px', color: '#C0A03C' }}>
+                      {formatDate(trophy.unlocked_at)}
+                    </span>
+                  )}
+                  {!isUnlocked && trophy.progress !== null && trophy.progress_max && (
+                    <span style={{ fontSize: '11px', color: 'var(--color-muted)' }}>
+                      {trophy.progress}/{trophy.progress_max}
+                    </span>
+                  )}
+                </div>
+                <div style={{ marginTop: '0.2rem', fontSize: '11px', color: isUnlocked ? '#C0A03C' : 'var(--color-muted)' }}>
+                  {TROPHY_CRITERIA['platina']}
+                </div>
+              </div>
+            )
+          }
           const isLast = index === trophies.length - 1
           const itemStyle: React.CSSProperties = {
             padding: '0.5rem 1rem',
