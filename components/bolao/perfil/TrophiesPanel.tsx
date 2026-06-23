@@ -227,29 +227,28 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                 key="platina"
                 onClick={() => setPlatinaFlipped((v) => !v)}
                 style={{
-                  padding: '0.5rem 1rem',
+                  padding: '1rem 1rem',
                   borderBottom: '1px solid var(--color-border)',
                   fontSize: '12px',
                   cursor: 'pointer',
+                  textAlign: 'center',
                   background: isUnlocked
-                    ? 'linear-gradient(90deg, rgba(192,160,60,0.15) 0%, transparent 100%)'
+                    ? 'linear-gradient(135deg, rgba(192,160,60,0.15) 0%, transparent 100%)'
                     : undefined,
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
-                  <span style={{ color: isUnlocked ? '#FFDF00' : 'var(--color-muted)', fontWeight: isUnlocked ? 'bold' : undefined, textTransform: 'uppercase' }}>
-                    {isUnlocked ? '💎' : '🔒'} {trophy.name}
-                  </span>
-                  <span style={{ fontSize: '11px', color: isUnlocked ? '#C0A03C' : 'var(--color-muted)' }}>
-                    {isUnlocked && trophy.unlocked_at
-                      ? formatDate(trophy.unlocked_at)
-                      : trophy.progress !== null && trophy.progress_max
-                        ? <>{trophy.progress}/{trophy.progress_max}{' '}<span style={{ letterSpacing: '0.05em' }}>{renderBar(rate)}</span></>
-                        : null}
-                  </span>
+                <div style={{ color: isUnlocked ? '#FFDF00' : 'var(--color-muted)', fontWeight: isUnlocked ? 'bold' : undefined, textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                  {isUnlocked ? '💎' : '🔒'} {trophy.name}
                 </div>
-                <div style={{ marginTop: '0.2rem', fontSize: '11px', color: isUnlocked ? '#C0A03C' : 'var(--color-muted)' }}>
+                <div style={{ fontSize: '11px', color: isUnlocked ? '#C0A03C' : 'var(--color-muted)', marginBottom: '0.25rem' }}>
                   {TROPHY_CRITERIA['platina']}
+                </div>
+                <div style={{ fontSize: '11px', color: isUnlocked ? '#C0A03C' : 'var(--color-muted)' }}>
+                  {isUnlocked && trophy.unlocked_at
+                    ? formatDate(trophy.unlocked_at)
+                    : trophy.progress !== null && trophy.progress_max
+                      ? <>{trophy.progress}/{trophy.progress_max}{' '}<span style={{ letterSpacing: '0.05em' }}>{renderBar(rate)}</span></>
+                      : null}
                 </div>
               </div>
             )
@@ -378,29 +377,28 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                     key="colecionador_do_caos"
                     onClick={() => setSadimFlipped((v) => !v)}
                     style={{
-                      padding: '0.5rem 1rem',
+                      padding: '1rem 1rem',
                       borderBottom: '1px solid var(--color-border)',
                       fontSize: '12px',
                       cursor: 'pointer',
+                      textAlign: 'center',
                       background: isUnlocked
-                        ? 'linear-gradient(90deg, rgba(255,69,58,0.15) 0%, transparent 100%)'
+                        ? 'linear-gradient(135deg, rgba(255,69,58,0.15) 0%, transparent 100%)'
                         : undefined,
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
-                      <span style={{ color: isUnlocked ? 'var(--color-error)' : 'var(--color-muted)', fontWeight: isUnlocked ? 'bold' : undefined, textTransform: 'uppercase' }}>
-                        {isUnlocked ? '🗑️' : '🔒'} {trophy.name}
-                      </span>
-                      <span style={{ fontSize: '11px', color: isUnlocked ? '#cc4040' : 'var(--color-muted)' }}>
-                        {isUnlocked && trophy.unlocked_at
-                          ? formatDate(trophy.unlocked_at)
-                          : trophy.progress !== null && trophy.progress_max
-                            ? <>{trophy.progress}/{trophy.progress_max}{' '}<span style={{ letterSpacing: '0.05em' }}>{renderBar(rate)}</span></>
-                            : null}
-                      </span>
+                    <div style={{ color: isUnlocked ? 'var(--color-error)' : 'var(--color-muted)', fontWeight: isUnlocked ? 'bold' : undefined, textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                      {isUnlocked ? '🗑️' : '🔒'} {trophy.name}
                     </div>
-                    <div style={{ marginTop: '0.2rem', fontSize: '11px', color: isUnlocked ? '#cc4040' : 'var(--color-muted)' }}>
+                    <div style={{ fontSize: '11px', color: isUnlocked ? '#cc4040' : 'var(--color-muted)', marginBottom: '0.25rem' }}>
                       {NEGATIVE_TROPHY_CRITERIA['colecionador_do_caos']}
+                    </div>
+                    <div style={{ fontSize: '11px', color: isUnlocked ? '#cc4040' : 'var(--color-muted)' }}>
+                      {isUnlocked && trophy.unlocked_at
+                        ? formatDate(trophy.unlocked_at)
+                        : trophy.progress !== null && trophy.progress_max
+                          ? <>{trophy.progress}/{trophy.progress_max}{' '}<span style={{ letterSpacing: '0.05em' }}>{renderBar(rate)}</span></>
+                          : null}
                     </div>
                   </div>
                 )
