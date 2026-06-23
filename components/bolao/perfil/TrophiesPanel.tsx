@@ -232,7 +232,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
                   <span style={{ color: isUnlocked ? '#FFDF00' : 'var(--color-muted)', fontWeight: isUnlocked ? 'bold' : undefined, textTransform: 'uppercase' }}>
-                    {isUnlocked ? '🏆' : '🔒'} {trophy.name}
+                    {isUnlocked ? '💎' : '🔒'} {trophy.name}
                   </span>
                   <span style={{ fontSize: '11px', color: isUnlocked ? '#C0A03C' : 'var(--color-muted)' }}>
                     {isUnlocked && trophy.unlocked_at
