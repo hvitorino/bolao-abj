@@ -138,6 +138,7 @@ const HEADER: React.CSSProperties = {
 }
 
 export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelProps) {
+  const [open, setOpen] = useState(true)
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set())
   const defaultSetRef = useRef(false)
 
@@ -161,13 +162,28 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
     })
   }
 
+  const headerBtn = (
+    <button
+      type="button"
+      onClick={() => setOpen((v) => !v)}
+      style={{
+        ...HEADER,
+        width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer',
+        display: 'flex', alignItems: 'center', gap: '0.4rem',
+        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+      }}
+    >
+      {open ? '▼' : '▶'} HISTÓRICO
+    </button>
+  )
+
   if (state.status === 'loading') {
     return (
       <div style={PANEL}>
-        <div style={HEADER}>HISTÓRICO</div>
-        <div style={{ padding: '1.5rem 1rem', fontSize: '12px', color: 'var(--color-muted)', textTransform: 'uppercase' }}>
+        {headerBtn}
+        {open && <div style={{ padding: '1.5rem 1rem', fontSize: '12px', color: 'var(--color-muted)', textTransform: 'uppercase' }}>
           CARREGANDO...
-        </div>
+        </div>}
       </div>
     )
   }
@@ -175,10 +191,10 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
   if (state.status === 'error') {
     return (
       <div style={PANEL}>
-        <div style={HEADER}>HISTÓRICO</div>
-        <div style={{ padding: '1.5rem 1rem', fontSize: '12px', color: 'var(--color-error)', textTransform: 'uppercase' }}>
+        {headerBtn}
+        {open && <div style={{ padding: '1.5rem 1rem', fontSize: '12px', color: 'var(--color-error)', textTransform: 'uppercase' }}>
           ✗ ERRO AO CARREGAR HISTÓRICO
-        </div>
+        </div>}
       </div>
     )
   }
@@ -188,15 +204,15 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
 
   return (
     <div style={PANEL}>
-      <div style={HEADER}>HISTÓRICO</div>
+      {headerBtn}
 
-      {items.length === 0 && (
+      {open && items.length === 0 && (
         <div style={{ padding: '1.5rem 1rem', fontSize: '12px', color: 'var(--color-muted)', textTransform: 'uppercase' }}>
           NENHUM JOGO ENCERRADO AINDA
         </div>
       )}
 
-      {days.map(([day, dayItems]) => {
+      {open && days.map(([day, dayItems]) => {
         const expanded = expandedDays.has(day)
         return (
         <div key={day}>
@@ -298,7 +314,7 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
       })}
 
       {/* Botão VER MAIS */}
-      {has_more && (
+      {open && has_more && (
         <div style={{ padding: '0.75rem 1rem' }}>
           <button
             onClick={onLoadMore}

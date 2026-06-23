@@ -185,8 +185,9 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
   const isAntiPlatina = negativeTrophies.length > 0 && negativeTrophies.every((t) => t.status === 'unlocked')
 
   return (
+    <>
     <div style={PANEL}>
-      {/* Header com contagem de positivos e vergonhas */}
+      {/* Header troféus positivos */}
       <button
         type="button"
         onClick={() => setTrophiesOpen((v) => !v)}
@@ -202,7 +203,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
       >
         <span>{trophiesOpen ? '▼' : '▶'} TROFÉUS</span>
         <span style={{ color: 'rgba(10, 14, 26, 0.65)' }}>
-          {unlocked.length}/{trophies.length} · VERGONHA {unlockedNeg.length}/9
+          {unlocked.length}/{trophies.length}
         </span>
       </button>
 
@@ -293,16 +294,11 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
           )
         })}
       </div>}
+    </div>
 
-      {/* Seção negativa — só renderiza se houver dados */}
-      {negativeTrophies.length > 0 && (
-        <>
-          {/* Divisor entre seções */}
-          <div style={{
-            borderTop: '1px solid var(--color-border)',
-            margin: '0',
-          }} />
-
+    {/* Painel separado — Galeria do Vexame */}
+    {negativeTrophies.length > 0 && (
+      <div style={PANEL}>
           {/* Header da seção negativa */}
           <button
             type="button"
@@ -313,10 +309,12 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
               letterSpacing: '0.1em', color: 'var(--color-bg)',
               backgroundColor: 'var(--color-error)',
               padding: '0.5rem 1rem',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
             }}
           >
-            {vexamesOpen ? '▼' : '▶'} GALERIA DO VEXAME
+            <span>{vexamesOpen ? '▼' : '▶'} GALERIA DO VEXAME</span>
+            <span style={{ color: 'rgba(10,14,26,0.65)' }}>{unlockedNeg.length}/9</span>
           </button>
 
           {/* Card Anti-Platina — exibido somente quando todos os 9 negativos estão desbloqueados */}
@@ -428,8 +426,8 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
               )
             })}
           </div>}
-        </>
-      )}
-    </div>
+      </div>
+    )}
+    </>
   )
 }
