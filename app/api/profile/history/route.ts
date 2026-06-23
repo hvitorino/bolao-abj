@@ -107,21 +107,28 @@ export async function GET(request: NextRequest) {
   // e associar ao item do histórico correspondente
 
   // Buscar cravadas (placares exatos) com game_id
-  const { data: exactScores } = await serviceClient
+  const { data: exactScoresRaw } = await serviceClient
     .from('scores')
-    .select('game_id, calculated_at, games(match_date)')
+    .select('game_id, games(match_date)')
     .eq('user_id', user.id)
     .eq('group_id', groupId)
     .filter('breakdown->>exact', 'gt', '0')
-    .order('calculated_at', { ascending: true })
 
   // Buscar todos os scores para sequências
-  const { data: allScores } = await serviceClient
+  const { data: allScoresRaw } = await serviceClient
     .from('scores')
-    .select('game_id, breakdown, calculated_at, games(match_date)')
+    .select('game_id, breakdown, points, games(match_date)')
     .eq('user_id', user.id)
     .eq('group_id', groupId)
-    .order('calculated_at', { ascending: true })
+
+  // Ordenar por match_date para garantir ordem cronológica correta dos troféus
+  function matchDateOf(row: { games: unknown }): number {
+    const g = row.games as { match_date?: string } | null
+    return g?.match_date ? new Date(g.match_date).getTime() : 0
+  }
+
+  const exactScores = exactScoresRaw ? [...exactScoresRaw].sort((a, b) => matchDateOf(a) - matchDateOf(b)) : []
+  const allScores = allScoresRaw ? [...allScoresRaw].sort((a, b) => matchDateOf(a) - matchDateOf(b)) : []
 
   // Mapear game_id -> troféu desbloqueado naquele jogo
   const trophyByGame: Map<string, string[]> = new Map()
