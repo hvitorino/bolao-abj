@@ -52,7 +52,7 @@ const TROPHY_CRITERIA: Record<string, string> = {
 }
 
 const NEGATIVE_TROPHY_CRITERIA: Record<string, string> = {
-  colecionador_do_caos: 'desbloqueou todos os 9 troféus negativos',
+  colecionador_do_caos: 'desbloqueou todos os 9 vexames — Midas ao contrário',
   placar_espelhado:  'acertou os números, errou o lado',
   ultima_hora:       'não é procrastinação, é estratégia',
   trono_de_papel:    'passeou na liderança mas a alegria logo se foi',
@@ -379,7 +379,7 @@ export function TrophiesPanel({ state }: TrophiesPanelProps) {
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.25rem' }}>
                       <span style={{ color: isUnlocked ? 'var(--color-error)' : 'var(--color-muted)', fontWeight: isUnlocked ? 'bold' : undefined, textTransform: 'uppercase' }}>
-                        {isUnlocked ? '🤡' : '🔒'} {trophy.name}
+                        {isUnlocked ? '💩' : '🔒'} {trophy.name}
                       </span>
                       <span style={{ fontSize: '11px', color: isUnlocked ? '#cc4040' : 'var(--color-muted)' }}>
                         {isUnlocked && trophy.unlocked_at
