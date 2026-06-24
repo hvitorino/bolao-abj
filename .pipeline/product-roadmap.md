@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 64 features
-- Concluídas: 63
+- Concluídas: 64
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -831,7 +831,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 64. change-password — Alteração Direta de Senha — pendente
+### 64. change-password — Alteração Direta de Senha — concluída
 **Objetivo:** Simplificar o fluxo de recuperação/alteração de senha removendo a dependência de envio de email e link de redefinição; o usuário autenticado altera a senha diretamente por um formulário com "nova senha" e "confirmar senha", e o fluxo anterior de email (magic link/reset email) é removido ou desabilitado.
 **Critérios de sucesso:**
 - Existe uma página ou modal acessível no dashboard para o usuário autenticado redefinir a senha
