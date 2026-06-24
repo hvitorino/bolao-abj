@@ -3,8 +3,8 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 66 features
-- Concluídas: 66
+- Total: 67 features
+- Concluídas: 67
 - Em progresso: 0
 - Pendentes: 0
 
@@ -856,6 +856,18 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Dados lidos de `games`, `predictions`, `scores` e `profiles` sem migration nova; política anon ou service_role configurada para leitura pública
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** auth, game-navigation, predictions, scoring, live-scores-realtime, game-participants-view, prediction-visibility
+
+---
+
+### 67. animated-predictions-ranking — Animação de Posição dos Palpites na Página Pública de Jogo — concluída
+**Objetivo:** Na página pública de jogo (`/jogos/[gameId]/publico`), ordenar a lista de participantes por pontuação efetiva em tempo real e animar as trocas de posição com a técnica FLIP, tornando visível e fluida qualquer reordenação causada por mudança de placar ao vivo.
+**Critérios de sucesso:**
+- Participantes ordenados por pontuação efetiva em todos os estados (`pending`, `live`, `finished`), com desempate por nome
+- Trocas de posição animadas com FLIP manual (`useLayoutEffect` + `translateY`, 350ms ease-in-out), sem dependências externas
+- Animação suprimida no primeiro render e em estado `pending` (onde a lista não muda)
+- Aparência visual e roles ARIA da tabela preservados; `npm run lint` e `npm run build` passam sem erros novos
+**Dependências:** public-game-view, public-game-view-group-fix, live-scoring
+**Observação de conclusão:** aprovada sem rodada de fix em 2026-06-24; merge `feature/animated-predictions-ranking` na main confirmado. Feature puramente de UI/UX — nenhuma migration, endpoint ou policy nova. `PublicParticipantsList.tsx` reescrito com técnica FLIP nativa; tabela substituída por `<div role="table">` para suporte confiável a `translateY`.
 
 ---
 
