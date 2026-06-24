@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ParticipantEntry } from '@/lib/types/participant'
 import { calculateLiveScore } from '@/lib/scoring'
 import { createClient } from '@/lib/supabase/client'
@@ -16,6 +16,64 @@ interface PublicParticipantsListProps {
 }
 
 /**
+ * Ordena participantes conforme status do jogo.
+ *
+ * - pending:  quem tem palpite (hasPrediction=true) primeiro; desempate por nome pt-BR.
+ * - live:     pontuação efetiva calculada no cliente via calculateLiveScore; sem palpite = -1.
+ * - finished: pontuação oficial de p.points; sem palpite = -1.
+ *
+ * Desempate sempre por nome pt-BR ascendente (estável e determinístico).
+ */
+function sortParticipants(
+  participants: ParticipantEntry[],
+  gameStatus: 'pending' | 'live' | 'finished',
+  liveHomeScore: number | null,
+  liveAwayScore: number | null
+): ParticipantEntry[] {
+  const copy = [...participants]
+
+  if (gameStatus === 'pending') {
+    return copy.sort((a, b) => {
+      // Quem tem palpite vem antes
+      if (a.hasPrediction !== b.hasPrediction) {
+        return a.hasPrediction ? -1 : 1
+      }
+      // Desempate: nome pt-BR ascendente
+      return a.name.localeCompare(b.name, 'pt-BR')
+    })
+  }
+
+  // live ou finished: ordenar por pontuação efetiva decrescente
+  const getEffectivePoints = (p: ParticipantEntry): number => {
+    if (!p.prediction) return -1
+
+    if (gameStatus === 'live') {
+      if (liveHomeScore === null || liveAwayScore === null) return -1
+      const result = calculateLiveScore(
+        { home_score: liveHomeScore, away_score: liveAwayScore },
+        p.prediction
+      )
+      return result?.points ?? -1
+    }
+
+    // finished
+    return p.points ?? -1
+  }
+
+  return copy.sort((a, b) => {
+    const ptsA = getEffectivePoints(a)
+    const ptsB = getEffectivePoints(b)
+
+    if (ptsA !== ptsB) {
+      return ptsB - ptsA // decrescente
+    }
+
+    // Desempate: nome pt-BR ascendente
+    return a.name.localeCompare(b.name, 'pt-BR')
+  })
+}
+
+/**
  * Tabela pública de palpites e pontuações dos participantes do bolão.
  * Sem accordion de breakdown (simplificado em relação a GameParticipantsList).
  * Sem destacar usuário atual (sem currentUserId na página pública).
@@ -27,6 +85,9 @@ interface PublicParticipantsListProps {
  *
  * Realtime de scores (finished): subscreve ao canal public-scores-${gameId} para atualizar
  * pontos quando scores são inseridos/atualizados no Supabase.
+ *
+ * Animação: FLIP manual via useLayoutEffect + CSS transitions (350ms ease-in-out).
+ * Ordena por pontuação efetiva decrescente em live/finished; reordena animado a cada update.
  */
 export default function PublicParticipantsList({
   participants: initialParticipants,
@@ -41,6 +102,81 @@ export default function PublicParticipantsList({
   const showPoints = gameStatus === 'finished'
   const showLivePoints = gameStatus === 'live'
   const isPending = gameStatus === 'pending'
+
+  // Ordenação derivada: recalcula sempre que participants, status ou placares mudam
+  const sortedParticipants = useMemo(
+    () => sortParticipants(participants, gameStatus, liveHomeScore, liveAwayScore),
+    [participants, gameStatus, liveHomeScore, liveAwayScore]
+  )
+
+  // Refs FLIP: mapa userId → elemento DOM da row
+  const rowRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+
+  // Posições anteriores de cada row (FIRST step do FLIP)
+  const prevPositions = useRef<Map<string, DOMRect>>(new Map())
+
+  // Guard: suprime animação no primeiro render
+  const isFirstRender = useRef(true)
+
+  // Captura posições atuais antes de uma re-renderização (chamado antes de setParticipants)
+  const capturePositions = () => {
+    const map = new Map<string, DOMRect>()
+    rowRefs.current.forEach((el, userId) => {
+      if (el) {
+        map.set(userId, el.getBoundingClientRect())
+      }
+    })
+    prevPositions.current = map
+  }
+
+  // FLIP: executa após cada mudança de sortedParticipants
+  useLayoutEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      // Salva posições iniciais sem animar
+      capturePositions()
+      return
+    }
+
+    // Para cada row visível, calcular delta entre posição anterior (FIRST) e atual (LAST)
+    const elements: Array<{ el: HTMLDivElement; deltaY: number }> = []
+
+    rowRefs.current.forEach((el, userId) => {
+      if (!el) return
+      const first = prevPositions.current.get(userId)
+      if (!first) return
+      const last = el.getBoundingClientRect()
+      const deltaY = first.top - last.top
+
+      if (deltaY !== 0) {
+        elements.push({ el, deltaY })
+      }
+    })
+
+    if (elements.length === 0) {
+      // Sem mudança de posição — apenas atualiza prevPositions para próximo ciclo
+      capturePositions()
+      return
+    }
+
+    // INVERT: aplicar transform reverso (sem transition para posicionar instantaneamente)
+    elements.forEach(({ el, deltaY }) => {
+      el.style.transition = 'none'
+      el.style.transform = `translateY(${deltaY}px)`
+    })
+
+    // Forçar reflow para garantir que o browser aplique o estado INVERT antes de PLAY
+    void elements[0]?.el.getBoundingClientRect()
+
+    // PLAY: remover transform — o CSS transition anima de volta para translateY(0)
+    elements.forEach(({ el }) => {
+      el.style.transition = 'transform 350ms ease-in-out'
+      el.style.transform = ''
+    })
+
+    // Atualiza prevPositions para o próximo ciclo
+    capturePositions()
+  }, [sortedParticipants])
 
   // Realtime de scores — somente para jogos encerrados
   // (ao vivo, pontuação é calculada no cliente; pending, não há pontuação)
@@ -67,6 +203,9 @@ export default function PublicParticipantsList({
           }
           if (!newScore?.user_id) return
 
+          // Captura posições ANTES de atualizar o estado (step FIRST do FLIP)
+          capturePositions()
+
           // Atualiza apenas participantes que pertencem ao grupo (já filtrados via SSR)
           setParticipants((prev) =>
             prev.map((p) =>
@@ -83,6 +222,15 @@ export default function PublicParticipantsList({
       supabase.removeChannel(channel)
     }
   }, [gameId, groupId, gameStatus])
+
+  // Callback ref para registrar/desregistrar rows no mapa
+  const getRowRef = (userId: string) => (el: HTMLDivElement | null) => {
+    if (el) {
+      rowRefs.current.set(userId, el)
+    } else {
+      rowRefs.current.delete(userId)
+    }
+  }
 
   return (
     <div
@@ -128,7 +276,7 @@ export default function PublicParticipantsList({
       </div>
 
       {/* Estado vazio */}
-      {participants.length === 0 && (
+      {sortedParticipants.length === 0 && (
         <div
           style={{
             padding: '0.75rem',
@@ -142,19 +290,27 @@ export default function PublicParticipantsList({
         </div>
       )}
 
-      {/* Tabela */}
-      {participants.length > 0 && (
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            fontSize: '11px',
-          }}
+      {/* Lista de palpites com roles ARIA e animação FLIP */}
+      {sortedParticipants.length > 0 && (
+        <div
+          role="table"
+          aria-label="Palpites dos participantes"
+          style={{ width: '100%', fontSize: '11px' }}
         >
-          <thead>
-            <tr>
-              <th
+          {/* Cabeçalho da tabela */}
+          <div role="rowgroup">
+            <div
+              role="row"
+              style={{
+                display: 'flex',
+                borderBottom: '1px solid var(--color-border)',
+              }}
+            >
+              <div
+                role="columnheader"
                 style={{
+                  flex: '1 1 0',
+                  minWidth: 0,
                   textAlign: 'left',
                   color: 'var(--color-muted)',
                   fontWeight: 'normal',
@@ -162,13 +318,15 @@ export default function PublicParticipantsList({
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   padding: '0.4rem 0.75rem',
-                  borderBottom: '1px solid var(--color-border)',
                 }}
               >
                 PARTICIPANTE
-              </th>
-              <th
+              </div>
+              <div
+                role="columnheader"
                 style={{
+                  flex: '0 0 auto',
+                  minWidth: '80px',
                   textAlign: 'center',
                   color: 'var(--color-muted)',
                   fontWeight: 'normal',
@@ -176,14 +334,16 @@ export default function PublicParticipantsList({
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   padding: '0.4rem 0.75rem',
-                  borderBottom: '1px solid var(--color-border)',
                 }}
               >
                 PALPITE
-              </th>
+              </div>
               {(showPoints || showLivePoints) && (
-                <th
+                <div
+                  role="columnheader"
                   style={{
+                    flex: '0 0 auto',
+                    minWidth: '48px',
                     textAlign: 'right',
                     color: 'var(--color-muted)',
                     fontWeight: 'normal',
@@ -191,16 +351,17 @@ export default function PublicParticipantsList({
                     textTransform: 'uppercase',
                     letterSpacing: '0.05em',
                     padding: '0.4rem 0.75rem',
-                    borderBottom: '1px solid var(--color-border)',
                   }}
                 >
                   {showLivePoints ? 'PTS*' : 'PTS'}
-                </th>
+                </div>
               )}
-            </tr>
-          </thead>
-          <tbody>
-            {participants.map((p) => {
+            </div>
+          </div>
+
+          {/* Corpo da tabela: rows animáveis */}
+          <div role="rowgroup">
+            {sortedParticipants.map((p) => {
               // Visibilidade de palpites em jogos pendentes
               const predictionLabel = isPending
                 ? p.hasPrediction
@@ -222,9 +383,7 @@ export default function PublicParticipantsList({
                     )
                   : null
 
-              const effectivePoints = showLivePoints
-                ? (liveResult?.points ?? null)
-                : p.points
+              const effectivePoints = showLivePoints ? (liveResult?.points ?? null) : p.points
 
               const predictionColor = isPending
                 ? p.hasPrediction
@@ -242,29 +401,42 @@ export default function PublicParticipantsList({
                     : 'var(--color-muted)'
 
               return (
-                <tr key={p.userId}>
+                <div
+                  key={p.userId}
+                  ref={getRowRef(p.userId)}
+                  role="row"
+                  style={{
+                    display: 'flex',
+                    borderBottom: '1px solid var(--color-border)',
+                    // transition inicial padrão (será sobrescrito dinamicamente pelo FLIP)
+                    transition: 'transform 350ms ease-in-out',
+                  }}
+                >
                   {/* PARTICIPANTE */}
-                  <td
+                  <div
+                    role="cell"
                     style={{
-                      padding: '0.35rem 0.75rem',
-                      borderBottom: '1px solid var(--color-border)',
-                      color: 'var(--color-text)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.03em',
-                      maxWidth: '120px',
+                      flex: '1 1 0',
+                      minWidth: 0,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
+                      padding: '0.35rem 0.75rem',
+                      color: 'var(--color-text)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.03em',
                     }}
                   >
                     {p.name}
-                  </td>
+                  </div>
 
                   {/* PALPITE */}
-                  <td
+                  <div
+                    role="cell"
                     style={{
+                      flex: '0 0 auto',
+                      minWidth: '80px',
                       padding: '0.35rem 0.75rem',
-                      borderBottom: '1px solid var(--color-border)',
                       textAlign: 'center',
                       fontWeight: 'bold',
                       fontSize: '12px',
@@ -274,14 +446,16 @@ export default function PublicParticipantsList({
                     }}
                   >
                     {predictionLabel}
-                  </td>
+                  </div>
 
                   {/* PTS / PTS* */}
                   {(showPoints || showLivePoints) && (
-                    <td
+                    <div
+                      role="cell"
                       style={{
+                        flex: '0 0 auto',
+                        minWidth: '48px',
                         padding: '0.35rem 0.75rem',
-                        borderBottom: '1px solid var(--color-border)',
                         textAlign: 'right',
                         fontWeight: 'bold',
                         color: pointsColor,
@@ -292,13 +466,13 @@ export default function PublicParticipantsList({
                         : effectivePoints !== null
                           ? `+${effectivePoints}`
                           : '-'}
-                    </td>
+                    </div>
                   )}
-                </tr>
+                </div>
               )
             })}
-          </tbody>
-        </table>
+          </div>
+        </div>
       )}
 
       {/* Rodapé com legenda para pontuação ao vivo */}

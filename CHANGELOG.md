@@ -6,6 +6,18 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [animated-predictions-ranking] — Animação de Posição dos Palpites na Página Pública de Jogo — 2026-06-24
+
+- `components/bolao/PublicParticipantsList.tsx` reescrito: ordenação reativa por pontuação efetiva e animação FLIP de reposicionamento de cards em tempo real via `useLayoutEffect` + CSS transitions (350ms ease-in-out)
+- Função `sortParticipants` implementada fora do componente: `pending` (quem tem palpite primeiro, desempate por nome pt-BR), `live` (pontuação via `calculateLiveScore`, sem palpite = -1), `finished` (`p.points ?? -1`)
+- `useMemo` para `sortedParticipants` recalcula automaticamente a cada mudança de `participants`, `gameStatus`, `liveHomeScore` ou `liveAwayScore`
+- Técnica FLIP manual: `rowRefs` (Map userId→HTMLDivElement), `prevPositions` (Map userId→DOMRect), `capturePositions()` chamado antes de `setParticipants` no handler Realtime, `isFirstRender` guard suprime animação no primeiro render
+- Estrutura HTML migrada de `<table>/<tr>/<td>` para `<div role="table">/<div role="row">/<div role="cell">` com `display: flex` para suportar `translateY` confiável em todos os browsers
+- Roles ARIA preservados: `role="table"`, `role="rowgroup"`, `role="row"`, `role="columnheader"`, `role="cell"`, `aria-label` no container
+- Aparência visual inalterada: JetBrains Mono, paleta `--color-*`, paddings, bordas, cabeçalho "PALPITES DOS PARTICIPANTES", badge "AO VIVO", rodapé "* PONTUAÇÃO PROVISÓRIA"
+- Sem alterações de backend, banco ou endpoints
+- `npm run lint` e `npm run build` sem erros novos
+
 ## [public-game-view-group-fix] — Correção: Contexto de Grupo na Página Pública de Jogo — 2026-06-24
 
 - `app/jogos/[gameId]/publico/page.tsx` atualizado: adicionada prop `searchParams: Promise<{ grupo?: string }>`; guard de erro inline quando `?grupo=` está ausente (sem `notFound()`, sem redirect) exibindo mensagem "PARÂMETRO DE GRUPO AUSENTE" em `color-error`; queries de `profiles`, `predictions` e `scores` substituídas por versões filtradas por `group_id` do grupo informado na URL; `groupId` passado como prop para `PublicGameClient`
