@@ -64,7 +64,48 @@ const TEAM_NAME_MAP: Record<string, string> = {
   'United Arab Emirates': 'Emirados Árabes',
 }
 
-// Mapa de tradução: fase ESPN (inglês) → português
+// Mapa estático espn_id → grupo (fase de grupos Copa 2026)
+// Fonte: ESPN API coletado em 2026-06-24; imutável para a fase de grupos.
+const STATIC_ROUND_MAP: Record<string, string> = {
+  // Grupo A
+  '760414': 'Grupo A', '760415': 'Grupo A', '760438': 'Grupo A',
+  '760441': 'Grupo A', '760466': 'Grupo A', '760467': 'Grupo A',
+  // Grupo B
+  '760416': 'Grupo B', '760420': 'Grupo B', '760439': 'Grupo B',
+  '760440': 'Grupo B', '760462': 'Grupo B', '760463': 'Grupo B',
+  // Grupo C
+  '760418': 'Grupo C', '760419': 'Grupo C', '760444': 'Grupo C',
+  '760445': 'Grupo C', '760464': 'Grupo C', '760465': 'Grupo C',
+  // Grupo D
+  '760417': 'Grupo D', '760421': 'Grupo D', '760442': 'Grupo D',
+  '760443': 'Grupo D', '760469': 'Grupo D', '760470': 'Grupo D',
+  // Grupo E
+  '760422': 'Grupo E', '760423': 'Grupo E', '760446': 'Grupo E',
+  '760448': 'Grupo E', '760468': 'Grupo E', '760473': 'Grupo E',
+  // Grupo F
+  '760424': 'Grupo F', '760425': 'Grupo F', '760447': 'Grupo F',
+  '760449': 'Grupo F', '760471': 'Grupo F', '760472': 'Grupo F',
+  // Grupo G
+  '760426': 'Grupo G', '760427': 'Grupo G', '760451': 'Grupo G',
+  '760452': 'Grupo G', '760476': 'Grupo G', '760477': 'Grupo G',
+  // Grupo H
+  '760428': 'Grupo H', '760429': 'Grupo H', '760450': 'Grupo H',
+  '760453': 'Grupo H', '760478': 'Grupo H', '760479': 'Grupo H',
+  // Grupo I
+  '760430': 'Grupo I', '760432': 'Grupo I', '760454': 'Grupo I',
+  '760457': 'Grupo I', '760474': 'Grupo I', '760475': 'Grupo I',
+  // Grupo J
+  '760431': 'Grupo J', '760433': 'Grupo J', '760455': 'Grupo J',
+  '760456': 'Grupo J', '760483': 'Grupo J', '760484': 'Grupo J',
+  // Grupo K
+  '760435': 'Grupo K', '760436': 'Grupo K', '760459': 'Grupo K',
+  '760461': 'Grupo K', '760481': 'Grupo K', '760482': 'Grupo K',
+  // Grupo L
+  '760434': 'Grupo L', '760437': 'Grupo L', '760458': 'Grupo L',
+  '760460': 'Grupo L', '760480': 'Grupo L', '760485': 'Grupo L',
+}
+
+// Mapa de tradução: fase ESPN (inglês) → português (para mata-mata)
 const ROUND_MAP: Record<string, string> = {
   'Group A': 'Grupo A',
   'Group B': 'Grupo B',
@@ -182,11 +223,18 @@ function mapEventToGame(event: EspnEvent): GameRecord {
   const homeScore = isPending ? null : parseInt(homeCompetitor.score, 10)
   const awayScore = isPending ? null : parseInt(awayCompetitor.score, 10)
 
-  // altGameNote ex: "FIFA World Cup, Group K" → extrai "Group K"
-  const altNote = competition.altGameNote
-  const altRound = altNote?.includes(',') ? altNote.split(',').pop()?.trim() : altNote?.trim()
-  const headline = altRound || competition.notes?.[0]?.headline
-  const round = translateRound(headline)
+  // Prioridade 1: mapa estático (imutável, não depende de ESPN)
+  // Prioridade 2: altGameNote do ESPN (para mata-mata)
+  const staticRound = STATIC_ROUND_MAP[event.id]
+  let round: string
+  if (staticRound) {
+    round = staticRound
+  } else {
+    const altNote = competition.altGameNote
+    const altRound = altNote?.includes(',') ? altNote.split(',').pop()?.trim() : altNote?.trim()
+    const headline = altRound || competition.notes?.[0]?.headline
+    round = translateRound(headline)
+  }
   const venue = competition.venue?.fullName ?? null
 
   // Calcula match_day em Pacific Time (PDT = UTC-7) — fuso mais a oeste
