@@ -3,7 +3,7 @@
 **Slug:** public-game-view
 **Branch:** feature/public-game-view
 **Data:** 2026-06-24
-**Status:** aguardando revisão (fix-1 aplicado)
+**Status:** aprovado
 
 ---
 

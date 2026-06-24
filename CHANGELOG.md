@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [public-game-view] — Página Pública de Jogo — 2026-06-24
+
+- `app/jogos/[gameId]/publico/page.tsx` criado: Server Component público (fora do route group `(dashboard)`) com `generateMetadata` para SEO, `revalidate = 0`, busca de dados via `createServiceClient()` (service_role), regra de visibilidade de palpites por status (`pending`/`live`/`finished`), `notFound()` para gameId inexistente, header público minimalista (sem TabBar, sem SidePanelContainer)
+- `components/bolao/PublicGameClient.tsx` criado: Client Component pai que encapsula `useGameRealtime` e distribui `liveGame` como prop para `PublicScoreCard` e `PublicParticipantsList`, evitando múltiplas subscriptions ao mesmo canal
+- `components/bolao/PublicScoreCard.tsx` criado: exibe placar com bandeiras, badge de status (■ AO VIVO / □ ENCERRADO / PENDENTE), rodada, data/horário BRT e venue; recebe `liveGame` via prop do pai
+- `components/bolao/PublicParticipantsList.tsx` criado: tabela PARTICIPANTE | PALPITE | PTS(★) com lógica OCULTO/PENDENTE para jogos `pending`; pontuação provisória via `calculateLiveScore()` para `live`; Realtime de scores via canal `public-scores-${gameId}` para `finished`; sem accordion de breakdown, sem destaque de usuário atual
+- `components/games/GameCard.tsx` modificado: botão utilitário `⎘ COPIAR LINK` abaixo das CTAs principais; copia `${origin}/jogos/${gameId}/publico` para o clipboard; feedback visual `✓ COPIADO!` em `color-win` por 2 segundos
+- `supabase/migrations/20260624000010_public_read_games_scores.sql` criada: adiciona políticas RLS de leitura para role `anon` nas tabelas `games` e `scores`, permitindo que o Supabase Realtime funcione na página pública (clientes sem sessão)
+
 ## [change-password] — Alteração Direta de Senha — 2026-06-23
 
 - Fluxo de recuperação de senha por email (`password-recovery`) removido inteiramente
