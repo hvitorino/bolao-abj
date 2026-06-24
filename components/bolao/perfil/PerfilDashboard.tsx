@@ -19,11 +19,12 @@ export type SectionState<T> =
 interface PerfilDashboardProps {
   groupId: string
   userId: string
+  userName: string
 }
 
 const HISTORY_PAGE_SIZE = 20
 
-export function PerfilDashboard({ groupId, userId }: PerfilDashboardProps) {
+export function PerfilDashboard({ groupId, userId, userName }: PerfilDashboardProps) {
   const [campaign, setCampaign] = useState<SectionState<CampaignData>>({ status: 'loading' })
   const [performance, setPerformance] = useState<SectionState<PerformanceData>>({ status: 'loading' })
   const [trophies, setTrophies] = useState<SectionState<TrophiesData>>({ status: 'loading' })
@@ -141,7 +142,7 @@ export function PerfilDashboard({ groupId, userId }: PerfilDashboardProps) {
         gap: '0',
       }}
     >
-      <CampaignPanel state={campaign} />
+      <CampaignPanel state={campaign} userName={userName} />
       <PerformancePanel state={performance} />
       <TrophiesPanel state={trophies} />
       <HistoryPanel

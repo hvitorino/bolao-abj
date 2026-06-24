@@ -52,9 +52,11 @@ export default async function PerfilPage() {
     )
   }
 
+  const userName: string = user.user_metadata?.name ?? user.email ?? 'Usuário'
+
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <PerfilDashboard groupId={activeGroup.groupId} userId={user.id} />
+      <PerfilDashboard groupId={activeGroup.groupId} userId={user.id} userName={userName} />
     </div>
   )
 }

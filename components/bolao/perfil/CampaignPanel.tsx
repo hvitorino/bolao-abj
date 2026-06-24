@@ -15,6 +15,7 @@ export interface CampaignData {
 
 interface CampaignPanelProps {
   state: SectionState<CampaignData>
+  userName: string
 }
 
 const PANEL: React.CSSProperties = {
@@ -36,11 +37,11 @@ const HEADER: React.CSSProperties = {
   padding: '0.5rem 1rem',
 }
 
-export function CampaignPanel({ state }: CampaignPanelProps) {
+export function CampaignPanel({ state, userName }: CampaignPanelProps) {
   if (state.status === 'loading') {
     return (
       <div style={PANEL}>
-        <div style={HEADER}>SUA CAMPANHA</div>
+        <div style={HEADER}>{userName.toUpperCase()}</div>
         <div
           style={{
             padding: '1.5rem 1rem',
@@ -58,7 +59,7 @@ export function CampaignPanel({ state }: CampaignPanelProps) {
   if (state.status === 'error') {
     return (
       <div style={PANEL}>
-        <div style={HEADER}>SUA CAMPANHA</div>
+        <div style={HEADER}>{userName.toUpperCase()}</div>
         <div
           style={{
             padding: '1.5rem 1rem',
@@ -85,7 +86,7 @@ export function CampaignPanel({ state }: CampaignPanelProps) {
 
   return (
     <div style={PANEL}>
-      <div style={HEADER}>SUA CAMPANHA</div>
+      <div style={HEADER}>{userName.toUpperCase()}</div>
 
       {/* Herói: posição e pontos */}
       <div
