@@ -231,6 +231,7 @@ export async function GET(request: NextRequest) {
     (item: {
       game_id: string
       match_day: string
+      round: string | null
       home_team: string
       away_team: string
       home_team_code: string
