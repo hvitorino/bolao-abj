@@ -38,9 +38,7 @@ export default async function PublicGamePage({ params }: PublicGamePageProps) {
   // 1. Dados do jogo
   const { data: game } = await serviceClient
     .from('games')
-    .select(
-      'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, status, round, match_date, venue'
-    )
+    .select('*')
     .eq('id', gameId)
     .maybeSingle()
 
@@ -54,7 +52,7 @@ export default async function PublicGamePage({ params }: PublicGamePageProps) {
   const profileList = (profiles ?? []) as { id: string; name: string }[]
 
   // 3. Palpites — visibilidade dependente do status do jogo
-  let predByUserGame: Record<string, { home_score: number; away_score: number }> = {}
+  const predByUserGame: Record<string, { home_score: number; away_score: number }> = {}
   const hasPredictionSet = new Set<string>()
 
   if (game.status === 'pending') {
