@@ -1,7 +1,7 @@
 # Relatório Final — Bolão da Copa
 
-Data de conclusão: 2026-06-22
-Total de features concluídas: 61
+Data de conclusão: 2026-06-24
+Total de features concluídas: 65
 
 ## Features Implementadas
 
@@ -66,6 +66,10 @@ Total de features concluídas: 61
 59. [trofeus-negativos] — Troféus Negativos e Anti-Platina — 2026-06-21
 60. [analise-confronto] — Análise de Confronto — 2026-06-22
 61. [game-detail-navigation] — Navegação para Detalhe do Jogo — 2026-06-22
+62. [next-game-navigation] — Navegação para o Próximo Jogo na Análise — 2026-06-23
+63. [menu-redesign] — Redesign da Navegação (Header + Tab Bar + Pull Tabs) — 2026-06-23
+64. [change-password] — Alteração Direta de Senha — 2026-06-24
+65. [public-game-view] — Página Pública de Jogo — 2026-06-24
 
 ## Resumo
 
@@ -107,7 +111,9 @@ As três features finais completaram o produto. `ranking-por-rodada` (item 53) a
 
 As seis features finais completaram o produto. `perfil-redesign` (item 56) transformou a aba `/perfil` de uma lista seca de estatísticas num painel rico com 4 seções empilhadas: SUA CAMPANHA (herói com posição/pontos/movimento), DESEMPENHO (barras ASCII, comparação com média do grupo, sequência em pílulas), TROFÉUS (sistema completo de 15 medalhas com 3 estados) e HISTÓRICO (feed cronológico paginado com palpites e pontos), com nova tabela `position_snapshots` para o indicador de movimento de posição. `fix-perfil-stats-trophies` (item 57) corrigiu os cálculos de estatísticas para considerar apenas jogos `finished` ou `live` (excluindo `pending` dos denominadores) e redesenhou a exibição de troféus: todos os 15 visíveis em grid com descrição sempre exposta, sem separação entre desbloqueados e bloqueados, sem segredos. `trophy-contributing-games` (item 58) enriqueceu cada card de troféu com a lista de jogos finalizados que efetivamente contribuíram para o progresso daquele troféu, no formato `[Bandeira] [Placar] x [Placar] [Bandeira]`, lendo dados já existentes sem migration adicional. `trofeus-negativos` (item 59) adicionou 9 troféus negativos com tom humorístico e autoirônico ao painel de perfil: PLACAR ESPELHADO, ÚLTIMA HORA, TRONO DE PAPEL, QUASE, SOLITÁRIO DO ERRO, DIA RUIM, NAUFRAGANDO, À DERIVA e SEM VOLTA — todos calculados a partir das tabelas existentes (`scores`, `predictions`, `games`, `position_snapshots`), com seção dedicada "CONQUISTAS IMPROVÁVEIS" no `TrophiesPanel`, header com contagem separada `TROFÉUS N/15 · VERGONHA N/9` e achievement "Anti-Platina" (COLECIONADOR DO CAOS) quando todos os 9 negativos estão desbloqueados. `analise-confronto` (item 60) adicionou página `/jogos/[gameId]/analise` com análise comparativa dos dois times: stats agregadas calculadas em tempo real (sem pré-cálculos) e últimos 3 jogos de cada time em ordem cronológica decrescente, com resultados coloridos (V verde, E muted, D vermelho), responsiva em mobile. Por fim, `game-detail-navigation` (item 61) tornou todos os jogos clicáveis nas abas "Campanha" e "Palpites" do perfil, redirecionando para a página individual de cada jogo, e ajustou o botão Voltar na página do jogo para retornar à última rota visitada dentro do app em vez de um destino fixo.
 
-Com isso, todas as 61 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 55 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
+As quatro features finais do produto completaram o conjunto. `next-game-navigation` (item 62) adicionou navegação direta para o próximo jogo cronológico a partir da página de análise: um botão visível em `/jogos/[gameId]/analise` leva para `/jogos/[nextId]/analise` sem precisar voltar à listagem, ficando desabilitado ou oculto quando não há próximo jogo. `menu-redesign` (item 63) reformulou completamente a navegação do Bolão da Copa em três camadas: header compacto de uma linha única, tab bar fixa no rodapé com 4 itens (CAMPANHA, JOGOS, RANKING, MAIS) e pull tabs laterais deslizantes para acesso contextual rápido a ONTEM, AO VIVO e CHAT; a `DualFooterBar` e o `GroupChatWidget` flutuante foram removidos e absorvidos nas novas estruturas; safe-area respeitada em iOS e `padding-bottom` do main ajustado para não sobrepor a tab bar. `change-password` (item 64) simplificou o fluxo de redefinição de senha: o usuário autenticado altera a senha diretamente por formulário com "nova senha" e "confirmar nova senha" via `supabase.auth.updateUser({ password })`, sem depender de link de e-mail; o fluxo anterior de magic link/reset email da feature `password-recovery` foi removido ou desabilitado. Por fim, `public-game-view` (item 65) criou uma página pública sem autenticação em `/jogos/[gameId]/publico` exibindo placar ao vivo, palpites e pontuação de todos os participantes para aquele jogo com atualização em tempo real via Supabase Realtime (canal `games` para placar/status, canal `scores` para pontuação), respeitando a regra de visibilidade temporal de palpites; e adicionou no `GameCard` da área autenticada um botão "copiar link" que copia `${origin}/jogos/${gameId}/publico` para o clipboard com feedback visual confirmando a cópia.
+
+Com isso, todas as 65 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 59 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
 
 ## Próximos passos sugeridos
 
