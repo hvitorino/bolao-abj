@@ -182,7 +182,10 @@ function mapEventToGame(event: EspnEvent): GameRecord {
   const homeScore = isPending ? null : parseInt(homeCompetitor.score, 10)
   const awayScore = isPending ? null : parseInt(awayCompetitor.score, 10)
 
-  const headline = competition.notes?.[0]?.headline
+  // altGameNote ex: "FIFA World Cup, Group K" → extrai "Group K"
+  const altNote = competition.altGameNote
+  const altRound = altNote?.includes(',') ? altNote.split(',').pop()?.trim() : altNote?.trim()
+  const headline = altRound || competition.notes?.[0]?.headline
   const round = translateRound(headline)
   const venue = competition.venue?.fullName ?? null
 

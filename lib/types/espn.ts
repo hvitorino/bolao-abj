@@ -30,6 +30,7 @@ export interface EspnEvent {
     notes?: Array<{
       headline: string
     }>
+    altGameNote?: string
   }>
 }
 
