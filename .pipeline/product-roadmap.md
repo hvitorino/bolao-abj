@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 64 features
+- Total: 65 features
 - Concluídas: 64
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -841,3 +841,18 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - O fluxo anterior de email (magic link/reset email) da feature `password-recovery` é removido ou desabilitado
 - Interface em português, visual segue DESIGN.md (monospace, paleta verde/amarelo/azul, dense)
 **Dependências:** auth, password-recovery
+
+---
+
+### 65. public-game-view — Página Pública de Jogo — pendente
+**Objetivo:** Criar uma página pública (sem autenticação) em `/jogos/[gameId]/publico` que exibe o placar ao vivo, os palpites de todos os participantes do bolão e a pontuação atualizada de cada um para aquele jogo, atualizando em tempo real via Supabase Realtime; e adicionar um botão "copiar link" nos cards de jogo (área autenticada) que copia a URL dessa página para a área de transferência.
+**Critérios de sucesso:**
+- Rota `/jogos/[gameId]/publico` acessível sem login (fora do route group `(dashboard)`)
+- Página exibe times, placar atual, status do jogo e rodada com visual seguindo DESIGN.md
+- Página exibe lista de todos os participantes com seu palpite e pontuação para aquele jogo (palpites visíveis apenas se o jogo não estiver `pending`, respeitando a regra de visibilidade temporal)
+- Dados atualizados em tempo real via Supabase Realtime (canal `games` para placar/status e canal `scores` para pontuação) sem necessidade de reload
+- No `GameCard` (área autenticada), botão com ícone de "copiar link" que copia `${window.location.origin}/jogos/${gameId}/publico` para o clipboard, sem navegar para a página
+- Feedback visual ao clicar no botão (ex: ícone muda brevemente para confirmar cópia)
+- Dados lidos de `games`, `predictions`, `scores` e `profiles` sem migration nova; política anon ou service_role configurada para leitura pública
+- `npm run lint` e `npm run build` passam sem erros novos
+**Dependências:** auth, game-navigation, predictions, scoring, live-scores-realtime, game-participants-view, prediction-visibility
