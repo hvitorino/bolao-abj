@@ -35,6 +35,7 @@ interface HistoryPanelProps {
   onLoadMore: () => void
   loadingMore: boolean
   trophies: Trophy[]
+  negativeTrophies: Trophy[]
 }
 
 const TROPHY_NAMES: Record<string, string> = {
@@ -143,7 +144,15 @@ const HEADER: React.CSSProperties = {
   padding: '0.5rem 1rem',
 }
 
-export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelProps) {
+export function HistoryPanel({ state, onLoadMore, loadingMore, negativeTrophies }: HistoryPanelProps) {
+  const gameIdToNegTrophy = new Map<string, Trophy>()
+  for (const t of negativeTrophies) {
+    if (t.status === 'unlocked') {
+      for (const g of t.contributing_games) {
+        if (!gameIdToNegTrophy.has(g.game_id)) gameIdToNegTrophy.set(g.game_id, t)
+      }
+    }
+  }
   const [open, setOpen] = useState(false)
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set())
   const defaultSetRef = useRef(false)
@@ -254,69 +263,103 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
           </button>
 
           {/* Jogos do dia — só renderiza quando expandido */}
-          {expanded && dayItems.map((item, idx) => (
-            <Link
-              key={item.game_id}
-              href={`/jogos/${item.game_id}/analise`}
-              style={{
-                padding: '0.4rem 1rem',
-                borderBottom: idx < dayItems.length - 1 ? '1px solid var(--color-border)' : 'none',
-                fontSize: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                flexWrap: 'wrap',
-                textDecoration: 'none',
-                color: 'inherit',
-                cursor: 'pointer',
-              }}
-            >
-              {/* Hora do jogo */}
-              <span style={{ color: 'var(--color-muted)', fontSize: '11px', minWidth: '2.5rem' }}>
-                {formatMatchTime(item.match_date)}
-              </span>
+          {expanded && dayItems.map((item, idx) => {
+            const posTrophyName = item.trophy_unlocked_id
+              ? (TROPHY_NAMES[item.trophy_unlocked_id] ?? item.trophy_unlocked_id)
+              : null
+            const negTrophy = gameIdToNegTrophy.get(item.game_id)
+            const hasTrophy = !!posTrophyName || !!negTrophy
+            const hasPred = !item.is_miss && item.pred_home !== null && item.pred_away !== null
 
-              {/* Resultado real — mini-card com bandeira */}
-              <HistoryGameCard
-                home_team_code={item.home_team_code}
-                away_team_code={item.away_team_code}
-                home_score={item.home_score}
-                away_score={item.away_score}
-                variant={item.is_miss ? 'miss' : item.points > 0 ? 'win' : 'neutral'}
-              />
-
-              {item.is_miss ? (
-                <span style={{ color: 'var(--color-error)', fontSize: '11px' }}>
-                  -- FUROU --
-                </span>
-              ) : (
-                <>
-                  {/* Palpite */}
-                  <span style={{ color: 'var(--color-muted)', fontSize: '11px' }}>
-                    vc {item.pred_home}×{item.pred_away}
+            return (
+              <Link
+                key={item.game_id}
+                href={`/jogos/${item.game_id}/analise`}
+                style={{
+                  padding: '0.5rem 1rem',
+                  borderBottom: idx < dayItems.length - 1 ? '1px solid var(--color-border)' : 'none',
+                  fontSize: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '0.25rem',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  cursor: 'pointer',
+                }}
+              >
+                {/* Linha 1: hora + resultado + pts */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                  <span style={{ color: 'var(--color-muted)', fontSize: '11px', minWidth: '2.5rem', textAlign: 'center' }}>
+                    {formatMatchTime(item.match_date)}
                   </span>
 
-                  {/* Pontos */}
-                  <span
-                    style={{
+                  <HistoryGameCard
+                    home_team_code={item.home_team_code}
+                    away_team_code={item.away_team_code}
+                    home_score={item.home_score}
+                    away_score={item.away_score}
+                    variant={item.is_miss ? 'miss' : item.points > 0 ? 'win' : 'neutral'}
+                  />
+
+                  {item.is_miss ? (
+                    <span style={{ color: 'var(--color-error)', fontSize: '11px', minWidth: '3rem', textAlign: 'center' }}>
+                      FUROU
+                    </span>
+                  ) : (
+                    <span style={{
                       color: item.points > 0 ? 'var(--color-win)' : 'var(--color-muted)',
                       fontWeight: item.points > 0 ? 'bold' : 'normal',
-                      minWidth: '2.5rem',
-                    }}
-                  >
-                    +{item.points}
-                  </span>
-
-                  {/* Troféu inline */}
-                  {item.trophy_unlocked_id && (
-                    <span style={{ color: 'var(--color-win)', fontSize: '11px' }}>
-                      ✓ {TROPHY_NAMES[item.trophy_unlocked_id] ?? item.trophy_unlocked_id}
+                      fontSize: '12px',
+                      minWidth: '3rem',
+                      textAlign: 'right',
+                    }}>
+                      +{item.points} pts
                     </span>
                   )}
-                </>
-              )}
-            </Link>
-          ))}
+                </div>
+
+                {/* Linha 2: palpite + troféus */}
+                {(hasPred || hasTrophy) && (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    {hasPred && (
+                      <span style={{ color: 'var(--color-muted)', fontSize: '11px' }}>
+                        palpite {item.pred_home}×{item.pred_away}
+                      </span>
+                    )}
+
+                    {posTrophyName && (
+                      <span style={{
+                        fontSize: '11px',
+                        color: 'var(--color-accent)',
+                        border: '1px solid var(--color-accent)',
+                        backgroundColor: 'rgba(255,223,0,0.08)',
+                        padding: '0.1rem 0.4rem',
+                        letterSpacing: '0.04em',
+                        fontWeight: 'bold',
+                      }}>
+                        🏆 {posTrophyName}
+                      </span>
+                    )}
+
+                    {negTrophy && (
+                      <span style={{
+                        fontSize: '11px',
+                        color: 'var(--color-error)',
+                        border: '1px solid var(--color-error)',
+                        backgroundColor: 'rgba(255,69,58,0.08)',
+                        padding: '0.1rem 0.4rem',
+                        letterSpacing: '0.04em',
+                        fontWeight: 'bold',
+                      }}>
+                        💀 {negTrophy.name}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </Link>
+            )
+          })}
 
           {/* Borda inferior de separação entre dias */}
           <div style={{ borderBottom: '1px solid var(--color-border)' }} />

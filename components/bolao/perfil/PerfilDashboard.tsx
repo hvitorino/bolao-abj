@@ -130,9 +130,10 @@ export function PerfilDashboard({ groupId, userId, userName }: PerfilDashboardPr
     }
   }, [groupId, historyOffset, loadingMore, getToken])
 
-  // Extrair troféus para passar ao HistoryPanel (badge inline)
   const trophyList: Trophy[] =
     trophies.status === 'populated' ? trophies.data.trophies : []
+  const negativeTrophyList: Trophy[] =
+    trophies.status === 'populated' ? trophies.data.negativeTrophies : []
 
   return (
     <div
@@ -150,6 +151,7 @@ export function PerfilDashboard({ groupId, userId, userName }: PerfilDashboardPr
         onLoadMore={handleLoadMore}
         loadingMore={loadingMore}
         trophies={trophyList}
+        negativeTrophies={negativeTrophyList}
       />
     </div>
   )
