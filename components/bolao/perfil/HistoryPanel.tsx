@@ -298,39 +298,43 @@ export function HistoryPanel({ state, onLoadMore, loadingMore, negativeTrophies 
                   cursor: 'pointer',
                 }}
               >
-                {/* Linha 1: hora | resultado | palpite | pontos */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                  <span style={{ color: 'var(--color-muted)', fontSize: '11px', fontFamily: MONO_FONT }}>
+                {/* Linha 1: hora (esquerda) | placar-card + palpite + pontos (centro) */}
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
+                  {/* Horário — ancorado à esquerda */}
+                  <span style={{ color: 'var(--color-muted)', fontSize: '11px', fontFamily: MONO_FONT, flexShrink: 0 }}>
                     {formatMatchTime(item.match_date)}
                   </span>
 
-                  <ScoreCard
-                    home_team_code={item.home_team_code}
-                    away_team_code={item.away_team_code}
-                    home_score={item.home_score}
-                    away_score={item.away_score}
-                    variant={resultVariant}
-                  />
+                  {/* Conteúdo central */}
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                    <ScoreCard
+                      home_team_code={item.home_team_code}
+                      away_team_code={item.away_team_code}
+                      home_score={item.home_score}
+                      away_score={item.away_score}
+                      variant={resultVariant}
+                    />
 
-                  {hasPred ? (
-                    <>
-                      <div style={{
-                        fontSize: '11px',
-                        color: variantColor(resultVariant),
-                        fontFamily: MONO_FONT,
-                        border: `1px solid ${variantColor(resultVariant)}`,
-                        padding: '0.2rem 0.4rem',
-                        whiteSpace: 'nowrap',
-                      }}>
-                        {item.pred_home}×{item.pred_away}
-                      </div>
-                      <PointsBadge points={item.points} variant={resultVariant} />
-                    </>
-                  ) : (
-                    <span style={{ color: 'var(--color-error)', fontSize: '11px', fontFamily: MONO_FONT }}>
-                      SEM PALPITE
-                    </span>
-                  )}
+                    {hasPred ? (
+                      <>
+                        <span style={{ color: variantColor(resultVariant), fontSize: '11px', fontFamily: MONO_FONT }}>
+                          {item.pred_home}×{item.pred_away}
+                        </span>
+                        <span style={{
+                          color: variantColor(resultVariant),
+                          fontSize: '11px',
+                          fontFamily: MONO_FONT,
+                          fontWeight: item.points > 0 ? 'bold' : 'normal',
+                        }}>
+                          +{item.points}
+                        </span>
+                      </>
+                    ) : (
+                      <span style={{ color: 'var(--color-error)', fontSize: '11px', fontFamily: MONO_FONT }}>
+                        SEM PALPITE
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Linha 2: troféus centralizados */}
