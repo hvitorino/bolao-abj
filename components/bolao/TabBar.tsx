@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from 'react'
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
 const MAIN_ITEMS = [
-  { href: '/perfil', label: 'CAMPANHA' },
+  { href: '/perfil', label: 'EU' },
   { href: '/jogos', label: 'JOGOS' },
   { href: '/ranking', label: 'RANKING' },
 ]
