@@ -3,7 +3,7 @@
 **Slug:** public-game-view-group-fix
 **Branch:** feature/public-game-view-group-fix
 **Data:** 2026-06-24
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
