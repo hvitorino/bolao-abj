@@ -826,7 +826,6 @@ async function calcNegativeTrophies(
     const orderedDays = [...byDay.keys()]
     for (const day of orderedDays) {
       const dayRows = byDay.get(day)!
-      if (dayRows.length < 2) continue
       const allMissed = dayRows.every((r) => {
         const bd = r.breakdown as Record<string, number> | null
         return Number(bd?.winner ?? 0) === 0
