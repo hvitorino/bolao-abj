@@ -3,7 +3,7 @@
 **Slug:** public-game-view
 **Branch:** feature/public-game-view
 **Data:** 2026-06-24
-**Status:** aguardando revisão
+**Status:** aguardando revisão (fix-1 aplicado)
 
 ---
 
@@ -23,7 +23,7 @@
 
 ### Banco de Dados
 
-Nenhuma migration criada. Todos os dados são lidos via `service_role` no Server Component, contornando RLS sem alterar políticas existentes.
+- `supabase/migrations/20260624000010_public_read_games_scores.sql` — Adiciona políticas de leitura para o role `anon` nas tabelas `games` e `scores`. Necessário para que o Supabase Realtime funcione na página pública, onde o cliente usa anon key sem sessão autenticada. A migration é idempotente (`DROP POLICY IF EXISTS` antes do `CREATE POLICY`).
 
 ---
 
@@ -62,3 +62,15 @@ ed80a93 feat(public-game-view): cria PublicParticipantsList com Realtime de scor
 676fedb feat(public-game-view): cria Server Component da página pública de jogo
 01bd15e chore(public-game-view): adiciona plano de implementação
 ```
+
+---
+
+## Correções Fix 1
+
+### Problema corrigido
+
+**Realtime bloqueado para anon key:** as tabelas `games` e `scores` só tinham políticas RLS para `authenticated`. Clientes anônimos (página pública) não recebiam eventos Realtime nem conseguiam fazer o fetch inicial em `useGameRealtime`.
+
+### O que foi feito
+
+- Criada `supabase/migrations/20260624000010_public_read_games_scores.sql` com `CREATE POLICY "Anon pode ler jogos" ON games FOR SELECT TO anon USING (true)` e equivalente em `scores`, precedidas de `DROP POLICY IF EXISTS` para idempotência.
