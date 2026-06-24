@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 66 features
-- Concluídas: 65
-- Em progresso: 1
+- Concluídas: 66
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -859,7 +859,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 66. public-game-view-group-fix — Correção: Contexto de Grupo na Página Pública de Jogo — em progresso
+### 66. public-game-view-group-fix — Correção: Contexto de Grupo na Página Pública de Jogo — concluída
 **Objetivo:** Corrigir a feature `public-game-view` (item 65) para que o link público de um jogo inclua o ID do grupo como parâmetro de rota, a página pública filtre palpites apenas dos participantes daquele grupo, e o botão "copiar link" no `GameCard` gere a URL já com o groupId do contexto atual — garantindo que o mesmo jogo em grupos diferentes produza links e exibições distintos.
 **Critérios de sucesso:**
 - A URL pública de um jogo inclui o ID do grupo como query param ou segmento de rota (ex: `/jogos/[gameId]/publico?grupo=[groupId]` ou `/grupos/[groupId]/jogos/[gameId]/publico`)
