@@ -9,6 +9,7 @@ export const revalidate = 0
 
 interface PublicGamePageProps {
   params: Promise<{ gameId: string }>
+  searchParams: Promise<{ grupo?: string }>
 }
 
 export async function generateMetadata({ params }: PublicGamePageProps): Promise<Metadata> {
@@ -31,8 +32,100 @@ export async function generateMetadata({ params }: PublicGamePageProps): Promise
   }
 }
 
-export default async function PublicGamePage({ params }: PublicGamePageProps) {
+export default async function PublicGamePage({ params, searchParams }: PublicGamePageProps) {
   const { gameId } = await params
+  const { grupo: groupId } = await searchParams
+
+  // Header público — aparece sempre, inclusive no estado de erro
+  const header = (
+    <header
+      style={{
+        backgroundColor: 'var(--color-surface)',
+        borderBottom: '1px solid var(--color-border)',
+        padding: '0.75rem 1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
+    >
+      <span
+        style={{
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          fontSize: '13px',
+          fontWeight: 'bold',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          color: 'var(--color-accent)',
+        }}
+      >
+        BOLÃO DA COPA
+      </span>
+      <span
+        style={{
+          fontSize: '10px',
+          color: 'var(--color-muted)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+        }}
+      >
+        VISUALIZAÇÃO PÚBLICA
+      </span>
+    </header>
+  )
+
+  // Erro: grupo ausente na URL — nenhum dado de palpite ou perfil é consultado
+  if (!groupId) {
+    return (
+      <div
+        style={{
+          minHeight: '100vh',
+          backgroundColor: 'var(--color-bg)',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+        }}
+      >
+        {header}
+        <main
+          style={{
+            maxWidth: '480px',
+            margin: '0 auto',
+            padding: '1rem',
+          }}
+        >
+          <div
+            style={{
+              border: '1px solid var(--color-error)',
+              backgroundColor: 'var(--color-surface)',
+              padding: '1.5rem',
+              fontSize: '13px',
+            }}
+          >
+            <div
+              style={{
+                color: 'var(--color-error)',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+                letterSpacing: '0.08em',
+                marginBottom: '0.75rem',
+              }}
+            >
+              ✗ PARÂMETRO DE GRUPO AUSENTE
+            </div>
+            <div
+              style={{
+                color: 'var(--color-muted)',
+                fontSize: '12px',
+                lineHeight: 1.5,
+              }}
+            >
+              Este link está incompleto. Peça ao participante que compartilhe o link novamente
+              usando o botão &quot;COPIAR LINK&quot; do jogo.
+            </div>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
   const serviceClient = createServiceClient()
 
   // 1. Dados do jogo
@@ -46,12 +139,21 @@ export default async function PublicGamePage({ params }: PublicGamePageProps) {
     notFound()
   }
 
-  // 2. Todos os perfis do sistema (página pública não tem grupo)
-  const { data: profiles } = await serviceClient.from('profiles').select('id, name')
+  // 2. Perfis — apenas membros do grupo informado na URL
+  const { data: memberRows } = await serviceClient
+    .from('group_members')
+    .select('user_id, profiles(id, name)')
+    .eq('group_id', groupId)
 
-  const profileList = (profiles ?? []) as { id: string; name: string }[]
+  const profileList = (memberRows ?? [])
+    .map((row) => {
+      const profile = row.profiles as { id: string; name: string } | null
+      if (!profile) return null
+      return { id: profile.id, name: profile.name }
+    })
+    .filter((p): p is { id: string; name: string } => p !== null)
 
-  // 3. Palpites — visibilidade dependente do status do jogo
+  // 3. Palpites — visibilidade dependente do status do jogo, filtrado por group_id
   const predByUserGame: Record<string, { home_score: number; away_score: number }> = {}
   const hasPredictionSet = new Set<string>()
 
@@ -61,6 +163,7 @@ export default async function PublicGamePage({ params }: PublicGamePageProps) {
       .from('predictions')
       .select('user_id, game_id')
       .eq('game_id', gameId)
+      .eq('group_id', groupId)
 
     for (const p of existencePredictions ?? []) {
       hasPredictionSet.add(p.user_id)
@@ -71,6 +174,7 @@ export default async function PublicGamePage({ params }: PublicGamePageProps) {
       .from('predictions')
       .select('user_id, game_id, home_score, away_score')
       .eq('game_id', gameId)
+      .eq('group_id', groupId)
 
     for (const p of fullPredictions ?? []) {
       hasPredictionSet.add(p.user_id)
@@ -81,7 +185,7 @@ export default async function PublicGamePage({ params }: PublicGamePageProps) {
     }
   }
 
-  // 4. Scores (encerrados e ao vivo — ao vivo calculado no cliente)
+  // 4. Scores (encerrados e ao vivo — ao vivo calculado no cliente), filtrado por group_id
   const scoreByUser: Record<string, { points: number; breakdown: ScoreBreakdown }> = {}
 
   if (game.status === 'finished') {
@@ -89,6 +193,7 @@ export default async function PublicGamePage({ params }: PublicGamePageProps) {
       .from('scores')
       .select('user_id, game_id, points, breakdown')
       .eq('game_id', gameId)
+      .eq('group_id', groupId)
 
     for (const s of scores ?? []) {
       scoreByUser[s.user_id] = {
@@ -98,8 +203,7 @@ export default async function PublicGamePage({ params }: PublicGamePageProps) {
     }
   }
 
-  // 5. Montar ParticipantEntry[] — apenas perfis que têm alguma interação com o jogo
-  //    (hasPrediction=true) ou todos os perfis do sistema (para listar quem não palpitou)
+  // 5. Montar ParticipantEntry[] — apenas membros do grupo
   const participants: ParticipantEntry[] = profileList
     .map((profile): ParticipantEntry => {
       const key = profile.id
@@ -130,40 +234,7 @@ export default async function PublicGamePage({ params }: PublicGamePageProps) {
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
       }}
     >
-      {/* Header público — sem o header do dashboard */}
-      <header
-        style={{
-          backgroundColor: 'var(--color-surface)',
-          borderBottom: '1px solid var(--color-border)',
-          padding: '0.75rem 1rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            fontSize: '13px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--color-accent)',
-          }}
-        >
-          BOLÃO DA COPA
-        </span>
-        <span
-          style={{
-            fontSize: '10px',
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          VISUALIZAÇÃO PÚBLICA
-        </span>
-      </header>
+      {header}
 
       {/* Conteúdo principal */}
       <main
@@ -177,6 +248,7 @@ export default async function PublicGamePage({ params }: PublicGamePageProps) {
           initialGame={game}
           initialParticipants={participants}
           gameStatus={game.status as 'pending' | 'live' | 'finished'}
+          groupId={groupId}
         />
       </main>
     </div>
