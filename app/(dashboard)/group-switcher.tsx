@@ -136,49 +136,64 @@ export function GroupMenu({ groups, activeGroupId, pendingInvitesCount, userName
                     fontWeight: 'bold',
                     borderBottom: '1px solid var(--color-border)',
                     letterSpacing: '0.1em',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
                   }}
                 >
+                  <span style={{ fontSize: '11px' }}>◉</span>
                   {userName.toUpperCase()}
                 </div>
               )}
 
-              {groups.map((group) => (
-                <button
-                  key={group.id}
-                  onClick={() => switchGroup(group.id)}
-                  style={{
-                    ...MONO,
-                    display: 'block',
-                    width: '100%',
-                    padding: '0.375rem 0.75rem',
-                    color: group.id === activeGroup?.id ? 'var(--color-primary)' : 'var(--color-text)',
-                    background: 'transparent',
-                    border: 'none',
-                    borderBottom: '1px solid var(--color-border)',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                  }}
-                >
-                  {group.id === activeGroup?.id ? '► ' : '  '}
-                  {group.name.toUpperCase()}
-                </button>
-              ))}
+              {groups.map((group) => {
+                const isActive = group.id === activeGroup?.id
+                return (
+                  <button
+                    key={group.id}
+                    onClick={() => switchGroup(group.id)}
+                    style={{
+                      ...MONO,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      width: '100%',
+                      padding: '0.375rem 0.75rem',
+                      color: isActive ? 'var(--color-primary)' : 'var(--color-text)',
+                      background: 'transparent',
+                      border: 'none',
+                      borderBottom: '1px solid var(--color-border)',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      fontWeight: isActive ? 'bold' : 'normal',
+                    }}
+                  >
+                    <span style={{ fontSize: '10px', color: isActive ? 'var(--color-primary)' : 'var(--color-muted)' }}>
+                      {isActive ? '►' : '▸'}
+                    </span>
+                    {group.name.toUpperCase()}
+                  </button>
+                )
+              })}
 
               <button
                 onClick={handleLogout}
                 style={{
                   ...MONO,
-                  display: 'block',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
                   width: '100%',
                   padding: '0.375rem 0.75rem',
-                  color: 'var(--color-muted)',
+                  color: 'var(--color-error)',
                   background: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
                   textAlign: 'left',
                 }}
               >
-                {'  '}SAIR
+                <span style={{ fontSize: '11px' }}>→</span>
+                SAIR
               </button>
             </div>
           )}
