@@ -236,12 +236,17 @@ async function syncHandler(request: Request) {
   // Ler query params
   const { searchParams } = new URL(request.url)
   const daysParam = searchParams.get('days') ?? '7'
+  const daysBackParam = searchParams.get('daysBack') ?? '1'
   const cleanParam = searchParams.get('clean') ?? 'false'
   const replaceParam = searchParams.get('replace') ?? 'false'
 
   const days = parseInt(daysParam, 10)
+  const daysBack = parseInt(daysBackParam, 10)
   if (isNaN(days) || days < 1) {
     return NextResponse.json({ error: 'days must be a positive integer' }, { status: 400 })
+  }
+  if (isNaN(daysBack) || daysBack < 1) {
+    return NextResponse.json({ error: 'daysBack must be a positive integer' }, { status: 400 })
   }
 
   // Aceitar tanto ?clean=true quanto ?replace=true conforme spec e contexto adicional
@@ -281,8 +286,8 @@ async function syncHandler(request: Request) {
   const today = new Date()
   today.setUTCHours(0, 0, 0, 0)
 
-  // Começa 1 dia atrás para re-sincronizar jogos que terminaram após meia-noite UTC
-  for (let i = -1; i < days; i++) {
+  // Começa daysBack dias atrás (default: 1) para re-sincronizar jogos históricos
+  for (let i = -daysBack; i < days; i++) {
     const date = new Date(today)
     date.setUTCDate(today.getUTCDate() + i)
     const dateStr = formatDateESPN(date)
