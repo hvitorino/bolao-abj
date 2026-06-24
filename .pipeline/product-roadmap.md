@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 65 features
-- Concluídas: 64
+- Concluídas: 65
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -844,7 +844,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 65. public-game-view — Página Pública de Jogo — pendente
+### 65. public-game-view — Página Pública de Jogo — concluída
 **Objetivo:** Criar uma página pública (sem autenticação) em `/jogos/[gameId]/publico` que exibe o placar ao vivo, os palpites de todos os participantes do bolão e a pontuação atualizada de cada um para aquele jogo, atualizando em tempo real via Supabase Realtime; e adicionar um botão "copiar link" nos cards de jogo (área autenticada) que copia a URL dessa página para a área de transferência.
 **Critérios de sucesso:**
 - Rota `/jogos/[gameId]/publico` acessível sem login (fora do route group `(dashboard)`)
