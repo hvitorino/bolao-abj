@@ -285,15 +285,8 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
                   cursor: 'pointer',
                 }}
               >
-                {/* Linha 1: hora (esquerda) | placar-card + palpite + pontos (centro) */}
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', width: '100%' }}>
-                  {/* Horário — ancorado à esquerda */}
-                  <span style={{ color: 'var(--color-muted)', fontSize: '11px', fontFamily: MONO_FONT, flexShrink: 0 }}>
-                    {formatMatchTime(item.match_date)}
-                  </span>
-
-                  {/* Conteúdo central */}
-                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                {/* Linha 1: placar-card + palpite + pontos (centro) */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
                     <ScoreCard
                       home_team_code={item.home_team_code}
                       away_team_code={item.away_team_code}
@@ -321,7 +314,6 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
                         SEM PALPITE
                       </span>
                     )}
-                  </div>
                 </div>
 
               </Link>
