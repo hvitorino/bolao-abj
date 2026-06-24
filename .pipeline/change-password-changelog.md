@@ -3,7 +3,7 @@
 **Slug:** change-password
 **Branch:** feature/change-password
 **Data:** 2026-06-23
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
