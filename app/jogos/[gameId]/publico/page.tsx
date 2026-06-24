@@ -147,9 +147,12 @@ export default async function PublicGamePage({ params, searchParams }: PublicGam
 
   const profileList = (memberRows ?? [])
     .map((row) => {
-      const profile = row.profiles as { id: string; name: string } | null
-      if (!profile) return null
-      return { id: profile.id, name: profile.name }
+      // O Supabase infere profiles como array em joins — normalizamos para objeto único
+      const raw = row.profiles as unknown
+      const profile = Array.isArray(raw) ? raw[0] : raw
+      if (!profile || typeof profile !== 'object') return null
+      const p = profile as { id: string; name: string }
+      return { id: p.id, name: p.name }
     })
     .filter((p): p is { id: string; name: string } => p !== null)
 
