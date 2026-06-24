@@ -91,6 +91,78 @@ curl "https://dyulqyuyjkjmtrgrdkgf.supabase.co/rest/v1/games?select=id,home_team
 
 ---
 
+---
+
+## Estratégia de Importação Automática — Rotinas Claude Code
+
+### Visão Geral
+
+As importações de palpites são feitas por **agentes cloud** (Claude Code Routines) que rodam na infraestrutura da Anthropic. Existem dois tipos de rotina:
+
+| Tipo | Frequência | Função |
+|------|-----------|--------|
+| **One-shot por horário** | Uma vez, 10 min após cada par de jogos simultâneos | Importa os palpites dos 2 jogos do horário |
+| **Catch-up diário** | Todo dia às 08:30 BRT (`30 11 * * *` UTC) | Reimporta jogos do dia anterior que estejam sem palpites |
+
+As rotinas ficam em: **https://claude.ai/code/routines**
+
+### Como funciona cada rotina
+
+1. Lê o JWT do bolaodefutebol.com na tabela `integration_tokens` (Supabase)
+2. Para cada jogo do lote, chama `GET https://bolaodefutebol.com/matches/{match_id}/predictions?groupId=ba08470f-94e7-4e51-b324-dc65c60c78af`
+3. Busca o `game_id` do ABJ no Supabase pelos nomes dos times
+4. Converte os `user_id` do bolaodefutebol para os `user_id` do ABJ (mapeamento acima)
+5. Faz upsert em `predictions` com `group_id = 49496d29-90d8-49c4-9a04-594c12e760e6`
+
+### Atualização do Token JWT
+
+O token JWT do bolaodefutebol.com é **válido ~8 horas** e obtido via proxy (Proxyman/Charles) no app mobile.
+
+**Quando atualizar:** antes da primeira rodada de jogos de cada dia em que haja rotina agendada.
+
+**Como atualizar:** execute no SQL Editor do Supabase Dashboard:
+
+```sql
+INSERT INTO integration_tokens (id, token, notes)
+VALUES (
+  'bolaodefutebol',
+  '<COLE_O_JWT_AQUI>',
+  'JWT bolaodefutebol.com — válido ~8h'
+)
+ON CONFLICT (id) DO UPDATE
+  SET token = EXCLUDED.token,
+      updated_at = now();
+```
+
+> **Tabela:** `integration_tokens` — RLS habilitado, apenas `service_role` acessa.
+> O SQL acima deve ser executado no Dashboard (que usa `service_role` internamente).
+
+### Rodada 3 — Rotinas one-shot criadas (jogos #49–72)
+
+| Disparo (UTC) | Disparo (BRT) | Jogos |
+|---------------|---------------|-------|
+| 2026-06-24T19:10Z | 16:10 | #49 Switzerland×Canada, #50 Bosnia×Qatar |
+| 2026-06-24T22:10Z | 19:10 | #51 Scotland×Brazil, #52 Morocco×Haiti |
+| 2026-06-25T01:10Z | 22:10 | #53 Czechia×Mexico, #54 S.Africa×S.Korea |
+| 2026-06-25T20:10Z | 17:10 | #55 Curacao×Ivory Coast, #56 Ecuador×Germany |
+| 2026-06-25T23:10Z | 20:10 | #57 Japan×Sweden, #58 Tunisia×Netherlands |
+| 2026-06-26T02:10Z | 23:10 | #59 Turkey×USA, #60 Paraguay×Australia |
+| 2026-06-26T19:10Z | 16:10 | #61 Norway×France, #62 Senegal×Iraq |
+| 2026-06-27T00:10Z | 21:10 | #63 Cape Verde×Saudi Arabia, #64 Uruguay×Spain |
+| 2026-06-27T03:10Z | 00:10 | #65 Egypt×Iran, #66 New Zealand×Belgium |
+| 2026-06-27T21:10Z | 18:10 | #67 Panama×England, #68 Croatia×Ghana |
+| 2026-06-27T23:40Z | 20:40 | #69 Colombia×Portugal, #70 DR Congo×Uzbekistan |
+| 2026-06-28T02:10Z | 23:10 | #71 Algeria×Austria, #72 Jordan×Argentina |
+
+### Oitavas em diante
+
+Os `match_id` do bolaodefutebol para Oitavas, Quartas, Semi e Final ainda não são conhecidos — serão capturados via Proxyman quando os jogos forem agendados no app. Quando disponíveis:
+
+1. Adicionar os `match_id` na tabela acima (seção "Rodada N")
+2. Criar novas rotinas one-shot nesta sessão Claude Code (ou nova sessão)
+
+---
+
 ## Histórico de Importações
 
 | Data | Rodada | Partidas | Palpites inseridos |
