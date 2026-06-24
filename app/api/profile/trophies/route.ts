@@ -654,7 +654,7 @@ async function calcNegativeTrophies(
       .select('game_id, breakdown, games!inner(match_day, home_team_code, away_team_code, home_score, away_score, match_date)')
       .eq('user_id', userId)
       .eq('group_id', groupId)
-      .order('games.match_date', { ascending: true }),
+      .order('calculated_at', { ascending: true }),
   ])
 
   // --- placar_espelhado ---
@@ -811,7 +811,6 @@ async function calcNegativeTrophies(
   let diaRuimGames: ContributingGame[] = []
   {
     const rows = (diaRuimRes.data ?? []) as Array<Record<string, unknown>>
-    console.log('[dia_ruim] total rows:', rows.length, 'error:', diaRuimRes.error)
     // Agrupar por match_day
     const byDay = new Map<string, Array<Record<string, unknown>>>()
     for (const row of rows) {
@@ -825,14 +824,12 @@ async function calcNegativeTrophies(
     }
     // Iterar em ordem cronológica (os dados já vêm ordenados por match_date)
     const orderedDays = [...byDay.keys()]
-    console.log('[dia_ruim] days:', orderedDays)
     for (const day of orderedDays) {
       const dayRows = byDay.get(day)!
       const allMissed = dayRows.every((r) => {
         const bd = r.breakdown as Record<string, number> | null
         return Number(bd?.winner ?? 0) === 0
       })
-      console.log(`[dia_ruim] day=${day} rows=${dayRows.length} allMissed=${allMissed}`, dayRows.map(r => ({ game_id: r.game_id, winner: (r.breakdown as Record<string, number>|null)?.winner })))
       if (allMissed) {
         const firstRow = dayRows[0]
         const fg = Array.isArray(firstRow.games)
