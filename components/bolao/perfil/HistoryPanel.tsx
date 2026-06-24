@@ -314,14 +314,16 @@ export function HistoryPanel({ state, onLoadMore, loadingMore, negativeTrophies 
 
                   {hasPred ? (
                     <>
-                      <ScoreCard
-                        home_team_code={item.home_team_code}
-                        away_team_code={item.away_team_code}
-                        home_score={item.pred_home!}
-                        away_score={item.pred_away!}
-                        variant={resultVariant}
-                        showFlags={false}
-                      />
+                      <div style={{
+                        fontSize: '11px',
+                        color: variantColor(resultVariant),
+                        fontFamily: MONO_FONT,
+                        border: `1px solid ${variantColor(resultVariant)}`,
+                        padding: '0.2rem 0.4rem',
+                        whiteSpace: 'nowrap',
+                      }}>
+                        {item.pred_home}×{item.pred_away}
+                      </div>
                       <PointsBadge points={item.points} variant={resultVariant} />
                     </>
                   ) : (
