@@ -66,6 +66,8 @@ export default function GameCard({
   const [isParticipantsExpanded, setIsParticipantsExpanded] = useState(false)
   // Estado de expansão do breakdown de pontuação — colapsado por padrão
   const [isScoreExpanded, setIsScoreExpanded] = useState(false)
+  // Estado do botão de copiar link — feedback visual por 2s após cópia
+  const [copied, setCopied] = useState(false)
 
   // Subscreve ao canal Realtime do Supabase para este jogo específico.
   const { game: liveGame } = useGameRealtime(game.id, game)
@@ -122,6 +124,18 @@ export default function GameCard({
   function handleEditSuccess(updated: Prediction) {
     setCurrentPrediction(updated)
     setIsEditing(false)
+  }
+
+  // Copia o link da página pública deste jogo para a área de transferência
+  async function handleCopyLink() {
+    try {
+      const url = `${window.location.origin}/jogos/${liveGame.id}/publico`
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Contexto não-seguro ou API não disponível — silencioso
+    }
   }
 
   return (
@@ -545,6 +559,33 @@ export default function GameCard({
           </div>
         </div>
       )}
+
+      {/* Botão de copiar link da página pública — utilitário, abaixo das CTAs principais */}
+      <div style={{ borderTop: '1px solid var(--color-border)' }}>
+        <button
+          type="button"
+          onClick={handleCopyLink}
+          style={{
+            width: '100%',
+            border: 'none',
+            backgroundColor: 'transparent',
+            padding: '0.5rem 0.75rem',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '0.4rem',
+            cursor: 'pointer',
+            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+            fontSize: '10px',
+            color: copied ? 'var(--color-win)' : 'var(--color-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            transition: 'color 150ms ease',
+          }}
+        >
+          {copied ? '✓ COPIADO!' : '⎘ COPIAR LINK'}
+        </button>
+      </div>
     </div>
   )
 }
