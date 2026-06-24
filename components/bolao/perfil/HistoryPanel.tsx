@@ -69,7 +69,13 @@ function formatMatchTime(matchDate: string): string {
   return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })
 }
 
-function HistoryGameCard({
+const MONO_FONT = "'JetBrains Mono', 'Courier New', monospace"
+
+function variantColor(variant: 'win' | 'neutral' | 'miss'): string {
+  return variant === 'win' ? 'var(--color-win)' : variant === 'miss' ? 'var(--color-error)' : 'var(--color-muted)'
+}
+
+function ScoreCard({
   home_team_code,
   away_team_code,
   home_score,
@@ -82,35 +88,37 @@ function HistoryGameCard({
   away_score: number
   variant: 'win' | 'neutral' | 'miss'
 }) {
-  const color =
-    variant === 'win'
-      ? 'var(--color-win)'
-      : variant === 'miss'
-        ? 'var(--color-error)'
-        : 'var(--color-muted)'
-
+  const color = variantColor(variant)
   return (
-    <div
-      style={{
-        fontSize: '11px',
-        color,
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.3rem',
-        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-        border: `1px solid ${color}`,
-        borderRadius: '4px',
-        padding: '0.2rem 0.4rem',
-        whiteSpace: 'nowrap',
-      }}
-    >
+    <div style={{
+      fontSize: '11px', color,
+      display: 'flex', alignItems: 'center', gap: '0.3rem',
+      fontFamily: MONO_FONT,
+      border: `1px solid ${color}`,
+      padding: '0.2rem 0.4rem',
+      whiteSpace: 'nowrap',
+    }}>
       <span>{getTeamFlag(home_team_code)}</span>
       <span>{home_team_code}</span>
-      <span>{home_score}</span>
-      <span>×</span>
-      <span>{away_score}</span>
+      <span>{home_score}×{away_score}</span>
       <span>{away_team_code}</span>
       <span>{getTeamFlag(away_team_code)}</span>
+    </div>
+  )
+}
+
+function PointsBadge({ points, variant }: { points: number; variant: 'win' | 'neutral' | 'miss' }) {
+  const color = variantColor(variant)
+  return (
+    <div style={{
+      fontSize: '11px', color,
+      fontFamily: MONO_FONT,
+      border: `1px solid ${color}`,
+      padding: '0.2rem 0.4rem',
+      whiteSpace: 'nowrap',
+      fontWeight: points > 0 ? 'bold' : 'normal',
+    }}>
+      +{points}
     </div>
   )
 }
@@ -264,12 +272,13 @@ export function HistoryPanel({ state, onLoadMore, loadingMore, negativeTrophies 
 
           {/* Jogos do dia — só renderiza quando expandido */}
           {expanded && dayItems.map((item, idx) => {
+            const hasPred = item.pred_home !== null && item.pred_away !== null
+            const resultVariant: 'win' | 'neutral' | 'miss' = item.is_miss ? 'miss' : item.points > 0 ? 'win' : 'neutral'
             const posTrophyName = item.trophy_unlocked_id
               ? (TROPHY_NAMES[item.trophy_unlocked_id] ?? item.trophy_unlocked_id)
               : null
             const negTrophy = gameIdToNegTrophy.get(item.game_id)
             const hasTrophy = !!posTrophyName || !!negTrophy
-            const hasPred = !item.is_miss && item.pred_home !== null && item.pred_away !== null
 
             return (
               <Link
@@ -278,81 +287,76 @@ export function HistoryPanel({ state, onLoadMore, loadingMore, negativeTrophies 
                 style={{
                   padding: '0.5rem 1rem',
                   borderBottom: idx < dayItems.length - 1 ? '1px solid var(--color-border)' : 'none',
-                  fontSize: '12px',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '0.25rem',
+                  gap: '0.3rem',
                   textDecoration: 'none',
                   color: 'inherit',
                   cursor: 'pointer',
                 }}
               >
-                {/* Linha 1: hora + resultado + pts */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                  <span style={{ color: 'var(--color-muted)', fontSize: '11px', minWidth: '2.5rem', textAlign: 'center' }}>
+                {/* Linha 1: hora | resultado | palpite | pontos */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                  <span style={{ color: 'var(--color-muted)', fontSize: '11px', fontFamily: MONO_FONT }}>
                     {formatMatchTime(item.match_date)}
                   </span>
 
-                  <HistoryGameCard
+                  <ScoreCard
                     home_team_code={item.home_team_code}
                     away_team_code={item.away_team_code}
                     home_score={item.home_score}
                     away_score={item.away_score}
-                    variant={item.is_miss ? 'miss' : item.points > 0 ? 'win' : 'neutral'}
+                    variant={resultVariant}
                   />
 
-                  {item.is_miss ? (
-                    <span style={{ color: 'var(--color-error)', fontSize: '11px', minWidth: '3rem', textAlign: 'center' }}>
-                      FUROU
-                    </span>
+                  {hasPred ? (
+                    <>
+                      <ScoreCard
+                        home_team_code={item.home_team_code}
+                        away_team_code={item.away_team_code}
+                        home_score={item.pred_home!}
+                        away_score={item.pred_away!}
+                        variant={resultVariant}
+                      />
+                      <PointsBadge points={item.points} variant={resultVariant} />
+                    </>
                   ) : (
-                    <span style={{
-                      color: item.points > 0 ? 'var(--color-win)' : 'var(--color-muted)',
-                      fontWeight: item.points > 0 ? 'bold' : 'normal',
-                      fontSize: '12px',
-                      minWidth: '3rem',
-                      textAlign: 'right',
-                    }}>
-                      +{item.points} pts
+                    <span style={{ color: 'var(--color-error)', fontSize: '11px', fontFamily: MONO_FONT }}>
+                      SEM PALPITE
                     </span>
                   )}
                 </div>
 
-                {/* Linha 2: palpite + troféus */}
-                {(hasPred || hasTrophy) && (
+                {/* Linha 2: troféus centralizados */}
+                {hasTrophy && (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {hasPred && (
-                      <span style={{ color: 'var(--color-muted)', fontSize: '11px' }}>
-                        palpite {item.pred_home}×{item.pred_away}
-                      </span>
-                    )}
-
                     {posTrophyName && (
                       <span style={{
                         fontSize: '11px',
                         color: 'var(--color-accent)',
                         border: '1px solid var(--color-accent)',
                         backgroundColor: 'rgba(255,223,0,0.08)',
-                        padding: '0.1rem 0.4rem',
-                        letterSpacing: '0.04em',
+                        padding: '0.1rem 0.5rem',
+                        fontFamily: MONO_FONT,
                         fontWeight: 'bold',
+                        letterSpacing: '0.04em',
                       }}>
                         🏆 {posTrophyName}
                       </span>
                     )}
-
                     {negTrophy && (
                       <span style={{
                         fontSize: '11px',
                         color: 'var(--color-error)',
                         border: '1px solid var(--color-error)',
                         backgroundColor: 'rgba(255,69,58,0.08)',
-                        padding: '0.1rem 0.4rem',
-                        letterSpacing: '0.04em',
+                        padding: '0.1rem 0.5rem',
+                        fontFamily: MONO_FONT,
                         fontWeight: 'bold',
+                        letterSpacing: '0.04em',
                       }}>
-                        💀 {negTrophy.name}
+                        🫠 {negTrophy.name}
                       </span>
                     )}
                   </div>
