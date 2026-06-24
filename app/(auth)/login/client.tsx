@@ -152,30 +152,6 @@ function LoginForm() {
         </Button>
       </form>
 
-      {/* Link para recuperar senha */}
-      <p
-        style={{
-          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-          fontSize: '12px',
-          textAlign: 'center',
-          color: 'var(--color-muted)',
-          margin: '1rem 0 0',
-        }}
-      >
-        Esqueceu a senha?{' '}
-        <Link
-          href="/esqueci-senha"
-          style={{
-            color: 'var(--color-primary)',
-            textDecoration: 'none',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-          }}
-        >
-          RECUPERAR ACESSO
-        </Link>
-      </p>
-
       {/* Separador */}
       <div
         style={{

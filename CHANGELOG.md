@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [change-password] — Alteração Direta de Senha — 2026-06-23
+
+- Fluxo de recuperação de senha por email (`password-recovery`) removido inteiramente
+- `components/bolao/ChangePasswordForm.tsx` criado: Client Component com estados `idle | loading | sucesso | error`, validação client-side (mínimo 6 chars + coincidência), chamada a `supabase.auth.updateUser({ password })`, mapeamento de erros Supabase para português, feedback de sucesso em `color-win` e erro em `color-error`
+- `app/(dashboard)/configuracoes/page.tsx` atualizado: seção "ALTERAR SENHA" adicionada abaixo de INTEGRAÇÕES, separada por `borderTop: 1px solid var(--color-border)`
+- `app/(auth)/login/client.tsx` atualizado: link "Esqueceu a senha? RECUPERAR ACESSO" removido; link de cadastro preservado
+- Arquivos removidos: `app/(auth)/esqueci-senha/page.tsx`, `app/(auth)/esqueci-senha/client.tsx`, `app/(auth)/nova-senha/page.tsx`, `app/(auth)/nova-senha/client.tsx`, `app/auth/callback/route.ts`
+- `app/api/mcp/oauth/callback/route.ts` preservado (callback OAuth do MCP, não relacionado)
+- Sem migrations SQL — operação usa exclusivamente `auth.users` via Supabase Auth SDK
+
 ## [menu-redesign] — Redesign da Navegação (Header + Tab Bar + Pull Tabs) — 2026-06-22
 
 - `components/bolao/TabBar.tsx` criado: tab bar fixa no rodapé com 4 itens (CAMPANHA, JOGOS, RANKING, MAIS), fonte 13px JetBrains Mono uppercase, altura 52px + `env(safe-area-inset-bottom)`, item ativo com `borderTop: 2px solid var(--color-primary)`, popover MAIS abre para cima com GRUPOS/REGRAS/CONFIG
