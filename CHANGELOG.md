@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [public-game-view-group-fix] — Correção: Contexto de Grupo na Página Pública de Jogo — 2026-06-24
+
+- `app/jogos/[gameId]/publico/page.tsx` atualizado: adicionada prop `searchParams: Promise<{ grupo?: string }>`; guard de erro inline quando `?grupo=` está ausente (sem `notFound()`, sem redirect) exibindo mensagem "PARÂMETRO DE GRUPO AUSENTE" em `color-error`; queries de `profiles`, `predictions` e `scores` substituídas por versões filtradas por `group_id` do grupo informado na URL; `groupId` passado como prop para `PublicGameClient`
+- `components/bolao/PublicGameClient.tsx` atualizado: prop `groupId: string` adicionada à interface e repassada para `PublicParticipantsList`
+- `components/bolao/PublicParticipantsList.tsx` atualizado: prop `groupId: string` adicionada; nome do canal Realtime alterado de `public-scores-${gameId}` para `public-scores-${gameId}-${groupId}` para evitar colisões entre abas de grupos diferentes; `groupId` adicionado ao array de dependências do `useEffect`
+- `components/games/GameCard.tsx` corrigido: `handleCopyLink` passa a gerar `${origin}/jogos/${gameId}/publico?grupo=${groupId}` em vez de URL sem o query param
+- Sem migrations: `group_id` já existe em `predictions` e `scores`; `group_members` já existe com `group_id` + `user_id`
+
 ## [public-game-view] — Página Pública de Jogo — 2026-06-24
 
 - `app/jogos/[gameId]/publico/page.tsx` criado: Server Component público (fora do route group `(dashboard)`) com `generateMetadata` para SEO, `revalidate = 0`, busca de dados via `createServiceClient()` (service_role), regra de visibilidade de palpites por status (`pending`/`live`/`finished`), `notFound()` para gameId inexistente, header público minimalista (sem TabBar, sem SidePanelContainer)
