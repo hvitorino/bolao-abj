@@ -81,12 +81,14 @@ function ScoreCard({
   home_score,
   away_score,
   variant,
+  showFlags = true,
 }: {
   home_team_code: string
   away_team_code: string
   home_score: number
   away_score: number
   variant: 'win' | 'neutral' | 'miss'
+  showFlags?: boolean
 }) {
   const color = variantColor(variant)
   return (
@@ -98,11 +100,11 @@ function ScoreCard({
       padding: '0.2rem 0.4rem',
       whiteSpace: 'nowrap',
     }}>
-      <span>{getTeamFlag(home_team_code)}</span>
+      {showFlags && <span>{getTeamFlag(home_team_code)}</span>}
       <span>{home_team_code}</span>
       <span>{home_score}×{away_score}</span>
       <span>{away_team_code}</span>
-      <span>{getTeamFlag(away_team_code)}</span>
+      {showFlags && <span>{getTeamFlag(away_team_code)}</span>}
     </div>
   )
 }
@@ -318,6 +320,7 @@ export function HistoryPanel({ state, onLoadMore, loadingMore, negativeTrophies 
                         home_score={item.pred_home!}
                         away_score={item.pred_away!}
                         variant={resultVariant}
+                        showFlags={false}
                       />
                       <PointsBadge points={item.points} variant={resultVariant} />
                     </>
