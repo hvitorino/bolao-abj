@@ -341,30 +341,12 @@ export function HistoryPanel({ state, onLoadMore, loadingMore, negativeTrophies 
                 {hasTrophy && (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                     {posTrophyName && (
-                      <span style={{
-                        fontSize: '11px',
-                        color: 'var(--color-accent)',
-                        border: '1px solid var(--color-accent)',
-                        backgroundColor: 'rgba(255,223,0,0.08)',
-                        padding: '0.1rem 0.5rem',
-                        fontFamily: MONO_FONT,
-                        fontWeight: 'bold',
-                        letterSpacing: '0.04em',
-                      }}>
+                      <span style={{ fontSize: '11px', color: 'var(--color-accent)', fontFamily: MONO_FONT, fontWeight: 'bold' }}>
                         🏆 {posTrophyName}
                       </span>
                     )}
                     {negTrophy && (
-                      <span style={{
-                        fontSize: '11px',
-                        color: 'var(--color-error)',
-                        border: '1px solid var(--color-error)',
-                        backgroundColor: 'rgba(255,69,58,0.08)',
-                        padding: '0.1rem 0.5rem',
-                        fontFamily: MONO_FONT,
-                        fontWeight: 'bold',
-                        letterSpacing: '0.04em',
-                      }}>
+                      <span style={{ fontSize: '11px', color: 'var(--color-error)', fontFamily: MONO_FONT, fontWeight: 'bold' }}>
                         🫠 {negTrophy.name}
                       </span>
                     )}
