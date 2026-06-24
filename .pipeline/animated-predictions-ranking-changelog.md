@@ -3,7 +3,7 @@
 **Slug:** animated-predictions-ranking
 **Branch:** feature/animated-predictions-ranking
 **Data:** 2026-06-24
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
