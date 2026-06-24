@@ -10,6 +10,7 @@ interface PublicGameClientProps {
   initialGame: Game
   initialParticipants: ParticipantEntry[]
   gameStatus: 'pending' | 'live' | 'finished'
+  groupId: string
 }
 
 /**
@@ -22,6 +23,7 @@ export default function PublicGameClient({
   initialGame,
   initialParticipants,
   gameStatus,
+  groupId,
 }: PublicGameClientProps) {
   const { game: liveGame } = useGameRealtime(initialGame.id, initialGame)
 
@@ -32,6 +34,7 @@ export default function PublicGameClient({
         participants={initialParticipants}
         gameStatus={(liveGame.status as 'pending' | 'live' | 'finished') ?? gameStatus}
         gameId={initialGame.id}
+        groupId={groupId}
         liveHomeScore={liveGame.home_score}
         liveAwayScore={liveGame.away_score}
       />

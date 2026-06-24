@@ -10,6 +10,7 @@ interface PublicParticipantsListProps {
   participants: ParticipantEntry[]
   gameStatus: 'pending' | 'live' | 'finished'
   gameId: string
+  groupId: string
   liveHomeScore: number | null
   liveAwayScore: number | null
 }
@@ -31,6 +32,7 @@ export default function PublicParticipantsList({
   participants: initialParticipants,
   gameStatus,
   gameId,
+  groupId,
   liveHomeScore,
   liveAwayScore,
 }: PublicParticipantsListProps) {
@@ -48,7 +50,7 @@ export default function PublicParticipantsList({
     const supabase = createClient()
 
     const channel = supabase
-      .channel(`public-scores-${gameId}`)
+      .channel(`public-scores-${gameId}-${groupId}`)
       .on(
         'postgres_changes',
         {
@@ -65,6 +67,7 @@ export default function PublicParticipantsList({
           }
           if (!newScore?.user_id) return
 
+          // Atualiza apenas participantes que pertencem ao grupo (já filtrados via SSR)
           setParticipants((prev) =>
             prev.map((p) =>
               p.userId === newScore.user_id
@@ -79,7 +82,7 @@ export default function PublicParticipantsList({
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [gameId, gameStatus])
+  }, [gameId, groupId, gameStatus])
 
   return (
     <div
