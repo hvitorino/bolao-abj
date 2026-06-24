@@ -787,7 +787,7 @@ async function calcNegativeTrophies(
       ])
       const total = totalPreds ?? 0
       const correct = correctPreds ?? 0
-      if (total > 0 && correct / total > 0.70) {
+      if (total >= 2 && correct === total - 1) {
         const g = Array.isArray(row.games)
           ? (row.games[0] as Record<string, unknown>)
           : (row.games as Record<string, unknown>)
