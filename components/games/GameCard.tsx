@@ -129,7 +129,7 @@ export default function GameCard({
   // Copia o link da página pública deste jogo para a área de transferência
   async function handleCopyLink() {
     try {
-      const url = `${window.location.origin}/jogos/${liveGame.id}/publico`
+      const url = `${window.location.origin}/jogos/${liveGame.id}/publico?grupo=${groupId}`
       await navigator.clipboard.writeText(url)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
