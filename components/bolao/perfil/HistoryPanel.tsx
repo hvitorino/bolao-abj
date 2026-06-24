@@ -154,15 +154,7 @@ const HEADER: React.CSSProperties = {
   padding: '0.5rem 1rem',
 }
 
-export function HistoryPanel({ state, onLoadMore, loadingMore, negativeTrophies }: HistoryPanelProps) {
-  const gameIdToNegTrophy = new Map<string, Trophy>()
-  for (const t of negativeTrophies) {
-    if (t.status === 'unlocked') {
-      for (const g of t.contributing_games) {
-        if (!gameIdToNegTrophy.has(g.game_id)) gameIdToNegTrophy.set(g.game_id, t)
-      }
-    }
-  }
+export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelProps) {
   const [open, setOpen] = useState(false)
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set())
   const defaultSetRef = useRef(false)
@@ -276,11 +268,6 @@ export function HistoryPanel({ state, onLoadMore, loadingMore, negativeTrophies 
           {expanded && dayItems.map((item, idx) => {
             const hasPred = item.pred_home !== null && item.pred_away !== null
             const resultVariant: 'win' | 'neutral' | 'miss' = item.is_miss ? 'miss' : item.points > 0 ? 'win' : 'neutral'
-            const posTrophyName = item.trophy_unlocked_id
-              ? (TROPHY_NAMES[item.trophy_unlocked_id] ?? item.trophy_unlocked_id)
-              : null
-            const negTrophy = gameIdToNegTrophy.get(item.game_id)
-            const hasTrophy = !!posTrophyName || !!negTrophy
 
             return (
               <Link
@@ -337,21 +324,6 @@ export function HistoryPanel({ state, onLoadMore, loadingMore, negativeTrophies 
                   </div>
                 </div>
 
-                {/* Linha 2: troféus centralizados */}
-                {hasTrophy && (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    {posTrophyName && (
-                      <span style={{ fontSize: '11px', color: 'var(--color-accent)', fontFamily: MONO_FONT, fontWeight: 'bold' }}>
-                        🏆 {posTrophyName}
-                      </span>
-                    )}
-                    {negTrophy && (
-                      <span style={{ fontSize: '11px', color: 'var(--color-error)', fontFamily: MONO_FONT, fontWeight: 'bold' }}>
-                        🫠 {negTrophy.name}
-                      </span>
-                    )}
-                  </div>
-                )}
               </Link>
             )
           })}
