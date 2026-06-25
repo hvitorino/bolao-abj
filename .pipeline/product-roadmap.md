@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 68 features
+- Total: 69 features
 - Concluídas: 68
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -895,3 +895,18 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Acessar a página pública sem groupId na URL resulta em erro claro (ex: mensagem de parâmetro obrigatório ausente) ou redirect para rota segura — nunca vaza dados de todos os grupos misturados
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** public-game-view, grupos, grupo-ativo-persistente
+
+---
+
+### 69. public-date-view — Página Pública por Data — pendente
+**Objetivo:** Criar uma página pública (sem autenticação) que exibe todos os palpites de todos os participantes de um grupo para os jogos de uma data específica, com a pontuação acumulada de cada participante naquele dia, atualizando em tempo real conforme os jogos são finalizados — análoga ao link público por jogo já existente, mas com escopo de uma data inteira.
+**Critérios de sucesso:**
+- Existe uma URL pública (sem autenticação) acessível por qualquer pessoa no formato `/publico/[groupId]/[date]` (ou equivalente) que exiba os palpites de todos os participantes para os jogos daquela data
+- A página mostra a pontuação acumulada de cada participante naquele dia (soma dos pontos de todos os jogos da data)
+- É possível compartilhar o link da página para uma data específica (botão "copiar link" na aba de Palpites, para a data navegada)
+- A página atualiza em tempo real (Supabase Realtime ou polling periódico) conforme os jogos da data vão sendo finalizados
+- Palpites visíveis apenas para jogos não-`pending` (respeitando a regra de visibilidade temporal já implementada em `public-game-view`)
+- Acessar a página sem groupId ou date válidos resulta em erro claro (nunca exibe dados misturados de grupos)
+- Visual segue DESIGN.md rigorosamente (JetBrains Mono, paleta verde/amarelo/azul, dense, sem ícones decorativos)
+- `npm run lint` e `npm run build` passam sem erros novos
+**Dependências:** public-game-view, public-game-view-group-fix, predictions, scoring, grupos, palpites-ao-vivo
