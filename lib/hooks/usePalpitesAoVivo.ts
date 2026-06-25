@@ -132,6 +132,8 @@ export function usePalpitesAoVivo(
   const isFirstFetch = useRef(true)
   // Fingerprint dos placares do último poll — evita re-render desnecessário
   const prevScoresKey = useRef<string>('')
+  // Indica se já temos dados válidos — erros transientes não sobrescrevem a UI
+  const hasData = useRef(false)
 
   const fetchAll = async () => {
     try {
@@ -331,11 +333,13 @@ export function usePalpitesAoVivo(
         setTodayGames(newTodayGames)
         setRankingWithDetails(newRankingWithDetails)
       }
+      hasData.current = true
       setError(null)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro desconhecido'
       console.error('[usePalpitesAoVivo] erro:', message)
-      setError(message)
+      // Só exibe erro se ainda não há dados — erros transientes (ex: unlock do celular) são silenciosos
+      if (!hasData.current) setError(message)
     } finally {
       if (isFirstFetch.current) {
         isFirstFetch.current = false
@@ -345,18 +349,37 @@ export function usePalpitesAoVivo(
   }
 
   useEffect(() => {
-    // Busca inicial diferida para evitar setState síncrono dentro do effect
-    const initialTimer = window.setTimeout(() => {
-      void fetchAll()
-    }, 0)
+    let interval: ReturnType<typeof setInterval> | null = null
 
-    const interval = setInterval(() => {
+    function startPolling() {
       void fetchAll()
-    }, POLL_INTERVAL_MS)
+      interval = setInterval(() => void fetchAll(), POLL_INTERVAL_MS)
+    }
+
+    function stopPolling() {
+      if (interval !== null) {
+        clearInterval(interval)
+        interval = null
+      }
+    }
+
+    function onVisibilityChange() {
+      if (document.visibilityState === 'visible') {
+        // Página voltou ao foco (ex: desbloqueio do celular) — reinicia polling limpo
+        startPolling()
+      } else {
+        stopPolling()
+      }
+    }
+
+    // Iniciar polling diferido para evitar setState síncrono dentro do effect
+    const initialTimer = window.setTimeout(startPolling, 0)
+    document.addEventListener('visibilitychange', onVisibilityChange)
 
     return () => {
       window.clearTimeout(initialTimer)
-      clearInterval(interval)
+      stopPolling()
+      document.removeEventListener('visibilitychange', onVisibilityChange)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId, currentUserId, selectedDate])
