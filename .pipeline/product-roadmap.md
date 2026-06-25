@@ -3,10 +3,10 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 67 features
+- Total: 68 features
 - Concluídas: 67
 - Em progresso: 0
-- Pendentes: 0
+- Pendentes: 1
 
 ## Features Priorizadas
 
@@ -868,6 +868,20 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Aparência visual e roles ARIA da tabela preservados; `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** public-game-view, public-game-view-group-fix, live-scoring
 **Observação de conclusão:** aprovada sem rodada de fix em 2026-06-24; merge `feature/animated-predictions-ranking` na main confirmado. Feature puramente de UI/UX — nenhuma migration, endpoint ou policy nova. `PublicParticipantsList.tsx` reescrito com técnica FLIP nativa; tabela substituída por `<div role="table">` para suporte confiável a `translateY`.
+
+---
+
+### 68. palpites-ao-vivo — Aba de Palpites com Jogos ao Vivo e Ranking — pendente
+**Objetivo:** Criar uma nova aba de navegação chamada "Palpites" que exibe, no topo fixo (sticky), cards com os placares dos jogos em andamento (placar real + palpite do usuário), e abaixo um ranking do grupo com animações de mudança de posição e breakdown expansível por participante mostrando pontos por jogo.
+**Critérios de sucesso:**
+- Nova aba "Palpites" aparece na navegação principal do dashboard
+- Cards de jogos em andamento ficam fixos no topo (sticky) com placar real e o palpite do usuário logado
+- Ranking do grupo exibido abaixo dos cards com posição, nome e total de pontos
+- Ao clicar em um participante, o breakdown expande mostrando pontos por jogo com bandeiras e placar do palpite de cada participante (não o placar real)
+- Formato do breakdown: "Acertou o vencedor +6 [Bandeira Time 1] 1x0 [Bandeira Time 2] [Bandeira Time 3] 1x0 [Bandeira Time 4]"
+- Ranking e placares atualizam automaticamente a cada 10 segundos
+- Animações suaves ao mudar de posição no ranking
+**Dependências:** auth, game-navigation, predictions, live-scores, scoring, ranking, live-scoring, grupos, grupo-ativo-persistente, menu-redesign
 
 ---
 
