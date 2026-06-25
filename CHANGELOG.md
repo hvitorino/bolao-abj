@@ -6,6 +6,17 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [public-date-view] — Página Pública por Data — 2026-06-25
+
+- Rota `/publico/[groupId]/[date]` criada como Server Component público (fora de `(dashboard)` e `(auth)`), acessível sem login em qualquer browser
+- `app/publico/[groupId]/[date]/page.tsx`: valida `groupId` e `date` (via `isValidDateString`), exibe erros inline preservando o header público; busca jogos por `match_day`, membros do grupo via join `group_members + profiles`, palpites com visibilidade condicional por status (pending: só existência/OCULTO; live/finished: valores reais), scores de jogos encerrados — tudo via `createServiceClient()` (service_role, bypassa RLS); `generateMetadata` com título `{N} JOGOS · {DD MMM YYYY} — Bolão da Copa`; `revalidate = 0`
+- `app/publico/[groupId]/[date]/public-date-client.tsx`: Client Component com dois canais Supabase Realtime (`public-date-games-*` e `public-date-scores-*`); calcula ranking do dia em tempo real (pontos oficiais de jogos `finished` + pontos provisórios de jogos `live` via `calculateLiveScore()`); renderiza `PublicDateRanking` + uma `PublicDateGameSection` por jogo em ordem cronológica
+- `components/bolao/PublicDateGameSection.tsx`: mini placar com grid `1fr auto 1fr`, badge de status (■ AO VIVO / □ ENCERRADO / PENDENTE), formatação de rodada (remove prefixo "Copa do Mundo NNNN - ") + horário BRT; reutiliza `PublicParticipantsList` existente para tabela de palpites
+- `components/bolao/PublicDateRanking.tsx`: ranking do dia com posição, `►` para líder, pontos totais (oficial + ao vivo), badge `★ AO VIVO` em `color-live`, rodapé `* PONTOS AO VIVO SÃO PROVISÓRIOS`; ordenação por pontos decrescente, desempate por nome pt-BR
+- `lib/types/public-date.ts`: interfaces `PublicDateGame` e `ProfileEntry`
+- `app/(dashboard)/palpites/palpites-live-section.tsx` modificado: botão `⎘ COPIAR LINK DO DIA` full-width abaixo do `DateChipsNav`; copia `${origin}/publico/${groupId}/${selectedDate}`; feedback visual `✓ COPIADO!` por 2 segundos em `color-win`; try/catch silencioso
+- Sem endpoints novos, sem migrations de banco; políticas anon para Realtime de `games` e `scores` já existiam em `20260624000010_public_read_games_scores.sql`
+
 ## [palpites-ao-vivo] — Aba de Palpites com Jogos ao Vivo e Ranking — 2026-06-25
 
 - Aba `PALPITES` adicionada à tab bar entre JOGOS e RANKING; `fontSize: 12px` e `letterSpacing: 0.04em` para acomodar 5 elementos em 320px

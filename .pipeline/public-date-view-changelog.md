@@ -3,7 +3,7 @@
 **Slug:** public-date-view
 **Branch:** feature/public-date-view
 **Data:** 2026-06-25
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
