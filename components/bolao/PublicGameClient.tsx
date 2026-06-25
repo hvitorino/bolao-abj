@@ -25,7 +25,7 @@ export default function PublicGameClient({
   gameStatus,
   groupId,
 }: PublicGameClientProps) {
-  const { game: liveGame } = useGameRealtime(initialGame.id, initialGame)
+  const { game: liveGame } = useGameRealtime(initialGame.id, initialGame, 10_000)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>

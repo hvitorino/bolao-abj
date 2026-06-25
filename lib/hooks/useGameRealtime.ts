@@ -19,7 +19,11 @@ export interface GameRealtimeState {
  * @param initialGame - estado inicial do jogo (vindo do Server Component)
  * @returns GameRealtimeState com { game, lastUpdatedAt, connectionStatus }
  */
-export function useGameRealtime(gameId: string, initialGame: Game): GameRealtimeState {
+export function useGameRealtime(
+  gameId: string,
+  initialGame: Game,
+  pollingInterval = 30_000,
+): GameRealtimeState {
   const [game, setGame] = useState<Game>(initialGame)
   const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null)
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error'>('connecting')
@@ -39,7 +43,7 @@ export function useGameRealtime(gameId: string, initialGame: Game): GameRealtime
       })
   }, [gameId])
 
-  // Polling de fallback: re-fetch a cada 30s se o jogo estiver dentro da janela ativa.
+  // Polling de fallback: re-fetch no intervalo configurado se o jogo estiver dentro da janela ativa.
   // Janela: 10 min antes do início até 3h após (cobre 90min de jogo + prorrogação + delay).
   // Evita polling em jogos distantes no tempo ou já encerrados.
   useEffect(() => {
@@ -61,9 +65,9 @@ export function useGameRealtime(gameId: string, initialGame: Game): GameRealtime
             setGame(data as Game)
           }
         })
-    }, 30_000)
+    }, pollingInterval)
     return () => clearInterval(interval)
-  }, [gameId, game.status, game.match_date])
+  }, [gameId, game.status, game.match_date, pollingInterval])
 
   useEffect(() => {
     const supabase = createClient()
