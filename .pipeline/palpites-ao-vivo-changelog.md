@@ -3,7 +3,7 @@
 **Slug:** palpites-ao-vivo
 **Branch:** feature/palpites-ao-vivo
 **Data:** 2026-06-25
-**Status:** aguardando revisão
+**Status:** aguardando revisão (fix 1 aplicado)
 
 ---
 
@@ -57,9 +57,26 @@ Nenhuma migration ou policy nova — a feature usa exclusivamente tabelas existe
 
 ---
 
+---
+
+## Correções Fix 1
+
+### Problema corrigido
+
+**`useLayoutEffect` trocado por `useEffect` no `NextUpdateCountdown`** (`components/bolao/PalpitesRanking.tsx`, linha 314).
+
+`useLayoutEffect` é reservado para leituras e mutações síncronas do DOM antes da pintura do browser. Usar esse hook para configurar um `setInterval` (subscrição assíncrona) era semanticamente incorreto. Substituído por `useEffect`, que é o hook correto para efeitos colaterais com timers/subscrições.
+
+O `useLayoutEffect` na linha 44 (animação FLIP — leitura de `getBoundingClientRect` e aplicação de `transform` síncronos) permanece inalterado, pois seu uso é correto.
+
+O import do React foi atualizado para incluir `useEffect` ao lado de `useLayoutEffect` (ambos ainda usados no arquivo).
+
+---
+
 ## Commits realizados
 
 ```
+3bde48b fix(palpites-ao-vivo): substitui useLayoutEffect por useEffect no NextUpdateCountdown
 ec16814 feat(palpites-ao-vivo): adiciona item PALPITES na tab bar entre JOGOS e RANKING
 3c5d6ee feat(palpites-ao-vivo): cria página /palpites com server component e seção client
 6d88c78 feat(palpites-ao-vivo): cria componente PalpitesRanking com animação FLIP
