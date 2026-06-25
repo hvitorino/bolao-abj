@@ -35,7 +35,7 @@ export function PalpitesLiveSection({
         gap: '1rem',
       }}
     >
-      {/* Navegação por data — sticky no topo */}
+      {/* Navegação por data e cards — sticky no topo */}
       <div
         style={{
           position: 'sticky',
@@ -45,6 +45,9 @@ export function PalpitesLiveSection({
           paddingTop: '1.5rem',
           marginTop: '-1.5rem',
           paddingBottom: '0.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
         }}
       >
         <DateChipsNav
@@ -54,10 +57,8 @@ export function PalpitesLiveSection({
           guessCount={guessCount}
           basePath="/palpites"
         />
+        <PalpitesLiveCard todayGames={todayGames} loading={loading} />
       </div>
-
-      {/* Cards dos jogos do dia */}
-      <PalpitesLiveCard todayGames={todayGames} loading={loading} />
 
       {/* Ranking com animação FLIP e accordion de breakdown */}
       <PalpitesRanking
