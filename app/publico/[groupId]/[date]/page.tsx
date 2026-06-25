@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { createServiceClient } from '@/lib/supabase/service-server'
 import { isValidDateString } from '@/lib/date'
-import { ParticipantEntry } from '@/lib/types/participant'
+import { calculateLiveScore } from '@/lib/scoring'
+import type { LiveGameWithPrediction, RankingParticipantDetail, GameScoreEntry } from '@/lib/hooks/usePalpitesAoVivo'
 import type { ScoreBreakdown } from '@/lib/types/score'
-import type { PublicDateGame, ProfileEntry } from '@/lib/types/public-date'
-import PublicDateClient from './public-date-client'
+import PublicDateClient, { type PublicMember } from './public-date-client'
 
 export const revalidate = 0
 
@@ -28,68 +28,29 @@ export async function generateMetadata({ params }: PublicDatePageProps): Promise
   const count = games?.length ?? 0
   const [year, month, day] = date.split('-')
   const d = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)))
-  const formatted = d.toLocaleDateString('pt-BR', {
-    timeZone: 'UTC',
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  }).toUpperCase()
+  const formatted = d
+    .toLocaleDateString('pt-BR', {
+      timeZone: 'UTC',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    })
+    .toUpperCase()
 
   return {
     title: `${count} JOGO${count !== 1 ? 'S' : ''} · ${formatted} — Bolão da Copa`,
-    description: `Palpites e pontuação dos participantes do bolão`,
+    description: 'Palpites e pontuação dos participantes do bolão',
   }
 }
 
-export default async function PublicDatePage({ params }: PublicDatePageProps) {
-  const { groupId, date } = await params
+const MONO: React.CSSProperties = {
+  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+}
 
-  // Header público — aparece sempre, inclusive no estado de erro
-  const header = (
-    <header
-      style={{
-        backgroundColor: 'var(--color-surface)',
-        borderBottom: '1px solid var(--color-border)',
-        padding: '0.75rem 1rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-    >
-      <span
-        style={{
-          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-          fontSize: '13px',
-          fontWeight: 'bold',
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--color-accent)',
-        }}
-      >
-        BOLÃO DA COPA
-      </span>
-      <span
-        style={{
-          fontSize: '10px',
-          color: 'var(--color-muted)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-        }}
-      >
-        VISUALIZAÇÃO PÚBLICA
-      </span>
-    </header>
-  )
-
-  const errorContainer = (message: string, detail?: string) => (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: 'var(--color-bg)',
-        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-      }}
-    >
-      {header}
+function ErrorPage({ message, detail }: { message: string; detail?: string }) {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', ...MONO }}>
+      <PublicHeader />
       <main style={{ maxWidth: '480px', margin: '0 auto', padding: '1rem' }}>
         <div
           style={{
@@ -119,60 +80,97 @@ export default async function PublicDatePage({ params }: PublicDatePageProps) {
       </main>
     </div>
   )
+}
 
-  // Validação: groupId
+function PublicHeader() {
+  return (
+    <header
+      style={{
+        backgroundColor: 'var(--color-surface)',
+        borderBottom: '1px solid var(--color-border)',
+        padding: '0.75rem 1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
+    >
+      <span
+        style={{
+          ...MONO,
+          fontSize: '13px',
+          fontWeight: 'bold',
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          color: 'var(--color-accent)',
+        }}
+      >
+        BOLÃO DA COPA
+      </span>
+      <span
+        style={{
+          ...MONO,
+          fontSize: '10px',
+          color: 'var(--color-muted)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+        }}
+      >
+        VISUALIZAÇÃO PÚBLICA
+      </span>
+    </header>
+  )
+}
+
+export default async function PublicDatePage({ params }: PublicDatePageProps) {
+  const { groupId, date } = await params
+
   if (!groupId) {
-    return errorContainer(
-      '✗ PARÂMETRO DE GRUPO AUSENTE',
-      'Este link está incompleto. Peça ao participante que compartilhe o link novamente usando o botão "COPIAR LINK DO DIA" na aba de Palpites.'
+    return (
+      <ErrorPage
+        message="✗ PARÂMETRO DE GRUPO AUSENTE"
+        detail='Este link está incompleto. Peça ao participante que compartilhe o link usando o botão "COPIAR LINK DO DIA" na aba de Palpites.'
+      />
     )
   }
 
-  // Validação: date
   if (!isValidDateString(date)) {
-    return errorContainer(
-      '✗ DATA INVÁLIDA',
-      'O formato de data na URL não é válido. Use o formato YYYY-MM-DD.'
+    return (
+      <ErrorPage
+        message="✗ DATA INVÁLIDA"
+        detail="O formato de data na URL não é válido. Use o formato YYYY-MM-DD."
+      />
     )
   }
 
   const serviceClient = createServiceClient()
 
-  // 1. Buscar jogos da data
-  const { data: gamesRaw } = await serviceClient
+  // 1. Jogos da data
+  const { data: gamesData } = await serviceClient
     .from('games')
-    .select('id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,round,venue,match_date')
+    .select(
+      'id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date'
+    )
     .eq('match_day', date)
     .order('match_date', { ascending: true })
 
-  const games: PublicDateGame[] = (gamesRaw ?? []).map((g) => ({
-    id: g.id,
-    home_team: g.home_team,
-    away_team: g.away_team,
-    home_team_code: g.home_team_code,
-    away_team_code: g.away_team_code,
-    home_score: g.home_score,
-    away_score: g.away_score,
-    status: g.status as 'pending' | 'live' | 'finished',
-    round: g.round,
-    venue: g.venue,
-    match_date: g.match_date,
-  }))
+  const gamesRaw = gamesData ?? []
 
-  // 2. Buscar membros do grupo
+  // 2. Membros do grupo
   const { data: memberRows } = await serviceClient
     .from('group_members')
     .select('user_id, profiles(id, name)')
     .eq('group_id', groupId)
 
   if (!memberRows || memberRows.length === 0) {
-    return errorContainer(
-      '✗ GRUPO NÃO ENCONTRADO',
-      'O grupo informado não existe ou não possui participantes.'
+    return (
+      <ErrorPage
+        message="✗ GRUPO NÃO ENCONTRADO"
+        detail="O grupo informado não existe ou não possui participantes."
+      />
     )
   }
 
-  const profileList = (memberRows)
+  const members: PublicMember[] = (memberRows)
     .map((row) => {
       const raw = row.profiles as unknown
       const profile = Array.isArray(raw) ? raw[0] : raw
@@ -180,24 +178,12 @@ export default async function PublicDatePage({ params }: PublicDatePageProps) {
       const p = profile as { id: string; name: string }
       return { id: p.id, name: p.name }
     })
-    .filter((p): p is { id: string; name: string } => p !== null)
+    .filter((m): m is PublicMember => m !== null)
 
-  const participants: ProfileEntry[] = profileList.map((p) => ({
-    userId: p.id,
-    name: p.name,
-  }))
-
-  // Estado vazio: nenhum jogo nesta data
-  if (games.length === 0) {
+  if (gamesRaw.length === 0) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          backgroundColor: 'var(--color-bg)',
-          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-        }}
-      >
-        {header}
+      <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', ...MONO }}>
+        <PublicHeader />
         <main style={{ maxWidth: '480px', margin: '0 auto', padding: '1rem' }}>
           <div
             style={{
@@ -217,120 +203,164 @@ export default async function PublicDatePage({ params }: PublicDatePageProps) {
     )
   }
 
-  const gameIds = games.map((g) => g.id)
-  const pendingIds = games.filter((g) => g.status === 'pending').map((g) => g.id)
-  const liveOrFinishedIds = games.filter((g) => g.status !== 'pending').map((g) => g.id)
-  const finishedIds = games.filter((g) => g.status === 'finished').map((g) => g.id)
+  const liveOrFinishedIds = gamesRaw.filter((g) => g.status !== 'pending').map((g) => g.id)
+  const finishedIds = gamesRaw.filter((g) => g.status === 'finished').map((g) => g.id)
 
-  // 3. Buscar palpites com visibilidade condicional por status
-  // Para jogos pending: apenas existência (user_id, game_id)
-  const hasPredictionMap: Record<string, Set<string>> = {} // gameId → Set<userId>
-  const predByUserGame: Record<string, Record<string, { home_score: number; away_score: number }>> = {} // gameId → userId → pred
-
-  // Inicializar mapas para todos os jogos
-  for (const gameId of gameIds) {
-    hasPredictionMap[gameId] = new Set<string>()
-    predByUserGame[gameId] = {}
-  }
-
-  if (pendingIds.length > 0) {
-    const { data: existencePreds } = await serviceClient
-      .from('predictions')
-      .select('user_id, game_id')
-      .eq('group_id', groupId)
-      .in('game_id', pendingIds)
-
-    for (const p of existencePreds ?? []) {
-      hasPredictionMap[p.game_id]?.add(p.user_id)
-    }
-  }
-
+  // 3. Palpites (apenas jogos não-pending para não revelar antes do início)
+  const predByUserGame: Record<
+    string,
+    Record<string, { home_score: number; away_score: number }>
+  > = {}
   if (liveOrFinishedIds.length > 0) {
-    const { data: fullPreds } = await serviceClient
+    const { data: predsData } = await serviceClient
       .from('predictions')
-      .select('user_id, game_id, home_score, away_score')
+      .select('user_id,game_id,home_score,away_score')
       .eq('group_id', groupId)
       .in('game_id', liveOrFinishedIds)
-
-    for (const p of fullPreds ?? []) {
-      hasPredictionMap[p.game_id]?.add(p.user_id)
-      if (!predByUserGame[p.game_id]) predByUserGame[p.game_id] = {}
-      predByUserGame[p.game_id][p.user_id] = {
+    for (const p of predsData ?? []) {
+      if (!predByUserGame[p.user_id]) predByUserGame[p.user_id] = {}
+      predByUserGame[p.user_id][p.game_id] = {
         home_score: p.home_score,
         away_score: p.away_score,
       }
     }
   }
 
-  // 4. Buscar scores para jogos finished
-  const scoreByUserGame: Record<string, Record<string, { points: number; breakdown: ScoreBreakdown }>> = {}
-
+  // 4. Scores (jogos finalizados)
+  const scoreByUserGame: Record<
+    string,
+    Record<string, { points: number; breakdown: ScoreBreakdown }>
+  > = {}
   if (finishedIds.length > 0) {
-    const { data: scores } = await serviceClient
+    const { data: scoresData } = await serviceClient
       .from('scores')
-      .select('user_id, game_id, points, breakdown')
+      .select('user_id,game_id,points,breakdown')
       .eq('group_id', groupId)
       .in('game_id', finishedIds)
-
-    for (const s of scores ?? []) {
-      if (!scoreByUserGame[s.game_id]) scoreByUserGame[s.game_id] = {}
-      scoreByUserGame[s.game_id][s.user_id] = {
+    for (const s of scoresData ?? []) {
+      if (!scoreByUserGame[s.user_id]) scoreByUserGame[s.user_id] = {}
+      scoreByUserGame[s.user_id][s.game_id] = {
         points: s.points,
-        breakdown: s.breakdown,
+        breakdown: s.breakdown as ScoreBreakdown,
       }
     }
   }
 
-  // 5. Montar gameParticipants: Record<gameId, ParticipantEntry[]>
-  const initialGameParticipants: Record<string, ParticipantEntry[]> = {}
+  // 5. Construir initialGames (sem myPrediction — página pública não tem usuário logado)
+  const initialGames: LiveGameWithPrediction[] = gamesRaw.map((g) => ({
+    id: g.id,
+    home_team: g.home_team,
+    away_team: g.away_team,
+    home_team_code: g.home_team_code,
+    away_team_code: g.away_team_code,
+    home_score: g.home_score,
+    away_score: g.away_score,
+    status: g.status as 'pending' | 'live' | 'finished',
+    match_date: g.match_date,
+    myPrediction: null,
+  }))
 
-  for (const game of games) {
-    const predMap = predByUserGame[game.id] ?? {}
-    const hasPredSet = hasPredictionMap[game.id] ?? new Set<string>()
-    const scoreMap = scoreByUserGame[game.id] ?? {}
+  // 6. Construir initialRanking com pontos do dia
+  const todayPointsByUser: Record<string, number> = {}
+  const hasLiveByUser: Record<string, boolean> = {}
 
-    const entries: ParticipantEntry[] = profileList.map((profile): ParticipantEntry => {
-      const hasPrediction = hasPredSet.has(profile.id)
-      const prediction = game.status !== 'pending' ? (predMap[profile.id] ?? null) : null
-      const scoreEntry = prediction !== null && game.status === 'finished'
-        ? (scoreMap[profile.id] ?? null)
-        : null
+  for (const userId of members.map((m) => m.id)) {
+    const userScores = scoreByUserGame[userId] ?? {}
+    for (const s of Object.values(userScores)) {
+      todayPointsByUser[userId] = (todayPointsByUser[userId] ?? 0) + s.points
+    }
+  }
 
-      return {
-        userId: profile.id,
-        name: profile.name,
-        prediction,
-        points: scoreEntry?.points ?? null,
-        breakdown: scoreEntry?.breakdown ?? null,
-        hasPrediction,
+  const liveGames = gamesRaw.filter((g) => g.status === 'live')
+  for (const userId of members.map((m) => m.id)) {
+    const userPreds = predByUserGame[userId] ?? {}
+    for (const game of liveGames) {
+      const pred = userPreds[game.id]
+      if (!pred) continue
+      const result = calculateLiveScore(
+        { home_score: game.home_score, away_score: game.away_score },
+        { home_score: pred.home_score, away_score: pred.away_score }
+      )
+      if (result && result.points > 0) {
+        todayPointsByUser[userId] = (todayPointsByUser[userId] ?? 0) + result.points
+        hasLiveByUser[userId] = true
       }
-    })
+    }
+  }
 
-    // Ordenar: com palpite primeiro, desempate por nome
-    entries.sort((a, b) => {
-      if (a.hasPrediction !== b.hasPrediction) return a.hasPrediction ? -1 : 1
+  const ranked = members
+    .map((m) => ({
+      ...m,
+      total_points: todayPointsByUser[m.id] ?? 0,
+      hasLivePoints: hasLiveByUser[m.id] ?? false,
+    }))
+    .sort((a, b) => {
+      if (b.total_points !== a.total_points) return b.total_points - a.total_points
       return a.name.localeCompare(b.name, 'pt-BR')
     })
 
-    initialGameParticipants[game.id] = entries
-  }
+  let prevPoints: number | null = null
+  let prevRank = 0
+
+  const initialRanking: RankingParticipantDetail[] = ranked.map((item, index) => {
+    const rank_position =
+      prevPoints !== null && item.total_points === prevPoints ? prevRank : index + 1
+    prevRank = rank_position
+    prevPoints = item.total_points
+
+    const userPreds = predByUserGame[item.id] ?? {}
+    const userScores = scoreByUserGame[item.id] ?? {}
+
+    const userGames: GameScoreEntry[] = gamesRaw.map((g) => {
+      const pred = g.status !== 'pending' ? (userPreds[g.id] ?? null) : null
+      const score = userScores[g.id] ?? null
+
+      let livePoints: number | null = null
+      if (g.status === 'live' && pred) {
+        const result = calculateLiveScore(
+          { home_score: g.home_score, away_score: g.away_score },
+          { home_score: pred.home_score, away_score: pred.away_score }
+        )
+        livePoints = result?.points ?? null
+      }
+
+      return {
+        gameId: g.id,
+        home_team: g.home_team,
+        away_team: g.away_team,
+        home_team_code: g.home_team_code,
+        away_team_code: g.away_team_code,
+        home_score: g.home_score,
+        away_score: g.away_score,
+        status: g.status as 'pending' | 'live' | 'finished',
+        match_date: g.match_date,
+        userPrediction: pred,
+        officialPoints: score?.points ?? null,
+        officialBreakdown: score?.breakdown ?? null,
+        livePoints,
+      }
+    })
+
+    return {
+      userId: item.id,
+      name: item.name,
+      rank_position,
+      total_points: item.total_points,
+      hasLivePoints: item.hasLivePoints,
+      games: userGames,
+    }
+  })
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: 'var(--color-bg)',
-        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-      }}
-    >
-      {header}
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', ...MONO }}>
+      <PublicHeader />
       <main style={{ maxWidth: '480px', margin: '0 auto', padding: '1rem' }}>
         <PublicDateClient
           groupId={groupId}
           date={date}
-          initialGames={games}
-          initialParticipants={participants}
-          initialGameParticipants={initialGameParticipants}
+          initialGames={initialGames}
+          initialRanking={initialRanking}
+          members={members}
         />
       </main>
     </div>
