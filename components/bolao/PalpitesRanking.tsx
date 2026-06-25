@@ -1,6 +1,6 @@
 'use client'
 
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { PalpitesRankingRow } from './PalpitesRankingRow'
 import type { RankingParticipantDetail, LiveGameWithPrediction } from '@/lib/hooks/usePalpitesAoVivo'
 
@@ -311,7 +311,7 @@ function NextUpdateCountdown({
 }) {
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!lastPolledAt) return
 
     const tick = () => {
