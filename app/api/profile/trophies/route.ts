@@ -609,8 +609,7 @@ async function calcNegativeTrophies(
       .eq('user_id', userId)
       .eq('group_id', groupId)
       .eq('games.status', 'finished')
-      .order('games.match_date', { ascending: true })
-      .limit(50),
+      .order('games.match_date', { ascending: true }),
 
     // ultima_hora: predictions com submitted_at e match_date
     sc
