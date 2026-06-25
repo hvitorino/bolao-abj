@@ -9,6 +9,7 @@ const FONT = "'JetBrains Mono', 'Courier New', monospace"
 const MAIN_ITEMS = [
   { href: '/perfil', label: 'EU' },
   { href: '/jogos', label: 'JOGOS' },
+  { href: '/palpites', label: 'PALPITES' },
   { href: '/ranking', label: 'RANKING' },
 ]
 
@@ -45,9 +46,9 @@ export function TabBar() {
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: FONT,
-    fontSize: '13px',
+    fontSize: '12px',
     textTransform: 'uppercase',
-    letterSpacing: '0.05em',
+    letterSpacing: '0.04em',
     textDecoration: 'none',
     border: 'none',
     background: 'none',
