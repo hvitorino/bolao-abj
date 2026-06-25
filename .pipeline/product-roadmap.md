@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 69 features
-- Concluídas: 68
+- Concluídas: 69
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -898,7 +898,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 69. public-date-view — Página Pública por Data — pendente
+### 69. public-date-view — Página Pública por Data — concluída
 **Objetivo:** Criar uma página pública (sem autenticação) que exibe todos os palpites de todos os participantes de um grupo para os jogos de uma data específica, com a pontuação acumulada de cada participante naquele dia, atualizando em tempo real conforme os jogos são finalizados — análoga ao link público por jogo já existente, mas com escopo de uma data inteira.
 **Critérios de sucesso:**
 - Existe uma URL pública (sem autenticação) acessível por qualquer pessoa no formato `/publico/[groupId]/[date]` (ou equivalente) que exiba os palpites de todos os participantes para os jogos daquela data
