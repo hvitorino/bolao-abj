@@ -51,31 +51,33 @@ function ErrorPage({ message, detail }: { message: string; detail?: string }) {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', ...MONO }}>
       <PublicHeader />
-      <main style={{ maxWidth: '480px', margin: '0 auto', padding: '1rem' }}>
-        <div
-          style={{
-            border: '1px solid var(--color-error)',
-            backgroundColor: 'var(--color-surface)',
-            padding: '1.5rem',
-            fontSize: '13px',
-          }}
-        >
+      <main style={{ padding: '1.5rem' }}>
+        <div style={{ maxWidth: '960px', margin: '0 auto' }}>
           <div
             style={{
-              color: 'var(--color-error)',
-              textTransform: 'uppercase',
-              fontWeight: 'bold',
-              letterSpacing: '0.08em',
-              marginBottom: detail ? '0.75rem' : 0,
+              border: '1px solid var(--color-error)',
+              backgroundColor: 'var(--color-surface)',
+              padding: '1.5rem',
+              fontSize: '13px',
             }}
           >
-            {message}
-          </div>
-          {detail && (
-            <div style={{ color: 'var(--color-muted)', fontSize: '12px', lineHeight: 1.5 }}>
-              {detail}
+            <div
+              style={{
+                color: 'var(--color-error)',
+                textTransform: 'uppercase',
+                fontWeight: 'bold',
+                letterSpacing: '0.08em',
+                marginBottom: detail ? '0.75rem' : 0,
+              }}
+            >
+              {message}
             </div>
-          )}
+            {detail && (
+              <div style={{ color: 'var(--color-muted)', fontSize: '12px', lineHeight: 1.5 }}>
+                {detail}
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>
@@ -88,35 +90,46 @@ function PublicHeader() {
       style={{
         backgroundColor: 'var(--color-surface)',
         borderBottom: '1px solid var(--color-border)',
-        padding: '0.75rem 1rem',
+        padding: '0 1.5rem',
+        height: '44px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
       }}
     >
-      <span
+      <div
         style={{
-          ...MONO,
-          fontSize: '13px',
-          fontWeight: 'bold',
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--color-accent)',
+          maxWidth: '960px',
+          margin: '0 auto',
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}
       >
-        BOLÃO DA COPA
-      </span>
-      <span
-        style={{
-          ...MONO,
-          fontSize: '10px',
-          color: 'var(--color-muted)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-        }}
-      >
-        VISUALIZAÇÃO PÚBLICA
-      </span>
+        <span
+          style={{
+            ...MONO,
+            fontSize: '13px',
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            color: 'var(--color-accent)',
+          }}
+        >
+          BOLÃO DA COPA
+        </span>
+        <span
+          style={{
+            ...MONO,
+            fontSize: '10px',
+            color: 'var(--color-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+          }}
+        >
+          VISUALIZAÇÃO PÚBLICA
+        </span>
+      </div>
     </header>
   )
 }
@@ -184,19 +197,21 @@ export default async function PublicDatePage({ params }: PublicDatePageProps) {
     return (
       <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', ...MONO }}>
         <PublicHeader />
-        <main style={{ maxWidth: '480px', margin: '0 auto', padding: '1rem' }}>
-          <div
-            style={{
-              border: '1px solid var(--color-border)',
-              backgroundColor: 'var(--color-surface)',
-              padding: '1.5rem',
-              fontSize: '12px',
-              color: 'var(--color-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-            }}
-          >
-            NENHUM JOGO NESTA DATA
+        <main style={{ padding: '1.5rem' }}>
+          <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+            <div
+              style={{
+                border: '1px solid var(--color-border)',
+                backgroundColor: 'var(--color-surface)',
+                padding: '1.5rem',
+                fontSize: '12px',
+                color: 'var(--color-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+              }}
+            >
+              NENHUM JOGO NESTA DATA
+            </div>
           </div>
         </main>
       </div>
@@ -354,14 +369,16 @@ export default async function PublicDatePage({ params }: PublicDatePageProps) {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-bg)', ...MONO }}>
       <PublicHeader />
-      <main style={{ maxWidth: '480px', margin: '0 auto', padding: '1rem' }}>
-        <PublicDateClient
-          groupId={groupId}
-          date={date}
-          initialGames={initialGames}
-          initialRanking={initialRanking}
-          members={members}
-        />
+      <main style={{ padding: '1.5rem' }}>
+        <div style={{ maxWidth: '960px', margin: '0 auto' }}>
+          <PublicDateClient
+            groupId={groupId}
+            date={date}
+            initialGames={initialGames}
+            initialRanking={initialRanking}
+            members={members}
+          />
+        </div>
       </main>
     </div>
   )
