@@ -603,13 +603,13 @@ async function calcNegativeTrophies(
     diaRuimRes,
   ] = await Promise.all([
     // placar_espelhado: buscar predictions com join em games
+    // Nota: .order('games.match_date') gera sintaxe inválida no PostgREST — ordenamos no JS abaixo.
     sc
       .from('predictions')
       .select('game_id, home_score, away_score, games!inner(home_team_code, away_team_code, home_score, away_score, match_date, status)')
       .eq('user_id', userId)
       .eq('group_id', groupId)
-      .eq('games.status', 'finished')
-      .order('games.match_date', { ascending: true }),
+      .eq('games.status', 'finished'),
 
     // ultima_hora: predictions com submitted_at e match_date
     sc
@@ -670,18 +670,21 @@ async function calcNegativeTrophies(
       if (!g) continue
       const gameHome = g.home_score as number
       const gameAway = g.away_score as number
+      const matchDate = g.match_date as string
       // Excluir empates (mesmos placares nos dois lados = não há "lado trocado")
       if (gameHome === gameAway) continue
       if (predHome === gameAway && predAway === gameHome) {
-        espelhadoAt = g.match_date as string
-        espelhadoGames = [{
-          game_id: row.game_id as string,
-          home_team_code: g.home_team_code as string,
-          away_team_code: g.away_team_code as string,
-          home_score: gameHome,
-          away_score: gameAway,
-        }]
-        break
+        // Guardar o espelhado mais antigo por match_date
+        if (!espelhadoAt || matchDate < espelhadoAt) {
+          espelhadoAt = matchDate
+          espelhadoGames = [{
+            game_id: row.game_id as string,
+            home_team_code: g.home_team_code as string,
+            away_team_code: g.away_team_code as string,
+            home_score: gameHome,
+            away_score: gameAway,
+          }]
+        }
       }
     }
   }
