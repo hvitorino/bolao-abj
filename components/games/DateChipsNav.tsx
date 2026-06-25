@@ -8,6 +8,7 @@ interface DateChipsNavProps {
   availableDates: string[] // YYYY-MM-DD[] ordenado ASC — datas com pelo menos 1 jogo
   gameCount: number        // total de jogos no dia atual (exibido abaixo da faixa)
   guessCount: number       // palpites do usuário no dia atual (exibido abaixo da faixa)
+  basePath?: string        // rota base para navegação (padrão: '/jogos')
 }
 
 // Formata data para exibição abreviada no chip
@@ -24,6 +25,7 @@ export default function DateChipsNav({
   availableDates,
   gameCount,
   guessCount,
+  basePath = '/jogos',
 }: DateChipsNavProps) {
   const router = useRouter()
   const activeChipRef = useRef<HTMLButtonElement>(null)
@@ -34,10 +36,10 @@ export default function DateChipsNav({
     if ('startViewTransition' in document) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ;(document as any).startViewTransition(() => {
-        startTransition(() => router.push(`/jogos?date=${date}`))
+        startTransition(() => router.push(`${basePath}?date=${date}`))
       })
     } else {
-      startTransition(() => router.push(`/jogos?date=${date}`))
+      startTransition(() => router.push(`${basePath}?date=${date}`))
     }
   }
 

@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { calculateLiveScore } from '@/lib/scoring'
-import { todayInBrasilia } from '@/lib/date'
 import type { ScoreBreakdown } from '@/lib/types/score'
 import type { RankingEntry } from '@/lib/types/ranking'
 
@@ -120,7 +119,8 @@ function sortRanking(
 
 export function usePalpitesAoVivo(
   groupId: string,
-  currentUserId: string
+  currentUserId: string,
+  selectedDate: string
 ): UsePalpitesAoVivoResult {
   const [todayGames, setTodayGames] = useState<LiveGameWithPrediction[]>([])
   const [rankingWithDetails, setRankingWithDetails] = useState<RankingParticipantDetail[]>([])
@@ -141,13 +141,11 @@ export function usePalpitesAoVivo(
       const { data: sessionData } = await supabase.auth.getSession()
       const token = sessionData.session?.access_token
 
-      // 2. Buscar todos os jogos de hoje usando match_day (mesmo critério da aba Jogos)
-      const today = todayInBrasilia()
-
+      // 2. Buscar todos os jogos do dia selecionado (mesmo critério da aba Jogos)
       const { data: gamesData, error: gamesError } = await supabase
         .from('games')
         .select('id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date')
-        .eq('match_day', today)
+        .eq('match_day', selectedDate)
         .order('match_date', { ascending: true })
 
       if (gamesError) throw new Error(`jogos: ${gamesError.message}`)
@@ -361,7 +359,7 @@ export function usePalpitesAoVivo(
       clearInterval(interval)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupId, currentUserId])
+  }, [groupId, currentUserId, selectedDate])
 
   return { todayGames, rankingWithDetails, loading, error, lastPolledAt }
 }

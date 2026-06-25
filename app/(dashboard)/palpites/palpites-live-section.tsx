@@ -3,22 +3,29 @@
 import { usePalpitesAoVivo } from '@/lib/hooks/usePalpitesAoVivo'
 import { PalpitesLiveCard } from '@/components/bolao/PalpitesLiveCard'
 import { PalpitesRanking } from '@/components/bolao/PalpitesRanking'
+import DateChipsNav from '@/components/games/DateChipsNav'
 
 interface PalpitesLiveSectionProps {
   groupId: string
   currentUserId: string
+  selectedDate: string
+  availableDates: string[]
 }
 
-/**
- * Orquestra a aba de palpites ao vivo.
- * Instancia o hook de polling uma única vez e distribui os dados
- * para PalpitesLiveCard (sticky) e PalpitesRanking (FLIP).
- */
-export function PalpitesLiveSection({ groupId, currentUserId }: PalpitesLiveSectionProps) {
+export function PalpitesLiveSection({
+  groupId,
+  currentUserId,
+  selectedDate,
+  availableDates,
+}: PalpitesLiveSectionProps) {
   const { todayGames, rankingWithDetails, loading, error } = usePalpitesAoVivo(
     groupId,
-    currentUserId
+    currentUserId,
+    selectedDate
   )
+
+  const gameCount = todayGames.length
+  const guessCount = todayGames.filter((g) => g.myPrediction !== null).length
 
   return (
     <div
@@ -28,18 +35,29 @@ export function PalpitesLiveSection({ groupId, currentUserId }: PalpitesLiveSect
         gap: '1rem',
       }}
     >
-      {/* Cards dos jogos de hoje — sticky no topo */}
+      {/* Navegação por data — sticky no topo */}
       <div
         style={{
           position: 'sticky',
           top: 'calc(44px + env(safe-area-inset-top))',
-          zIndex: 10,
+          zIndex: 20,
           backgroundColor: 'var(--color-bg)',
+          paddingTop: '1.5rem',
+          marginTop: '-1.5rem',
           paddingBottom: '0.5rem',
         }}
       >
-        <PalpitesLiveCard todayGames={todayGames} loading={loading} />
+        <DateChipsNav
+          currentDate={selectedDate}
+          availableDates={availableDates}
+          gameCount={gameCount}
+          guessCount={guessCount}
+          basePath="/palpites"
+        />
       </div>
+
+      {/* Cards dos jogos do dia */}
+      <PalpitesLiveCard todayGames={todayGames} loading={loading} />
 
       {/* Ranking com animação FLIP e accordion de breakdown */}
       <PalpitesRanking

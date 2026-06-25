@@ -32,16 +32,23 @@ export function PalpitesLiveCard({ todayGames, loading }: PalpitesLiveCardProps)
   return (
     <div
       style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'center',
-        gap: '0.75rem 1.25rem',
-        padding: '0.25rem 0',
+        border: '1px solid var(--color-border)',
+        backgroundColor: 'var(--color-surface)',
+        padding: '0.6rem 0.75rem',
       }}
     >
-      {todayGames.map((game) => (
-        <GameItem key={game.id} game={game} />
-      ))}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: '0.75rem 1.25rem',
+        }}
+      >
+        {todayGames.map((game) => (
+          <GameItem key={game.id} game={game} />
+        ))}
+      </div>
     </div>
   )
 }
