@@ -1,7 +1,6 @@
 'use client'
 
 import { useId } from 'react'
-import { getTeamFlag } from '@/lib/utils/teamFlag'
 import { BREAKDOWN_LABELS } from '@/lib/scoring'
 import type { RankingParticipantDetail, GameScoreEntry } from '@/lib/hooks/usePalpitesAoVivo'
 import type { ScoreBreakdown } from '@/lib/types/score'
@@ -213,20 +212,6 @@ function RuleGroupLine({ group }: { group: RuleGroup }) {
         overflow: 'hidden',
       }}
     >
-      {/* Jogos onde a regra foi atingida */}
-      {group.games.map((g, i) => (
-        <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.15rem', flexShrink: 0 }}>
-          {i > 0 && <span style={{ color: 'var(--color-border)', margin: '0 0.1rem' }}>|</span>}
-          <span style={{ fontSize: '12px' }}>{getTeamFlag(g.home_team_code)}</span>
-          <span style={{ color: 'var(--color-text)', fontWeight: 'bold' }}>{g.home_team_code}</span>
-          <span style={{ color: 'var(--color-accent)' }}>
-            {g.predHome}×{g.predAway}
-          </span>
-          <span style={{ color: 'var(--color-text)', fontWeight: 'bold' }}>{g.away_team_code}</span>
-          <span style={{ fontSize: '12px' }}>{getTeamFlag(g.away_team_code)}</span>
-        </span>
-      ))}
-
       {/* Nome da regra */}
       <span style={{ color: 'var(--color-muted)', flexShrink: 0 }}>{group.label}</span>
 
@@ -242,9 +227,6 @@ function RuleGroupLine({ group }: { group: RuleGroup }) {
 // --------------------------------------------------------------------------
 
 function LiveGameLine({ game }: { game: GameScoreEntry }) {
-  const homeFlag = getTeamFlag(game.home_team_code)
-  const awayFlag = getTeamFlag(game.away_team_code)
-  const pred = game.userPrediction!
 
   return (
     <div
@@ -261,13 +243,6 @@ function LiveGameLine({ game }: { game: GameScoreEntry }) {
       }}
     >
       <span style={{ color: 'var(--color-live)', flexShrink: 0 }}>AO VIVO*</span>
-      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.15rem', flexShrink: 0 }}>
-        <span style={{ fontSize: '12px' }}>{homeFlag}</span>
-        <span style={{ color: 'var(--color-text)', fontWeight: 'bold' }}>{game.home_team_code}</span>
-        <span style={{ color: 'var(--color-live)' }}>{pred.home_score}×{pred.away_score}</span>
-        <span style={{ color: 'var(--color-text)', fontWeight: 'bold' }}>{game.away_team_code}</span>
-        <span style={{ fontSize: '12px' }}>{awayFlag}</span>
-      </span>
       <span style={{ color: 'var(--color-live)', fontWeight: 'bold', flexShrink: 0 }}>
         {game.livePoints !== null ? `+${game.livePoints}` : '+?'}
       </span>
