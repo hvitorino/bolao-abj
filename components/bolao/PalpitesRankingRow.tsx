@@ -42,6 +42,9 @@ export function PalpitesRankingRow({
     }
   }
 
+  const ruleGroups = buildRuleGroups(participant.games)
+  const liveGames = participant.games.filter((g) => g.status === 'live' && g.userPrediction)
+
   return (
     <div
       style={{
@@ -143,26 +146,32 @@ export function PalpitesRankingRow({
           style={{
             backgroundColor: 'var(--color-bg)',
             borderTop: '1px solid var(--color-border)',
+            padding: '0.35rem 3.5rem 0.35rem 0.75rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.2rem',
           }}
         >
-          {participant.games
-            .filter((g) => g.status === 'live' || g.status === 'finished')
-            .map((game) => (
-              <GameBreakdownLine key={game.gameId} game={game} />
-            ))}
+          {/* Regras de pontuação atingidas (jogos finalizados) */}
+          {ruleGroups.map((group) => (
+            <RuleGroupLine key={group.key} group={group} />
+          ))}
 
-          {participant.games.filter((g) => g.status === 'live' || g.status === 'finished')
-            .length === 0 && (
+          {/* Jogos ao vivo com pontuação provisória */}
+          {liveGames.map((game) => (
+            <LiveGameLine key={game.gameId} game={game} />
+          ))}
+
+          {ruleGroups.length === 0 && liveGames.length === 0 && (
             <div
               style={{
-                padding: '0.5rem 0.75rem',
-                fontSize: '11px',
+                fontSize: '13px',
                 color: 'var(--color-muted)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
               }}
             >
-              NENHUM JOGO DISPUTADO
+              NENHUM PONTO CONQUISTADO HOJE
             </div>
           )}
         </div>
@@ -171,132 +180,133 @@ export function PalpitesRankingRow({
   )
 }
 
-function GameBreakdownLine({ game }: { game: GameScoreEntry }) {
-  const homeFlag = getTeamFlag(game.home_team_code)
-  const awayFlag = getTeamFlag(game.away_team_code)
+// --------------------------------------------------------------------------
+// Linha de regra de pontuação agrupada
+// --------------------------------------------------------------------------
 
-  const isLive = game.status === 'live'
-  const hasPrediction = game.userPrediction !== null
+interface RuleGame {
+  home_team_code: string
+  away_team_code: string
+  predHome: number
+  predAway: number
+}
 
-  // Pontos efetivos para exibir
-  const effectivePoints = isLive ? game.livePoints : game.officialPoints
-  const effectiveBreakdown: ScoreBreakdown | null = isLive ? null : game.officialBreakdown
+interface RuleGroup {
+  key: keyof ScoreBreakdown
+  label: string
+  totalPoints: number
+  games: RuleGame[]
+}
 
-  // Cores
-  const pointsColor = isLive
-    ? 'var(--color-live)'
-    : effectivePoints !== null && effectivePoints > 0
-      ? 'var(--color-accent)'
-      : 'var(--color-muted)'
-
+function RuleGroupLine({ group }: { group: RuleGroup }) {
   return (
     <div
       style={{
-        borderBottom: '1px solid var(--color-border)',
-        padding: '0.4rem 0.75rem',
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-        fontSize: '11px',
+        fontSize: '13px',
+        display: 'flex',
+        alignItems: 'center',
+        flexWrap: 'nowrap',
+        justifyContent: 'flex-end',
+        gap: '0.25rem',
+        lineHeight: 1.6,
+        overflow: 'hidden',
       }}
     >
-      {/* Linha do jogo: palpite + pontos */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '0.5rem',
-        }}
-      >
-        {/* Palpite do participante (ou placeholder) */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-            overflow: 'hidden',
-          }}
-        >
-          <span style={{ fontSize: '13px', flexShrink: 0 }}>{homeFlag}</span>
-          <span style={{ color: 'var(--color-text)', fontWeight: 'bold', flexShrink: 0 }}>
-            {game.home_team_code}
+      {/* Jogos onde a regra foi atingida */}
+      {group.games.map((g, i) => (
+        <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.15rem', flexShrink: 0 }}>
+          {i > 0 && <span style={{ color: 'var(--color-border)', margin: '0 0.1rem' }}>|</span>}
+          <span style={{ fontSize: '12px' }}>{getTeamFlag(g.home_team_code)}</span>
+          <span style={{ color: 'var(--color-text)', fontWeight: 'bold' }}>{g.home_team_code}</span>
+          <span style={{ color: 'var(--color-accent)' }}>
+            {g.predHome}×{g.predAway}
           </span>
-          {hasPrediction ? (
-            <span style={{ color: 'var(--color-accent)', fontWeight: 'bold', flexShrink: 0 }}>
-              {game.userPrediction!.home_score} × {game.userPrediction!.away_score}
-            </span>
-          ) : (
-            <span style={{ color: 'var(--color-muted)', flexShrink: 0 }}>— × —</span>
-          )}
-          <span style={{ color: 'var(--color-text)', fontWeight: 'bold', flexShrink: 0 }}>
-            {game.away_team_code}
-          </span>
-          <span style={{ fontSize: '13px', flexShrink: 0 }}>{awayFlag}</span>
-        </div>
+          <span style={{ color: 'var(--color-text)', fontWeight: 'bold' }}>{g.away_team_code}</span>
+          <span style={{ fontSize: '12px' }}>{getTeamFlag(g.away_team_code)}</span>
+        </span>
+      ))}
 
-        {/* Pontos */}
-        <div
-          style={{
-            color: pointsColor,
-            fontWeight: 'bold',
-            flexShrink: 0,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {hasPrediction ? (
-            <>
-              {effectivePoints !== null ? `+${effectivePoints}` : '—'} PTS
-              {isLive && <span style={{ color: 'var(--color-live)' }}>*</span>}
-            </>
-          ) : (
-            <span style={{ color: 'var(--color-error)' }}>SEM PALPITE</span>
-          )}
-        </div>
-      </div>
+      {/* Nome da regra */}
+      <span style={{ color: 'var(--color-muted)', flexShrink: 0 }}>{group.label}</span>
 
-      {/* Breakdown textual (apenas jogos finished com pontos > 0) */}
-      {!isLive && effectiveBreakdown && effectivePoints !== null && effectivePoints > 0 && (
-        <div
-          style={{
-            marginTop: '0.2rem',
-            fontSize: '10px',
-            color: 'var(--color-muted)',
-            letterSpacing: '0.03em',
-          }}
-        >
-          {buildBreakdownText(effectiveBreakdown)}
-        </div>
-      )}
-
-      {/* Para jogos live com palpite: indicador provisório */}
-      {isLive && hasPrediction && (
-        <div
-          style={{
-            marginTop: '0.2rem',
-            fontSize: '10px',
-            color: 'var(--color-live)',
-            letterSpacing: '0.03em',
-          }}
-        >
-          PONTUAÇÃO PROVISÓRIA
-        </div>
-      )}
+      <span style={{ color: 'var(--color-accent)', fontWeight: 'bold', flexShrink: 0 }}>
+        +{group.totalPoints}
+      </span>
     </div>
   )
 }
 
-/**
- * Monta string de breakdown exibindo apenas componentes com valor > 0.
- * Ex: "Acertou o vencedor +3 · Placar exato +5"
- */
-function buildBreakdownText(breakdown: ScoreBreakdown): string {
-  const parts: string[] = []
+// --------------------------------------------------------------------------
+// Linha de jogo ao vivo (pontuação provisória)
+// --------------------------------------------------------------------------
 
-  for (const key of Object.keys(BREAKDOWN_LABELS) as Array<keyof ScoreBreakdown>) {
-    const pts = breakdown[key]
-    if (pts > 0) {
-      parts.push(`${BREAKDOWN_LABELS[key]} +${pts}`)
+function LiveGameLine({ game }: { game: GameScoreEntry }) {
+  const homeFlag = getTeamFlag(game.home_team_code)
+  const awayFlag = getTeamFlag(game.away_team_code)
+  const pred = game.userPrediction!
+
+  return (
+    <div
+      style={{
+        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+        fontSize: '13px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.25rem',
+        flexWrap: 'nowrap',
+        justifyContent: 'flex-end',
+        lineHeight: 1.6,
+        overflow: 'hidden',
+      }}
+    >
+      <span style={{ color: 'var(--color-live)', flexShrink: 0 }}>AO VIVO*</span>
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.15rem', flexShrink: 0 }}>
+        <span style={{ fontSize: '12px' }}>{homeFlag}</span>
+        <span style={{ color: 'var(--color-text)', fontWeight: 'bold' }}>{game.home_team_code}</span>
+        <span style={{ color: 'var(--color-live)' }}>{pred.home_score}×{pred.away_score}</span>
+        <span style={{ color: 'var(--color-text)', fontWeight: 'bold' }}>{game.away_team_code}</span>
+        <span style={{ fontSize: '12px' }}>{awayFlag}</span>
+      </span>
+      <span style={{ color: 'var(--color-live)', fontWeight: 'bold', flexShrink: 0 }}>
+        {game.livePoints !== null ? `+${game.livePoints}` : '+?'}
+      </span>
+    </div>
+  )
+}
+
+// --------------------------------------------------------------------------
+// Agrupamento por regra de pontuação
+// --------------------------------------------------------------------------
+
+function buildRuleGroups(games: GameScoreEntry[]): RuleGroup[] {
+  const ruleMap = new Map<keyof ScoreBreakdown, RuleGroup>()
+
+  for (const game of games) {
+    if (game.status !== 'finished' || !game.officialBreakdown || !game.userPrediction) continue
+    const breakdown = game.officialBreakdown
+
+    for (const key of Object.keys(BREAKDOWN_LABELS) as Array<keyof ScoreBreakdown>) {
+      const pts = breakdown[key]
+      if (!pts || pts <= 0) continue
+
+      if (!ruleMap.has(key)) {
+        ruleMap.set(key, { key, label: BREAKDOWN_LABELS[key], totalPoints: 0, games: [] })
+      }
+
+      const group = ruleMap.get(key)!
+      group.totalPoints += pts
+      group.games.push({
+        home_team_code: game.home_team_code,
+        away_team_code: game.away_team_code,
+        predHome: game.userPrediction.home_score,
+        predAway: game.userPrediction.away_score,
+      })
     }
   }
 
-  return parts.join(' · ')
+  // Preserva a ordem definida em BREAKDOWN_LABELS
+  return (Object.keys(BREAKDOWN_LABELS) as Array<keyof ScoreBreakdown>)
+    .filter((key) => ruleMap.has(key))
+    .map((key) => ruleMap.get(key)!)
 }

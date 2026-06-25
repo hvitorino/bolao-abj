@@ -8,46 +8,23 @@ const MONO: React.CSSProperties = {
 }
 
 interface PalpitesLiveCardProps {
-  liveGames: LiveGameWithPrediction[]
+  todayGames: LiveGameWithPrediction[]
   loading: boolean
 }
 
-export function PalpitesLiveCard({ liveGames, loading }: PalpitesLiveCardProps) {
+export function PalpitesLiveCard({ todayGames, loading }: PalpitesLiveCardProps) {
   if (loading) {
     return (
-      <div
-        style={{
-          ...MONO,
-          padding: '0.75rem',
-          fontSize: '11px',
-          color: 'var(--color-muted)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          border: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-surface)',
-        }}
-      >
+      <div style={{ ...MONO, padding: '0.5rem', fontSize: '10px', color: 'var(--color-muted)', textAlign: 'center' }}>
         CARREGANDO...
       </div>
     )
   }
 
-  if (liveGames.length === 0) {
+  if (todayGames.length === 0) {
     return (
-      <div
-        style={{
-          ...MONO,
-          padding: '0.75rem 1rem',
-          fontSize: '11px',
-          color: 'var(--color-muted)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          border: '1px solid var(--color-border)',
-          backgroundColor: 'var(--color-surface)',
-          textAlign: 'center',
-        }}
-      >
-        NENHUM JOGO AO VIVO NO MOMENTO
+      <div style={{ ...MONO, padding: '0.5rem', fontSize: '10px', color: 'var(--color-muted)', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        NENHUM JOGO HOJE
       </div>
     )
   }
@@ -56,173 +33,93 @@ export function PalpitesLiveCard({ liveGames, loading }: PalpitesLiveCardProps) 
     <div
       style={{
         display: 'flex',
-        gap: '0.75rem',
-        overflowX: liveGames.length >= 2 ? 'auto' : undefined,
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: '0.75rem 1.25rem',
+        padding: '0.25rem 0',
       }}
     >
-      {liveGames.map((game) => (
-        <LiveGameCard key={game.id} game={game} />
+      {todayGames.map((game) => (
+        <GameItem key={game.id} game={game} />
       ))}
     </div>
   )
 }
 
-function LiveGameCard({ game }: { game: LiveGameWithPrediction }) {
+function GameItem({ game }: { game: LiveGameWithPrediction }) {
   const homeFlag = getTeamFlag(game.home_team_code)
   const awayFlag = getTeamFlag(game.away_team_code)
 
-  const scoreHome = game.home_score ?? '-'
-  const scoreAway = game.away_score ?? '-'
+  const isLive = game.status === 'live'
+  const isFinished = game.status === 'finished'
+  const isPending = game.status === 'pending'
+
+  const statusLabel = isLive ? '██ AO VIVO' : isFinished ? 'ENC' : formatMatchTime(game.match_date)
+  const statusColor = isLive ? 'var(--color-live)' : 'var(--color-muted)'
+
+  const realScore = isPending ? '—×—' : `${game.home_score ?? '?'}×${game.away_score ?? '?'}`
+  const predScore = game.myPrediction
+    ? `${game.myPrediction.home_score}×${game.myPrediction.away_score}`
+    : '—'
 
   return (
     <div
       style={{
         ...MONO,
-        border: '1px solid var(--color-border)',
-        backgroundColor: 'var(--color-surface)',
-        minWidth: '260px',
-        flexShrink: 0,
-        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '0.1rem',
+        opacity: isPending ? 0.65 : 1,
       }}
     >
-      {/* Cabeçalho: badge AO VIVO + times */}
-      <div
+      {/* Status */}
+      <span
         style={{
-          borderBottom: '1px solid var(--color-border)',
-          padding: '0.4rem 0.75rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
+          fontSize: '9px',
+          color: statusColor,
+          fontWeight: 'bold',
+          letterSpacing: '0.05em',
+          textTransform: 'uppercase',
+          animation: isLive ? 'blink 1s step-end infinite' : undefined,
         }}
       >
+        {statusLabel}
+      </span>
+
+      {/* Placar real: 🏴 2×1 🏴 */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+        <span style={{ fontSize: '14px', lineHeight: 1 }}>{homeFlag}</span>
         <span
           style={{
-            fontSize: '10px',
-            color: 'var(--color-live)',
-            animation: 'blink 1s step-end infinite',
+            fontSize: '13px',
             fontWeight: 'bold',
-            letterSpacing: '0.05em',
+            color: isPending ? 'var(--color-muted)' : 'var(--color-accent)',
           }}
         >
-          ██ AO VIVO ██
+          {realScore}
         </span>
-        <span
-          style={{
-            fontSize: '11px',
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          {game.home_team_code} × {game.away_team_code}
-        </span>
+        <span style={{ fontSize: '14px', lineHeight: 1 }}>{awayFlag}</span>
       </div>
 
-      {/* Placar real */}
-      <div
+      {/* Palpite: só o placar, sem bandeiras */}
+      <span
         style={{
-          borderBottom: '1px solid var(--color-border)',
-          padding: '0.5rem 0.75rem',
+          fontSize: '10px',
+          color: game.myPrediction ? 'var(--color-text)' : 'var(--color-error)',
+          opacity: 0.7,
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem',
-          }}
-        >
-          <span style={{ fontSize: '13px' }}>{homeFlag}</span>
-          <span style={{ fontSize: '11px', color: 'var(--color-text)', fontWeight: 'bold' }}>
-            {game.home_team_code}
-          </span>
-          <span
-            style={{
-              fontSize: '24px',
-              fontWeight: 'bold',
-              color: 'var(--color-accent)',
-              minWidth: '3.5rem',
-              textAlign: 'center',
-            }}
-          >
-            {scoreHome} × {scoreAway}
-          </span>
-          <span style={{ fontSize: '11px', color: 'var(--color-text)', fontWeight: 'bold' }}>
-            {game.away_team_code}
-          </span>
-          <span style={{ fontSize: '13px' }}>{awayFlag}</span>
-        </div>
-        <div
-          style={{
-            textAlign: 'center',
-            fontSize: '10px',
-            color: 'var(--color-muted)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            marginTop: '0.2rem',
-          }}
-        >
-          PLACAR REAL
-        </div>
-      </div>
-
-      {/* Palpite do usuário */}
-      <div style={{ padding: '0.5rem 0.75rem' }}>
-        {game.myPrediction ? (
-          <div>
-            <div
-              style={{
-                fontSize: '10px',
-                color: 'var(--color-muted)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                marginBottom: '0.2rem',
-              }}
-            >
-              SEU PALPITE:
-            </div>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-              }}
-            >
-              <span style={{ fontSize: '13px' }}>{homeFlag}</span>
-              <span style={{ fontSize: '11px', color: 'var(--color-text)' }}>
-                {game.home_team_code}
-              </span>
-              <span
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 'bold',
-                  color: 'var(--color-text)',
-                  minWidth: '3rem',
-                  textAlign: 'center',
-                }}
-              >
-                {game.myPrediction.home_score} × {game.myPrediction.away_score}
-              </span>
-              <span style={{ fontSize: '11px', color: 'var(--color-text)' }}>
-                {game.away_team_code}
-              </span>
-              <span style={{ fontSize: '13px' }}>{awayFlag}</span>
-            </div>
-          </div>
-        ) : (
-          <div
-            style={{
-              fontSize: '11px',
-              color: 'var(--color-error)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-            }}
-          >
-            SEM PALPITE REGISTRADO
-          </div>
-        )}
-      </div>
+        {predScore}
+      </span>
     </div>
   )
+}
+
+function formatMatchTime(matchDate: string): string {
+  try {
+    return new Date(matchDate).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+  } catch {
+    return '—:——'
+  }
 }

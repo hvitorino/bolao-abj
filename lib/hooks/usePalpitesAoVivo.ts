@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { calculateLiveScore } from '@/lib/scoring'
+import { todayInBrasilia } from '@/lib/date'
 import type { ScoreBreakdown } from '@/lib/types/score'
 import type { RankingEntry } from '@/lib/types/ranking'
 
@@ -21,7 +22,8 @@ export interface LiveGameWithPrediction {
   away_team_code: string
   home_score: number | null
   away_score: number | null
-  status: 'live'
+  status: 'pending' | 'live' | 'finished'
+  match_date: string
   myPrediction: { home_score: number; away_score: number } | null
 }
 
@@ -51,7 +53,7 @@ export interface RankingParticipantDetail {
 }
 
 export interface UsePalpitesAoVivoResult {
-  liveGames: LiveGameWithPrediction[]
+  todayGames: LiveGameWithPrediction[]
   rankingWithDetails: RankingParticipantDetail[]
   loading: boolean
   error: string | null
@@ -89,22 +91,8 @@ interface ScoreRow {
 }
 
 // --------------------------------------------------------------------------
-// Cálculo de total_points com pontos live
+// Ordenação do ranking
 // --------------------------------------------------------------------------
-
-function applyLivePointsToRanking(
-  ranking: RankingEntry[],
-  livePointsByUser: Record<string, number>
-): Array<{ entry: RankingEntry; total_points: number; hasLivePoints: boolean }> {
-  return ranking.map((entry) => {
-    const live = livePointsByUser[entry.user_id] ?? 0
-    return {
-      entry,
-      total_points: entry.total_points + live,
-      hasLivePoints: live > 0,
-    }
-  })
-}
 
 function sortRanking(
   items: Array<{ entry: RankingEntry; total_points: number; hasLivePoints: boolean }>
@@ -134,7 +122,7 @@ export function usePalpitesAoVivo(
   groupId: string,
   currentUserId: string
 ): UsePalpitesAoVivoResult {
-  const [liveGames, setLiveGames] = useState<LiveGameWithPrediction[]>([])
+  const [todayGames, setTodayGames] = useState<LiveGameWithPrediction[]>([])
   const [rankingWithDetails, setRankingWithDetails] = useState<RankingParticipantDetail[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -142,6 +130,8 @@ export function usePalpitesAoVivo(
 
   // Controla se é o primeiro fetch (para setLoading correto)
   const isFirstFetch = useRef(true)
+  // Fingerprint dos placares do último poll — evita re-render desnecessário
+  const prevScoresKey = useRef<string>('')
 
   const fetchAll = async () => {
     try {
@@ -151,11 +141,13 @@ export function usePalpitesAoVivo(
       const { data: sessionData } = await supabase.auth.getSession()
       const token = sessionData.session?.access_token
 
-      // 2. Buscar jogos live e finished
+      // 2. Buscar todos os jogos de hoje usando match_day (mesmo critério da aba Jogos)
+      const today = todayInBrasilia()
+
       const { data: gamesData, error: gamesError } = await supabase
         .from('games')
         .select('id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date')
-        .in('status', ['live', 'finished'])
+        .eq('match_day', today)
         .order('match_date', { ascending: true })
 
       if (gamesError) throw new Error(`jogos: ${gamesError.message}`)
@@ -165,7 +157,7 @@ export function usePalpitesAoVivo(
       const liveGameIds = games.filter((g) => g.status === 'live').map((g) => g.id)
       const finishedGameIds = games.filter((g) => g.status === 'finished').map((g) => g.id)
 
-      // 3. Buscar palpites (live + finished) do grupo
+      // 3. Buscar palpites de todos os jogos de hoje do grupo
       let allPredictions: PredictionRow[] = []
       if (gameIds.length > 0) {
         const { data: predictionsData, error: predictionsError } = await supabase
@@ -178,7 +170,7 @@ export function usePalpitesAoVivo(
         allPredictions = (predictionsData ?? []) as PredictionRow[]
       }
 
-      // 4. Buscar scores (apenas finished)
+      // 4. Buscar scores dos jogos finalizados de hoje
       let allScores: ScoreRow[] = []
       if (finishedGameIds.length > 0) {
         const { data: scoresData, error: scoresError } = await supabase
@@ -191,7 +183,7 @@ export function usePalpitesAoVivo(
         allScores = (scoresData ?? []) as ScoreRow[]
       }
 
-      // 5. Buscar ranking oficial via API
+      // 5. Buscar lista de participantes do grupo via API ranking
       let rankingEntries: RankingEntry[] = []
       if (token) {
         const rankingRes = await fetch(`/api/ranking?group_id=${groupId}`, {
@@ -222,37 +214,41 @@ export function usePalpitesAoVivo(
         scoreByUserGame[s.user_id][s.game_id] = s
       }
 
-      // ---------- Palpites do currentUser para jogos live ----------
+      // ---------- Jogos de hoje para o card (todos os status, com palpite do usuário atual) ----------
 
       const myPredsByGame = predByUserGame[currentUserId] ?? {}
 
-      const newLiveGames: LiveGameWithPrediction[] = games
-        .filter((g) => g.status === 'live')
-        .map((g) => {
-          const myPred = myPredsByGame[g.id] ?? null
-          return {
-            id: g.id,
-            home_team: g.home_team,
-            away_team: g.away_team,
-            home_team_code: g.home_team_code,
-            away_team_code: g.away_team_code,
-            home_score: g.home_score,
-            away_score: g.away_score,
-            status: 'live' as const,
-            myPrediction: myPred
-              ? { home_score: myPred.home_score, away_score: myPred.away_score }
-              : null,
-          }
-        })
+      const newTodayGames: LiveGameWithPrediction[] = games.map((g) => {
+        const myPred = myPredsByGame[g.id] ?? null
+        return {
+          id: g.id,
+          home_team: g.home_team,
+          away_team: g.away_team,
+          home_team_code: g.home_team_code,
+          away_team_code: g.away_team_code,
+          home_score: g.home_score,
+          away_score: g.away_score,
+          status: g.status,
+          match_date: g.match_date,
+          myPrediction: myPred
+            ? { home_score: myPred.home_score, away_score: myPred.away_score }
+            : null,
+        }
+      })
 
-      // ---------- Calcular pontos live por usuário ----------
+      // ---------- Calcular pontos do dia por usuário (apenas jogos de hoje) ----------
 
-      const livePointsByUser: Record<string, number> = {}
+      // Pontos de jogos finalizados hoje (da tabela scores)
+      const todayPointsByUser: Record<string, number> = {}
+      for (const s of allScores) {
+        todayPointsByUser[s.user_id] = (todayPointsByUser[s.user_id] ?? 0) + s.points
+      }
 
+      // Pontos estimados de jogos ao vivo hoje
+      const hasLiveByUser: Record<string, boolean> = {}
       if (liveGameIds.length > 0) {
         for (const userId of Object.keys(predByUserGame)) {
           const userPreds = predByUserGame[userId]
-          let sum = 0
           for (const gameId of liveGameIds) {
             const pred = userPreds[gameId]
             if (!pred) continue
@@ -262,22 +258,29 @@ export function usePalpitesAoVivo(
               { home_score: game.home_score, away_score: game.away_score },
               { home_score: pred.home_score, away_score: pred.away_score }
             )
-            if (result) sum += result.points
+            if (result && result.points > 0) {
+              todayPointsByUser[userId] = (todayPointsByUser[userId] ?? 0) + result.points
+              hasLiveByUser[userId] = true
+            }
           }
-          if (sum > 0) livePointsByUser[userId] = sum
         }
       }
 
-      // ---------- Montar ranking com detalhes ----------
+      // ---------- Montar ranking com pontos apenas do dia ----------
 
-      const adjustedRanking = sortRanking(applyLivePointsToRanking(rankingEntries, livePointsByUser))
+      const adjustedRanking = sortRanking(
+        rankingEntries.map((entry) => ({
+          entry,
+          total_points: todayPointsByUser[entry.user_id] ?? 0,
+          hasLivePoints: hasLiveByUser[entry.user_id] ?? false,
+        }))
+      )
 
       const newRankingWithDetails: RankingParticipantDetail[] = adjustedRanking.map(
         ({ entry, total_points, hasLivePoints, rank_position }) => {
           const userPreds = predByUserGame[entry.user_id] ?? {}
           const userScores = scoreByUserGame[entry.user_id] ?? {}
 
-          // Montar games: apenas live e finished (não pending)
           const userGames: GameScoreEntry[] = games.map((g) => {
             const pred = userPreds[g.id] ?? null
             const score = userScores[g.id] ?? null
@@ -321,11 +324,16 @@ export function usePalpitesAoVivo(
         }
       )
 
-      // Atualizar estado (sem resetar loading para true em polls subsequentes)
-      setLiveGames(newLiveGames)
-      setRankingWithDetails(newRankingWithDetails)
+      // Só atualiza estado (e dispara animação FLIP) se algum placar mudou
+      const scoresKey = games.map((g) => `${g.id}:${g.status}:${g.home_score}:${g.away_score}`).join('|')
+      const scoresChanged = scoresKey !== prevScoresKey.current
+      prevScoresKey.current = scoresKey
+
+      if (scoresChanged) {
+        setTodayGames(newTodayGames)
+        setRankingWithDetails(newRankingWithDetails)
+      }
       setError(null)
-      setLastPolledAt(new Date())
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro desconhecido'
       console.error('[usePalpitesAoVivo] erro:', message)
@@ -355,5 +363,5 @@ export function usePalpitesAoVivo(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId, currentUserId])
 
-  return { liveGames, rankingWithDetails, loading, error, lastPolledAt }
+  return { todayGames, rankingWithDetails, loading, error, lastPolledAt }
 }

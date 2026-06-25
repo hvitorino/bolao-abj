@@ -15,7 +15,7 @@ interface PalpitesLiveSectionProps {
  * para PalpitesLiveCard (sticky) e PalpitesRanking (FLIP).
  */
 export function PalpitesLiveSection({ groupId, currentUserId }: PalpitesLiveSectionProps) {
-  const { liveGames, rankingWithDetails, loading, error, lastPolledAt } = usePalpitesAoVivo(
+  const { todayGames, rankingWithDetails, loading, error } = usePalpitesAoVivo(
     groupId,
     currentUserId
   )
@@ -28,7 +28,7 @@ export function PalpitesLiveSection({ groupId, currentUserId }: PalpitesLiveSect
         gap: '1rem',
       }}
     >
-      {/* Cards de jogos ao vivo — sticky no topo */}
+      {/* Cards dos jogos de hoje — sticky no topo */}
       <div
         style={{
           position: 'sticky',
@@ -38,17 +38,16 @@ export function PalpitesLiveSection({ groupId, currentUserId }: PalpitesLiveSect
           paddingBottom: '0.5rem',
         }}
       >
-        <PalpitesLiveCard liveGames={liveGames} loading={loading} />
+        <PalpitesLiveCard todayGames={todayGames} loading={loading} />
       </div>
 
       {/* Ranking com animação FLIP e accordion de breakdown */}
       <PalpitesRanking
         currentUserId={currentUserId}
         rankingWithDetails={rankingWithDetails}
-        liveGames={liveGames}
+        todayGames={todayGames}
         loading={loading}
         error={error}
-        lastPolledAt={lastPolledAt}
       />
     </div>
   )

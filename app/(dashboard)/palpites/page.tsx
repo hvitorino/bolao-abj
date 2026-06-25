@@ -36,32 +36,5 @@ export default async function PalpitesPage() {
 
   if (!activeGroup?.id) redirect('/grupos')
 
-  return (
-    <div
-      style={{
-        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1rem',
-      }}
-    >
-      {/* Título da página */}
-      <div
-        style={{
-          fontSize: '13px',
-          fontWeight: 'bold',
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--color-muted)',
-          borderBottom: '1px solid var(--color-border)',
-          paddingBottom: '0.5rem',
-        }}
-      >
-        PALPITES
-      </div>
-
-      {/* Componente client que orquestra dados e UI */}
-      <PalpitesLiveSection groupId={activeGroup.id} currentUserId={user.id} />
-    </div>
-  )
+  return <PalpitesLiveSection groupId={activeGroup.id} currentUserId={user.id} />
 }

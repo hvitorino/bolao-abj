@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { PalpitesRankingRow } from './PalpitesRankingRow'
 import type { RankingParticipantDetail, LiveGameWithPrediction } from '@/lib/hooks/usePalpitesAoVivo'
-
 const MONO: React.CSSProperties = {
   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
 }
@@ -11,21 +10,19 @@ const MONO: React.CSSProperties = {
 interface PalpitesRankingProps {
   currentUserId: string
   rankingWithDetails: RankingParticipantDetail[]
-  liveGames: LiveGameWithPrediction[]
+  todayGames: LiveGameWithPrediction[]
   loading: boolean
   error: string | null
-  lastPolledAt: Date | null
 }
 
 export function PalpitesRanking({
   currentUserId,
   rankingWithDetails,
-  liveGames,
+  todayGames,
   loading,
   error,
-  lastPolledAt,
 }: PalpitesRankingProps) {
-  const [expandedUserId, setExpandedUserId] = useState<string | null>(null)
+  const [expandedUserIds, setExpandedUserIds] = useState<Set<string>>(new Set())
 
   // FLIP state
   const rowRefs = useRef<Map<string, HTMLDivElement>>(new Map())
@@ -88,10 +85,15 @@ export function PalpitesRanking({
   }
 
   const handleToggle = (userId: string) => {
-    setExpandedUserId((prev) => (prev === userId ? null : userId))
+    setExpandedUserIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(userId)) next.delete(userId)
+      else next.add(userId)
+      return next
+    })
   }
 
-  const hasLiveGames = liveGames.length > 0
+  const hasLiveGames = todayGames.some((g) => g.status === 'live')
 
   // ---------- Estados de loading / error / empty ----------
 
@@ -193,7 +195,6 @@ export function PalpitesRanking({
         >
           RANKING
         </span>
-        <NextUpdateCountdown intervalMs={10_000} lastPolledAt={lastPolledAt} />
       </div>
 
       {/* Cabeçalho das colunas */}
@@ -247,7 +248,7 @@ export function PalpitesRanking({
                 participant={participant}
                 isCurrentUser={participant.userId === currentUserId}
                 isLeader={participant.rank_position === 1 && participant.total_points > 0}
-                isExpanded={expandedUserId === participant.userId}
+                isExpanded={expandedUserIds.has(participant.userId)}
                 onToggle={() => handleToggle(participant.userId)}
               />
             </div>
@@ -276,68 +277,8 @@ export function PalpitesRanking({
             ██ AO VIVO
           </span>
         )}
-        {lastPolledAt && (
-          <span
-            style={{
-              ...MONO,
-              fontSize: '11px',
-              color: 'var(--color-muted)',
-              marginLeft: 'auto',
-            }}
-          >
-            ⏱{' '}
-            {lastPolledAt.toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-            })}
-          </span>
-        )}
       </div>
     </div>
   )
 }
 
-// --------------------------------------------------------------------------
-// Contador regressivo de próxima atualização
-// --------------------------------------------------------------------------
-
-function NextUpdateCountdown({
-  intervalMs,
-  lastPolledAt,
-}: {
-  intervalMs: number
-  lastPolledAt: Date | null
-}) {
-  const [secondsLeft, setSecondsLeft] = useState<number | null>(null)
-
-  useEffect(() => {
-    if (!lastPolledAt) return
-
-    const tick = () => {
-      const elapsed = Date.now() - lastPolledAt.getTime()
-      const remaining = Math.max(0, Math.ceil((intervalMs - elapsed) / 1000))
-      setSecondsLeft(remaining)
-    }
-
-    tick()
-    const timer = setInterval(tick, 500)
-    return () => clearInterval(timer)
-  }, [intervalMs, lastPolledAt])
-
-  if (secondsLeft === null) return null
-
-  return (
-    <span
-      style={{
-        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-        fontSize: '10px',
-        color: 'var(--color-muted)',
-        textTransform: 'uppercase',
-        letterSpacing: '0.05em',
-      }}
-    >
-      PRÓX. ATU. EM {secondsLeft}S
-    </span>
-  )
-}
