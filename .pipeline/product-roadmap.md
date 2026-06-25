@@ -4,9 +4,9 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 68 features
-- Concluídas: 67
+- Concluídas: 68
 - Em progresso: 0
-- Pendentes: 1
+- Pendentes: 0
 
 ## Features Priorizadas
 
@@ -871,7 +871,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 68. palpites-ao-vivo — Aba de Palpites com Jogos ao Vivo e Ranking — pendente
+### 68. palpites-ao-vivo — Aba de Palpites com Jogos ao Vivo e Ranking — concluída
 **Objetivo:** Criar uma nova aba de navegação chamada "Palpites" que exibe, no topo fixo (sticky), cards com os placares dos jogos em andamento (placar real + palpite do usuário), e abaixo um ranking do grupo com animações de mudança de posição e breakdown expansível por participante mostrando pontos por jogo.
 **Critérios de sucesso:**
 - Nova aba "Palpites" aparece na navegação principal do dashboard
