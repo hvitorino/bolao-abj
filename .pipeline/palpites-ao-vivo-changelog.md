@@ -3,7 +3,7 @@
 **Slug:** palpites-ao-vivo
 **Branch:** feature/palpites-ao-vivo
 **Data:** 2026-06-25
-**Status:** aguardando revisão (fix 1 aplicado)
+**Status:** aprovado
 
 ---
 

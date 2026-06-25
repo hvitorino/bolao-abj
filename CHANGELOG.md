@@ -6,6 +6,18 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [palpites-ao-vivo] — Aba de Palpites com Jogos ao Vivo e Ranking — 2026-06-25
+
+- Aba `PALPITES` adicionada à tab bar entre JOGOS e RANKING; `fontSize: 12px` e `letterSpacing: 0.04em` para acomodar 5 elementos em 320px
+- Rota `/palpites` criada como Server Component (`app/(dashboard)/palpites/page.tsx`): resolve `currentUserId` e `groupId` via sessão Supabase e cookie `bolao_active_group`, redireciona para `/grupos` sem grupo ativo
+- `palpites-live-section.tsx`: Client Component orquestrador que instancia `usePalpitesAoVivo` uma única vez e distribui dados para `PalpitesLiveCard` (sticky) e `PalpitesRanking`
+- `lib/hooks/usePalpitesAoVivo.ts`: hook com polling de 10s (`POLL_INTERVAL_MS = 10_000`); busca jogos `live`+`finished`, palpites e scores por `group_id`, ranking via `/api/ranking`; calcula pontos parciais de jogos live via `calculateLiveScore()`; não reseta `loading` em polls subsequentes
+- `components/bolao/PalpitesLiveCard.tsx`: cards sticky com badge `██ AO VIVO ██` piscante (`color-live`), placar real 24px bold em `color-accent`, palpite do usuário logado; scroll horizontal com ≥2 jogos (`min-width: 260px`); estado vazio "NENHUM JOGO AO VIVO NO MOMENTO"
+- `components/bolao/PalpitesRankingRow.tsx`: linha do ranking com accordion de breakdown; acessibilidade completa (`role="button"`, `aria-expanded`, `aria-controls`, `role="region"`, `aria-label`); ativação por Enter/Espaço; `►`/`■` para líder/currentUser; breakdown filtra apenas jogos `live`/`finished`; pontos provisórios marcados com `*` em `color-live`
+- `components/bolao/PalpitesRanking.tsx`: tabela com animação FLIP manual (`useLayoutEffect`, 350ms ease-in-out) idêntica ao padrão de `PublicParticipantsList.tsx`; `NextUpdateCountdown` com contador regressivo via `useEffect`/`setInterval(500ms)`; rodapé com timestamp, `N PARTICIPANTES`, badge `██ AO VIVO` e `► LÍDER`/`■ VOCÊ`
+- Sem novos endpoints Ruby/Sinatra; sem migrations de banco; feature usa exclusivamente tabelas existentes (`games`, `predictions`, `scores`, `profiles`, `group_members`)
+- `npm run lint` e `npm run build` passam sem erros novos
+
 ## [animated-predictions-ranking] — Animação de Posição dos Palpites na Página Pública de Jogo — 2026-06-24
 
 - `components/bolao/PublicParticipantsList.tsx` reescrito: ordenação reativa por pontuação efetiva e animação FLIP de reposicionamento de cards em tempo real via `useLayoutEffect` + CSS transitions (350ms ease-in-out)
