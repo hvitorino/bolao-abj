@@ -29,11 +29,12 @@ export default function PublicDateClient({
     initialGameParticipants
   )
 
-  const gameIds = initialGames.map((g) => g.id)
+  const gameIdsKey = initialGames.map((g) => g.id).join(',')
 
   // Realtime: canal de jogos
   useEffect(() => {
-    if (gameIds.length === 0) return
+    const ids = gameIdsKey ? gameIdsKey.split(',') : []
+    if (ids.length === 0) return
 
     const supabase = createClient()
 
@@ -48,7 +49,7 @@ export default function PublicDateClient({
         },
         (payload) => {
           const updated = payload.new as PublicDateGame
-          if (!updated?.id || !gameIds.includes(updated.id)) return
+          if (!updated?.id || !ids.includes(updated.id)) return
 
           setGames((prev) =>
             prev.map((g) =>
@@ -69,11 +70,12 @@ export default function PublicDateClient({
     return () => {
       supabase.removeChannel(gamesChannel)
     }
-  }, [groupId, date, gameIds.join(',')])
+  }, [groupId, date, gameIdsKey])
 
   // Realtime: canal de scores
   useEffect(() => {
-    if (gameIds.length === 0) return
+    const ids = gameIdsKey ? gameIdsKey.split(',') : []
+    if (ids.length === 0) return
 
     const supabase = createClient()
 
@@ -96,7 +98,7 @@ export default function PublicDateClient({
           }
           if (!newScore?.user_id) return
           if (newScore.group_id !== groupId) return
-          if (!gameIds.includes(newScore.game_id)) return
+          if (!ids.includes(newScore.game_id)) return
 
           setGameParticipants((prev) => {
             const gameEntry = prev[newScore.game_id]
@@ -117,7 +119,7 @@ export default function PublicDateClient({
     return () => {
       supabase.removeChannel(scoresChannel)
     }
-  }, [groupId, date, gameIds.join(',')])
+  }, [groupId, date, gameIdsKey])
 
   // Calcular ranking do dia
   const rankingEntries = initialParticipants.map((participant) => {
@@ -165,6 +167,7 @@ export default function PublicDateClient({
           <PublicDateGameSection
             key={game.id}
             game={game}
+            groupId={groupId}
             participants={entries}
             liveHomeScore={game.home_score}
             liveAwayScore={game.away_score}

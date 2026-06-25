@@ -4,6 +4,7 @@ import PublicParticipantsList from '@/components/bolao/PublicParticipantsList'
 
 interface PublicDateGameSectionProps {
   game: PublicDateGame
+  groupId: string
   participants: ParticipantEntry[]
   liveHomeScore: number | null
   liveAwayScore: number | null
@@ -34,6 +35,7 @@ function formatTimeBRT(isoString: string): string {
  */
 export default function PublicDateGameSection({
   game,
+  groupId,
   participants,
   liveHomeScore,
   liveAwayScore,
@@ -206,7 +208,7 @@ export default function PublicDateGameSection({
           participants={participants}
           gameStatus={game.status}
           gameId={game.id}
-          groupId=""
+          groupId={groupId}
           liveHomeScore={liveHomeScore}
           liveAwayScore={liveAwayScore}
         />
