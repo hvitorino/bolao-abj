@@ -331,12 +331,14 @@ export default async function PublicDatePage({ params }: PublicDatePageProps) {
       const score = userScores[g.id] ?? null
 
       let livePoints: number | null = null
+      let liveBreakdown: ScoreBreakdown | null = null
       if (g.status === 'live' && pred) {
         const result = calculateLiveScore(
           { home_score: g.home_score, away_score: g.away_score },
           { home_score: pred.home_score, away_score: pred.away_score }
         )
         livePoints = result?.points ?? null
+        liveBreakdown = result?.breakdown ?? null
       }
 
       return {
@@ -353,6 +355,7 @@ export default async function PublicDatePage({ params }: PublicDatePageProps) {
         officialPoints: score?.points ?? null,
         officialBreakdown: score?.breakdown ?? null,
         livePoints,
+        liveBreakdown,
       }
     })
 

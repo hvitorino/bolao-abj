@@ -227,7 +227,46 @@ function RuleGroupLine({ group }: { group: RuleGroup }) {
 // --------------------------------------------------------------------------
 
 function LiveGameLine({ game }: { game: GameScoreEntry }) {
+  // Se há breakdown detalhado ao vivo, exibe cada regra separadamente
+  if (game.liveBreakdown) {
+    const lines = (Object.keys(BREAKDOWN_LABELS) as Array<keyof ScoreBreakdown>)
+      .filter((key) => {
+        const pts = game.liveBreakdown![key]
+        return pts !== undefined && pts > 0
+      })
 
+    if (lines.length > 0) {
+      return (
+        <>
+          {lines.map((key) => (
+            <div
+              key={key}
+              style={{
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '13px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+                flexWrap: 'nowrap',
+                justifyContent: 'flex-end',
+                lineHeight: 1.6,
+                overflow: 'hidden',
+              }}
+            >
+              <span style={{ color: 'var(--color-live)', flexShrink: 0 }}>
+                {BREAKDOWN_LABELS[key]}*
+              </span>
+              <span style={{ color: 'var(--color-live)', fontWeight: 'bold', flexShrink: 0 }}>
+                +{game.liveBreakdown![key]}
+              </span>
+            </div>
+          ))}
+        </>
+      )
+    }
+  }
+
+  // Fallback: exibe total ao vivo quando não há breakdown ou pontos = 0
   return (
     <div
       style={{
@@ -244,7 +283,7 @@ function LiveGameLine({ game }: { game: GameScoreEntry }) {
     >
       <span style={{ color: 'var(--color-live)', flexShrink: 0 }}>AO VIVO*</span>
       <span style={{ color: 'var(--color-live)', fontWeight: 'bold', flexShrink: 0 }}>
-        {game.livePoints !== null ? `+${game.livePoints}` : '+?'}
+        {game.livePoints !== null ? `+${game.livePoints}` : '+0'}
       </span>
     </div>
   )

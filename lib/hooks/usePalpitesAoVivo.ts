@@ -38,7 +38,8 @@ export interface GameScoreEntry {
   userPrediction: { home_score: number; away_score: number } | null
   officialPoints: number | null
   officialBreakdown: ScoreBreakdown | null
-  livePoints: number | null    // pontos parciais calculados client-side (live only)
+  livePoints: number | null         // pontos parciais calculados client-side (live only)
+  liveBreakdown: ScoreBreakdown | null  // breakdown parcial calculado client-side (live only)
   match_date: string
 }
 
@@ -286,12 +287,14 @@ export function usePalpitesAoVivo(
             const score = userScores[g.id] ?? null
 
             let livePoints: number | null = null
+            let liveBreakdown: ScoreBreakdown | null = null
             if (g.status === 'live' && pred) {
               const result = calculateLiveScore(
                 { home_score: g.home_score, away_score: g.away_score },
                 { home_score: pred.home_score, away_score: pred.away_score }
               )
               livePoints = result?.points ?? null
+              liveBreakdown = result?.breakdown ?? null
             }
 
             return {
@@ -310,6 +313,7 @@ export function usePalpitesAoVivo(
               officialPoints: score?.points ?? null,
               officialBreakdown: score?.breakdown ?? null,
               livePoints,
+              liveBreakdown,
             }
           })
 
