@@ -3,6 +3,8 @@ import { NextResponse, type NextRequest } from 'next/server'
 
 const authRoutes = ['/login', '/cadastro', '/esqueci-senha', '/nova-senha', '/auth/callback']
 const publicPrefixes = ['/publico/']
+// Rotas individuais de jogo (ex: /jogos/{uuid}/publico) acessíveis sem autenticação
+const PUBLIC_GAME_RE = /^\/jogos\/[^/]+\/publico$/
 
 const CRAWLER_RE =
   /whatsapp|telegrambot|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|linkedinbot|googlebot|bingbot/i
@@ -52,7 +54,7 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl
   const isAuthRoute = authRoutes.includes(pathname)
-  const isPublicRoute = isAuthRoute || publicPrefixes.some((prefix) => pathname.startsWith(prefix))
+  const isPublicRoute = isAuthRoute || publicPrefixes.some((prefix) => pathname.startsWith(prefix)) || PUBLIC_GAME_RE.test(pathname)
 
   // Usuário não autenticado tentando acessar rota protegida
   if (!user && !isPublicRoute) {
