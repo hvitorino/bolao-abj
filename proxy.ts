@@ -1,7 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const publicRoutes = ['/login', '/cadastro', '/esqueci-senha', '/nova-senha', '/auth/callback']
+const authRoutes = ['/login', '/cadastro', '/esqueci-senha', '/nova-senha', '/auth/callback']
+const publicPrefixes = ['/publico/']
 
 const CRAWLER_RE =
   /whatsapp|telegrambot|facebookexternalhit|facebot|twitterbot|slackbot|discordbot|linkedinbot|googlebot|bingbot/i
@@ -50,7 +51,8 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
-  const isPublicRoute = publicRoutes.includes(pathname)
+  const isAuthRoute = authRoutes.includes(pathname)
+  const isPublicRoute = isAuthRoute || publicPrefixes.some((prefix) => pathname.startsWith(prefix))
 
   // Usuário não autenticado tentando acessar rota protegida
   if (!user && !isPublicRoute) {
@@ -60,7 +62,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Usuário autenticado tentando acessar login ou cadastro
-  if (user && isPublicRoute) {
+  if (user && isAuthRoute) {
     const jogosUrl = request.nextUrl.clone()
     jogosUrl.pathname = '/jogos'
     return NextResponse.redirect(jogosUrl)
