@@ -40,9 +40,9 @@ interface AnaliseData {
 }
 
 function DrawerSkeleton() {
-  const line = (w: number) => (
+  const line = (w: number, i: number) => (
     <div
-      key={w}
+      key={i}
       style={{ color: 'var(--color-muted)', fontSize: '12px', marginBottom: '0.5rem' }}
     >
       {'─'.repeat(w)}
@@ -50,17 +50,13 @@ function DrawerSkeleton() {
   )
   return (
     <div
+      className="skeleton-pulse"
       style={{
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
         padding: '0.5rem 0',
       }}
     >
-      {line(42)}
-      {line(36)}
-      {line(40)}
-      {line(28)}
-      {line(38)}
-      {line(32)}
+      {[42, 36, 40, 28, 38, 32].map((w, i) => line(w, i))}
     </div>
   )
 }
@@ -198,13 +194,14 @@ export default function GameAnaliseDrawer({
         style={{
           position: 'fixed',
           bottom: 0,
-          left: 0,
-          right: 0,
+          left: '0.5rem',
+          right: '0.5rem',
           zIndex: 51,
-          maxHeight: '85vh',
+          maxHeight: '72vh',
           backgroundColor: 'var(--color-surface)',
           border: '1px solid var(--color-border)',
           borderBottom: 'none',
+          borderRadius: '8px 8px 0 0',
           transform: isOpen ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 250ms ease',
           display: 'flex',
@@ -257,7 +254,7 @@ export default function GameAnaliseDrawer({
         </div>
 
         {/* Conteúdo com scroll */}
-        <div style={{ overflowY: 'auto', flex: 1, padding: '1rem' }}>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '0.75rem' }}>
           {loading && <DrawerSkeleton />}
           {error && !loading && (
             <div

@@ -83,6 +83,7 @@ function GameItem({
       onClick={() => onGameClick(game.id)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      title="Ver análise"
       style={{
         ...MONO,
         display: 'flex',
@@ -90,10 +91,13 @@ function GameItem({
         alignItems: 'center',
         gap: '0.1rem',
         opacity: isPending ? 0.65 : 1,
-        background: isHovered ? 'rgba(255,255,255,0.04)' : 'none',
+        background: isHovered ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.01)',
         border: 'none',
+        outline: isHovered ? '1px solid var(--color-muted)' : '1px solid rgba(90, 122, 106, 0.3)',
         cursor: 'pointer',
         padding: '0.25rem 0.5rem',
+        borderRadius: '2px',
+        transition: 'outline-color 150ms ease, background 150ms ease',
       }}
     >
       {/* Status */}
