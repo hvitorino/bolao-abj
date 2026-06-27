@@ -173,7 +173,7 @@ export default function GameAnaliseDrawer({
   const myPrediction: Prediction | null =
     myParticipant?.prediction
       ? {
-          id: '',
+          id: myParticipant.prediction.id,
           user_id: currentUserId,
           game_id: data!.game.id,
           home_score: myParticipant.prediction.home_score,

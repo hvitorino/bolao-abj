@@ -157,7 +157,7 @@ export default async function PublicGamePage({ params, searchParams }: PublicGam
     .filter((p): p is { id: string; name: string } => p !== null)
 
   // 3. Palpites — visibilidade dependente do status do jogo, filtrado por group_id
-  const predByUserGame: Record<string, { home_score: number; away_score: number }> = {}
+  const predByUserGame: Record<string, { id: string; home_score: number; away_score: number }> = {}
   const hasPredictionSet = new Set<string>()
 
   if (game.status === 'pending') {
@@ -175,13 +175,14 @@ export default async function PublicGamePage({ params, searchParams }: PublicGam
     // live ou finished — valores reais
     const { data: fullPredictions } = await serviceClient
       .from('predictions')
-      .select('user_id, game_id, home_score, away_score')
+      .select('id, user_id, game_id, home_score, away_score')
       .eq('game_id', gameId)
       .eq('group_id', groupId)
 
     for (const p of fullPredictions ?? []) {
       hasPredictionSet.add(p.user_id)
       predByUserGame[p.user_id] = {
+        id: p.id,
         home_score: p.home_score,
         away_score: p.away_score,
       }

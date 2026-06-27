@@ -199,9 +199,9 @@ export default async function AnalisePage({ params }: PageProps) {
     .filter((p): p is { id: string; name: string } => p !== null)
     .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'))
 
-  const predByUser: Record<string, { home_score: number; away_score: number }> = {}
+  const predByUser: Record<string, { id: string; home_score: number; away_score: number }> = {}
   for (const p of allPredictions ?? []) {
-    predByUser[p.user_id] = { home_score: p.home_score, away_score: p.away_score }
+    predByUser[p.user_id] = { id: p.id, home_score: p.home_score, away_score: p.away_score }
   }
   const scoreByUser: Record<string, { points: number; breakdown: ScoreBreakdown }> = {}
   for (const s of (allScores ?? []) as Score[]) {

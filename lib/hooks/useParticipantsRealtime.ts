@@ -45,6 +45,7 @@ export function useParticipantsRealtime(
       return {
         ...entry,
         prediction: {
+          id: entry.prediction?.id ?? '',
           home_score: payload.home_score,
           away_score: payload.away_score,
         },
