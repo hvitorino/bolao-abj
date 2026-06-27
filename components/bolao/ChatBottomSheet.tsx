@@ -43,8 +43,10 @@ export function ChatBottomSheet({
   const touchStartY = useRef<number | null>(null)
 
   // Abertura: isOpen → true
+  // Promise.resolve().then() evita cascata de renders (react-hooks/set-state-in-effect)
   useEffect(() => {
-    if (isOpen) {
+    if (!isOpen) return
+    Promise.resolve().then(() => {
       if (!everOpened) setEverOpened(true)
       setIsVisible(true)
       requestAnimationFrame(() => {
@@ -52,8 +54,9 @@ export function ChatBottomSheet({
           setIsAnimatingIn(true)
         })
       })
-    }
-  }, [isOpen, everOpened])
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
 
   // Fechamento interno
   function handleClose() {
