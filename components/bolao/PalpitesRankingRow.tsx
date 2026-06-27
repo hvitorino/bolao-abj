@@ -4,6 +4,7 @@ import { useId } from 'react'
 import { BREAKDOWN_LABELS } from '@/lib/scoring'
 import type { RankingParticipantDetail, GameScoreEntry } from '@/lib/hooks/usePalpitesAoVivo'
 import type { ScoreBreakdown } from '@/lib/types/score'
+import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 const MONO: React.CSSProperties = {
   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
@@ -195,8 +196,8 @@ function GameBreakdownBlock({ game, isCurrentUser }: GameBreakdownBlockProps) {
   // Segmento esquerdo: times e placar real
   const matchLabel =
     game.status === 'pending'
-      ? `${game.home_team_code} vs ${game.away_team_code}`
-      : `${game.home_team_code} ${game.home_score}×${game.away_score} ${game.away_team_code}`
+      ? `${getTeamFlag(game.home_team_code)} vs ${getTeamFlag(game.away_team_code)}`
+      : `${getTeamFlag(game.home_team_code)} ${game.home_score}×${game.away_score} ${getTeamFlag(game.away_team_code)}`
 
   // Segmento direito: total do jogo
   let totalLabel: string
