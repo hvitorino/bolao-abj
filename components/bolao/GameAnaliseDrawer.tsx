@@ -76,6 +76,16 @@ export default function GameAnaliseDrawer({
   const [isDragging, setIsDragging] = useState(false)
   const touchStartY = useRef<number | null>(null)
 
+  // Fecha quando o chat abre
+  useEffect(() => {
+    function handleChatOpen() {
+      if (isOpen) handleClose()
+    }
+    window.addEventListener('bolao:chat:open', handleChatOpen)
+    return () => window.removeEventListener('bolao:chat:open', handleChatOpen)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
+
   // Abertura do drawer quando gameId muda para não-null
   useEffect(() => {
     if (gameId === null) return
@@ -86,6 +96,8 @@ export default function GameAnaliseDrawer({
       setLoading(true)
       setError(null)
       setData(null)
+
+      window.dispatchEvent(new CustomEvent('bolao:drawer:open'))
 
       // Duplo rAF: garante que o elemento está no DOM antes de acionar a transição CSS
       requestAnimationFrame(() => {
@@ -221,7 +233,7 @@ export default function GameAnaliseDrawer({
         style={{
           position: 'fixed',
           bottom: 'calc(52px + env(safe-area-inset-bottom))',
-          left: 'calc(28px + 1.5rem)',
+          left: '1.5rem',
           right: '1.5rem',
           zIndex: 51,
           maxHeight: '72vh',

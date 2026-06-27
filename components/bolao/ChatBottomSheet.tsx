@@ -42,6 +42,16 @@ export function ChatBottomSheet({
 
   const touchStartY = useRef<number | null>(null)
 
+  // Fecha quando o drawer de análise abre
+  useEffect(() => {
+    function handleDrawerOpen() {
+      if (isAnimatingIn) handleClose()
+    }
+    window.addEventListener('bolao:drawer:open', handleDrawerOpen)
+    return () => window.removeEventListener('bolao:drawer:open', handleDrawerOpen)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAnimatingIn])
+
   // Abertura: isOpen → true
   // Promise.resolve().then() evita cascata de renders (react-hooks/set-state-in-effect)
   useEffect(() => {
@@ -49,6 +59,7 @@ export function ChatBottomSheet({
     Promise.resolve().then(() => {
       if (!everOpened) setEverOpened(true)
       setIsVisible(true)
+      window.dispatchEvent(new CustomEvent('bolao:chat:open'))
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsAnimatingIn(true)
