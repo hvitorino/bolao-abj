@@ -32,6 +32,10 @@ const USER_COLORS = [
   '#eab308', // yellow
   '#ef4444', // red
   '#06b6d4', // cyan
+  '#84cc16', // lime
+  '#f43f5e', // rose
+  '#8b5cf6', // violet
+  '#fb923c', // amber-orange
 ]
 
 function getUserColor(userId: string): string {
@@ -264,6 +268,7 @@ export function ChatPanelContent({
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
+        minHeight: 0,
         fontFamily: FONT,
       }}
     >

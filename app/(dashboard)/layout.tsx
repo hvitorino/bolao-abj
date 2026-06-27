@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
 import { GroupMenu } from './group-switcher'
 import { TabBar } from '@/components/bolao/TabBar'
-import { SidePanelContainer } from '@/components/bolao/SidePanelContainer'
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
@@ -109,7 +108,7 @@ export default async function DashboardLayout({
           padding: '1.5rem',
           paddingTop: 'calc(44px + env(safe-area-inset-top) + 1.5rem)',
           paddingBottom: 'calc(52px + env(safe-area-inset-bottom) + 1.5rem)',
-          paddingLeft: 'calc(28px + 1.5rem)',
+          paddingLeft: '1.5rem',
         }}
       >
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>{children}</div>
@@ -121,13 +120,6 @@ export default async function DashboardLayout({
         activeGroupName={activeGroup?.name ?? ''}
       />
 
-      {activeGroup && (
-        <SidePanelContainer
-          groupId={activeGroup.id}
-          currentUserId={user.id}
-          activeGroupName={activeGroup.name}
-        />
-      )}
     </div>
   )
 }

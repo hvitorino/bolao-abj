@@ -134,7 +134,7 @@ export function ChatBottomSheet({
         style={{
           position: 'fixed',
           bottom: 'calc(52px + env(safe-area-inset-bottom))',
-          left: 'calc(28px + 1.5rem)',
+          left: '1.5rem',
           right: '1.5rem',
           zIndex: 51,
           maxHeight: '72vh',
@@ -176,7 +176,7 @@ export function ChatBottomSheet({
         </div>
 
         {/* Conteúdo — lazy-mount */}
-        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
           {everOpened && (
             <ChatPanelContent
               activeGroupId={groupId}
