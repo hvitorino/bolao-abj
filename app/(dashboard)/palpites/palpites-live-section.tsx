@@ -114,29 +114,31 @@ export function PalpitesLiveSection({
         )}
       </div>
 
-      {/* Conteúdo principal — condicional pelo modo */}
-      {viewMode === 'preencher' ? (
-        <PalpitesRanking
-          currentUserId={currentUserId}
-          rankingWithDetails={rankingWithDetails}
-          todayGames={todayGames}
-          loading={loading}
-          error={error}
-        />
-      ) : (
-        <>
-          <AcompanharCarrossel
-            todayGames={todayGames}
-            currentUserGameScores={currentUserGameScores}
-            loading={loading}
-          />
-          <AcompanharRanking
-            rankingWithDetails={rankingWithDetails}
+      {/* Conteúdo principal — condicional pelo modo, animado na troca */}
+      <div key={viewMode} style={{ animation: 'modeFadeIn 200ms ease-out' }}>
+        {viewMode === 'preencher' ? (
+          <PalpitesRanking
             currentUserId={currentUserId}
+            rankingWithDetails={rankingWithDetails}
+            todayGames={todayGames}
             loading={loading}
+            error={error}
           />
-        </>
-      )}
+        ) : (
+          <>
+            <AcompanharCarrossel
+              todayGames={todayGames}
+              currentUserGameScores={currentUserGameScores}
+              loading={loading}
+            />
+            <AcompanharRanking
+              rankingWithDetails={rankingWithDetails}
+              currentUserId={currentUserId}
+              loading={loading}
+            />
+          </>
+        )}
+      </div>
 
       {/* Drawer de análise do jogo — apenas ativado pelo PalpitesLiveCard no modo Preencher */}
       <GameAnaliseDrawer

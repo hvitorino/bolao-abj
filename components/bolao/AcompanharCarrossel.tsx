@@ -1,6 +1,7 @@
 'use client'
 
 import type { LiveGameWithPrediction, GameScoreEntry } from '@/lib/hooks/usePalpitesAoVivo'
+import { getTeamFlag } from '@/lib/utils/teamFlag'
 
 const MONO: React.CSSProperties = {
   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
@@ -132,8 +133,8 @@ function MiniCard({
           gap: '0.25rem',
         }}
       >
-        <span style={{ ...MONO, fontSize: '11px', color: 'var(--color-muted)' }}>
-          {game.home_team_code}
+        <span style={{ fontSize: '16px', lineHeight: 1 }}>
+          {getTeamFlag(game.home_team_code)}
         </span>
         <span
           style={{
@@ -146,8 +147,8 @@ function MiniCard({
         >
           {placar}
         </span>
-        <span style={{ ...MONO, fontSize: '11px', color: 'var(--color-muted)' }}>
-          {game.away_team_code}
+        <span style={{ fontSize: '16px', lineHeight: 1 }}>
+          {getTeamFlag(game.away_team_code)}
         </span>
       </div>
 
@@ -164,6 +165,20 @@ function MiniCard({
       >
         {labelText}
       </span>
+
+      {/* Palpite do usuário */}
+      {game.myPrediction && (
+        <span
+          style={{
+            ...MONO,
+            fontSize: '9px',
+            color: 'var(--color-muted)',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {game.myPrediction.home_score}×{game.myPrediction.away_score}
+        </span>
+      )}
     </div>
   )
 }
