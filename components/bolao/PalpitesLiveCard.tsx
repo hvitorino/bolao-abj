@@ -70,12 +70,12 @@ function GameItem({
   const isFinished = game.status === 'finished'
   const isPending = game.status === 'pending'
 
-  const statusLabel = isLive ? '● AO VIVO' : isFinished ? '✓ ENC' : formatMatchTime(game.match_date)
+  const statusLabel = isLive ? '● AO VIVO' : isFinished ? '✓ ENC' : `◷ ${formatMatchTime(game.match_date)}`
   const statusColor = isLive
     ? 'var(--color-primary)'
     : isFinished
       ? 'var(--color-accent)'
-      : 'var(--color-muted)'
+      : 'var(--color-text)'
 
   const realScore = isPending ? '—×—' : `${game.home_score ?? '?'}×${game.away_score ?? '?'}`
   const predScore = game.myPrediction
