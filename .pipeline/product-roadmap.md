@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 71 features
-- Concluídas: 70
-- Em progresso: 1
+- Concluídas: 71
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -911,7 +911,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 71. palpites-analise-drawer — Drawer de Análise na Aba Palpites — em progresso
+### 71. palpites-analise-drawer — Drawer de Análise na Aba Palpites — concluída
 **Objetivo:** Tornar os cards de placar na aba `/palpites` clicáveis, abrindo o conteúdo completo de análise do jogo em um bottom drawer sem sair da aba — mantendo o ranking visível ao fechar.
 **Critérios de sucesso:**
 - Clicar em qualquer `GameItem` dentro de `PalpitesLiveCard` abre um bottom drawer com slide-up animado
