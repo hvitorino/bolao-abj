@@ -75,6 +75,7 @@ export default function GameAnaliseDrawer({
   const [dragOffset, setDragOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const touchStartY = useRef<number | null>(null)
+  const closedByPopstate = useRef(false)
 
   // Abertura do drawer quando gameId muda para não-null
   useEffect(() => {
@@ -163,6 +164,35 @@ export default function GameAnaliseDrawer({
     return () => {
       document.body.style.overflow = ''
     }
+  }, [isOpen])
+
+  // Intercepta gesto de navegação para trás enquanto o drawer está aberto.
+  // Push de estado fantasma no histórico: o gesto "voltar" dispara popstate
+  // e fecha o drawer em vez de navegar para a página anterior.
+  useEffect(() => {
+    if (!isOpen) return
+
+    closedByPopstate.current = false
+    history.pushState({ gameAnaliseDrawer: true }, '')
+
+    function onPopState() {
+      closedByPopstate.current = true
+      setIsOpen(false)
+      setTimeout(() => {
+        setIsVisible(false)
+        onClose()
+      }, 250)
+    }
+
+    window.addEventListener('popstate', onPopState)
+    return () => {
+      window.removeEventListener('popstate', onPopState)
+      // Se o drawer fechou por outro meio (ESC, backdrop, swipe), remove o estado fantasma
+      if (!closedByPopstate.current) {
+        history.back()
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen])
 
   if (!isVisible) return null
