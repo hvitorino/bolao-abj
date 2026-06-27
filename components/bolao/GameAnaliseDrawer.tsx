@@ -220,7 +220,7 @@ export default function GameAnaliseDrawer({
         style={{
           position: 'fixed',
           bottom: 0,
-          left: '1.5rem',
+          left: 'calc(28px + 1.5rem)',
           right: '1.5rem',
           zIndex: 51,
           maxHeight: '72vh',
