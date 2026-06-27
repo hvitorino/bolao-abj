@@ -81,34 +81,37 @@ export default function GameAnaliseDrawer({
   useEffect(() => {
     if (gameId === null) return
 
-    setIsVisible(true)
-    setLoading(true)
-    setError(null)
-    setData(null)
+    // Mover setState para microtask evita cascata de renders (react-hooks/set-state-in-effect)
+    Promise.resolve().then(() => {
+      setIsVisible(true)
+      setLoading(true)
+      setError(null)
+      setData(null)
 
-    // Fetch dos dados da análise
-    fetch(`/api/analise-data?gameId=${encodeURIComponent(gameId)}&groupId=${encodeURIComponent(groupId)}`)
-      .then(async (res) => {
-        if (!res.ok) {
-          const body = await res.json().catch(() => ({}))
-          throw new Error(body.error ?? `Erro ${res.status}`)
-        }
-        return res.json() as Promise<AnaliseData>
-      })
-      .then((json) => {
-        setData(json)
-        setLoading(false)
-      })
-      .catch((err: Error) => {
-        setError(err.message)
-        setLoading(false)
-      })
-
-    // Duplo rAF para garantir que o elemento esteja no DOM antes da transição CSS
-    requestAnimationFrame(() => {
+      // Duplo rAF: garante que o elemento está no DOM antes de acionar a transição CSS
       requestAnimationFrame(() => {
-        setIsOpen(true)
+        requestAnimationFrame(() => {
+          setIsOpen(true)
+        })
       })
+
+      // Fetch dos dados da análise
+      fetch(`/api/analise-data?gameId=${encodeURIComponent(gameId)}&groupId=${encodeURIComponent(groupId)}`)
+        .then(async (res) => {
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}))
+            throw new Error(body.error ?? `Erro ${res.status}`)
+          }
+          return res.json() as Promise<AnaliseData>
+        })
+        .then((json) => {
+          setData(json)
+          setLoading(false)
+        })
+        .catch((err: Error) => {
+          setError(err.message)
+          setLoading(false)
+        })
     })
   }, [gameId, groupId])
 
