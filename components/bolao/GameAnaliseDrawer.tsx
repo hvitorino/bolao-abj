@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import GameCard from '@/components/games/GameCard'
 import MatchupStatsCard from '@/components/bolao/MatchupStatsCard'
 import RecentGamesSection from '@/components/bolao/RecentGamesSection'
@@ -72,6 +72,9 @@ export default function GameAnaliseDrawer({
   const [data, setData] = useState<AnaliseData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [dragOffset, setDragOffset] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const touchStartY = useRef<number | null>(null)
 
   // Abertura do drawer quando gameId muda para não-null
   useEffect(() => {
@@ -118,6 +121,29 @@ export default function GameAnaliseDrawer({
       setIsVisible(false)
       onClose()
     }, 250)
+  }
+
+  // Swipe-to-close: handlers aplicados apenas no drag handle
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartY.current = e.touches[0].clientY
+    setIsDragging(true)
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    if (touchStartY.current === null) return
+    const delta = e.touches[0].clientY - touchStartY.current
+    if (delta > 0) setDragOffset(delta)
+  }
+
+  function handleTouchEnd() {
+    setIsDragging(false)
+    if (dragOffset > 60) {
+      setDragOffset(0)
+      handleClose()
+    } else {
+      setDragOffset(0)
+    }
+    touchStartY.current = null
   }
 
   // Handler de ESC
@@ -194,67 +220,49 @@ export default function GameAnaliseDrawer({
         style={{
           position: 'fixed',
           bottom: 0,
-          left: '0.5rem',
-          right: '0.5rem',
+          left: '1.5rem',
+          right: '1.5rem',
           zIndex: 51,
           maxHeight: '72vh',
           backgroundColor: 'var(--color-surface)',
           border: '1px solid var(--color-border)',
           borderBottom: 'none',
           borderRadius: '8px 8px 0 0',
-          transform: isOpen ? 'translateY(0)' : 'translateY(100%)',
-          transition: 'transform 250ms ease',
+          transform: isOpen
+            ? isDragging ? `translateY(${dragOffset}px)` : 'translateY(0)'
+            : 'translateY(100%)',
+          transition: isDragging ? 'none' : 'transform 250ms ease',
           display: 'flex',
           flexDirection: 'column',
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
         }}
       >
-        {/* Header fixo */}
+        {/* Drag handle — área de swipe para fechar */}
         <div
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           style={{
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0.75rem 1rem',
-            borderBottom: '1px solid var(--color-border)',
+            justifyContent: 'center',
+            padding: '10px 0 6px',
             flexShrink: 0,
+            cursor: 'grab',
+            touchAction: 'none',
           }}
         >
-          <span
+          <div
             style={{
-              fontSize: '12px',
-              color: 'var(--color-muted)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
+              width: '32px',
+              height: '3px',
+              borderRadius: '2px',
+              backgroundColor: 'var(--color-border)',
             }}
-          >
-            {data
-              ? `${data.game.home_team_code} × ${data.game.away_team_code}`
-              : 'ANÁLISE'}
-          </span>
-          <button
-            onClick={handleClose}
-            aria-label="Fechar"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--color-muted)',
-              cursor: 'pointer',
-              fontSize: '18px',
-              minWidth: '44px',
-              minHeight: '44px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-            }}
-          >
-            ✕
-          </button>
+          />
         </div>
 
         {/* Conteúdo com scroll */}
-        <div style={{ overflowY: 'auto', flex: 1, padding: '0.75rem' }}>
+        <div style={{ overflowY: 'auto', flex: 1, padding: '0 0.75rem 0.75rem' }}>
           {loading && <DrawerSkeleton />}
           {error && !loading && (
             <div
