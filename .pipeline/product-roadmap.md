@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 73 features
-- Concluídas: 72
-- Em progresso: 1
+- Concluídas: 73
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -952,7 +952,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 73. modo-acompanhar — Modo "Acompanhar" — em progresso
+### 73. modo-acompanhar — Modo "Acompanhar" — concluída
 **Objetivo:** Adicionar dentro da tela do dia (aba "Palpites") um modo alternativo de visualização — "Acompanhar" — otimizado para consumo rápido de placares ao vivo e ranking do dia, sem remover a função de preenchimento de palpites. O usuário alterna entre "Modo Preencher" (padrão atual com cards grandes) e "Modo Acompanhar" (carrossel de mini-cards de placares + ranking do dia).
 **Critérios de sucesso:**
 - Botão Acompanhar alterna corretamente entre os dois modos sem reload da tela
