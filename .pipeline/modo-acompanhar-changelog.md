@@ -3,7 +3,7 @@
 **Slug:** modo-acompanhar
 **Branch:** feature/modo-acompanhar
 **Data:** 2026-06-27
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
