@@ -30,7 +30,7 @@ export default function LoginClient() {
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirect') || '/jogos'
+  const redirectTo = searchParams.get('redirect') || '/palpites'
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [estado, setEstado] = useState<FormState>('idle')

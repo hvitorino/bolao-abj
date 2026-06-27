@@ -30,7 +30,7 @@ export default function CadastroClient() {
 function CadastroForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirect') || '/jogos'
+  const redirectTo = searchParams.get('redirect') || '/palpites'
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
