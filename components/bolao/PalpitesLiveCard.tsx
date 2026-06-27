@@ -104,7 +104,7 @@ function GameItem({
         boxShadow: isPressed ? 'none' : '0 2px 6px rgba(0,0,0,0.35)',
         cursor: 'pointer',
         padding: '0.25rem 0.5rem',
-        paddingTop: '0.6rem',
+        paddingTop: '1.4rem',
         borderRadius: '2px',
         transition: 'background 100ms ease, box-shadow 100ms ease',
       }}
@@ -129,6 +129,9 @@ function GameItem({
       {/* Status */}
       <span
         style={{
+          position: 'absolute',
+          top: '4px',
+          left: '4px',
           fontSize: '9px',
           color: statusColor,
           fontWeight: 'bold',
