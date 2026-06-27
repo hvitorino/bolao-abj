@@ -105,7 +105,7 @@ function MiniCard({
         flexDirection: 'column',
         alignItems: 'center',
         gap: '0.2rem',
-        flexShrink: 0,
+        flex: 1,
         minWidth: '80px',
         padding: '0.4rem 0.6rem',
         border: cardBorder,
