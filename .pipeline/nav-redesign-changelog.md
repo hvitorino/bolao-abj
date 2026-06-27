@@ -3,7 +3,7 @@
 **Slug:** nav-redesign
 **Branch:** feature/nav-redesign
 **Data:** 2026-06-27
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
