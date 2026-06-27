@@ -5,6 +5,7 @@ import { usePalpitesAoVivo } from '@/lib/hooks/usePalpitesAoVivo'
 import { PalpitesLiveCard } from '@/components/bolao/PalpitesLiveCard'
 import { PalpitesRanking } from '@/components/bolao/PalpitesRanking'
 import DateChipsNav from '@/components/games/DateChipsNav'
+import GameAnaliseDrawer from '@/components/bolao/GameAnaliseDrawer'
 
 interface PalpitesLiveSectionProps {
   groupId: string
@@ -25,6 +26,7 @@ export function PalpitesLiveSection({
     selectedDate
   )
   const [copied, setCopied] = useState(false)
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
 
   const gameCount = todayGames.length
   const guessCount = todayGames.filter((g) => g.myPrediction !== null).length
@@ -89,7 +91,7 @@ export function PalpitesLiveSection({
         >
           {copied ? '✓ COPIADO!' : '⎘ COPIAR LINK DO DIA'}
         </button>
-        <PalpitesLiveCard todayGames={todayGames} loading={loading} />
+        <PalpitesLiveCard todayGames={todayGames} loading={loading} onGameClick={setSelectedGameId} />
       </div>
 
       {/* Ranking com animação FLIP e accordion de breakdown */}
@@ -99,6 +101,14 @@ export function PalpitesLiveSection({
         todayGames={todayGames}
         loading={loading}
         error={error}
+      />
+
+      {/* Drawer de análise do jogo — abre ao clicar em um GameItem */}
+      <GameAnaliseDrawer
+        gameId={selectedGameId}
+        groupId={groupId}
+        currentUserId={currentUserId}
+        onClose={() => setSelectedGameId(null)}
       />
     </div>
   )

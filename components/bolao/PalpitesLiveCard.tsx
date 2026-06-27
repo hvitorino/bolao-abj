@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 import type { LiveGameWithPrediction } from '@/lib/hooks/usePalpitesAoVivo'
 
@@ -10,9 +11,10 @@ const MONO: React.CSSProperties = {
 interface PalpitesLiveCardProps {
   todayGames: LiveGameWithPrediction[]
   loading: boolean
+  onGameClick: (gameId: string) => void
 }
 
-export function PalpitesLiveCard({ todayGames, loading }: PalpitesLiveCardProps) {
+export function PalpitesLiveCard({ todayGames, loading, onGameClick }: PalpitesLiveCardProps) {
   if (loading) {
     return (
       <div style={{ ...MONO, padding: '0.5rem', fontSize: '10px', color: 'var(--color-muted)', textAlign: 'center' }}>
@@ -46,14 +48,21 @@ export function PalpitesLiveCard({ todayGames, loading }: PalpitesLiveCardProps)
         }}
       >
         {todayGames.map((game) => (
-          <GameItem key={game.id} game={game} />
+          <GameItem key={game.id} game={game} onGameClick={onGameClick} />
         ))}
       </div>
     </div>
   )
 }
 
-function GameItem({ game }: { game: LiveGameWithPrediction }) {
+function GameItem({
+  game,
+  onGameClick,
+}: {
+  game: LiveGameWithPrediction
+  onGameClick: (gameId: string) => void
+}) {
+  const [isHovered, setIsHovered] = useState(false)
   const homeFlag = getTeamFlag(game.home_team_code)
   const awayFlag = getTeamFlag(game.away_team_code)
 
@@ -70,7 +79,10 @@ function GameItem({ game }: { game: LiveGameWithPrediction }) {
     : '—'
 
   return (
-    <div
+    <button
+      onClick={() => onGameClick(game.id)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
         ...MONO,
         display: 'flex',
@@ -78,6 +90,10 @@ function GameItem({ game }: { game: LiveGameWithPrediction }) {
         alignItems: 'center',
         gap: '0.1rem',
         opacity: isPending ? 0.65 : 1,
+        background: isHovered ? 'rgba(255,255,255,0.04)' : 'none',
+        border: 'none',
+        cursor: 'pointer',
+        padding: '0.25rem 0.5rem',
       }}
     >
       {/* Status */}
@@ -119,7 +135,7 @@ function GameItem({ game }: { game: LiveGameWithPrediction }) {
       >
         {predScore}
       </span>
-    </div>
+    </button>
   )
 }
 

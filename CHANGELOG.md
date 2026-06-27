@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [palpites-analise-drawer] — Drawer de Análise na Aba Palpites — 2026-06-27
+
+- `lib/analytics/team-stats.ts` criado: exporta `GameRow`, `calculateTeamStats`, `getRecentGames` (extraído de `analise/page.tsx` para evitar duplicação)
+- `app/(dashboard)/jogos/[gameId]/analise/page.tsx` refatorado: importa de `@/lib/analytics/team-stats` (remove ~103 linhas de definições locais)
+- `app/api/analise-data/route.ts` criado: GET autenticado com validação de membership no grupo, queries paralelas de membros/palpites/scores/estatísticas; retorna 400/401/403/404/500 conforme o caso
+- `components/bolao/GameAnaliseDrawer.tsx` criado: bottom drawer com slide-up 250ms, backdrop fade, skeleton monospace, estado de erro, ESC, scroll lock, área ✕ mínima 44×44px, derivação de `myPrediction`/`myScore` de `participants`
+- `components/bolao/PalpitesLiveCard.tsx` atualizado: prop `onGameClick` adicionada; `GameItem` convertido de `<div>` para `<button>` com hover state
+- `app/(dashboard)/palpites/palpites-live-section.tsx` atualizado: estado `selectedGameId` e `GameAnaliseDrawer` integrados
+- `app/publico/[groupId]/[date]/public-date-client.tsx` atualizado: `onGameClick={() => {}}` (drawer desabilitado em contexto público)
+
 ## [palpites-breakdown-por-jogo] — Breakdown Vertical por Jogo nos Palpites — 2026-06-27
 
 - `components/bolao/PalpitesRankingRow.tsx` refatorado: accordion substituído por blocos verticais jogo a jogo (componente local `GameBreakdownBlock`)

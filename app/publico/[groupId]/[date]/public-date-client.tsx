@@ -268,7 +268,7 @@ export default function PublicDateClient({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <PalpitesLiveCard todayGames={games} loading={false} />
+      <PalpitesLiveCard todayGames={games} loading={false} onGameClick={() => {}} />
       <PalpitesRanking
         currentUserId=""
         rankingWithDetails={ranking}
