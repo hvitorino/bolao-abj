@@ -219,7 +219,7 @@ export default function GameAnaliseDrawer({
         aria-label="Análise do jogo"
         style={{
           position: 'fixed',
-          bottom: 0,
+          bottom: 'calc(52px + env(safe-area-inset-bottom))',
           left: 'calc(28px + 1.5rem)',
           right: '1.5rem',
           zIndex: 51,
