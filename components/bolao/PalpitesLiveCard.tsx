@@ -103,8 +103,8 @@ function GameItem({
         outline: '1px solid rgba(90, 122, 106, 0.5)',
         boxShadow: isPressed ? 'none' : '0 2px 6px rgba(0,0,0,0.35)',
         cursor: 'pointer',
-        padding: '0.25rem 0.5rem',
-        paddingTop: '1.4rem',
+        padding: '0.4rem 0.75rem',
+        paddingTop: '1.75rem',
         borderRadius: '2px',
         transition: 'background 100ms ease, box-shadow 100ms ease',
       }}
@@ -132,7 +132,7 @@ function GameItem({
           position: 'absolute',
           top: '4px',
           left: '4px',
-          fontSize: '9px',
+          fontSize: '11px',
           color: statusColor,
           fontWeight: 'bold',
           letterSpacing: '0.05em',
@@ -144,23 +144,23 @@ function GameItem({
 
       {/* Placar real: 🏴 2×1 🏴 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-        <span style={{ fontSize: '14px', lineHeight: 1 }}>{homeFlag}</span>
+        <span style={{ fontSize: '18px', lineHeight: 1 }}>{homeFlag}</span>
         <span
           style={{
-            fontSize: '13px',
+            fontSize: '16px',
             fontWeight: 'bold',
             color: isPending ? 'var(--color-muted)' : 'var(--color-accent)',
           }}
         >
           {realScore}
         </span>
-        <span style={{ fontSize: '14px', lineHeight: 1 }}>{awayFlag}</span>
+        <span style={{ fontSize: '18px', lineHeight: 1 }}>{awayFlag}</span>
       </div>
 
       {/* Palpite: só o placar, sem bandeiras */}
       <span
         style={{
-          fontSize: '10px',
+          fontSize: '12px',
           color: game.myPrediction ? 'var(--color-text)' : 'var(--color-muted)',
         }}
       >
