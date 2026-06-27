@@ -69,7 +69,6 @@ interface ChatPanelContentProps {
   activeGroupName: string
   currentUserId: string
   isVisible: boolean
-  onUnreadCountChange?: (count: number) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -87,7 +86,6 @@ export function ChatPanelContent({
   activeGroupName,
   currentUserId,
   isVisible,
-  onUnreadCountChange,
 }: ChatPanelContentProps) {
   const supabase = createClient()
 
@@ -95,7 +93,6 @@ export function ChatPanelContent({
   const [newMessage, setNewMessage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isSending, setIsSending] = useState(false)
-  const [unreadCount, setUnreadCount] = useState(0)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [hasFetched, setHasFetched] = useState(false)
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(true)
@@ -112,11 +109,6 @@ export function ChatPanelContent({
   useEffect(() => {
     isVisibleRef.current = isVisible
   }, [isVisible])
-
-  // Notifica o pai sobre mudança no unreadCount
-  useEffect(() => {
-    onUnreadCountChange?.(unreadCount)
-  }, [unreadCount, onUnreadCountChange])
 
   // Carrega mensagens
   const loadMessages = useCallback(async () => {
@@ -171,10 +163,6 @@ export function ChatPanelContent({
             if (prev.some((m) => m.id === newMsg.id)) return prev
             return [...prev, newMsg]
           })
-
-          if (!isVisibleRef.current) {
-            setUnreadCount((prev) => prev + 1)
-          }
         }
       )
       .subscribe()
@@ -184,11 +172,10 @@ export function ChatPanelContent({
     }
   }, [activeGroupId, supabase])
 
-  // Ao abrir o painel: carregar mensagens (se ainda não carregou), zerar não-lidas, rolar para o fim
+  // Ao abrir o painel: carregar mensagens (se ainda não carregou), rolar para o fim
   useEffect(() => {
     if (!isVisible) return
 
-    setUnreadCount(0)
     if (typeof window !== 'undefined') {
       localStorage.setItem(localStorageKey, new Date().toISOString())
     }

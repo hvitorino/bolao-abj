@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { ChatBottomSheet } from './ChatBottomSheet'
+import { createClient } from '@/lib/supabase/client'
 
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
@@ -21,6 +22,59 @@ const MAIS_ITEMS = [
 
 function isPathActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(href + '/')
+}
+
+function useChatUnreadCount(groupId: string, currentUserId: string): number {
+  const [count, setCount] = useState(0)
+  const supabase = createClient()
+  const localStorageKey = `chat_last_read_${groupId}`
+
+  // Contagem inicial: mensagens de outros desde o último acesso
+  useEffect(() => {
+    if (!groupId) return
+    const lastRead = typeof window !== 'undefined' ? localStorage.getItem(localStorageKey) : null
+    if (!lastRead) return
+    supabase
+      .from('group_messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('group_id', groupId)
+      .neq('user_id', currentUserId)
+      .gt('created_at', lastRead)
+      .then(({ count: c }) => {
+        if (c && c > 0) setCount(c)
+      })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groupId, currentUserId])
+
+  // Realtime: incrementa ao chegar mensagem de outro usuário
+  useEffect(() => {
+    if (!groupId) return
+    const channel = supabase
+      .channel(`unread-badge-${groupId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'group_messages', filter: `group_id=eq.${groupId}` },
+        (payload) => {
+          const msg = payload.new as { user_id: string }
+          if (msg.user_id === currentUserId) return
+          setCount((prev) => prev + 1)
+        }
+      )
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [groupId, currentUserId])
+
+  // Reseta quando o chat é aberto
+  useEffect(() => {
+    function handleChatOpen() {
+      setCount(0)
+    }
+    window.addEventListener('bolao:chat:open', handleChatOpen)
+    return () => window.removeEventListener('bolao:chat:open', handleChatOpen)
+  }, [])
+
+  return count
 }
 
 // ---------------------------------------------------------------------------
@@ -41,7 +95,7 @@ export function TabBar({ groupId, currentUserId, activeGroupName }: TabBarProps)
   const pathname = usePathname()
   const [maisOpen, setMaisOpen] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
-  const [chatUnreadCount, setChatUnreadCount] = useState(0)
+  const chatUnreadCount = useChatUnreadCount(groupId, currentUserId)
   const maisRef = useRef<HTMLDivElement>(null)
 
   const maisActive = MAIS_ITEMS.some(({ href }) => isPathActive(pathname, href))
@@ -221,7 +275,6 @@ export function TabBar({ groupId, currentUserId, activeGroupName }: TabBarProps)
           groupId={groupId}
           currentUserId={currentUserId}
           activeGroupName={activeGroupName}
-          onUnreadCountChange={(count) => setChatUnreadCount(count)}
         />
       )}
     </div>

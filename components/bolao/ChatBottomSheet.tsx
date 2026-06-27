@@ -13,7 +13,6 @@ interface ChatBottomSheetProps {
   groupId: string
   currentUserId: string
   activeGroupName: string
-  onUnreadCountChange?: (count: number) => void
 }
 
 // ---------------------------------------------------------------------------
@@ -32,7 +31,6 @@ export function ChatBottomSheet({
   groupId,
   currentUserId,
   activeGroupName,
-  onUnreadCountChange,
 }: ChatBottomSheetProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [isAnimatingIn, setIsAnimatingIn] = useState(false)
@@ -194,7 +192,6 @@ export function ChatBottomSheet({
               activeGroupName={activeGroupName}
               currentUserId={currentUserId}
               isVisible={isAnimatingIn}
-              onUnreadCountChange={onUnreadCountChange}
             />
           )}
         </div>
