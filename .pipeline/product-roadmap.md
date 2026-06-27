@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 72 features
+- Total: 73 features
 - Concluídas: 72
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -949,3 +949,20 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Visual segue DESIGN.md rigorosamente (JetBrains Mono, paleta verde/amarelo/azul, dense, sem ícones decorativos)
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** public-game-view, public-game-view-group-fix, predictions, scoring, grupos, palpites-ao-vivo
+
+---
+
+### 73. modo-acompanhar — Modo "Acompanhar" — em progresso
+**Objetivo:** Adicionar dentro da tela do dia (aba "Palpites") um modo alternativo de visualização — "Acompanhar" — otimizado para consumo rápido de placares ao vivo e ranking do dia, sem remover a função de preenchimento de palpites. O usuário alterna entre "Modo Preencher" (padrão atual com cards grandes) e "Modo Acompanhar" (carrossel de mini-cards de placares + ranking do dia).
+**Critérios de sucesso:**
+- Botão Acompanhar alterna corretamente entre os dois modos sem reload da tela
+- Estado visual do botão (outline vs preenchido) reflete corretamente o modo ativo
+- Botão Compartilhar mantém a ação atual de copiar link, independente do modo ativo, e nunca exibe estado "ativo"
+- No modo Acompanhar, carrossel nunca exibe barra de scroll, em qualquer navegador/dispositivo, mas permite arrastar quando o conteúdo excede a largura da tela
+- Quando os jogos do dia cabem sem overflow, carrossel não exibe comportamento de arraste nem espaço vazio sugerindo scroll
+- Os 4 estados de mini-card são exibidos corretamente conforme o status real do jogo e a disponibilidade de cálculo de pontos
+- Ranking do dia reflete apenas a pontuação dos jogos da data selecionada, distinto do ranking geral
+- Trocar a data selecionada mantém o modo Acompanhar/Preencher já escolhido
+- Trocar o grupo ativo reseta a tela para o modo Preencher
+- Não há regressão no fluxo de preenchimento de palpite no modo Preencher
+**Dependências:** public-date-view, predictions, scoring, palpites-ao-vivo, grupos
