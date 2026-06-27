@@ -3,8 +3,8 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 69 features
-- Concluídas: 69
+- Total: 70 features
+- Concluídas: 70
 - Em progresso: 0
 - Pendentes: 0
 
@@ -895,6 +895,19 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Acessar a página pública sem groupId na URL resulta em erro claro (ex: mensagem de parâmetro obrigatório ausente) ou redirect para rota segura — nunca vaza dados de todos os grupos misturados
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** public-game-view, grupos, grupo-ativo-persistente
+
+---
+
+### 70. palpites-breakdown-por-jogo — Breakdown Vertical por Jogo nos Palpites — concluída
+**Objetivo:** Na aba de Palpites, substituir o agrupamento de pontos por regra (que somava todos os jogos sem indicar a origem de cada acerto) por blocos verticais empilhados jogo a jogo, exibindo para cada participante o placar real, o palpite daquele participante e as sub-linhas de cada regra que pontuou — tudo sem scroll horizontal em viewports de 360px.
+**Critérios de sucesso:**
+- Ao expandir um participante na aba Palpites, os jogos do dia são exibidos como blocos verticais empilhados (sem scroll horizontal em 375px), com linha-cabeçalho (jogo + palpite + total) e sub-linhas indentadas por regra que pontuou (pts > 0)
+- Jogos ao vivo mostram total e sub-linhas em `color-live` com sufixo `*` (provisório); jogos encerrados em estilo padrão; jogo pendente: palpite de terceiros oculto (`—`), próprio palpite visível
+- Estado vazio "nenhum jogo no dia" somente quando `participant.games.length === 0`, não quando há jogos com zero pontos
+- Sem alteração de schema, RLS, API ou hook de dados — mudança puramente de apresentação isolada em `PalpitesRankingRow.tsx`
+- `npm run lint` e `npm run build` passam sem erros novos
+**Dependências:** palpites-ao-vivo, live-scoring, prediction-visibility
+**Observação de conclusão:** aprovada sem rodada de fix em 2026-06-27; merge `feature/palpites-breakdown-por-jogo` na main confirmado (commit `ec618cc`). Refatoração isolada em `PalpitesRankingRow.tsx`: componente local `GameBreakdownBlock` substituiu `buildRuleGroups`/`RuleGroupLine`/`LiveGameLine`; padding do accordion ajustado para eliminar scroll horizontal em 360px; guard de privacidade em profundidade para palpites de terceiros em jogos pendentes.
 
 ---
 
