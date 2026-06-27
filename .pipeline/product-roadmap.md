@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 70 features
+- Total: 71 features
 - Concluídas: 70
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -908,6 +908,20 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** palpites-ao-vivo, live-scoring, prediction-visibility
 **Observação de conclusão:** aprovada sem rodada de fix em 2026-06-27; merge `feature/palpites-breakdown-por-jogo` na main confirmado (commit `ec618cc`). Refatoração isolada em `PalpitesRankingRow.tsx`: componente local `GameBreakdownBlock` substituiu `buildRuleGroups`/`RuleGroupLine`/`LiveGameLine`; padding do accordion ajustado para eliminar scroll horizontal em 360px; guard de privacidade em profundidade para palpites de terceiros em jogos pendentes.
+
+---
+
+### 71. palpites-analise-drawer — Drawer de Análise na Aba Palpites — em progresso
+**Objetivo:** Tornar os cards de placar na aba `/palpites` clicáveis, abrindo o conteúdo completo de análise do jogo em um bottom drawer sem sair da aba — mantendo o ranking visível ao fechar.
+**Critérios de sucesso:**
+- Clicar em qualquer `GameItem` dentro de `PalpitesLiveCard` abre um bottom drawer com slide-up animado
+- O drawer exibe `GameCard` + `MatchupStatsCard` + `RecentGamesSection` idênticos à página `/jogos/[gameId]/analise`
+- Fechar via ✕, backdrop e ESC funciona corretamente
+- URL permanece em `/palpites` sem alteração de rota
+- Ranking abaixo permanece intacto após fechar o drawer
+- Polling do `usePalpitesAoVivo` continua rodando durante drawer aberto
+- Funciona corretamente em mobile (scroll interno, área de toque adequada)
+**Dependências:** palpites-ao-vivo, analise-confronto, game-navigation
 
 ---
 
