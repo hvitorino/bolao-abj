@@ -108,22 +108,24 @@ function GameItem({
         transition: 'background 100ms ease, box-shadow 100ms ease',
       }}
     >
-      {/* Botão de navegação */}
-      <span
-        style={{
-          position: 'absolute',
-          top: '4px',
-          right: '4px',
-          backgroundColor: 'var(--color-primary)',
-          color: '#fff',
-          fontSize: '8px',
-          lineHeight: 1,
-          padding: '2px 4px',
-          borderRadius: '2px',
-        }}
-      >
-        ✎
-      </span>
+      {/* Indicador de edição — apenas para jogos pendentes */}
+      {isPending && (
+        <span
+          style={{
+            position: 'absolute',
+            top: '4px',
+            right: '4px',
+            backgroundColor: 'var(--color-primary)',
+            color: '#fff',
+            fontSize: '8px',
+            lineHeight: 1,
+            padding: '2px 4px',
+            borderRadius: '2px',
+          }}
+        >
+          ✎
+        </span>
+      )}
 
       {/* Status */}
       <span
