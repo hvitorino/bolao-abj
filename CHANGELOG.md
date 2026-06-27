@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [nav-redesign] — Redesign da Navegação (Abas) — 2026-06-27
+
+- `components/bolao/ChatBottomSheet.tsx` criado: bottom sheet para chat do grupo com lazy-mount de `ChatPanelContent`, swipe-to-close (threshold 60px), backdrop com click-to-close, handler de ESC, scroll lock do body e animação slide-up idêntica ao `GameAnaliseDrawer` (posição, dimensões e transição CSS)
+- `components/bolao/TabBar.tsx` modificado: reordenação das abas para EU | RANKING | PALPITES | CHAT | MAIS; aba JOGOS removida; CHAT é `<button>` que abre `ChatBottomSheet`; badge de não lidas (`color-accent`) aparece quando `chatUnreadCount > 0 && !chatOpen`; props `groupId`, `currentUserId`, `activeGroupName` adicionadas; botão CHAT desabilitado (cursor default, sem ação) quando `groupId === ''`
+- `app/(dashboard)/layout.tsx` atualizado: passa `groupId`, `currentUserId` e `activeGroupName` para `<TabBar />`
+- `components/bolao/SidePanelContainer.tsx` modificado: pull tab CHAT, painel CHAT, import de `ChatPanelContent`, estados `chatEverOpened`/`chatUnreadCount`, callback `handleUnreadCountChange`, `useEffect` de chat e `showChatTab` removidos; `PanelId` simplificado para `'recap' | 'live' | null`; `overflowY` fixo em `'auto'`
+- Rota `/jogos` e todos seus arquivos preservados intactos (apenas removida da tab bar)
+- Nenhuma alteração de banco de dados, migrations, RLS ou endpoints
+
 ## [palpites-analise-drawer] — Drawer de Análise na Aba Palpites — 2026-06-27
 
 - `lib/analytics/team-stats.ts` criado: exporta `GameRow`, `calculateTeamStats`, `getRecentGames` (extraído de `analise/page.tsx` para evitar duplicação)

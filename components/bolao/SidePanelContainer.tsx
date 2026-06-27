@@ -5,13 +5,12 @@ import { useDailyRecap } from '@/lib/hooks/useDailyRecap'
 import { useLiveTodayRanking } from '@/lib/hooks/useLiveTodayRanking'
 import { RecapPanelContent } from './RecapPanelContent'
 import { LiveTodayPanelContent } from './LiveTodayPanelContent'
-import { ChatPanelContent } from './ChatPanelContent'
 
 // ---------------------------------------------------------------------------
 // Tipos
 // ---------------------------------------------------------------------------
 
-type PanelId = 'recap' | 'live' | 'chat' | null
+type PanelId = 'recap' | 'live' | null
 
 interface SidePanelContainerProps {
   groupId: string
@@ -45,11 +44,8 @@ const FONT = "'JetBrains Mono', 'Courier New', monospace"
 export function SidePanelContainer({
   groupId,
   currentUserId,
-  activeGroupName = '',
 }: SidePanelContainerProps) {
   const [openPanel, setOpenPanel] = useState<PanelId>(null)
-  const [chatEverOpened, setChatEverOpened] = useState(false)
-  const [chatUnreadCount, setChatUnreadCount] = useState(0)
 
   const decidedRef = useRef(false)
 
@@ -76,25 +72,13 @@ export function SidePanelContainer({
     }
   }, [loading, hasData])
 
-  // Ao abrir o painel CHAT pela primeira vez: marcar como "ever opened"
-  useEffect(() => {
-    if (openPanel === 'chat' && !chatEverOpened) {
-      setChatEverOpened(true)
-    }
-  }, [openPanel, chatEverOpened])
-
   const handleClose = useCallback(() => {
     setOpenPanel(null)
-  }, [])
-
-  const handleUnreadCountChange = useCallback((count: number) => {
-    setChatUnreadCount(count)
   }, [])
 
   // Visibilidade dos pull tabs
   const showRecapTab = !loading && hasData === true
   const showLiveTab = hasGamesToday === true
-  const showChatTab = true // sempre visível quando há groupId
 
   // Posicionamento vertical dos pull tabs (container centrado entre header e tab bar)
   const pullTabContainerStyle: React.CSSProperties = {
@@ -134,7 +118,6 @@ export function SidePanelContainer({
   const panelTitles: Record<Exclude<PanelId, null>, string> = {
     recap: 'ONTEM',
     live: 'AO VIVO',
-    chat: `CHAT — ${activeGroupName.toUpperCase()}`,
   }
 
   return (
@@ -176,49 +159,6 @@ export function SidePanelContainer({
             }}
           >
             AO VIVO
-          </button>
-        )}
-
-        {showChatTab && (
-          <button
-            type="button"
-            onClick={() => setOpenPanel(openPanel === 'chat' ? null : 'chat')}
-            aria-label={`Abrir chat do grupo${chatUnreadCount > 0 ? ` (${chatUnreadCount} não lidas)` : ''}`}
-            style={{
-              ...pullTabBaseStyle,
-              background: 'var(--color-primary)',
-              color: '#0a0e1a',
-              borderRight: '2px solid rgba(0,0,0,0.2)',
-              borderBottom: 'none',
-              borderLeft: 'none',
-              borderTop: (!showRecapTab && !showLiveTab) ? 'none' : '1px solid rgba(0,0,0,0.2)',
-            }}
-          >
-            CHAT
-            {chatUnreadCount > 0 && openPanel !== 'chat' && (
-              <span
-                style={{
-                  position: 'absolute',
-                  top: '4px',
-                  right: '2px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minWidth: '14px',
-                  height: '14px',
-                  padding: '0 2px',
-                  backgroundColor: '#0a0e1a',
-                  color: '#FFDF00',
-                  fontSize: '9px',
-                  fontWeight: 'bold',
-                  fontFamily: FONT,
-                  lineHeight: 1,
-                  writingMode: 'horizontal-tb',
-                }}
-              >
-                {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
-              </span>
-            )}
           </button>
         )}
       </div>
@@ -313,7 +253,7 @@ export function SidePanelContainer({
         )}
 
         {/* Conteúdo do painel */}
-        <div style={{ flex: 1, overflowY: openPanel === 'chat' ? 'hidden' : 'auto' }}>
+        <div style={{ flex: 1, overflowY: 'auto' }}>
           {openPanel === 'recap' && (
             <RecapPanelContent
               data={data}
@@ -330,19 +270,6 @@ export function SidePanelContainer({
               currentUserId={currentUserId}
               onClose={handleClose}
             />
-          )}
-
-          {/* Chat: lazy-mount — monta na primeira abertura e nunca mais desmonta */}
-          {chatEverOpened && (
-            <div style={{ display: openPanel === 'chat' ? 'flex' : 'none', flexDirection: 'column', height: '100%' }}>
-              <ChatPanelContent
-                activeGroupId={groupId}
-                activeGroupName={activeGroupName}
-                currentUserId={currentUserId}
-                isVisible={openPanel === 'chat'}
-                onUnreadCountChange={handleUnreadCountChange}
-              />
-            </div>
           )}
         </div>
       </div>
