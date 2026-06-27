@@ -41,9 +41,6 @@ export function PalpitesRankingRow({
     }
   }
 
-  const ruleGroups = buildRuleGroups(participant.games)
-  const liveGames = participant.games.filter((g) => g.status === 'live' && g.userPrediction)
-
   return (
     <div
       style={{
@@ -145,23 +142,21 @@ export function PalpitesRankingRow({
           style={{
             backgroundColor: 'var(--color-bg)',
             borderTop: '1px solid var(--color-border)',
-            padding: '0.35rem 3.5rem 0.35rem 0.75rem',
+            padding: '0.25rem 0.5rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.2rem',
           }}
         >
-          {/* Regras de pontuação atingidas (jogos finalizados) */}
-          {ruleGroups.map((group) => (
-            <RuleGroupLine key={group.key} group={group} />
+          {participant.games.map((game) => (
+            <GameBreakdownBlock
+              key={game.gameId}
+              game={game}
+              isCurrentUser={isCurrentUser}
+            />
           ))}
 
-          {/* Jogos ao vivo com pontuação provisória */}
-          {liveGames.map((game) => (
-            <LiveGameLine key={game.gameId} game={game} />
-          ))}
-
-          {ruleGroups.length === 0 && liveGames.length === 0 && (
+          {participant.games.length === 0 && (
             <div
               style={{
                 fontSize: '13px',
@@ -180,147 +175,167 @@ export function PalpitesRankingRow({
 }
 
 // --------------------------------------------------------------------------
-// Linha de regra de pontuação agrupada
+// GameBreakdownBlock — bloco vertical por jogo
 // --------------------------------------------------------------------------
 
-interface RuleGame {
-  home_team_code: string
-  away_team_code: string
-  predHome: number
-  predAway: number
+interface GameBreakdownBlockProps {
+  game: GameScoreEntry
+  isCurrentUser: boolean
 }
 
-interface RuleGroup {
-  key: keyof ScoreBreakdown
-  label: string
-  totalPoints: number
-  games: RuleGame[]
-}
+function GameBreakdownBlock({ game, isCurrentUser }: GameBreakdownBlockProps) {
+  // Guard de privacidade: oculta palpite de terceiro em jogo pendente
+  const shouldHidePrediction = game.status === 'pending' && !isCurrentUser
+  const predictionLabel = shouldHidePrediction
+    ? '—'
+    : game.userPrediction
+      ? `${game.userPrediction.home_score}×${game.userPrediction.away_score}`
+      : '—'
 
-function RuleGroupLine({ group }: { group: RuleGroup }) {
+  // Segmento esquerdo: times e placar real
+  const matchLabel =
+    game.status === 'pending'
+      ? `${game.home_team_code} vs ${game.away_team_code}`
+      : `${game.home_team_code} ${game.home_score}×${game.away_score} ${game.away_team_code}`
+
+  // Segmento direito: total do jogo
+  let totalLabel: string
+  let totalColor: string
+  if (game.status === 'pending') {
+    totalLabel = '—'
+    totalColor = 'var(--color-muted)'
+  } else if (game.status === 'live') {
+    if (game.livePoints !== null) {
+      totalLabel = `+${game.livePoints}*`
+      totalColor = 'var(--color-live)'
+    } else {
+      totalLabel = '—'
+      totalColor = 'var(--color-muted)'
+    }
+  } else {
+    // finished
+    const pts = game.officialPoints ?? 0
+    totalLabel = `+${pts}`
+    totalColor = pts > 0 ? 'var(--color-accent)' : 'var(--color-muted)'
+  }
+
+  // Sub-linhas de regra ativas
+  const keys = Object.keys(BREAKDOWN_LABELS) as Array<keyof ScoreBreakdown>
+  let activeRules: Array<keyof ScoreBreakdown> = []
+
+  if (game.status === 'finished' && game.officialBreakdown) {
+    activeRules = keys.filter((k) => (game.officialBreakdown![k] ?? 0) > 0)
+  } else if (game.status === 'live' && game.liveBreakdown) {
+    activeRules = keys.filter((k) => (game.liveBreakdown![k] ?? 0) > 0)
+  }
+
+  const isLive = game.status === 'live'
+
   return (
     <div
       style={{
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-        fontSize: '13px',
-        display: 'flex',
-        alignItems: 'center',
-        flexWrap: 'nowrap',
-        justifyContent: 'flex-end',
-        gap: '0.25rem',
-        lineHeight: 1.6,
-        overflow: 'hidden',
+        fontSize: '12px',
+        borderBottom: '1px solid var(--color-border)',
+        paddingBottom: '0.2rem',
+        marginBottom: '0.1rem',
       }}
     >
-      {/* Nome da regra */}
-      <span style={{ color: 'var(--color-muted)', flexShrink: 0 }}>{group.label}</span>
+      {/* Linha-cabeçalho */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'nowrap',
+          gap: '0.25rem',
+          lineHeight: 1.6,
+          overflow: 'hidden',
+        }}
+      >
+        {/* Esquerdo: times + placar real */}
+        <span
+          style={{
+            color: isLive ? 'var(--color-live)' : 'var(--color-text)',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {matchLabel}
+        </span>
 
-      <span style={{ color: 'var(--color-accent)', fontWeight: 'bold', flexShrink: 0 }}>
-        +{group.totalPoints}
-      </span>
-    </div>
-  )
-}
+        {/* Centro: palpite */}
+        <span
+          style={{
+            color: game.status === 'pending' ? 'var(--color-muted)' : 'var(--color-text)',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            textAlign: 'center',
+          }}
+        >
+          {predictionLabel}
+        </span>
 
-// --------------------------------------------------------------------------
-// Linha de jogo ao vivo (pontuação provisória)
-// --------------------------------------------------------------------------
+        {/* Direito: total */}
+        <span
+          style={{
+            color: totalColor,
+            fontWeight: 'bold',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}
+        >
+          {totalLabel}
+        </span>
+      </div>
 
-function LiveGameLine({ game }: { game: GameScoreEntry }) {
-  // Se há breakdown detalhado ao vivo, exibe cada regra separadamente
-  if (game.liveBreakdown) {
-    const lines = (Object.keys(BREAKDOWN_LABELS) as Array<keyof ScoreBreakdown>)
-      .filter((key) => {
-        const pts = game.liveBreakdown![key]
-        return pts !== undefined && pts > 0
-      })
+      {/* Sub-linhas de regra */}
+      {activeRules.map((key) => {
+        const pts = isLive
+          ? (game.liveBreakdown![key] ?? 0)
+          : (game.officialBreakdown![key] ?? 0)
 
-    if (lines.length > 0) {
-      return (
-        <>
-          {lines.map((key) => (
-            <div
-              key={key}
+        return (
+          <div
+            key={key}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingLeft: '1rem',
+              lineHeight: 1.5,
+              gap: '0.25rem',
+            }}
+          >
+            <span style={{ color: isLive ? 'var(--color-live)' : 'var(--color-win)', flexShrink: 0 }}>
+              ✓
+            </span>
+            <span
               style={{
-                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                fontSize: '13px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.25rem',
-                flexWrap: 'nowrap',
-                justifyContent: 'flex-end',
-                lineHeight: 1.6,
+                flex: 1,
+                color: 'var(--color-muted)',
+                whiteSpace: 'nowrap',
                 overflow: 'hidden',
+                textOverflow: 'ellipsis',
               }}
             >
-              <span style={{ color: 'var(--color-live)', flexShrink: 0 }}>
-                {BREAKDOWN_LABELS[key]}*
-              </span>
-              <span style={{ color: 'var(--color-live)', fontWeight: 'bold', flexShrink: 0 }}>
-                +{game.liveBreakdown![key]}
-              </span>
-            </div>
-          ))}
-        </>
-      )
-    }
-  }
-
-  // Fallback: exibe total ao vivo quando não há breakdown ou pontos = 0
-  return (
-    <div
-      style={{
-        fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-        fontSize: '13px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0.25rem',
-        flexWrap: 'nowrap',
-        justifyContent: 'flex-end',
-        lineHeight: 1.6,
-        overflow: 'hidden',
-      }}
-    >
-      <span style={{ color: 'var(--color-live)', flexShrink: 0 }}>AO VIVO*</span>
-      <span style={{ color: 'var(--color-live)', fontWeight: 'bold', flexShrink: 0 }}>
-        {game.livePoints !== null ? `+${game.livePoints}` : '+0'}
-      </span>
+              {BREAKDOWN_LABELS[key]}
+            </span>
+            <span
+              style={{
+                color: isLive ? 'var(--color-live)' : 'var(--color-accent)',
+                fontWeight: 'bold',
+                flexShrink: 0,
+              }}
+            >
+              {isLive ? `+${pts}*` : `+${pts}`}
+            </span>
+          </div>
+        )
+      })}
     </div>
   )
-}
-
-// --------------------------------------------------------------------------
-// Agrupamento por regra de pontuação
-// --------------------------------------------------------------------------
-
-function buildRuleGroups(games: GameScoreEntry[]): RuleGroup[] {
-  const ruleMap = new Map<keyof ScoreBreakdown, RuleGroup>()
-
-  for (const game of games) {
-    if (game.status !== 'finished' || !game.officialBreakdown || !game.userPrediction) continue
-    const breakdown = game.officialBreakdown
-
-    for (const key of Object.keys(BREAKDOWN_LABELS) as Array<keyof ScoreBreakdown>) {
-      const pts = breakdown[key]
-      if (!pts || pts <= 0) continue
-
-      if (!ruleMap.has(key)) {
-        ruleMap.set(key, { key, label: BREAKDOWN_LABELS[key], totalPoints: 0, games: [] })
-      }
-
-      const group = ruleMap.get(key)!
-      group.totalPoints += pts
-      group.games.push({
-        home_team_code: game.home_team_code,
-        away_team_code: game.away_team_code,
-        predHome: game.userPrediction.home_score,
-        predAway: game.userPrediction.away_score,
-      })
-    }
-  }
-
-  // Preserva a ordem definida em BREAKDOWN_LABELS
-  return (Object.keys(BREAKDOWN_LABELS) as Array<keyof ScoreBreakdown>)
-    .filter((key) => ruleMap.has(key))
-    .map((key) => ruleMap.get(key)!)
 }
