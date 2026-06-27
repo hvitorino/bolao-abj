@@ -56,3 +56,30 @@ Nenhuma alteração.
 5ad0708 feat(palpites-breakdown-por-jogo): substitui agrupamento por regra por blocos verticais jogo a jogo
 942bfb1 chore(palpites-breakdown-por-jogo): adiciona plano de implementação
 ```
+
+---
+
+## Revisão
+
+**Data:** 2026-06-27
+**Resultado:** APROVADO
+
+### Critérios verificados
+
+- **Remoção de artefatos antigos:** `buildRuleGroups`, `RuleGroupLine`, `LiveGameLine`, `RuleGame`, `RuleGroup` ausentes — confirmado via grep sem resultado.
+- **`GameBreakdownBlock` implementado:** componente local com interface `{ game: GameScoreEntry; isCurrentUser: boolean }`, conforme spec.
+- **Layout mobile (375px):** container usa `flexWrap: 'nowrap'` + `overflow: 'hidden'` — previne scroll horizontal sem quebra de layout.
+- **Guard de privacidade:** `game.status === 'pending' && !isCurrentUser` → exibe `—` no campo de palpite. Correto.
+- **Jogo encerrado:** usa `officialBreakdown`/`officialPoints`; `color-accent` se N > 0, `color-muted` se N = 0.
+- **Jogo ao vivo:** usa `liveBreakdown`/`livePoints`, cor `var(--color-live)`, sufixo `*` no total e em cada sub-linha.
+- **Jogo pendente:** `—` no palpite de terceiro e `—` no total; sem sub-linhas.
+- **Estado vazio:** dispara somente quando `participant.games.length === 0`.
+- **Padding do accordion:** alterado para `'0.25rem 0.5rem'` conforme spec.
+- **Sub-linhas:** ordem canônica via `Object.keys(BREAKDOWN_LABELS)` (`winner → exact → winner_score → diff → loser_score → goleada`); filtradas com `> 0`.
+- **Fonte monospace:** `JetBrains Mono` declarada tanto na constante `MONO` (linha do componente-pai) quanto no `GameBreakdownBlock`.
+- **Lint:** 6 erros e 14 warnings pré-existentes, todos em arquivos não tocados por esta feature — confirmado pelo `git show 5ad0708 --stat` (único arquivo modificado: `PalpitesRankingRow.tsx`).
+- **Build:** compilação sem erros.
+
+### Ressalvas não-bloqueantes
+
+- O segmento esquerdo do cabeçalho tem `flexShrink: 0` combinado com `minWidth: 0` (linhas 261-262) — propriedades ligeiramente contraditórias. O `flexShrink: 0` domina, mas o `overflow: hidden` no container pai garante que não haja scroll. Sem impacto funcional em 375px; pode ser simplificado em refatoração futura.
