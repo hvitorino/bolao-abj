@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 72 features
-- Concluídas: 71
-- Em progresso: 1
+- Concluídas: 72
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -925,7 +925,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 72. nav-redesign — Redesign da Navegação (Abas) — em progresso
+### 72. nav-redesign — Redesign da Navegação (Abas) — concluída
 **Objetivo:** Reformular as abas de navegação do app, removendo a aba "Jogos" da barra de navegação e adicionando uma aba "CHAT" que abre um bottom sheet com o chat no mesmo espaço do bottom sheet de detalhes dos jogos.
 **Critérios de sucesso:**
 - Navegação exibe exatamente 5 abas na ordem: EU, RANKING, PALPITES, CHAT, MAIS
