@@ -63,7 +63,7 @@ export default function DateChipsNav({
     function onTouchStart(e: TouchEvent) {
       startX = e.touches[0].clientX
       startY = e.touches[0].clientY
-      ignoredSwipe = !!(e.target as Element)?.closest('.date-chips-scroll')
+      ignoredSwipe = !!(e.target as Element)?.closest('.date-chips-scroll, .acompanhar-carrossel')
     }
 
     function onTouchEnd(e: TouchEvent) {
