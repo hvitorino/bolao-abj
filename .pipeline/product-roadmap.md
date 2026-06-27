@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 71 features
+- Total: 72 features
 - Concluídas: 71
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -922,6 +922,18 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Polling do `usePalpitesAoVivo` continua rodando durante drawer aberto
 - Funciona corretamente em mobile (scroll interno, área de toque adequada)
 **Dependências:** palpites-ao-vivo, analise-confronto, game-navigation
+
+---
+
+### 72. nav-redesign — Redesign da Navegação (Abas) — em progresso
+**Objetivo:** Reformular as abas de navegação do app, removendo a aba "Jogos" da barra de navegação e adicionando uma aba "CHAT" que abre um bottom sheet com o chat no mesmo espaço do bottom sheet de detalhes dos jogos.
+**Critérios de sucesso:**
+- Navegação exibe exatamente 5 abas na ordem: EU, RANKING, PALPITES, CHAT, MAIS
+- A aba "Jogos" não aparece mais na barra de navegação
+- Ao tocar em CHAT, abre um bottom sheet com o chat no mesmo espaço (mesmas dimensões e posição) do bottom sheet que já exibe detalhes dos jogos
+- Nenhum arquivo da rota /jogos é deletado
+- As demais abas e suas funcionalidades permanecem intactas
+**Dependências:** auth, game-navigation, group-chat, menu-redesign, palpites-ao-vivo
 
 ---
 
