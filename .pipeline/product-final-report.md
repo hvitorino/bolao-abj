@@ -1,7 +1,7 @@
 # Relatório Final — Bolão da Copa
 
-Data de conclusão: 2026-06-24
-Total de features concluídas: 65
+Data de conclusão: 2026-06-27
+Total de features concluídas: 70
 
 ## Features Implementadas
 
@@ -70,6 +70,11 @@ Total de features concluídas: 65
 63. [menu-redesign] — Redesign da Navegação (Header + Tab Bar + Pull Tabs) — 2026-06-23
 64. [change-password] — Alteração Direta de Senha — 2026-06-24
 65. [public-game-view] — Página Pública de Jogo — 2026-06-24
+66. [public-game-view-group-fix] — Correção: Contexto de Grupo na Página Pública de Jogo — 2026-06-24
+67. [animated-predictions-ranking] — Animação de Posição dos Palpites na Página Pública de Jogo — 2026-06-24
+68. [palpites-ao-vivo] — Aba de Palpites com Jogos ao Vivo e Ranking — 2026-06-26
+69. [public-date-view] — Página Pública por Data — 2026-06-26
+70. [palpites-breakdown-por-jogo] — Breakdown Vertical por Jogo nos Palpites — 2026-06-27
 
 ## Resumo
 
@@ -113,7 +118,11 @@ As seis features finais completaram o produto. `perfil-redesign` (item 56) trans
 
 As quatro features finais do produto completaram o conjunto. `next-game-navigation` (item 62) adicionou navegação direta para o próximo jogo cronológico a partir da página de análise: um botão visível em `/jogos/[gameId]/analise` leva para `/jogos/[nextId]/analise` sem precisar voltar à listagem, ficando desabilitado ou oculto quando não há próximo jogo. `menu-redesign` (item 63) reformulou completamente a navegação do Bolão da Copa em três camadas: header compacto de uma linha única, tab bar fixa no rodapé com 4 itens (CAMPANHA, JOGOS, RANKING, MAIS) e pull tabs laterais deslizantes para acesso contextual rápido a ONTEM, AO VIVO e CHAT; a `DualFooterBar` e o `GroupChatWidget` flutuante foram removidos e absorvidos nas novas estruturas; safe-area respeitada em iOS e `padding-bottom` do main ajustado para não sobrepor a tab bar. `change-password` (item 64) simplificou o fluxo de redefinição de senha: o usuário autenticado altera a senha diretamente por formulário com "nova senha" e "confirmar nova senha" via `supabase.auth.updateUser({ password })`, sem depender de link de e-mail; o fluxo anterior de magic link/reset email da feature `password-recovery` foi removido ou desabilitado. Por fim, `public-game-view` (item 65) criou uma página pública sem autenticação em `/jogos/[gameId]/publico` exibindo placar ao vivo, palpites e pontuação de todos os participantes para aquele jogo com atualização em tempo real via Supabase Realtime (canal `games` para placar/status, canal `scores` para pontuação), respeitando a regra de visibilidade temporal de palpites; e adicionou no `GameCard` da área autenticada um botão "copiar link" que copia `${origin}/jogos/${gameId}/publico` para o clipboard com feedback visual confirmando a cópia.
 
-Com isso, todas as 65 features do roadmap — as 6 funcionalidades centrais do `CLAUDE.md` e as 59 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
+Com isso, todas as 65 features do roadmap até aqui — as 6 funcionalidades centrais do `CLAUDE.md` e as 59 extensões identificadas ao longo do desenvolvimento — estão implementadas, revisadas e mergeadas na main.
+
+As cinco features finais completaram o produto com foco em transparência de dados e experiência de compartilhamento. `public-game-view-group-fix` (item 66) corrigiu a feature `public-game-view` para que o link público de um jogo inclua o `group_id` como query param, a página pública filtre palpites apenas dos participantes daquele grupo e o botão "copiar link" no `GameCard` gere a URL com o groupId do contexto atual — o mesmo jogo em grupos diferentes produz links e exibições distintos, e acessar sem groupId resulta em erro claro, nunca vazando dados de grupos misturados. `animated-predictions-ranking` (item 67) adicionou animações FLIP na página pública de jogo: participantes são ordenados por pontuação efetiva em tempo real (com desempate por nome) e trocas de posição são animadas via `useLayoutEffect` + `translateY` em 350ms ease-in-out, sem dependências externas; a animação é suprimida no primeiro render e em estado `pending`. `palpites-ao-vivo` (item 68) criou uma nova aba de navegação "Palpites" que exibe, no topo fixo (sticky), cards com placares dos jogos em andamento e o palpite do usuário logado, e abaixo um ranking do grupo com animações de mudança de posição e breakdown expansível por participante mostrando pontos por jogo com bandeiras e palpite de cada participante; ranking e placares atualizam automaticamente a cada 10 segundos. `public-date-view` (item 69) estendeu o conceito de link público do jogo para uma data inteira: a rota pública `/publico/[groupId]/[date]` exibe palpites de todos os participantes para os jogos daquela data, com pontuação acumulada no dia, respeitando a regra de visibilidade temporal (palpites visíveis apenas para jogos não-`pending`), atualização em tempo real via Supabase Realtime e botão "copiar link" na aba de Palpites. Por fim, `palpites-breakdown-por-jogo` (item 70) refatorou o accordion de expansão da aba Palpites: em vez de pontos agregados por regra (que somava todos os jogos sem indicar a origem de cada acerto), cada participante expandido exibe agora blocos verticais empilhados jogo a jogo — linha-cabeçalho com placar real, palpite e total de pontos, e sub-linhas indentadas por cada regra que pontuou (pts > 0), em layout que nunca gera scroll horizontal em 360px; jogos ao vivo mostram total e sub-linhas em `color-live` com sufixo `*` (provisório); palpites de terceiros em jogos pendentes ficam ocultos (`—`) por guard de privacidade em profundidade; mudança puramente de apresentação, isolada em `PalpitesRankingRow.tsx`, sem alteração de schema, RLS, API ou hook de dados.
+
+Com isso, todas as 70 features do roadmap estão implementadas, revisadas e mergeadas na main.
 
 ## Próximos passos sugeridos
 
