@@ -41,10 +41,9 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick }: PalpitesL
     >
       <div
         style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: '0.75rem 1.25rem',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '0.75rem',
         }}
       >
         {todayGames.map((game) => (
