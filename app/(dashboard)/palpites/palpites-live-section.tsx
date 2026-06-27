@@ -131,10 +131,12 @@ export function PalpitesLiveSection({
               currentUserGameScores={currentUserGameScores}
               loading={loading}
             />
-            <AcompanharRanking
-              rankingWithDetails={rankingWithDetails}
+            <PalpitesRanking
               currentUserId={currentUserId}
+              rankingWithDetails={rankingWithDetails}
+              todayGames={todayGames}
               loading={loading}
+              error={error}
             />
           </>
         )}
