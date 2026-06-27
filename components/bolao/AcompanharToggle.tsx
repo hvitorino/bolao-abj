@@ -24,9 +24,13 @@ export function AcompanharToggle({ isActive, onToggle }: AcompanharToggleProps) 
         textTransform: 'uppercase',
         letterSpacing: '0.08em',
         cursor: 'pointer',
+        transition: 'background-color 200ms ease, color 200ms ease',
       }}
     >
-      {isActive ? '● ACOMPANHANDO' : '◉ ACOMPANHAR'}
+      <span key={String(isActive)} className={isActive ? 'acompanhar-toggle-dot' : undefined}>
+        {isActive ? '●' : '◉'}
+      </span>
+      {isActive ? ' ACOMPANHANDO' : ' ACOMPANHAR'}
     </button>
   )
 }

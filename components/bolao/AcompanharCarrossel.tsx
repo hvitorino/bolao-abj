@@ -49,6 +49,7 @@ interface AcompanharCarrosselProps {
   todayGames: LiveGameWithPrediction[]
   currentUserGameScores: GameScoreEntry[]
   loading: boolean
+  onGameClick?: (gameId: string) => void
 }
 
 // --------------------------------------------------------------------------
@@ -58,9 +59,11 @@ interface AcompanharCarrosselProps {
 function MiniCard({
   game,
   userScore,
+  onClick,
 }: {
   game: LiveGameWithPrediction
   userScore: GameScoreEntry | undefined
+  onClick?: () => void
 }) {
   const state = getMiniCardState(game, userScore)
 
@@ -101,6 +104,10 @@ function MiniCard({
 
   return (
     <div
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick() } : undefined}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -111,6 +118,7 @@ function MiniCard({
         padding: '0.4rem 0.6rem',
         border: cardBorder,
         backgroundColor: 'var(--color-surface)',
+        cursor: onClick ? 'pointer' : undefined,
       }}
     >
       {/* Horário */}
@@ -192,6 +200,7 @@ export function AcompanharCarrossel({
   todayGames,
   currentUserGameScores,
   loading,
+  onGameClick,
 }: AcompanharCarrosselProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [showRightFade, setShowRightFade] = useState(false)
@@ -266,7 +275,12 @@ export function AcompanharCarrossel({
         style={scrollStyle}
       >
         {todayGames.map((game) => (
-          <MiniCard key={game.id} game={game} userScore={scoreByGameId[game.id]} />
+          <MiniCard
+            key={game.id}
+            game={game}
+            userScore={scoreByGameId[game.id]}
+            onClick={onGameClick ? () => onGameClick(game.id) : undefined}
+          />
         ))}
       </div>
 

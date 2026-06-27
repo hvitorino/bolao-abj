@@ -110,6 +110,17 @@ body {
   animation: 220ms ease-out vt-slide-in-left;
 }
 
+@keyframes toggleActivate {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+
+.acompanhar-toggle-dot {
+  display: inline-block;
+  animation: toggleActivate 280ms ease-out;
+}
+
 @media (min-width: 768px) {
   .ranking-name-cell {
     font-size: 14px;

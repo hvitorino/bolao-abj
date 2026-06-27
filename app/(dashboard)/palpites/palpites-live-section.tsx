@@ -130,6 +130,7 @@ export function PalpitesLiveSection({
               todayGames={todayGames}
               currentUserGameScores={currentUserGameScores}
               loading={loading}
+              onGameClick={setSelectedGameId}
             />
             <PalpitesRanking
               currentUserId={currentUserId}
