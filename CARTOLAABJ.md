@@ -170,3 +170,6 @@ Os `match_id` do bolaodefutebol para Oitavas, Quartas, Semi e Final ainda não s
 | 2026-06-24 | Rodadas 1 e 2 (jogos #1–47) | 47 | 530 |
 | 2026-06-24 | Jogo #48 — Colombia × DR Congo | 1 | 11 |
 | 2026-06-26 | Jogos #59 e #60 — Türkiye × EUA e Paraguai × Austrália | 2 | 24 |
+| 2026-06-26 | Jogos #61 e #62 — Noruega × França e Senegal × Iraq | 2 | 24 |
+| 2026-06-26 | Jogos #63 e #64 — Cape Verde × Arábia Saudita e Uruguai × Espanha | 2 | 24 |
+| 2026-06-27 | Jogos #65 e #66 — Egito × Irã e Nova Zelândia × Bélgica | 2 | 22 |
