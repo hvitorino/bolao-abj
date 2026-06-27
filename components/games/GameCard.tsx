@@ -145,7 +145,6 @@ export default function GameCard({
         backgroundColor: cardBg,
         fontFamily: "'JetBrains Mono', 'Courier New', monospace",
         overflow: 'hidden',
-        filter: isFinished ? 'grayscale(45%) opacity(0.75)' : undefined,
       }}
     >
       {/* Header do card: status · horário · estádio */}
@@ -162,17 +161,17 @@ export default function GameCard({
         {isLive && (
           <span
             style={{
-              color: 'var(--color-primary)',
+              color: 'var(--color-bg)',
+              backgroundColor: 'var(--color-primary)',
               fontSize: '11px',
               fontWeight: 'bold',
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
-              border: '1px solid var(--color-primary)',
               padding: '0.1rem 0.4rem',
               flexShrink: 0,
             }}
           >
-            ■ AO VIVO
+            ● AO VIVO
           </span>
         )}
         {isPending && (
@@ -182,28 +181,28 @@ export default function GameCard({
               fontSize: '11px',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              border: '1px solid transparent',
+              border: '1px solid var(--color-border)',
               padding: '0.1rem 0.4rem',
               flexShrink: 0,
             }}
           >
-            PENDENTE
+            ◷ EM BREVE
           </span>
         )}
         {isFinished && (
           <span
             style={{
-              color: 'var(--color-muted)',
+              color: 'var(--color-accent)',
               fontSize: '11px',
               fontWeight: 'bold',
               textTransform: 'uppercase',
               letterSpacing: '0.08em',
-              border: '1px solid var(--color-muted)',
+              border: '1px solid var(--color-accent)',
               padding: '0.1rem 0.4rem',
               flexShrink: 0,
             }}
           >
-            □ ENCERRADO
+            ✓ ENCERRADO
           </span>
         )}
         <span
