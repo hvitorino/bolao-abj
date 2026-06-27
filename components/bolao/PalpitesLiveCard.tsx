@@ -119,7 +119,7 @@ function GameItem({
           borderRadius: '2px',
         }}
       >
-        ▶
+        ✎
       </span>
 
       {/* Status */}
