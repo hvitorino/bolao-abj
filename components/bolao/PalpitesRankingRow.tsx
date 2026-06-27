@@ -1,6 +1,6 @@
 'use client'
 
-import { useId } from 'react'
+import { useId, useState } from 'react'
 import { BREAKDOWN_LABELS } from '@/lib/scoring'
 import type { RankingParticipantDetail, GameScoreEntry } from '@/lib/hooks/usePalpitesAoVivo'
 import type { ScoreBreakdown } from '@/lib/types/score'
@@ -26,6 +26,7 @@ export function PalpitesRankingRow({
   onToggle,
 }: PalpitesRankingRowProps) {
   const accordionId = useId()
+  const [isPressed, setIsPressed] = useState(false)
 
   const rankColor = isLeader
     ? 'var(--color-accent)'
@@ -34,6 +35,7 @@ export function PalpitesRankingRow({
       : 'var(--color-text)'
 
   const rowBg = isCurrentUser ? 'rgba(0,151,59,0.08)' : undefined
+  const pressedBg = 'rgba(255,255,255,0.06)'
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -57,13 +59,18 @@ export function PalpitesRankingRow({
         aria-controls={accordionId}
         onClick={onToggle}
         onKeyDown={handleKeyDown}
+        onPointerDown={() => setIsPressed(true)}
+        onPointerUp={() => setIsPressed(false)}
+        onPointerLeave={() => setIsPressed(false)}
+        onPointerCancel={() => setIsPressed(false)}
         style={{
           display: 'flex',
           alignItems: 'center',
           padding: '0.4rem 0.5rem',
           cursor: 'pointer',
-          backgroundColor: rowBg,
+          backgroundColor: isPressed ? pressedBg : rowBg,
           userSelect: 'none',
+          transition: 'background-color 0.1s ease',
         }}
       >
         {/* Posição */}
@@ -125,12 +132,14 @@ export function PalpitesRankingRow({
           style={{
             width: '1.5rem',
             textAlign: 'center',
-            fontSize: '10px',
+            fontSize: '14px',
             color: 'var(--color-muted)',
             flexShrink: 0,
+            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+            transition: 'transform 0.2s ease',
           }}
         >
-          {isExpanded ? '▲' : '▼'}
+          ▾
         </div>
       </div>
 
