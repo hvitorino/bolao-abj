@@ -194,7 +194,8 @@ export function AcompanharCarrossel({
   loading,
 }: AcompanharCarrosselProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
-  const [showFade, setShowFade] = useState(false)
+  const [showRightFade, setShowRightFade] = useState(false)
+  const [showLeftFade, setShowLeftFade] = useState(false)
 
   useEffect(() => {
     const el = scrollRef.current
@@ -204,7 +205,8 @@ export function AcompanharCarrossel({
       if (!el) return
       const hasOverflow = el.scrollWidth > el.clientWidth + 1
       const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 4
-      setShowFade(hasOverflow && !atEnd)
+      setShowRightFade(hasOverflow && !atEnd)
+      setShowLeftFade(el.scrollLeft > 4)
     }
 
     check()
@@ -268,8 +270,21 @@ export function AcompanharCarrossel({
         ))}
       </div>
 
-      {/* Gradiente indicador de scroll — visível só quando há overflow e não chegou ao fim */}
-      {showFade && (
+      {showLeftFade && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            width: '3rem',
+            background: 'linear-gradient(to left, transparent, var(--color-bg))',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+      {showRightFade && (
         <div
           aria-hidden="true"
           style={{
