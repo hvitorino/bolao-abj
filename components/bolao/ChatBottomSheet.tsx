@@ -175,47 +175,6 @@ export function ChatBottomSheet({
           />
         </div>
 
-        {/* Cabeçalho */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0 0.75rem 0.5rem',
-            flexShrink: 0,
-          }}
-        >
-          <span
-            style={{
-              fontFamily: FONT,
-              fontSize: '11px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              color: 'var(--color-text)',
-            }}
-          >
-            CHAT — {activeGroupName.toUpperCase()}
-          </span>
-          <button
-            type="button"
-            onClick={handleClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontFamily: FONT,
-              fontSize: '13px',
-              color: 'var(--color-muted)',
-              padding: '0 0.25rem',
-              flexShrink: 0,
-            }}
-            aria-label="Fechar chat"
-          >
-            [ FECHAR ]
-          </button>
-        </div>
-
         {/* Conteúdo — lazy-mount */}
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           {everOpened && (

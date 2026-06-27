@@ -23,9 +23,37 @@ function resolveProfile(
   return profiles
 }
 
-function formatTime(iso: string): string {
+const USER_COLORS = [
+  '#60a5fa', // blue
+  '#f97316', // orange
+  '#ec4899', // pink
+  '#a855f7', // purple
+  '#14b8a6', // teal
+  '#eab308', // yellow
+  '#ef4444', // red
+  '#06b6d4', // cyan
+]
+
+function getUserColor(userId: string): string {
+  let hash = 0
+  for (let i = 0; i < userId.length; i++) {
+    hash = (hash * 31 + userId.charCodeAt(i)) & 0xffff
+  }
+  return USER_COLORS[hash % USER_COLORS.length]
+}
+
+function formatDateTime(iso: string): string {
   const d = new Date(iso)
-  return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+  const now = new Date()
+  const isToday =
+    d.getFullYear() === now.getFullYear() &&
+    d.getMonth() === now.getMonth() &&
+    d.getDate() === now.getDate()
+  const time = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+  if (isToday) return time
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  return `${day}/${month} ${time}`
 }
 
 // ---------------------------------------------------------------------------
@@ -287,9 +315,9 @@ export function ChatPanelContent({
           </div>
         ) : (
           messages.map((msg) => {
-            const isOwn = msg.user_id === currentUserId
             const profile = resolveProfile(msg.profiles)
             const name = profile?.name ?? 'ANÔNIMO'
+            const color = getUserColor(msg.user_id)
             return (
               <div key={msg.id} style={{ marginBottom: '0.75rem' }}>
                 <div
@@ -301,17 +329,12 @@ export function ChatPanelContent({
                     marginBottom: '0.125rem',
                   }}
                 >
-                  <span
-                    style={{
-                      color: isOwn ? 'var(--color-primary)' : 'var(--color-accent)',
-                      fontWeight: 'bold',
-                    }}
-                  >
+                  <span style={{ color, fontWeight: 'bold' }}>
                     {name}
                   </span>
                   <span style={{ color: 'var(--color-muted)' }}>
                     {' · '}
-                    {formatTime(msg.created_at)}
+                    {formatDateTime(msg.created_at)}
                   </span>
                 </div>
                 <div
