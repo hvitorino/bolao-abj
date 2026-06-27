@@ -1,7 +1,7 @@
 # Relatório Final — Bolão da Copa
 
 Data de conclusão: 2026-06-27
-Total de features concluídas: 70
+Total de features concluídas: 71
 
 ## Features Implementadas
 
@@ -75,6 +75,7 @@ Total de features concluídas: 70
 68. [palpites-ao-vivo] — Aba de Palpites com Jogos ao Vivo e Ranking — 2026-06-26
 69. [public-date-view] — Página Pública por Data — 2026-06-26
 70. [palpites-breakdown-por-jogo] — Breakdown Vertical por Jogo nos Palpites — 2026-06-27
+71. [palpites-analise-drawer] — Drawer de Análise na Aba Palpites — 2026-06-27
 
 ## Resumo
 
@@ -122,7 +123,7 @@ Com isso, todas as 65 features do roadmap até aqui — as 6 funcionalidades cen
 
 As cinco features finais completaram o produto com foco em transparência de dados e experiência de compartilhamento. `public-game-view-group-fix` (item 66) corrigiu a feature `public-game-view` para que o link público de um jogo inclua o `group_id` como query param, a página pública filtre palpites apenas dos participantes daquele grupo e o botão "copiar link" no `GameCard` gere a URL com o groupId do contexto atual — o mesmo jogo em grupos diferentes produz links e exibições distintos, e acessar sem groupId resulta em erro claro, nunca vazando dados de grupos misturados. `animated-predictions-ranking` (item 67) adicionou animações FLIP na página pública de jogo: participantes são ordenados por pontuação efetiva em tempo real (com desempate por nome) e trocas de posição são animadas via `useLayoutEffect` + `translateY` em 350ms ease-in-out, sem dependências externas; a animação é suprimida no primeiro render e em estado `pending`. `palpites-ao-vivo` (item 68) criou uma nova aba de navegação "Palpites" que exibe, no topo fixo (sticky), cards com placares dos jogos em andamento e o palpite do usuário logado, e abaixo um ranking do grupo com animações de mudança de posição e breakdown expansível por participante mostrando pontos por jogo com bandeiras e palpite de cada participante; ranking e placares atualizam automaticamente a cada 10 segundos. `public-date-view` (item 69) estendeu o conceito de link público do jogo para uma data inteira: a rota pública `/publico/[groupId]/[date]` exibe palpites de todos os participantes para os jogos daquela data, com pontuação acumulada no dia, respeitando a regra de visibilidade temporal (palpites visíveis apenas para jogos não-`pending`), atualização em tempo real via Supabase Realtime e botão "copiar link" na aba de Palpites. Por fim, `palpites-breakdown-por-jogo` (item 70) refatorou o accordion de expansão da aba Palpites: em vez de pontos agregados por regra (que somava todos os jogos sem indicar a origem de cada acerto), cada participante expandido exibe agora blocos verticais empilhados jogo a jogo — linha-cabeçalho com placar real, palpite e total de pontos, e sub-linhas indentadas por cada regra que pontuou (pts > 0), em layout que nunca gera scroll horizontal em 360px; jogos ao vivo mostram total e sub-linhas em `color-live` com sufixo `*` (provisório); palpites de terceiros em jogos pendentes ficam ocultos (`—`) por guard de privacidade em profundidade; mudança puramente de apresentação, isolada em `PalpitesRankingRow.tsx`, sem alteração de schema, RLS, API ou hook de dados.
 
-Com isso, todas as 70 features do roadmap estão implementadas, revisadas e mergeadas na main.
+Com isso, todas as 70 features do roadmap até então estavam implementadas, revisadas e mergeadas na main. A feature final, `palpites-analise-drawer` (item 71), fechou o produto tornando os cards de placar da aba `/palpites` clicáveis: clicar em qualquer `GameItem` dentro de `PalpitesLiveCard` abre um bottom drawer com slide-up animado exibindo `GameCard` + `MatchupStatsCard` + `RecentGamesSection` idênticos à página `/jogos/[gameId]/analise` — fechar via ✕, backdrop ou ESC funciona corretamente; a URL permanece em `/palpites` sem alteração de rota; o ranking abaixo permanece intacto após fechar; o polling do `usePalpitesAoVivo` continua rodando durante o drawer aberto; e o funcionamento foi validado em mobile com scroll interno e área de toque adequada. Com isso, todas as 71 features do roadmap estão implementadas, revisadas e mergeadas na main.
 
 ## Próximos passos sugeridos
 
