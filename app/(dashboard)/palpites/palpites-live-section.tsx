@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { usePalpitesAoVivo } from '@/lib/hooks/usePalpitesAoVivo'
 import { PalpitesLiveCard } from '@/components/bolao/PalpitesLiveCard'
 import { PalpitesRanking } from '@/components/bolao/PalpitesRanking'
@@ -39,6 +39,21 @@ export function PalpitesLiveSection({
     }
     return 'preencher'
   })
+
+  // Controla o fade-out antes de trocar o modo
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const transitionRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleModeToggle = useCallback(() => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    transitionRef.current = setTimeout(() => {
+      setViewMode((v) => (v === 'acompanhar' ? 'preencher' : 'acompanhar'))
+      setIsTransitioning(false)
+    }, 160)
+  }, [isTransitioning])
+
+  useEffect(() => () => { if (transitionRef.current) clearTimeout(transitionRef.current) }, [])
 
   // Persiste o modo ao alternar
   useEffect(() => {
@@ -98,30 +113,52 @@ export function PalpitesLiveSection({
         <div style={{ display: 'flex', gap: '8px' }}>
           <AcompanharToggle
             isActive={viewMode === 'acompanhar'}
-            onToggle={() => setViewMode((v) => (v === 'acompanhar' ? 'preencher' : 'acompanhar'))}
+            onToggle={handleModeToggle}
           />
           <CompartilharButton groupId={groupId} selectedDate={selectedDate} />
         </div>
 
         {/* Carrossel/mini-cards — sempre no slot abaixo do toggle para manter distâncias estáveis */}
-        {viewMode === 'preencher' ? (
-          <PalpitesLiveCard
-            todayGames={todayGames}
-            loading={loading}
-            onGameClick={setSelectedGameId}
-          />
-        ) : (
-          <AcompanharCarrossel
-            todayGames={todayGames}
-            currentUserGameScores={currentUserGameScores}
-            loading={loading}
-            onGameClick={setSelectedGameId}
-          />
-        )}
+        <div
+          key={viewMode}
+          style={{
+            opacity: isTransitioning ? 0 : 1,
+            transform: isTransitioning ? 'translateY(4px)' : 'translateY(0)',
+            transition: isTransitioning
+              ? 'opacity 160ms ease, transform 160ms ease'
+              : 'none',
+            animation: isTransitioning ? 'none' : 'modeFadeIn 200ms ease-out',
+          }}
+        >
+          {viewMode === 'preencher' ? (
+            <PalpitesLiveCard
+              todayGames={todayGames}
+              loading={loading}
+              onGameClick={setSelectedGameId}
+            />
+          ) : (
+            <AcompanharCarrossel
+              todayGames={todayGames}
+              currentUserGameScores={currentUserGameScores}
+              loading={loading}
+              onGameClick={setSelectedGameId}
+            />
+          )}
+        </div>
       </div>
 
       {/* Conteúdo principal — animado na troca de modo */}
-      <div key={viewMode} style={{ animation: 'modeFadeIn 200ms ease-out' }}>
+      <div
+        key={viewMode}
+        style={{
+          opacity: isTransitioning ? 0 : 1,
+          transform: isTransitioning ? 'translateY(4px)' : 'translateY(0)',
+          transition: isTransitioning
+            ? 'opacity 160ms ease, transform 160ms ease'
+            : 'none',
+          animation: isTransitioning ? 'none' : 'modeFadeIn 200ms ease-out',
+        }}
+      >
         <PalpitesRanking
           currentUserId={currentUserId}
           rankingWithDetails={rankingWithDetails}
