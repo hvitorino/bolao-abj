@@ -105,15 +105,18 @@ function GameItem({
         transition: 'background 100ms ease, box-shadow 100ms ease',
       }}
     >
-      {/* Ícone de navegação */}
+      {/* Botão de navegação */}
       <span
         style={{
           position: 'absolute',
-          top: '3px',
-          right: '5px',
-          fontSize: '11px',
-          color: 'var(--color-primary)',
+          top: '4px',
+          right: '4px',
+          backgroundColor: 'var(--color-primary)',
+          color: '#fff',
+          fontSize: '8px',
           lineHeight: 1,
+          padding: '2px 4px',
+          borderRadius: '2px',
         }}
       >
         ▶
