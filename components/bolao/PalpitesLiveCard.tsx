@@ -70,8 +70,12 @@ function GameItem({
   const isFinished = game.status === 'finished'
   const isPending = game.status === 'pending'
 
-  const statusLabel = isLive ? '██ AO VIVO' : isFinished ? 'ENC' : formatMatchTime(game.match_date)
-  const statusColor = isLive ? 'var(--color-live)' : 'var(--color-muted)'
+  const statusLabel = isLive ? '● AO VIVO' : isFinished ? '✓ ENC' : formatMatchTime(game.match_date)
+  const statusColor = isLive
+    ? 'var(--color-primary)'
+    : isFinished
+      ? 'var(--color-accent)'
+      : 'var(--color-muted)'
 
   const realScore = isPending ? '—×—' : `${game.home_score ?? '?'}×${game.away_score ?? '?'}`
   const predScore = game.myPrediction
@@ -93,7 +97,7 @@ function GameItem({
         flexDirection: 'column',
         alignItems: 'center',
         gap: '0.1rem',
-        opacity: isPending ? 0.65 : 1,
+        opacity: 1,
         background: isPressed ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.07)',
         border: 'none',
         outline: '1px solid rgba(90, 122, 106, 0.5)',
@@ -130,7 +134,6 @@ function GameItem({
           fontWeight: 'bold',
           letterSpacing: '0.05em',
           textTransform: 'uppercase',
-          animation: isLive ? 'blink 1s step-end infinite' : undefined,
         }}
       >
         {statusLabel}
@@ -155,8 +158,7 @@ function GameItem({
       <span
         style={{
           fontSize: '10px',
-          color: game.myPrediction ? 'var(--color-text)' : 'var(--color-error)',
-          opacity: 0.7,
+          color: game.myPrediction ? 'var(--color-text)' : 'var(--color-muted)',
         }}
       >
         {predScore}
