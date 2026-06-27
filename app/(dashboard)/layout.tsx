@@ -115,7 +115,11 @@ export default async function DashboardLayout({
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>{children}</div>
       </main>
 
-      <TabBar />
+      <TabBar
+        groupId={activeGroup?.id ?? ''}
+        currentUserId={user.id}
+        activeGroupName={activeGroup?.name ?? ''}
+      />
 
       {activeGroup && (
         <SidePanelContainer
