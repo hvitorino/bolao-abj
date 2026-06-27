@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useRef, useState } from 'react'
 import type { LiveGameWithPrediction, GameScoreEntry } from '@/lib/hooks/usePalpitesAoVivo'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 
@@ -192,63 +193,96 @@ export function AcompanharCarrossel({
   currentUserGameScores,
   loading,
 }: AcompanharCarrosselProps) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [showFade, setShowFade] = useState(false)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+
+    function check() {
+      if (!el) return
+      const hasOverflow = el.scrollWidth > el.clientWidth + 1
+      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 4
+      setShowFade(hasOverflow && !atEnd)
+    }
+
+    check()
+    el.addEventListener('scroll', check, { passive: true })
+    const ro = new ResizeObserver(check)
+    ro.observe(el)
+    return () => {
+      el.removeEventListener('scroll', check)
+      ro.disconnect()
+    }
+  }, [todayGames])
+
+  const scrollStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '0.5rem',
+    overflowX: 'auto',
+    scrollbarWidth: 'none',
+    WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
+    padding: '0.5rem 0',
+  }
+
   if (loading) {
     return (
-      <div
-        className="acompanhar-carrossel"
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: '0.5rem',
-          overflowX: 'auto',
-          scrollbarWidth: 'none',
-          WebkitOverflowScrolling: 'touch',
-          padding: '0.5rem 0',
-        }}
-      >
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            style={{
-              flexShrink: 0,
-              width: '80px',
-              height: '68px',
-              border: '1px solid var(--color-border)',
-              backgroundColor: 'var(--color-surface)',
-              opacity: 0.4,
-            }}
-          />
-        ))}
+      <div style={{ position: 'relative' }}>
+        <div className="acompanhar-carrossel" style={scrollStyle}>
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1,
+                minWidth: '80px',
+                height: '68px',
+                border: '1px solid var(--color-border)',
+                backgroundColor: 'var(--color-surface)',
+                opacity: 0.4,
+              }}
+            />
+          ))}
+        </div>
       </div>
     )
   }
 
-  if (todayGames.length === 0) {
-    return null
-  }
+  if (todayGames.length === 0) return null
 
-  // Indexar pontuações do usuário por gameId para lookup rápido
   const scoreByGameId: Record<string, GameScoreEntry> = {}
   for (const s of currentUserGameScores) {
     scoreByGameId[s.gameId] = s
   }
 
   return (
-    <div
-      className="acompanhar-carrossel"
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: '0.5rem',
-        overflowX: 'auto',
-        scrollbarWidth: 'none',
-        WebkitOverflowScrolling: 'touch',
-        padding: '0.5rem 0',
-      }}
-    >
-      {todayGames.map((game) => (
-        <MiniCard key={game.id} game={game} userScore={scoreByGameId[game.id]} />
-      ))}
+    <div style={{ position: 'relative' }}>
+      <div
+        ref={scrollRef}
+        className="acompanhar-carrossel"
+        style={scrollStyle}
+      >
+        {todayGames.map((game) => (
+          <MiniCard key={game.id} game={game} userScore={scoreByGameId[game.id]} />
+        ))}
+      </div>
+
+      {/* Gradiente indicador de scroll — visível só quando há overflow e não chegou ao fim */}
+      {showFade && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            width: '3rem',
+            background: 'linear-gradient(to right, transparent, var(--color-bg))',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
     </div>
   )
 }
