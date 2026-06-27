@@ -235,12 +235,17 @@ export function AcompanharCarrossel({
     overflowX: 'auto',
     scrollbarWidth: 'none',
     WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
-    padding: '0.5rem 0',
   }
 
   if (loading) {
     return (
-      <div style={{ position: 'relative' }}>
+      <div
+        style={{
+          border: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-surface)',
+          padding: '0.6rem 0.75rem',
+        }}
+      >
         <div className="acompanhar-carrossel" style={scrollStyle}>
           {[1, 2, 3].map((i) => (
             <div
@@ -250,7 +255,6 @@ export function AcompanharCarrossel({
                 minWidth: '80px',
                 height: '68px',
                 border: '1px solid var(--color-border)',
-                backgroundColor: 'var(--color-surface)',
                 opacity: 0.4,
               }}
             />
@@ -268,50 +272,58 @@ export function AcompanharCarrossel({
   }
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div
-        ref={scrollRef}
-        className="acompanhar-carrossel"
-        style={scrollStyle}
-      >
-        {todayGames.map((game) => (
-          <MiniCard
-            key={game.id}
-            game={game}
-            userScore={scoreByGameId[game.id]}
-            onClick={onGameClick ? () => onGameClick(game.id) : undefined}
-          />
-        ))}
-      </div>
+    <div
+      style={{
+        border: '1px solid var(--color-border)',
+        backgroundColor: 'var(--color-surface)',
+        padding: '0.6rem 0.75rem',
+      }}
+    >
+      <div style={{ position: 'relative' }}>
+        <div
+          ref={scrollRef}
+          className="acompanhar-carrossel"
+          style={scrollStyle}
+        >
+          {todayGames.map((game) => (
+            <MiniCard
+              key={game.id}
+              game={game}
+              userScore={scoreByGameId[game.id]}
+              onClick={onGameClick ? () => onGameClick(game.id) : undefined}
+            />
+          ))}
+        </div>
 
-      {showLeftFade && (
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            bottom: 0,
-            width: '3rem',
-            background: 'linear-gradient(to left, transparent, var(--color-bg))',
-            pointerEvents: 'none',
-          }}
-        />
-      )}
-      {showRightFade && (
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            width: '3rem',
-            background: 'linear-gradient(to right, transparent, var(--color-bg))',
-            pointerEvents: 'none',
-          }}
-        />
-      )}
+        {showLeftFade && (
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: '3rem',
+              background: 'linear-gradient(to left, transparent, var(--color-surface))',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+        {showRightFade && (
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: '3rem',
+              background: 'linear-gradient(to right, transparent, var(--color-surface))',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+      </div>
     </div>
   )
 }
