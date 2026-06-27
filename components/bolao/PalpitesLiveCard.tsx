@@ -63,6 +63,7 @@ function GameItem({
   onGameClick: (gameId: string) => void
 }) {
   const [isHovered, setIsHovered] = useState(false)
+  const [isPressed, setIsPressed] = useState(false)
   const homeFlag = getTeamFlag(game.home_team_code)
   const awayFlag = getTeamFlag(game.away_team_code)
 
@@ -83,6 +84,10 @@ function GameItem({
       onClick={() => onGameClick(game.id)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onPointerDown={() => setIsPressed(true)}
+      onPointerUp={() => setIsPressed(false)}
+      onPointerLeave={() => setIsPressed(false)}
+      onPointerCancel={() => setIsPressed(false)}
       title="Ver análise"
       style={{
         ...MONO,
@@ -91,9 +96,9 @@ function GameItem({
         alignItems: 'center',
         gap: '0.1rem',
         opacity: isPending ? 0.65 : 1,
-        background: isHovered ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.01)',
+        background: isPressed || isHovered ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.01)',
         border: 'none',
-        outline: isHovered ? '1px solid var(--color-muted)' : '1px solid rgba(90, 122, 106, 0.3)',
+        outline: isPressed || isHovered ? '1px solid var(--color-muted)' : '1px solid rgba(90, 122, 106, 0.3)',
         cursor: 'pointer',
         padding: '0.25rem 0.5rem',
         borderRadius: '2px',
