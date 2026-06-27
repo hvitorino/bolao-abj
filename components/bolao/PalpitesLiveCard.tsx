@@ -62,7 +62,6 @@ function GameItem({
   game: LiveGameWithPrediction
   onGameClick: (gameId: string) => void
 }) {
-  const [isHovered, setIsHovered] = useState(false)
   const [isPressed, setIsPressed] = useState(false)
   const homeFlag = getTeamFlag(game.home_team_code)
   const awayFlag = getTeamFlag(game.away_team_code)
@@ -82,8 +81,6 @@ function GameItem({
   return (
     <button
       onClick={() => onGameClick(game.id)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       onPointerDown={() => setIsPressed(true)}
       onPointerUp={() => setIsPressed(false)}
       onPointerLeave={() => setIsPressed(false)}
@@ -96,14 +93,14 @@ function GameItem({
         alignItems: 'center',
         gap: '0.1rem',
         opacity: isPending ? 0.65 : 1,
-        background: isPressed || isHovered ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)',
+        background: isPressed ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.07)',
         border: 'none',
-        outline: isPressed || isHovered ? '1px solid var(--color-muted)' : '1px solid rgba(90, 122, 106, 0.4)',
-        boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+        outline: '1px solid rgba(90, 122, 106, 0.5)',
+        boxShadow: isPressed ? 'none' : '0 2px 6px rgba(0,0,0,0.35)',
         cursor: 'pointer',
         padding: '0.25rem 0.5rem',
         borderRadius: '2px',
-        transition: 'outline-color 150ms ease, background 150ms ease',
+        transition: 'background 100ms ease, box-shadow 100ms ease',
       }}
     >
       {/* Status */}
