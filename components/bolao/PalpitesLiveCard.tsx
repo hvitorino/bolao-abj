@@ -88,6 +88,7 @@ function GameItem({
       title="Ver análise"
       style={{
         ...MONO,
+        position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -99,10 +100,25 @@ function GameItem({
         boxShadow: isPressed ? 'none' : '0 2px 6px rgba(0,0,0,0.35)',
         cursor: 'pointer',
         padding: '0.25rem 0.5rem',
+        paddingTop: '0.6rem',
         borderRadius: '2px',
         transition: 'background 100ms ease, box-shadow 100ms ease',
       }}
     >
+      {/* Ícone de navegação */}
+      <span
+        style={{
+          position: 'absolute',
+          top: '3px',
+          right: '5px',
+          fontSize: '9px',
+          color: 'var(--color-primary)',
+          lineHeight: 1,
+        }}
+      >
+        ›
+      </span>
+
       {/* Status */}
       <span
         style={{
