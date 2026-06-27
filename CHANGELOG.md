@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [modo-acompanhar] — Modo Acompanhar na Aba Palpites — 2026-06-27
+
+- `components/bolao/AcompanharToggle.tsx` criado: botão toggle dois estados (outline "◉ ACOMPANHAR" / preenchido "● ACOMPANHANDO"), `flex: 1`, sem transição CSS, cor primária (#009c3b) como borda sempre
+- `components/bolao/CompartilharButton.tsx` criado: extração da lógica de cópia de link de `palpites-live-section.tsx`; copia `origin/publico/:groupId/:selectedDate`, feedback "✓ COPIADO!" por 2s em `color-win`, nunca tem estado ativo
+- `components/bolao/AcompanharCarrossel.tsx` criado: carrossel horizontal de mini-cards (`overflow-x: auto`, `scrollbar-width: none`), 4 estados por card (em-breve, ao-vivo, final, pontuado), índice O(1) por `gameId`, placar em BRT
+- `components/bolao/AcompanharRanking.tsx` criado: tabela estática de ranking do dia sem accordion; indicadores `► ` (líder) e `■ ` (usuário atual); linha do usuário com fundo `rgba(0,151,59,0.08)`; estados loading (3 esqueletos) e vazio
+- `app/(dashboard)/palpites/palpites-live-section.tsx` atualizado: estado `viewMode` com persistência via `sessionStorage`, reset na troca de grupo via `useRef`, botão de compartilhar extraído para `CompartilharButton`, `PalpitesLiveCard` ocultado no modo Acompanhar, renderização condicional de conteúdo
+- `app/globals.css` atualizado: regra `.acompanhar-carrossel::-webkit-scrollbar { display: none }` adicionada
+- Sem alterações de banco de dados, migrations, RLS ou endpoints
+
 ## [nav-redesign] — Redesign da Navegação (Abas) — 2026-06-27
 
 - `components/bolao/ChatBottomSheet.tsx` criado: bottom sheet para chat do grupo com lazy-mount de `ChatPanelContent`, swipe-to-close (threshold 60px), backdrop com click-to-close, handler de ESC, scroll lock do body e animação slide-up idêntica ao `GameAnaliseDrawer` (posição, dimensões e transição CSS)

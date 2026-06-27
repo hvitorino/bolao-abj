@@ -73,6 +73,11 @@ body {
   display: none;
 }
 
+/* Ocultar scrollbar no carrossel do modo Acompanhar (webkit) */
+.acompanhar-carrossel::-webkit-scrollbar {
+  display: none;
+}
+
 /* View Transitions — navegação entre datas */
 @keyframes vt-slide-out-left {
   to { transform: translateX(-30px); opacity: 0; }
