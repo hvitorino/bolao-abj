@@ -7,7 +7,6 @@ import { PalpitesRanking } from '@/components/bolao/PalpitesRanking'
 import { AcompanharToggle } from '@/components/bolao/AcompanharToggle'
 import { CompartilharButton } from '@/components/bolao/CompartilharButton'
 import { AcompanharCarrossel } from '@/components/bolao/AcompanharCarrossel'
-import { AcompanharRanking } from '@/components/bolao/AcompanharRanking'
 import DateChipsNav from '@/components/games/DateChipsNav'
 import GameAnaliseDrawer from '@/components/bolao/GameAnaliseDrawer'
 
@@ -104,43 +103,32 @@ export function PalpitesLiveSection({
           <CompartilharButton groupId={groupId} selectedDate={selectedDate} />
         </div>
 
-        {/* Mini-cards de status dos jogos — visíveis apenas no modo Preencher */}
-        {viewMode === 'preencher' && (
+        {/* Carrossel/mini-cards — sempre no slot abaixo do toggle para manter distâncias estáveis */}
+        {viewMode === 'preencher' ? (
           <PalpitesLiveCard
             todayGames={todayGames}
+            loading={loading}
+            onGameClick={setSelectedGameId}
+          />
+        ) : (
+          <AcompanharCarrossel
+            todayGames={todayGames}
+            currentUserGameScores={currentUserGameScores}
             loading={loading}
             onGameClick={setSelectedGameId}
           />
         )}
       </div>
 
-      {/* Conteúdo principal — condicional pelo modo, animado na troca */}
+      {/* Conteúdo principal — animado na troca de modo */}
       <div key={viewMode} style={{ animation: 'modeFadeIn 200ms ease-out' }}>
-        {viewMode === 'preencher' ? (
-          <PalpitesRanking
-            currentUserId={currentUserId}
-            rankingWithDetails={rankingWithDetails}
-            todayGames={todayGames}
-            loading={loading}
-            error={error}
-          />
-        ) : (
-          <>
-            <AcompanharCarrossel
-              todayGames={todayGames}
-              currentUserGameScores={currentUserGameScores}
-              loading={loading}
-              onGameClick={setSelectedGameId}
-            />
-            <PalpitesRanking
-              currentUserId={currentUserId}
-              rankingWithDetails={rankingWithDetails}
-              todayGames={todayGames}
-              loading={loading}
-              error={error}
-            />
-          </>
-        )}
+        <PalpitesRanking
+          currentUserId={currentUserId}
+          rankingWithDetails={rankingWithDetails}
+          todayGames={todayGames}
+          loading={loading}
+          error={error}
+        />
       </div>
 
       {/* Drawer de análise do jogo — apenas ativado pelo PalpitesLiveCard no modo Preencher */}
