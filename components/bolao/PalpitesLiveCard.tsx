@@ -111,12 +111,12 @@ function GameItem({
           position: 'absolute',
           top: '3px',
           right: '5px',
-          fontSize: '9px',
+          fontSize: '11px',
           color: 'var(--color-primary)',
           lineHeight: 1,
         }}
       >
-        ›
+        ▶
       </span>
 
       {/* Status */}
