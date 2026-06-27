@@ -6,6 +6,17 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [palpites-breakdown-por-jogo] — Breakdown Vertical por Jogo nos Palpites — 2026-06-27
+
+- `components/bolao/PalpitesRankingRow.tsx` refatorado: accordion substituído por blocos verticais jogo a jogo (componente local `GameBreakdownBlock`)
+- Removidos: `buildRuleGroups`, `RuleGroupLine`, `LiveGameLine`, interfaces `RuleGame` e `RuleGroup`
+- Cada jogo exibe linha-cabeçalho `[COD Hg×Ag COD | palpite | total]` + sub-linhas indentadas por regra (apenas regras com pontos > 0)
+- Guard de privacidade: palpite de terceiro em jogo pendente exibe `—` (defesa em profundidade sobre RLS)
+- Jogos ao vivo: total e sub-linhas em `color-live` com sufixo `*` (provisório); atualiza via polling de 10s existente
+- Estado vazio "NENHUM PONTO CONQUISTADO HOJE" dispara apenas quando `participant.games.length === 0` (sem jogos no dia)
+- Padding do accordion: `'0.35rem 3.5rem 0.35rem 0.75rem'` → `'0.25rem 0.5rem'` para eliminar scroll horizontal em 360px
+- Sem alterações de backend, banco de dados ou endpoints
+
 ## [public-date-view] — Página Pública por Data — 2026-06-25
 
 - Rota `/publico/[groupId]/[date]` criada como Server Component público (fora de `(dashboard)` e `(auth)`), acessível sem login em qualquer browser

@@ -3,7 +3,7 @@
 **Slug:** palpites-breakdown-por-jogo
 **Branch:** feature/palpites-breakdown-por-jogo
 **Data:** 2026-06-27
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
