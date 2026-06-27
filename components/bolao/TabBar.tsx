@@ -3,14 +3,14 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
+import { ChatBottomSheet } from './ChatBottomSheet'
 
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
-const MAIN_ITEMS = [
+const LINK_ITEMS = [
   { href: '/perfil', label: 'EU' },
-  { href: '/jogos', label: 'JOGOS' },
-  { href: '/palpites', label: 'PALPITES' },
   { href: '/ranking', label: 'RANKING' },
+  { href: '/palpites', label: 'PALPITES' },
 ]
 
 const MAIS_ITEMS = [
@@ -23,9 +23,25 @@ function isPathActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(href + '/')
 }
 
-export function TabBar() {
+// ---------------------------------------------------------------------------
+// Props
+// ---------------------------------------------------------------------------
+
+interface TabBarProps {
+  groupId: string        // '' quando o usuário não tem grupo ativo
+  currentUserId: string
+  activeGroupName: string
+}
+
+// ---------------------------------------------------------------------------
+// Componente
+// ---------------------------------------------------------------------------
+
+export function TabBar({ groupId, currentUserId, activeGroupName }: TabBarProps) {
   const pathname = usePathname()
   const [maisOpen, setMaisOpen] = useState(false)
+  const [chatOpen, setChatOpen] = useState(false)
+  const [chatUnreadCount, setChatUnreadCount] = useState(0)
   const maisRef = useRef<HTMLDivElement>(null)
 
   const maisActive = MAIS_ITEMS.some(({ href }) => isPathActive(pathname, href))
@@ -40,7 +56,7 @@ export function TabBar() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const itemStyle = (active: boolean): React.CSSProperties => ({
+  const itemStyle = (active: boolean, disabled?: boolean): React.CSSProperties => ({
     flex: 1,
     display: 'flex',
     alignItems: 'center',
@@ -52,12 +68,21 @@ export function TabBar() {
     textDecoration: 'none',
     border: 'none',
     background: 'none',
-    cursor: 'pointer',
-    color: active ? 'var(--color-primary)' : 'var(--color-muted)',
+    cursor: disabled ? 'default' : 'pointer',
+    color: disabled
+      ? 'var(--color-muted)'
+      : active
+        ? 'var(--color-primary)'
+        : 'var(--color-muted)',
     borderTop: active ? '2px solid var(--color-primary)' : '2px solid transparent',
     height: '100%',
     padding: '0 0.25rem',
   })
+
+  function handleChatClick() {
+    if (!groupId) return
+    setChatOpen(true)
+  }
 
   return (
     <div
@@ -82,7 +107,8 @@ export function TabBar() {
           margin: '0 auto',
         }}
       >
-        {MAIN_ITEMS.map(({ href, label }) => {
+        {/* EU, RANKING, PALPITES — links de navegação */}
+        {LINK_ITEMS.map(({ href, label }) => {
           const active = isPathActive(pathname, href)
           return (
             <Link key={href} href={href} style={itemStyle(active)}>
@@ -91,7 +117,43 @@ export function TabBar() {
           )
         })}
 
-        {/* MAIS — com popover para cima */}
+        {/* CHAT — abre bottom sheet */}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'stretch', position: 'relative' }}>
+          <button
+            type="button"
+            onClick={handleChatClick}
+            style={itemStyle(chatOpen, !groupId)}
+            aria-label={`Chat${chatUnreadCount > 0 ? ` (${chatUnreadCount} não lidas)` : ''}`}
+          >
+            CHAT
+          </button>
+          {!chatOpen && chatUnreadCount > 0 && (
+            <span
+              style={{
+                position: 'absolute',
+                top: '2px',
+                right: '2px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: '14px',
+                height: '14px',
+                padding: '0 2px',
+                backgroundColor: 'var(--color-accent)',
+                color: 'var(--color-bg)',
+                fontSize: '9px',
+                fontWeight: 'bold',
+                fontFamily: FONT,
+                lineHeight: 1,
+                pointerEvents: 'none',
+              }}
+            >
+              {chatUnreadCount > 99 ? '99+' : chatUnreadCount}
+            </span>
+          )}
+        </div>
+
+        {/* MAIS — popover para cima */}
         <div
           ref={maisRef}
           style={{
@@ -150,6 +212,18 @@ export function TabBar() {
           )}
         </div>
       </div>
+
+      {/* ChatBottomSheet — renderizado dentro da TabBar mas posicionado via fixed */}
+      {groupId && (
+        <ChatBottomSheet
+          isOpen={chatOpen}
+          onClose={() => setChatOpen(false)}
+          groupId={groupId}
+          currentUserId={currentUserId}
+          activeGroupName={activeGroupName}
+          onUnreadCountChange={(count) => setChatUnreadCount(count)}
+        />
+      )}
     </div>
   )
 }
