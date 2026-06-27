@@ -71,6 +71,7 @@ export function PalpitesLiveSection({
           gameCount={gameCount}
           guessCount={guessCount}
           basePath="/palpites"
+          swipeDisabled={selectedGameId !== null}
         />
         {/* Botão de copiar link da data atual */}
         <button

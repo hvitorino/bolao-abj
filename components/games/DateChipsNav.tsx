@@ -9,6 +9,7 @@ interface DateChipsNavProps {
   gameCount: number        // total de jogos no dia atual (exibido abaixo da faixa)
   guessCount: number       // palpites do usuário no dia atual (exibido abaixo da faixa)
   basePath?: string        // rota base para navegação (padrão: '/jogos')
+  swipeDisabled?: boolean  // desabilita navegação por swipe (ex: quando um drawer está aberto)
 }
 
 // Formata data para exibição abreviada no chip
@@ -26,6 +27,7 @@ export default function DateChipsNav({
   gameCount,
   guessCount,
   basePath = '/jogos',
+  swipeDisabled = false,
 }: DateChipsNavProps) {
   const router = useRouter()
   const activeChipRef = useRef<HTMLButtonElement>(null)
@@ -65,7 +67,7 @@ export default function DateChipsNav({
     }
 
     function onTouchEnd(e: TouchEvent) {
-      if (ignoredSwipe) return
+      if (ignoredSwipe || swipeDisabled) return
       const deltaX = e.changedTouches[0].clientX - startX
       const deltaY = e.changedTouches[0].clientY - startY
       if (Math.abs(deltaX) < 50 || Math.abs(deltaY) > Math.abs(deltaX)) return
@@ -84,7 +86,7 @@ export default function DateChipsNav({
       document.body.removeEventListener('touchstart', onTouchStart)
       document.body.removeEventListener('touchend', onTouchEnd)
     }
-  }, [currentDate, availableDates, router])
+  }, [currentDate, availableDates, router, swipeDisabled])
 
   return (
     <div
