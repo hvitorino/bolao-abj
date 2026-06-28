@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+import { ThemeProvider } from '@/components/bolao/ThemeProvider'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -20,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
         className={`${jetbrainsMono.variable} font-mono min-h-screen`}
         style={{
@@ -29,7 +30,7 @@ export default function RootLayout({
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
         }}
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   )

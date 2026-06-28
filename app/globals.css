@@ -15,6 +15,20 @@
   --color-error: #ff453a;
 }
 
+.light {
+  --color-primary: #007a2f;
+  --color-accent: #c9a800;
+  --color-secondary: #002776;
+  --color-bg: #f4f6f8;
+  --color-surface: #ffffff;
+  --color-border: #c8dbc8;
+  --color-text: #0d1b0f;
+  --color-muted: #4a6a5a;
+  --color-live: #d62c22;
+  --color-win: #009c3b;
+  --color-error: #d62c22;
+}
+
 * {
   box-sizing: border-box;
 }

@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
 import { GroupMenu } from './group-switcher'
 import { TabBar } from '@/components/bolao/TabBar'
+import { ThemeToggle } from '@/components/bolao/ThemeToggle'
 
 const ACTIVE_GROUP_COOKIE = 'bolao_active_group'
 
@@ -94,12 +95,15 @@ export default async function DashboardLayout({
             </span>
           </div>
 
-          <GroupMenu
-            groups={groups}
-            activeGroupId={activeGroup?.id}
-            pendingInvitesCount={pendingInvitesCount ?? 0}
-            userName={profile?.name ?? user.email ?? ''}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+            <ThemeToggle />
+            <GroupMenu
+              groups={groups}
+              activeGroupId={activeGroup?.id}
+              pendingInvitesCount={pendingInvitesCount ?? 0}
+              userName={profile?.name ?? user.email ?? ''}
+            />
+          </div>
         </div>
       </header>
 
