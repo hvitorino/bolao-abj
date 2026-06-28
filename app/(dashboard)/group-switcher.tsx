@@ -78,20 +78,98 @@ export function GroupMenu({ groups, activeGroupId, pendingInvitesCount, userName
       )}
 
       {groups.length === 0 ? (
-        <Link
-          href="/grupos"
-          style={{
-            ...MONO,
-            color: 'var(--color-primary)',
-            textDecoration: 'none',
-            fontWeight: 'bold',
-            border: '1px solid var(--color-primary)',
-            padding: '0.2rem 0.5rem',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          CRIAR/ENTRAR EM UM GRUPO
-        </Link>
+        <div ref={ref} style={{ position: 'relative' }}>
+          <button
+            onClick={() => setOpen((o) => !o)}
+            style={{
+              ...MONO,
+              color: 'var(--color-bg)',
+              background: 'var(--color-primary)',
+              border: '1px solid var(--color-primary)',
+              padding: '0.2rem 0.5rem',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.375rem',
+              fontWeight: 'bold',
+            }}
+          >
+            MENU
+            <span style={{ fontSize: '10px', lineHeight: 1 }}>{open ? '▲' : '▼'}</span>
+          </button>
+
+          {open && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 'calc(100% + 4px)',
+                right: 0,
+                backgroundColor: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+                zIndex: 100,
+                minWidth: '180px',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {userName && (
+                <div
+                  style={{
+                    ...MONO,
+                    padding: '0.375rem 0.75rem',
+                    color: 'var(--color-accent)',
+                    fontWeight: 'bold',
+                    borderBottom: '1px solid var(--color-border)',
+                    letterSpacing: '0.1em',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                  }}
+                >
+                  <span style={{ fontSize: '11px' }}>◉</span>
+                  {userName.toUpperCase()}
+                </div>
+              )}
+              <Link
+                href="/grupos"
+                onClick={() => setOpen(false)}
+                style={{
+                  ...MONO,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  width: '100%',
+                  padding: '0.375rem 0.75rem',
+                  color: 'var(--color-text)',
+                  textDecoration: 'none',
+                  borderBottom: '1px solid var(--color-border)',
+                }}
+              >
+                <span style={{ fontSize: '10px', color: 'var(--color-muted)' }}>▸</span>
+                CRIAR/ENTRAR EM GRUPO
+              </Link>
+              <button
+                onClick={handleLogout}
+                style={{
+                  ...MONO,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  width: '100%',
+                  padding: '0.375rem 0.75rem',
+                  color: 'var(--color-error)',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                }}
+              >
+                <span style={{ fontSize: '11px' }}>→</span>
+                SAIR
+              </button>
+            </div>
+          )}
+        </div>
       ) : (
         <div ref={ref} style={{ position: 'relative' }}>
           <button
