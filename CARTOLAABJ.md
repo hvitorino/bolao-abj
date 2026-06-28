@@ -173,3 +173,7 @@ Os `match_id` do bolaodefutebol para Oitavas, Quartas, Semi e Final ainda não s
 | 2026-06-26 | Jogos #61 e #62 — Noruega × França e Senegal × Iraq | 2 | 24 |
 | 2026-06-26 | Jogos #63 e #64 — Cape Verde × Arábia Saudita e Uruguai × Espanha | 2 | 24 |
 | 2026-06-27 | Jogos #65 e #66 — Egito × Irã e Nova Zelândia × Bélgica | 2 | 22 |
+| 2026-06-27 | Jogos #67 e #68 — Panama × Inglaterra e Croácia × Gana | 2 | 24 |
+| 2026-06-28 | Jogo #70 — Congo DR × Uzbequistão | 1 | 11 |
+| 2026-06-28 | Jogo #72 — Jordan × Argentina | 1 | 12 |
+| 2026-06-28 | Jogo #71 — Argélia × Áustria | 1 | 12 |
