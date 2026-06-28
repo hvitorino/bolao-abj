@@ -182,6 +182,16 @@ function formatDateESPN(date: Date): string {
   return `${year}${month}${day}`
 }
 
+function getPhase(matchDate: string): string {
+  if (matchDate < '2026-06-28T12:00:00Z') return 'Fase de Grupos'
+  if (matchDate < '2026-07-04T12:00:00Z') return '16 avos de Final'
+  if (matchDate < '2026-07-08T12:00:00Z') return 'Oitavas de Final'
+  if (matchDate < '2026-07-13T12:00:00Z') return 'Quartas de Final'
+  if (matchDate < '2026-07-18T12:00:00Z') return 'Semifinal'
+  if (matchDate < '2026-07-19T00:00:00Z') return 'Terceiro Lugar'
+  return 'Final'
+}
+
 interface GameRecord {
   espn_id: string
   home_team: string
@@ -194,6 +204,7 @@ interface GameRecord {
   away_score: number | null
   status: GameStatus
   round: string
+  phase: string
   venue: string | null
 }
 
@@ -256,6 +267,7 @@ function mapEventToGame(event: EspnEvent): GameRecord {
     away_score: awayScore,
     status: gameStatus,
     round,
+    phase: getPhase(event.date),
     venue,
   }
 }

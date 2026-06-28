@@ -30,6 +30,17 @@ const ROUND_MAP: Record<string, string> = {
   'Third Place': 'Terceiro Lugar', 'Final': 'Final',
 }
 
+function getPhase(matchDate: string): string {
+  const d = matchDate
+  if (d < '2026-06-28T12:00:00Z') return 'Fase de Grupos'
+  if (d < '2026-07-04T12:00:00Z') return '16 avos de Final'
+  if (d < '2026-07-08T12:00:00Z') return 'Oitavas de Final'
+  if (d < '2026-07-13T12:00:00Z') return 'Quartas de Final'
+  if (d < '2026-07-18T12:00:00Z') return 'Semifinal'
+  if (d < '2026-07-19T00:00:00Z') return 'Terceiro Lugar'
+  return 'Final'
+}
+
 function mapStatus(state: string): 'pending' | 'live' | 'finished' {
   if (state === 'in') return 'live'
   if (state === 'post') return 'finished'
@@ -95,10 +106,12 @@ Deno.serve(async (req) => {
           home_team_code: homeTeam.abbreviation.toUpperCase().slice(0, 3),
           away_team_code: awayTeam.abbreviation.toUpperCase().slice(0, 3),
           match_date: String(ev.date),
+          match_day: new Date(new Date(String(ev.date)).getTime() - 7 * 60 * 60 * 1000).toISOString().slice(0, 10),
           home_score: isPending ? null : parseInt(String(home.score), 10),
           away_score: isPending ? null : parseInt(String(away.score), 10),
           status,
           round: ROUND_MAP[headline ?? ''] ?? headline ?? 'Copa do Mundo 2026',
+          phase: getPhase(String(ev.date)),
           venue: (comp?.venue as Record<string, string>)?.fullName ?? null,
         }
 
