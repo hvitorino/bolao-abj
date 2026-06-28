@@ -7,7 +7,7 @@
  * vêm de `rounds` (fases com ao menos um palpite no grupo).
  *
  * A ordenação segue a sequência lógica da Copa:
- *   Grupos A–L → Oitavas de Final → Quartas de Final → Semifinal → Final
+ *   Rodada 1–3 → 16 avos → Oitavas → Quartas → Semifinal → Terceiro Lugar → Final
  * Fases não reconhecidas são colocadas ao final em ordem alfabética.
  *
  * O scroll horizontal permite navegação em mobile sem barra de scroll
@@ -15,21 +15,14 @@
  */
 
 const ROUND_ORDER = [
-  'Grupo A',
-  'Grupo B',
-  'Grupo C',
-  'Grupo D',
-  'Grupo E',
-  'Grupo F',
-  'Grupo G',
-  'Grupo H',
-  'Grupo I',
-  'Grupo J',
-  'Grupo K',
-  'Grupo L',
+  'Rodada 1',
+  'Rodada 2',
+  'Rodada 3',
+  '16 avos de Final',
   'Oitavas de Final',
   'Quartas de Final',
   'Semifinal',
+  'Terceiro Lugar',
   'Final',
 ]
 

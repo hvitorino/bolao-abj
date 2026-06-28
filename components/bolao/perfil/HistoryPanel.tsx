@@ -288,7 +288,7 @@ export function HistoryPanel({ state, onLoadMore, loadingMore }: HistoryPanelPro
               >
                 {/* Linha 1: round + placar-card + palpite + pontos (centro) */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                    {item.round && item.round !== 'Copa do Mundo 2026' && (
+                    {item.round && (
                       <span style={{ color: 'var(--color-muted)', fontSize: '10px', fontFamily: MONO_FONT, textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>
                         {item.round}
                       </span>

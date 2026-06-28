@@ -46,11 +46,6 @@ function formatDate(matchDate: string): string {
     .replace(/ DE /g, ' ')
 }
 
-// Remove prefixo "Copa do Mundo NNNN" do nome da rodada
-function formatRound(round: string): string {
-  return round.replace(/copa do mundo \d{4}\s*[-–]?\s*/i, '').trim()
-}
-
 // Formata status em português
 function formatStatus(status: string): string {
   switch (status) {
@@ -268,7 +263,7 @@ export default async function MeusPalpitesPage({ searchParams }: MeusPalpitesPag
                             textTransform: 'uppercase',
                           }}
                         >
-                          {formatRound(game.round)} · {formatDate(game.match_date)}
+                          {game.round} · {formatDate(game.match_date)}
                         </div>
                         <div
                           style={{
