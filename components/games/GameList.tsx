@@ -64,6 +64,7 @@ export default function GameList({
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
             color: 'var(--color-muted)',
+            textAlign: 'center',
             marginBottom: '1rem',
           }}
         >
