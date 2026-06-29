@@ -279,6 +279,21 @@ export function AcompanharCarrossel({
         padding: '0.6rem 0.75rem',
       }}
     >
+      <div
+        style={{
+          fontSize: '12px',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          fontWeight: 'bold',
+          color: 'var(--color-text)',
+          textAlign: 'center',
+          marginBottom: '0.75rem',
+        }}
+      >
+        {todayGames[0].round}
+      </div>
+
       <div style={{ position: 'relative' }}>
         <div
           ref={scrollRef}
