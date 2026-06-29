@@ -154,6 +154,12 @@ ON CONFLICT (id) DO UPDATE
 | 2026-06-27T23:40Z | 20:40 | #69 Colombia×Portugal, #70 DR Congo×Uzbekistan |
 | 2026-06-28T02:10Z | 23:10 | #71 Algeria×Austria, #72 Jordan×Argentina |
 
+### 16 avos de Final
+
+| # | BDF match_id | Partida | Data UTC |
+|---|-------------|---------|----------|
+| 73 | `18a7ab8b-2f8f-4001-9cc7-4a6a1ce232a5` | África do Sul × Canadá | 2026-06-28T19:00 |
+
 ### Oitavas em diante
 
 Os `match_id` do bolaodefutebol para Oitavas, Quartas, Semi e Final ainda não são conhecidos — serão capturados via Proxyman quando os jogos forem agendados no app. Quando disponíveis:
@@ -174,6 +180,8 @@ Os `match_id` do bolaodefutebol para Oitavas, Quartas, Semi e Final ainda não s
 | 2026-06-26 | Jogos #63 e #64 — Cape Verde × Arábia Saudita e Uruguai × Espanha | 2 | 24 |
 | 2026-06-27 | Jogos #65 e #66 — Egito × Irã e Nova Zelândia × Bélgica | 2 | 22 |
 | 2026-06-27 | Jogos #67 e #68 — Panama × Inglaterra e Croácia × Gana | 2 | 24 |
+| 2026-06-28 | Jogo #73 — África do Sul × Canadá | 1 | 11 |
+| 2026-06-28 | Jogo #69 — Colômbia × Portugal | 1 | 11 |
 | 2026-06-28 | Jogo #70 — Congo DR × Uzbequistão | 1 | 11 |
 | 2026-06-28 | Jogo #72 — Jordan × Argentina | 1 | 12 |
 | 2026-06-28 | Jogo #71 — Argélia × Áustria | 1 | 12 |
