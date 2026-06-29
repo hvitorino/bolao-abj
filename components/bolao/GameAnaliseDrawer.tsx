@@ -16,6 +16,7 @@ interface GameAnaliseDrawerProps {
   groupId: string
   currentUserId: string
   onClose: () => void
+  onPredictionSubmitted?: () => void
 }
 
 interface AnaliseData {
@@ -66,6 +67,7 @@ export default function GameAnaliseDrawer({
   groupId,
   currentUserId,
   onClose,
+  onPredictionSubmitted,
 }: GameAnaliseDrawerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
@@ -300,6 +302,7 @@ export default function GameAnaliseDrawer({
                   userId={currentUserId}
                   groupId={groupId}
                   hideAnalysisLink
+                  onPredictionChange={onPredictionSubmitted}
                 />
               </div>
               <div style={{ marginBottom: '1rem' }}>

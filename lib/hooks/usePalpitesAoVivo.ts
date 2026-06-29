@@ -58,6 +58,7 @@ export interface UsePalpitesAoVivoResult {
   loading: boolean
   error: string | null
   lastPolledAt: Date | null
+  refresh: () => Promise<void>
 }
 
 // --------------------------------------------------------------------------
@@ -136,7 +137,7 @@ export function usePalpitesAoVivo(
   // Indica se já temos dados válidos — erros transientes não sobrescrevem a UI
   const hasData = useRef(false)
 
-  const fetchAll = async () => {
+  const fetchAll = async (forceUpdate = false) => {
     try {
       const supabase = createClient()
 
@@ -328,12 +329,12 @@ export function usePalpitesAoVivo(
         }
       )
 
-      // Só atualiza estado (e dispara animação FLIP) se algum placar mudou
+      // Só atualiza estado (e dispara animação FLIP) se algum placar mudou, ou se forçado
       const scoresKey = games.map((g) => `${g.id}:${g.status}:${g.home_score}:${g.away_score}`).join('|')
       const scoresChanged = scoresKey !== prevScoresKey.current
       prevScoresKey.current = scoresKey
 
-      if (scoresChanged) {
+      if (scoresChanged || forceUpdate) {
         setTodayGames(newTodayGames)
         setRankingWithDetails(newRankingWithDetails)
       }
@@ -388,5 +389,5 @@ export function usePalpitesAoVivo(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId, currentUserId, selectedDate])
 
-  return { todayGames, rankingWithDetails, loading, error, lastPolledAt }
+  return { todayGames, rankingWithDetails, loading, error, lastPolledAt, refresh: () => fetchAll(true) }
 }

@@ -23,7 +23,7 @@ export function PalpitesLiveSection({
   selectedDate,
   availableDates,
 }: PalpitesLiveSectionProps) {
-  const { todayGames, rankingWithDetails, loading, error } = usePalpitesAoVivo(
+  const { todayGames, rankingWithDetails, loading, error, refresh } = usePalpitesAoVivo(
     groupId,
     currentUserId,
     selectedDate
@@ -174,6 +174,7 @@ export function PalpitesLiveSection({
         groupId={groupId}
         currentUserId={currentUserId}
         onClose={() => setSelectedGameId(null)}
+        onPredictionSubmitted={refresh}
       />
     </div>
   )
