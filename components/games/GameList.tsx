@@ -57,6 +57,19 @@ export default function GameList({
           padding: '1rem',
         }}
       >
+        <div
+          style={{
+            fontSize: '11px',
+            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            color: 'var(--color-muted)',
+            marginBottom: '1rem',
+          }}
+        >
+          {games[0].round}
+        </div>
+
         {/* alignItems: 'start' evita que o grid estique os cards mais curtos até a
             altura da linha (definida pelo card mais alto), o que faria a área de
             cards vizinhos crescer quando um deles expande os palpites */}
