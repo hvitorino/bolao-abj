@@ -103,6 +103,10 @@ const STATIC_ROUND_MAP: Record<string, string> = {
   // Grupo L
   '760434': 'Grupo L', '760437': 'Grupo L', '760458': 'Grupo L',
   '760460': 'Grupo L', '760480': 'Grupo L', '760485': 'Grupo L',
+  // 16 avos de Final
+  '760486': '16 avos de Final', '760487': '16 avos de Final', '760488': '16 avos de Final',
+  '760489': '16 avos de Final', '760490': '16 avos de Final', '760491': '16 avos de Final',
+  '760492': '16 avos de Final',
 }
 
 // Mapa de tradução: fase ESPN (inglês) → português (para mata-mata)
