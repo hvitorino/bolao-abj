@@ -119,6 +119,7 @@ const ROUND_MAP: Record<string, string> = {
   'Group J': 'Grupo J',
   'Group K': 'Grupo K',
   'Group L': 'Grupo L',
+  'Round of 32': '16 avos de Final',
   'Round of 16': 'Oitavas de Final',
   'Quarterfinals': 'Quartas de Final',
   'Semifinals': 'Semifinal',
@@ -170,9 +171,9 @@ function translateTeam(displayName: string): string {
   return TEAM_NAME_MAP[displayName] ?? displayName
 }
 
-function translateRound(headline: string | undefined): string {
-  if (!headline) return 'Copa do Mundo 2026'
-  return ROUND_MAP[headline] ?? headline
+function translateRound(headline: string | undefined, matchDate: string): string {
+  if (!headline) return getPhase(matchDate)
+  return ROUND_MAP[headline] ?? getPhase(matchDate)
 }
 
 function formatDateESPN(date: Date): string {
@@ -244,7 +245,7 @@ function mapEventToGame(event: EspnEvent): GameRecord {
     const altNote = competition.altGameNote
     const altRound = altNote?.includes(',') ? altNote.split(',').pop()?.trim() : altNote?.trim()
     const headline = altRound || competition.notes?.[0]?.headline
-    round = translateRound(headline)
+    round = translateRound(headline, event.date)
   }
   const venue = competition.venue?.fullName ?? null
 

@@ -25,7 +25,7 @@ const ROUND_MAP: Record<string, string> = {
   'Group D': 'Grupo D', 'Group E': 'Grupo E', 'Group F': 'Grupo F',
   'Group G': 'Grupo G', 'Group H': 'Grupo H', 'Group I': 'Grupo I',
   'Group J': 'Grupo J', 'Group K': 'Grupo K', 'Group L': 'Grupo L',
-  'Round of 32': 'Rodada de 32', 'Round of 16': 'Oitavas de Final',
+  'Round of 32': '16 avos de Final', 'Round of 16': 'Oitavas de Final',
   'Quarterfinals': 'Quartas de Final', 'Semifinals': 'Semifinal',
   'Third Place': 'Terceiro Lugar', 'Final': 'Final',
 }
@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
           home_score: isPending ? null : parseInt(String(home.score), 10),
           away_score: isPending ? null : parseInt(String(away.score), 10),
           status,
-          round: ROUND_MAP[headline ?? ''] ?? headline ?? 'Copa do Mundo 2026',
+          round: ROUND_MAP[headline ?? ''] ?? getPhase(String(ev.date)),
           phase: getPhase(String(ev.date)),
           venue: (comp?.venue as Record<string, string>)?.fullName ?? null,
         }
