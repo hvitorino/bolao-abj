@@ -94,7 +94,10 @@ Deno.serve(async (req) => {
         const statusType = (ev.status as Record<string, unknown>)?.type as Record<string, string>
         const status = mapStatus(statusType?.state ?? 'pre')
         const isPending = status === 'pending'
-        const headline = (comp?.notes as Record<string, string>[])?.[0]?.headline
+        const altGameNote = comp?.altGameNote as string | undefined
+        const altRound = altGameNote?.includes(',') ? altGameNote.split(',').pop()?.trim() : altGameNote?.trim()
+        const noteHeadline = (comp?.notes as Record<string, string>[])?.[0]?.headline
+        const headline = altRound || noteHeadline
 
         const homeTeam = home.team as Record<string, string>
         const awayTeam = away.team as Record<string, string>
