@@ -33,6 +33,7 @@ interface GameRaw {
   away_score: number | null
   status: string
   match_date: string
+  round: string
 }
 
 function sortAndRank(
@@ -154,7 +155,7 @@ export default function PublicDateClient({
       const { data: gamesData } = await supabase
         .from('games')
         .select(
-          'id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date'
+          'id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date,round'
         )
         .eq('match_day', date)
         .order('match_date', { ascending: true })
@@ -219,6 +220,7 @@ export default function PublicDateClient({
         away_score: g.away_score,
         status: g.status as 'pending' | 'live' | 'finished',
         match_date: g.match_date,
+        round: g.round,
         myPrediction: null,
       }))
 

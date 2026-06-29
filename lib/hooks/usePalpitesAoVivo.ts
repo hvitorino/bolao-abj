@@ -76,6 +76,7 @@ interface GameRow {
   away_score: number | null
   status: 'pending' | 'live' | 'finished'
   match_date: string
+  round: string
 }
 
 interface PredictionRow {
