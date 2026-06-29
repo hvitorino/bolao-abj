@@ -23,6 +23,7 @@ export interface LiveGameWithPrediction {
   away_score: number | null
   status: 'pending' | 'live' | 'finished'
   match_date: string
+  round: string
   myPrediction: { home_score: number; away_score: number } | null
 }
 
@@ -148,7 +149,7 @@ export function usePalpitesAoVivo(
       // 2. Buscar todos os jogos do dia selecionado (mesmo critério da aba Jogos)
       const { data: gamesData, error: gamesError } = await supabase
         .from('games')
-        .select('id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date')
+        .select('id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date,round')
         .eq('match_day', selectedDate)
         .order('match_date', { ascending: true })
 
@@ -232,6 +233,7 @@ export function usePalpitesAoVivo(
           away_score: g.away_score,
           status: g.status,
           match_date: g.match_date,
+          round: g.round,
           myPrediction: myPred
             ? { home_score: myPred.home_score, away_score: myPred.away_score }
             : null,

@@ -41,6 +41,19 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick }: PalpitesL
     >
       <div
         style={{
+          fontSize: '11px',
+          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+          textTransform: 'uppercase',
+          letterSpacing: '0.1em',
+          color: 'var(--color-muted)',
+          marginBottom: '0.6rem',
+        }}
+      >
+        {todayGames[0].round}
+      </div>
+
+      <div
+        style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '0.75rem',
