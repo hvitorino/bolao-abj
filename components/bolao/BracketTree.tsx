@@ -1,138 +1,340 @@
 'use client'
 
+import { useState, useCallback } from 'react'
 import type { BracketSlotWithGame } from '@/lib/types/game'
+import type { Prediction } from '@/lib/types/prediction'
+import { getTeamFlag } from '@/lib/flags'
+import GameAnaliseDrawer from '@/components/bolao/GameAnaliseDrawer'
+import { createClient } from '@/lib/supabase/client'
 
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
-function formatTeam(slot: BracketSlotWithGame, side: 'home' | 'away'): string {
-  const game = slot.game
-  if (game) {
-    return side === 'home' ? game.home_team_code : game.away_team_code
-  }
-  // Show source description if no team yet
-  const source = side === 'home' ? slot.source_home : slot.source_away
-  return source ?? '???'
+// ── Constants ─────────────────────────────────────────────────────
+
+/** Card height in px (used to compute connector SVG positions) */
+const CARD_H = 36
+/** Gap between children inside a column, in px */
+const CHILD_GAP = 4
+/** Height of a parent card area (card + PhaseLabel), in px */
+const PARENT_CARD_H = 46
+/** Gap between stacked parent cards (FINAL → 3RD), in px */
+const PARENT_GAP = 5
+
+// ── Slot helpers ──────────────────────────────────────────────────
+
+function winnerCode(slot: BracketSlotWithGame): string | null {
+  const g = slot.game
+  if (!g || g.status !== 'finished' || g.home_score == null || g.away_score == null) return null
+  if (g.home_score > g.away_score) return g.home_team_code
+  if (g.away_score > g.home_score) return g.away_team_code
+  return null
 }
 
-function formatScore(slot: BracketSlotWithGame): string {
-  const game = slot.game
-  if (!game) return '—'
-  if (game.status === 'pending') {
-    const d = new Date(game.match_date)
+/** Returns the display label for a side: flag + code for teams, short text for empty slots */
+function sideLabel(slot: BracketSlotWithGame, side: 'home' | 'away'): string {
+  const g = slot.game
+  if (g) {
+    const code = side === 'home' ? g.home_team_code : g.away_team_code
+    return getTeamFlag(code) + ' ' + code
+  }
+  // For empty slots, derive short code from source description
+  const source = side === 'home' ? slot.source_home : slot.source_away
+  if (source) {
+    const slotRef = source.match(/[A-Z]+\d*-?\d+/)
+    if (slotRef) return slotRef[0]
+    const groupRef = source.match(/([12])º Grupo ([A-L])/)
+    if (groupRef) return `${groupRef[1]}${groupRef[2]}`
+    if (source.startsWith('Melhor 3º')) return '3º+'
+    if (source.startsWith('Perd.')) {
+      const ref = source.match(/[A-Z]+\d*-?\d+/)
+      return ref ? `L${ref[0]}` : source.substring(0, 6)
+    }
+    return source.substring(0, 6)
+  }
+  return '???'
+}
+
+function gameCode(slot: BracketSlotWithGame, side: 'home' | 'away'): string {
+  const g = slot.game
+  if (g) return side === 'home' ? g.home_team_code : g.away_team_code
+  return ''
+}
+
+function scoreStr(slot: BracketSlotWithGame): string {
+  const g = slot.game
+  if (!g) return '—'
+  if (g.status === 'pending') {
+    const d = new Date(g.match_date)
     return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })
   }
-  return `${game.home_score ?? '-'}×${game.away_score ?? '-'}`
+  return `${g.home_score ?? '-'}×${g.away_score ?? '-'}`
 }
 
-function slotStatus(slot: BracketSlotWithGame): 'empty' | 'pending' | 'live' | 'finished' {
+type SlotStatus = 'empty' | 'pending' | 'live' | 'finished'
+function slotStatus(slot: BracketSlotWithGame): SlotStatus {
   if (!slot.game) return 'empty'
   if (slot.game.status === 'live') return 'live'
   if (slot.game.status === 'finished') return 'finished'
   return 'pending'
 }
 
-/** Returns the winner team code, or null if not determined yet */
-function winnerCode(slot: BracketSlotWithGame): string | null {
-  const g = slot.game
-  if (!g || g.status !== 'finished' || g.home_score == null || g.away_score == null) return null
-  if (g.home_score > g.away_score) return g.home_team_code
-  if (g.away_score > g.home_score) return g.away_team_code
-  return null // draw (shouldn't happen in knockout, but handle)
+// ── Column-height calculator (for SVG connectors) ─────────────────
+
+function columnHeight(node: BracketSlotWithGame): number {
+  if (node.children.length === 0) return CARD_H
+  const childrenTotal = node.children.reduce((sum, c) => sum + columnHeight(c), 0)
+  const gaps = (node.children.length - 1) * CHILD_GAP
+  return childrenTotal + gaps
 }
 
-interface SlotCardProps {
+// ── Prediction color helper ───────────────────────────────────────
+
+function predictionColor(game: BracketSlotWithGame['game'], pred: Prediction | null | undefined): string {
+  if (!game || !pred || game.status === 'pending') return 'var(--color-muted)'
+  if (game.home_score == null || game.away_score == null) return 'var(--color-muted)'
+  if (pred.home_score === game.home_score && pred.away_score === game.away_score) return 'var(--color-win)'
+  // Check if hit winner (for knockout, winner matters most)
+  const actualWinner = game.home_score > game.away_score ? game.home_team_code
+    : game.away_score > game.home_score ? game.away_team_code : null
+  const predWinner = pred.home_score > pred.away_score ? game.home_team_code
+    : pred.away_score > pred.home_score ? game.away_team_code : null
+  if (actualWinner && actualWinner === predWinner) return 'var(--color-accent)'
+  return 'var(--color-error)'
+}
+
+// ── Compact Slot Card ─────────────────────────────────────────────
+
+function CompactSlotCard({
+  slot,
+  prediction,
+  onGameClick,
+}: {
   slot: BracketSlotWithGame
-}
-
-function SlotCard({ slot }: SlotCardProps) {
+  prediction?: Prediction | null
+  onGameClick?: (gameId: string) => void
+}) {
   const status = slotStatus(slot)
-
-  let borderColor = 'var(--color-border)'
-  if (status === 'live') borderColor = 'var(--color-live)'
-  else if (status === 'finished') borderColor = 'var(--color-primary)'
-
   const isLive = status === 'live'
+  const isFinished = status === 'finished'
+  const isPending = status === 'pending'
+  const hasGame = !!slot.game
+
+  const winner = winnerCode(slot)
+  const homeLabel = sideLabel(slot, 'home')
+  const awayLabel = sideLabel(slot, 'away')
+  const homeCode = gameCode(slot, 'home')
+  const awayCode = gameCode(slot, 'away')
+  const score = scoreStr(slot)
+
+  // Border color by status (empty=default, pending=blue, live=red, finished=green)
+  let borderColor = 'var(--color-border)'
+  if (isPending) borderColor = 'var(--color-secondary)'
+  else if (isLive) borderColor = 'var(--color-live)'
+  else if (isFinished) borderColor = 'var(--color-primary)'
+
+  const scoreColor = isLive
+    ? 'var(--color-live)'
+    : isFinished
+      ? 'var(--color-accent)'
+      : 'var(--color-muted)'
+
+  const predColor = predictionColor(slot.game, prediction)
 
   return (
     <div
       style={{
         border: `1px solid ${borderColor}`,
         backgroundColor: 'var(--color-surface)',
-        padding: '0.4rem 0.5rem',
-        minWidth: '140px',
+        padding: '0.1rem 0.3rem',
         fontFamily: FONT,
-        fontSize: '11px',
-        lineHeight: 1.4,
+        fontSize: '10px',
+        lineHeight: 1.3,
+        minWidth: '120px',
+        overflow: 'hidden',
+        ...(hasGame && onGameClick
+          ? { cursor: 'pointer' }
+          : {}),
       }}
+      onClick={hasGame && onGameClick ? () => onGameClick(slot.game!.id) : undefined}
     >
-      {/* Teams */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        <div style={{
+      {/* Main row: home — score — away */}
+      <div
+        style={{
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
-          fontWeight: winnerCode(slot) === slot.game?.home_team_code ? 'bold' : 'normal',
-          color: winnerCode(slot) === slot.game?.home_team_code ? 'var(--color-accent)' : 'var(--color-text)',
-        }}>
-          <span>{formatTeam(slot, 'home')}</span>
-        </div>
-        <div style={{
-          display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
-          fontWeight: winnerCode(slot) === slot.game?.away_team_code ? 'bold' : 'normal',
-          color: winnerCode(slot) === slot.game?.away_team_code ? 'var(--color-accent)' : 'var(--color-text)',
-        }}>
-          <span>{formatTeam(slot, 'away')}</span>
-        </div>
+          gap: '0.25rem',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <span
+          style={{
+            fontWeight: winner === homeCode ? 'bold' : 'normal',
+            color: winner === homeCode ? 'var(--color-accent)' : 'var(--color-text)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            minWidth: 0,
+          }}
+          title={slot.game?.home_team ?? homeLabel}
+        >
+          {homeLabel}
+        </span>
+
+        <span
+          style={{
+            color: scoreColor,
+            fontWeight: 'bold',
+            fontSize: '10px',
+            flexShrink: 0,
+          }}
+        >
+          {isLive ? <span className="blink">{score}</span> : score}
+        </span>
+
+        <span
+          style={{
+            fontWeight: winner === awayCode ? 'bold' : 'normal',
+            color: winner === awayCode ? 'var(--color-accent)' : 'var(--color-text)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            textAlign: 'right',
+            minWidth: 0,
+          }}
+          title={slot.game?.away_team ?? awayLabel}
+        >
+          {awayLabel}
+        </span>
       </div>
 
-      {/* Score / Status */}
-      <div style={{
-        marginTop: '0.3rem',
-        textAlign: 'center',
-        color: isLive ? 'var(--color-live)' : status === 'finished' ? 'var(--color-accent)' : 'var(--color-muted)',
-        fontSize: '13px',
-        fontWeight: 'bold',
-      }}>
-        {isLive ? (
-          <span className="blink">{formatScore(slot)} ██ AO VIVO</span>
-        ) : (
-          formatScore(slot)
-        )}
-      </div>
-
-      {/* Phase label for empty slots */}
-      {status === 'empty' && (
-        <div style={{
-          marginTop: '0.2rem',
-          textAlign: 'center',
-          color: 'var(--color-muted)',
+      {/* Prediction / placeholder row (always same height for consistency) */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop: '0.08rem',
+          paddingTop: '0.08rem',
+          borderTop: `1px dashed var(--color-border)`,
           fontSize: '9px',
-          textTransform: 'uppercase',
-        }}>
-          {slot.phase.split(' ')[0]}
-        </div>
-      )}
+          minHeight: '12px',
+          alignItems: 'center',
+          color: predColor,
+        }}
+      >
+        {prediction
+          ? `${prediction.home_score}×${prediction.away_score}`
+          : hasGame
+            ? '-×-'
+            : ''}
+      </div>
     </div>
   )
 }
 
-interface BracketTreeProps {
-  roots: BracketSlotWithGame[]
-}
+// ── Phase label ───────────────────────────────────────────────────
 
-export function BracketTree({ roots }: BracketTreeProps) {
-  if (roots.length === 0) {
-    return (
-      <div style={{
+function PhaseLabel({ text }: { text: string }) {
+  return (
+    <div
+      style={{
         fontFamily: FONT,
         color: 'var(--color-muted)',
+        fontSize: '8px',
+        textTransform: 'uppercase',
+        letterSpacing: '0.06em',
         textAlign: 'center',
-        padding: '2rem 0',
-        fontSize: '13px',
-      }}>
-        NENHUM SLOT DE CHAVEAMENTO ENCONTRADO
+        marginBottom: '0.15rem',
+      }}
+    >
+      {text}
+    </div>
+  )
+}
+
+// ── Bracket connector SVG ─────────────────────────────────────────
+
+function BracketConnector({
+  node,
+  parentCount = 1,
+}: {
+  node: BracketSlotWithGame
+  /** Number of parent cards on the right (1 = normal, 2 = FINAL+3RD) */
+  parentCount?: number
+}) {
+  const children = node.children
+  if (children.length === 0) return null
+
+  const totalHeight = columnHeight(node)
+  const childHeights = children.map((c) => columnHeight(c))
+
+  const childCenters: number[] = []
+  let y = 0
+  for (let i = 0; i < children.length; i++) {
+    const center = y + childHeights[i] / 2
+    childCenters.push(center)
+    y += childHeights[i] + CHILD_GAP
+  }
+
+  const firstCenter = childCenters[0]
+  const lastCenter = childCenters[childCenters.length - 1]
+  const midY = (firstCenter + lastCenter) / 2
+
+  // Compute Y positions for right-side horizontal lines
+  const parentLinesY: number[] = []
+  if (parentCount === 1) {
+    // Single card: centered at midY (flexbox centers the card in the row)
+    parentLinesY.push(midY)
+  } else {
+    // Two stacked cards: centered column, cards symmetrically around midY
+    const halfSpan = (PARENT_CARD_H + PARENT_GAP) / 2
+    parentLinesY.push(midY - halfSpan)  // top card center
+    parentLinesY.push(midY + halfSpan)  // bottom card center
+  }
+
+  return (
+    <div
+      style={{
+        width: 12,
+        flexShrink: 0,
+        height: totalHeight,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
+    >
+      <svg width="12" height={totalHeight} viewBox={`0 0 12 ${totalHeight}`}>
+        {/* Vertical line connecting children */}
+        <line x1="6" y1={firstCenter} x2="6" y2={lastCenter} stroke="var(--color-border)" strokeWidth="1" />
+        {/* Horizontal lines to parent cards (right) */}
+        {parentLinesY.map((py, i) => (
+          <line key={i} x1="6" y1={py} x2="12" y2={py} stroke="var(--color-border)" strokeWidth="1" />
+        ))}
+        {/* Horizontal lines to each child (left) */}
+        {childCenters.map((cy, i) => (
+          <line key={i} x1="0" y1={cy} x2="6" y2={cy} stroke="var(--color-border)" strokeWidth="1" />
+        ))}
+      </svg>
+    </div>
+  )
+}
+
+// ── Recursive bracket column ──────────────────────────────────────
+
+function BracketColumn({
+  node,
+  predictionMap,
+  onGameClick,
+}: {
+  node: BracketSlotWithGame
+  predictionMap: Record<string, Prediction>
+  onGameClick?: (gameId: string) => void
+}) {
+  const hasChildren = node.children.length > 0
+
+  if (!hasChildren) {
+    const pred = node.game ? predictionMap[node.game.id] : undefined
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <CompactSlotCard slot={node} prediction={pred} onGameClick={onGameClick} />
       </div>
     )
   }
@@ -140,108 +342,218 @@ export function BracketTree({ roots }: BracketTreeProps) {
   return (
     <div
       style={{
-        fontFamily: FONT,
-        overflowX: 'auto',
-        padding: '1rem 0',
-        scrollbarWidth: 'none',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: '0.35rem',
       }}
     >
-      <style>{`
-        .bracket-tree::-webkit-scrollbar { display: none; }
-        @keyframes blink {
-          50% { opacity: 0; }
-        }
-        .blink {
-          animation: blink 1s step-end infinite;
-        }
-      `}</style>
-
+      {/* Children column (left) */}
       <div
-        className="bracket-tree"
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          gap: '1.5rem',
-          minWidth: 'max-content',
-          alignItems: 'center',
-          justifyContent: 'flex-start',
-          padding: '0 1rem',
+          flexDirection: 'column',
+          gap: `${CHILD_GAP}px`,
+          alignItems: 'stretch',
         }}
       >
-        {roots.map((root) => (
-          <BracketColumn key={root.id} node={root} />
+        {node.children.map((child) => (
+          <BracketColumn key={child.id} node={child} predictionMap={predictionMap} onGameClick={onGameClick} />
         ))}
       </div>
-    </div>
-  )
-}
 
-/** Recursively renders a bracket column (node + its children to the left) */
-function BracketColumn({ node, depth = 0 }: { node: BracketSlotWithGame; depth?: number }) {
-  const hasChildren = node.children.length > 0
+      {/* Connector lines */}
+      <BracketConnector node={node} />
 
-  return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: '1rem',
-    }}>
-      {/* Left side: children (recursive) */}
-      {hasChildren && (
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: node.children.length > 2 ? '0.5rem' : '1.5rem',
-          alignItems: 'flex-end',
-        }}>
-          {node.children.map((child) => (
-            <BracketColumn key={child.id} node={child} depth={depth + 1} />
-          ))}
-        </div>
-      )}
-
-      {/* Connector lines (SVG or simple CSS) */}
-      {hasChildren && <BracketConnector childCount={node.children.length} />}
-
-      {/* Current slot card */}
+      {/* Current node card (right) */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        {/* Phase header */}
-        <div style={{
-          color: 'var(--color-muted)',
-          fontSize: '9px',
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          marginBottom: '0.3rem',
-          textAlign: 'center',
-        }}>
-          {node.phase}
-        </div>
-        <SlotCard slot={node} />
+        <PhaseLabel text={node.phase} />
+        <CompactSlotCard slot={node} prediction={node.game ? predictionMap[node.game.id] : undefined} onGameClick={onGameClick} />
       </div>
     </div>
   )
 }
 
-/** Simple connector lines between children and parent */
-function BracketConnector({ childCount }: { childCount: number }) {
+// ── Final + 3rd Place merged column ───────────────────────────────
+
+function FinalAnd3rdColumn({
+  final,
+  third,
+  predictionMap,
+  onGameClick,
+}: {
+  final: BracketSlotWithGame
+  third: BracketSlotWithGame
+  predictionMap: Record<string, Prediction>
+  onGameClick?: (gameId: string) => void
+}) {
+  const sfChildren = final.children // SF-01, SF-02
+
   return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: '20px',
-      flexShrink: 0,
-    }}>
-      <svg width="20" height={childCount * 50} viewBox={`0 0 20 ${childCount * 50}`}>
-        {/* Vertical line */}
-        <line x1="10" y1="0" x2="10" y2={childCount * 50} stroke="var(--color-border)" strokeWidth="1" />
-        {/* Horizontal line to parent */}
-        <line x1="10" y1={(childCount * 50) / 2} x2="20" y2={(childCount * 50) / 2} stroke="var(--color-border)" strokeWidth="1" />
-        {/* Horizontal line to children */}
-        <line x1="0" y1={(childCount * 50) / 2} x2="10" y2={(childCount * 50) / 2} stroke="var(--color-border)" strokeWidth="1" />
-      </svg>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: '0.35rem',
+      }}
+    >
+      {/* SF subtree (left) */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: `${CHILD_GAP}px`,
+          alignItems: 'stretch',
+        }}
+      >
+        {sfChildren.map((child) => (
+          <BracketColumn key={child.id} node={child} predictionMap={predictionMap} onGameClick={onGameClick} />
+        ))}
+      </div>
+
+      {/* Connector with 2 parent lines for FINAL + 3RD */}
+      <BracketConnector node={final} parentCount={2} />
+
+      {/* FINAL + 3RD stacked (right) */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.3rem',
+        }}
+      >
+        {/* FINAL */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <PhaseLabel text={final.phase} />
+          <CompactSlotCard slot={final} prediction={final.game ? predictionMap[final.game.id] : undefined} onGameClick={onGameClick} />
+        </div>
+
+        {/* 3RD PLACE */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <PhaseLabel text={third.phase} />
+          <CompactSlotCard slot={third} prediction={third.game ? predictionMap[third.game.id] : undefined} onGameClick={onGameClick} />
+        </div>
+      </div>
     </div>
+  )
+}
+
+// ── Public component ──────────────────────────────────────────────
+
+interface BracketTreeProps {
+  roots: BracketSlotWithGame[]
+  predictions?: Record<string, Prediction>
+  groupId?: string
+  currentUserId?: string
+}
+
+export function BracketTree({ roots, predictions, groupId, currentUserId }: BracketTreeProps) {
+  const predictionMap = predictions ?? {}
+  const [predictionState, setPredictionState] = useState<Record<string, Prediction>>(predictionMap)
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
+
+  // Re-fetch predictions from Supabase after submitting a prediction
+  const handlePredictionSubmitted = useCallback(async () => {
+    if (!currentUserId) return
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('predictions')
+      .select('*')
+      .eq('user_id', currentUserId)
+    if (data) {
+      const map: Record<string, Prediction> = {}
+      for (const p of data as Prediction[]) map[p.game_id] = p
+      setPredictionState(map)
+    }
+  }, [currentUserId])
+
+  if (roots.length === 0) {
+    return (
+      <div
+        style={{
+          fontFamily: FONT,
+          color: 'var(--color-muted)',
+          textAlign: 'center',
+          padding: '2rem 0',
+          fontSize: '13px',
+        }}
+      >
+        NENHUM SLOT DE CHAVEAMENTO ENCONTRADO
+      </div>
+    )
+  }
+
+  // Separate FINAL and 3RD from other roots so they render in the same column
+  const finalRoot = roots.find((r) => r.label === 'FINAL')
+  const thirdRoot = roots.find((r) => r.label === '3RD')
+  const otherRoots = roots.filter((r) => r.label !== 'FINAL' && r.label !== '3RD')
+
+  return (
+    <>
+      <div
+        style={{
+          fontFamily: FONT,
+          overflowX: 'auto',
+          padding: '0.25rem 0',
+          scrollbarWidth: 'none',
+        }}
+      >
+        <style>{`
+          .bracket-scroll::-webkit-scrollbar { display: none; }
+          @keyframes blink {
+            50% { opacity: 0; }
+          }
+          .blink {
+            animation: blink 1s step-end infinite;
+          }
+        `}</style>
+
+        <div
+          className="bracket-scroll"
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '0.5rem',
+            minWidth: 'max-content',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            padding: '0 0.5rem',
+          }}
+        >
+          {/* Other roots (should be none in practice) */}
+          {otherRoots.map((root) => (
+            <BracketColumn key={root.id} node={root} predictionMap={predictionState} onGameClick={setSelectedGameId} />
+          ))}
+
+          {/* FINAL + 3RD merged column */}
+          {finalRoot && thirdRoot && (
+            <FinalAnd3rdColumn final={finalRoot} third={thirdRoot} predictionMap={predictionState} onGameClick={setSelectedGameId} />
+          )}
+
+          {/* If only FINAL exists (no 3RD), render solo */}
+          {finalRoot && !thirdRoot && (
+            <BracketColumn node={finalRoot} predictionMap={predictionState} onGameClick={setSelectedGameId} />
+          )}
+
+          {/* If only 3RD exists (no FINAL), render solo */}
+          {thirdRoot && !finalRoot && (
+            <BracketColumn node={thirdRoot} predictionMap={predictionState} onGameClick={setSelectedGameId} />
+          )}
+        </div>
+      </div>
+
+      {/* Game detail drawer */}
+      {groupId && currentUserId && (
+        <GameAnaliseDrawer
+          gameId={selectedGameId}
+          groupId={groupId}
+          currentUserId={currentUserId}
+          onClose={() => setSelectedGameId(null)}
+          onPredictionSubmitted={handlePredictionSubmitted}
+        />
+      )}
+    </>
   )
 }

@@ -425,12 +425,40 @@ async function syncHandler(request: Request) {
     }
   }
 
-  // Link knockout games to bracket_slots
-  // For each knockout game without a bracket_slot_id, find an unlinked slot
-  // in the same phase and assign by match_date ordering.
+  // Link knockout games to bracket_slots using static ESPN ID → slot mapping
+  // plus fallback positional assignment (ordered by match_date within each phase).
+  //
+  // IMPORTANT: knockout bracket crossings depend on correct slot assignment.
+  // R32-01 + R32-02 → R16-01, R32-03 + R32-04 → R16-02, etc.
+  // Games MUST be assigned to slots that respect these pairings.
+
+  // Static mapping: ESPN game ID → bracket slot label
+  // Populate as knockout games become known from the ESPN API.
+  const ESPN_SLOT_MAP: Record<string, string> = {
+    // 16 avos de Final — mapeamento oficial via CSV do chaveamento
+    // Pares: (R32-01,R32-02)→R16-01, (R32-03,R32-04)→R16-02, etc.
+    '760486': 'R32-01',  // J1: RSA×CAN
+    '760488': 'R32-02',  // J4: NED×MAR
+    '760489': 'R32-03',  // J3: GER×PAR
+    '760492': 'R32-04',  // J6: FRA×SWE
+    '760487': 'R32-05',  // J2: BRA×JPN
+    '760490': 'R32-06',  // J5: CIV×NOR
+    '760491': 'R32-07',  // J7: MEX×ECU
+    '760495': 'R32-08',  // J8: ENG×COD
+    '760496': 'R32-09',  // J12: POR×CRO
+    '760497': 'R32-10',  // J11: ESP×AUT
+    '760494': 'R32-11',  // J10: USA×BIH
+    '760493': 'R32-12',  // J9: BEL×SEN
+    '760500': 'R32-13',  // J15: ARG×CPV
+    '760499': 'R32-14',  // J14: AUS×EGY
+    '760498': 'R32-15',  // J13: SUI×ALG
+    '760501': 'R32-16',  // J16: COL×GHA
+    // Oitavas, Quartas, Semi, Final — preencher quando os jogos aparecerem na ESPN
+  }
+
   const { data: unlinkedGames, error: unlinkedError } = await supabase
     .from('games')
-    .select('id, phase, match_date')
+    .select('id, espn_id, phase, match_date')
     .is('bracket_slot_id', null)
     .neq('phase', 'Fase de Grupos')
     .order('match_date', { ascending: true })
@@ -438,7 +466,9 @@ async function syncHandler(request: Request) {
   if (!unlinkedError && unlinkedGames && unlinkedGames.length > 0) {
     const { data: allSlots, error: slotsError } = await supabase
       .from('bracket_slots')
-      .select('id, label, phase')
+      .select('id, label, phase, position')
+      .order('phase')
+      .order('position')
 
     if (!slotsError && allSlots) {
       // Get currently linked slot IDs
@@ -449,28 +479,57 @@ async function syncHandler(request: Request) {
 
       const linkedSlotIds = new Set((linkedGames ?? []).map((g: { bracket_slot_id: string }) => g.bracket_slot_id))
 
-      // Group unlinked slots by phase
-      const availableSlots = new Map<string, { id: string; label: string }[]>()
+      // Build a map: slot label → slot data (only for unlinked slots)
+      const slotByLabel = new Map<string, { id: string; label: string; phase: string }>()
+      const availableByPhase = new Map<string, { id: string; label: string }[]>()
+
       for (const slot of allSlots) {
         if (!linkedSlotIds.has(slot.id)) {
-          const list = availableSlots.get(slot.phase) ?? []
+          slotByLabel.set(slot.label, slot)
+          const list = availableByPhase.get(slot.phase) ?? []
           list.push(slot)
-          availableSlots.set(slot.phase, list)
+          availableByPhase.set(slot.phase, list)
         }
       }
 
-      // Assign slots to games by phase + match_date ordering
-      for (const game of (unlinkedGames as { id: string; phase: string; match_date: string }[])) {
-        const phaseSlots = availableSlots.get(game.phase)
-        if (!phaseSlots || phaseSlots.length === 0) continue
+      // Assign slots to games
+      for (const game of (unlinkedGames as { id: string; espn_id: string | null; phase: string; match_date: string }[])) {
+        let slotId: string | null = null
 
-        const slot = phaseSlots.shift()!
-        await supabase
-          .from('games')
-          .update({ bracket_slot_id: slot.id })
-          .eq('id', game.id)
+        // 1) Static mapping: use ESPN ID → slot label map
+        if (game.espn_id && ESPN_SLOT_MAP[game.espn_id]) {
+          const targetLabel = ESPN_SLOT_MAP[game.espn_id]
+          const targetSlot = slotByLabel.get(targetLabel)
+          if (targetSlot) {
+            slotId = targetSlot.id
+            slotByLabel.delete(targetLabel)
+            // Also remove from availableByPhase
+            const phaseList = availableByPhase.get(targetSlot.phase)
+            if (phaseList) {
+              const idx = phaseList.findIndex((s) => s.id === slotId)
+              if (idx >= 0) phaseList.splice(idx, 1)
+            }
+          }
+        }
 
-        console.log(`[sync-games] Linked game ${game.id} (${game.phase}) -> slot ${slot.label}`)
+        // 2) Fallback: positional assignment by phase + match_date order
+        if (!slotId) {
+          const phaseSlots = availableByPhase.get(game.phase)
+          if (phaseSlots && phaseSlots.length > 0) {
+            const slot = phaseSlots.shift()!
+            slotId = slot.id
+            slotByLabel.delete(slot.label)
+          }
+        }
+
+        if (slotId) {
+          await supabase
+            .from('games')
+            .update({ bracket_slot_id: slotId })
+            .eq('id', game.id)
+
+          console.log(`[sync-games] Linked game ${game.id} (${game.phase}, espn=${game.espn_id}) → slot ${slotId}`)
+        }
       }
     }
   }
