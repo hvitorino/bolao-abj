@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import type { BracketSlotWithGame } from '@/lib/types/game'
 import type { Prediction } from '@/lib/types/prediction'
 import { getTeamFlag } from '@/lib/flags'
+import GameAnaliseDrawer from '@/components/bolao/GameAnaliseDrawer'
 
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
@@ -100,13 +102,16 @@ function predictionColor(game: BracketSlotWithGame['game'], pred: Prediction | n
 function CompactSlotCard({
   slot,
   prediction,
+  onGameClick,
 }: {
   slot: BracketSlotWithGame
   prediction?: Prediction | null
+  onGameClick?: (gameId: string) => void
 }) {
   const status = slotStatus(slot)
   const isLive = status === 'live'
   const isFinished = status === 'finished'
+  const hasGame = !!slot.game
 
   const winner = winnerCode(slot)
   const homeLabel = sideLabel(slot, 'home')
@@ -138,7 +143,11 @@ function CompactSlotCard({
         lineHeight: 1.3,
         minWidth: '120px',
         overflow: 'hidden',
+        ...(hasGame && onGameClick
+          ? { cursor: 'pointer' }
+          : {}),
       }}
+      onClick={hasGame && onGameClick ? () => onGameClick(slot.game!.id) : undefined}
     >
       {/* Main row: home — score — away */}
       <div
@@ -202,7 +211,7 @@ function CompactSlotCard({
             color: predColor,
           }}
         >
-          ▸ seu {prediction.home_score}×{prediction.away_score}
+          {prediction.home_score}×{prediction.away_score}
         </div>
       )}
     </div>
@@ -291,9 +300,11 @@ function BracketConnector({
 function BracketColumn({
   node,
   predictionMap,
+  onGameClick,
 }: {
   node: BracketSlotWithGame
   predictionMap: Record<string, Prediction>
+  onGameClick?: (gameId: string) => void
 }) {
   const hasChildren = node.children.length > 0
 
@@ -301,7 +312,7 @@ function BracketColumn({
     const pred = node.game ? predictionMap[node.game.id] : undefined
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <CompactSlotCard slot={node} prediction={pred} />
+        <CompactSlotCard slot={node} prediction={pred} onGameClick={onGameClick} />
       </div>
     )
   }
@@ -325,7 +336,7 @@ function BracketColumn({
         }}
       >
         {node.children.map((child) => (
-          <BracketColumn key={child.id} node={child} predictionMap={predictionMap} />
+          <BracketColumn key={child.id} node={child} predictionMap={predictionMap} onGameClick={onGameClick} />
         ))}
       </div>
 
@@ -335,7 +346,7 @@ function BracketColumn({
       {/* Current node card (right) */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <PhaseLabel text={node.phase} />
-        <CompactSlotCard slot={node} prediction={node.game ? predictionMap[node.game.id] : undefined} />
+        <CompactSlotCard slot={node} prediction={node.game ? predictionMap[node.game.id] : undefined} onGameClick={onGameClick} />
       </div>
     </div>
   )
@@ -347,10 +358,12 @@ function FinalAnd3rdColumn({
   final,
   third,
   predictionMap,
+  onGameClick,
 }: {
   final: BracketSlotWithGame
   third: BracketSlotWithGame
   predictionMap: Record<string, Prediction>
+  onGameClick?: (gameId: string) => void
 }) {
   const sfChildren = final.children // SF-01, SF-02
 
@@ -373,7 +386,7 @@ function FinalAnd3rdColumn({
         }}
       >
         {sfChildren.map((child) => (
-          <BracketColumn key={child.id} node={child} predictionMap={predictionMap} />
+          <BracketColumn key={child.id} node={child} predictionMap={predictionMap} onGameClick={onGameClick} />
         ))}
       </div>
 
@@ -392,13 +405,13 @@ function FinalAnd3rdColumn({
         {/* FINAL */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <PhaseLabel text={final.phase} />
-          <CompactSlotCard slot={final} prediction={final.game ? predictionMap[final.game.id] : undefined} />
+          <CompactSlotCard slot={final} prediction={final.game ? predictionMap[final.game.id] : undefined} onGameClick={onGameClick} />
         </div>
 
         {/* 3RD PLACE */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <PhaseLabel text={third.phase} />
-          <CompactSlotCard slot={third} prediction={third.game ? predictionMap[third.game.id] : undefined} />
+          <CompactSlotCard slot={third} prediction={third.game ? predictionMap[third.game.id] : undefined} onGameClick={onGameClick} />
         </div>
       </div>
     </div>
@@ -410,10 +423,13 @@ function FinalAnd3rdColumn({
 interface BracketTreeProps {
   roots: BracketSlotWithGame[]
   predictions?: Record<string, Prediction>
+  groupId?: string
+  currentUserId?: string
 }
 
-export function BracketTree({ roots, predictions }: BracketTreeProps) {
+export function BracketTree({ roots, predictions, groupId, currentUserId }: BracketTreeProps) {
   const predictionMap = predictions ?? {}
+  const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
 
   if (roots.length === 0) {
     return (
@@ -437,56 +453,68 @@ export function BracketTree({ roots, predictions }: BracketTreeProps) {
   const otherRoots = roots.filter((r) => r.label !== 'FINAL' && r.label !== '3RD')
 
   return (
-    <div
-      style={{
-        fontFamily: FONT,
-        overflowX: 'auto',
-        padding: '0.25rem 0',
-        scrollbarWidth: 'none',
-      }}
-    >
-      <style>{`
-        .bracket-scroll::-webkit-scrollbar { display: none; }
-        @keyframes blink {
-          50% { opacity: 0; }
-        }
-        .blink {
-          animation: blink 1s step-end infinite;
-        }
-      `}</style>
-
+    <>
       <div
-        className="bracket-scroll"
         style={{
-          display: 'flex',
-          flexDirection: 'row',
-          gap: '0.5rem',
-          minWidth: 'max-content',
-          alignItems: 'flex-start',
-          justifyContent: 'flex-start',
-          padding: '0 0.5rem',
+          fontFamily: FONT,
+          overflowX: 'auto',
+          padding: '0.25rem 0',
+          scrollbarWidth: 'none',
         }}
       >
-        {/* Other roots (should be none in practice) */}
-        {otherRoots.map((root) => (
-          <BracketColumn key={root.id} node={root} predictionMap={predictionMap} />
-        ))}
+        <style>{`
+          .bracket-scroll::-webkit-scrollbar { display: none; }
+          @keyframes blink {
+            50% { opacity: 0; }
+          }
+          .blink {
+            animation: blink 1s step-end infinite;
+          }
+        `}</style>
 
-        {/* FINAL + 3RD merged column */}
-        {finalRoot && thirdRoot && (
-          <FinalAnd3rdColumn final={finalRoot} third={thirdRoot} predictionMap={predictionMap} />
-        )}
+        <div
+          className="bracket-scroll"
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '0.5rem',
+            minWidth: 'max-content',
+            alignItems: 'flex-start',
+            justifyContent: 'flex-start',
+            padding: '0 0.5rem',
+          }}
+        >
+          {/* Other roots (should be none in practice) */}
+          {otherRoots.map((root) => (
+            <BracketColumn key={root.id} node={root} predictionMap={predictionMap} onGameClick={setSelectedGameId} />
+          ))}
 
-        {/* If only FINAL exists (no 3RD), render solo */}
-        {finalRoot && !thirdRoot && (
-          <BracketColumn node={finalRoot} predictionMap={predictionMap} />
-        )}
+          {/* FINAL + 3RD merged column */}
+          {finalRoot && thirdRoot && (
+            <FinalAnd3rdColumn final={finalRoot} third={thirdRoot} predictionMap={predictionMap} onGameClick={setSelectedGameId} />
+          )}
 
-        {/* If only 3RD exists (no FINAL), render solo */}
-        {thirdRoot && !finalRoot && (
-          <BracketColumn node={thirdRoot} predictionMap={predictionMap} />
-        )}
+          {/* If only FINAL exists (no 3RD), render solo */}
+          {finalRoot && !thirdRoot && (
+            <BracketColumn node={finalRoot} predictionMap={predictionMap} onGameClick={setSelectedGameId} />
+          )}
+
+          {/* If only 3RD exists (no FINAL), render solo */}
+          {thirdRoot && !finalRoot && (
+            <BracketColumn node={thirdRoot} predictionMap={predictionMap} onGameClick={setSelectedGameId} />
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Game detail drawer */}
+      {groupId && currentUserId && (
+        <GameAnaliseDrawer
+          gameId={selectedGameId}
+          groupId={groupId}
+          currentUserId={currentUserId}
+          onClose={() => setSelectedGameId(null)}
+        />
+      )}
+    </>
   )
 }

@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { BracketTree } from '@/components/bolao/BracketTree'
 import { buildBracketTree } from '@/lib/bracket'
+import { resolveActiveGroup } from '@/lib/active-group'
 import type { BracketSlot, Game, BracketSlotWithGame } from '@/lib/types/game'
 import type { Prediction } from '@/lib/types/prediction'
 
@@ -20,6 +22,12 @@ export default async function ChaveamentoPage() {
   if (!user) {
     redirect('/login')
   }
+
+  // Resolve active group (needed for GameAnaliseDrawer)
+  const cookieStore = await cookies()
+  const cookieGroupId = cookieStore.get('bolao_active_group')?.value
+  const activeGroupResult = await resolveActiveGroup(supabase, user.id, undefined, '', {}, cookieGroupId)
+  const groupId = 'error' in activeGroupResult ? '' : activeGroupResult.groupId
 
   // Fetch bracket slots, games, and user predictions in parallel
   const [
@@ -116,7 +124,7 @@ export default async function ChaveamentoPage() {
       </div>
 
       {/* Bracket visualization */}
-      <BracketTree roots={roots} predictions={predictionByGameId} />
+      <BracketTree roots={roots} predictions={predictionByGameId} groupId={groupId} currentUserId={user.id} />
     </div>
   )
 }
