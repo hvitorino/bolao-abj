@@ -126,13 +126,43 @@ export default async function ChaveamentoPage() {
       {/* Bracket visualization — contained in card */}
       <div
         style={{
+          position: 'relative',
           border: '1px solid var(--color-border)',
           backgroundColor: 'var(--color-surface)',
           overflow: 'hidden',
+          width: '100%',
           padding: '0.5rem',
         }}
       >
         <BracketTree roots={roots} predictions={predictionByGameId} groupId={groupId} currentUserId={user.id} />
+
+        {/* Left scroll fade indicator */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: '48px',
+            background: 'linear-gradient(to right, var(--color-surface), transparent)',
+            pointerEvents: 'none',
+            zIndex: 10,
+          }}
+        />
+
+        {/* Right scroll fade indicator */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            right: 0,
+            width: '48px',
+            background: 'linear-gradient(to left, var(--color-surface), transparent)',
+            pointerEvents: 'none',
+            zIndex: 10,
+          }}
+        />
       </div>
     </div>
   )

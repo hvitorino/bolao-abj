@@ -501,7 +501,6 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
       <div
         style={{
           fontFamily: FONT,
-          position: 'relative',
         }}
       >
         <style>{`
@@ -549,33 +548,7 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
           )}
         </div>
 
-        {/* Left scroll fade indicator */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            width: '48px',
-            background: 'linear-gradient(to right, var(--color-surface), transparent)',
-            pointerEvents: 'none',
-            zIndex: 10,
-          }}
-        />
 
-        {/* Right scroll fade indicator */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            right: 0,
-            width: '48px',
-            background: 'linear-gradient(to left, var(--color-surface), transparent)',
-            pointerEvents: 'none',
-            zIndex: 10,
-          }}
-        />
       </div>
 
       {/* Game detail drawer — only when no external click handler */}
