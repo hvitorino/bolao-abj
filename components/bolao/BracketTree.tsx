@@ -11,7 +11,7 @@ const FONT = "'JetBrains Mono', 'Courier New', monospace"
 // ── Constants ─────────────────────────────────────────────────────
 
 /** Card height in px (used to compute connector SVG positions) */
-const CARD_H = 20
+const CARD_H = 36
 /** Gap between children inside a column, in px */
 const CHILD_GAP = 4
 
@@ -111,6 +111,7 @@ function CompactSlotCard({
   const status = slotStatus(slot)
   const isLive = status === 'live'
   const isFinished = status === 'finished'
+  const isPending = status === 'pending'
   const hasGame = !!slot.game
 
   const winner = winnerCode(slot)
@@ -120,8 +121,10 @@ function CompactSlotCard({
   const awayCode = gameCode(slot, 'away')
   const score = scoreStr(slot)
 
+  // Border color by status (empty=default, pending=blue, live=red, finished=green)
   let borderColor = 'var(--color-border)'
-  if (isLive) borderColor = 'var(--color-live)'
+  if (isPending) borderColor = 'var(--color-secondary)'
+  else if (isLive) borderColor = 'var(--color-live)'
   else if (isFinished) borderColor = 'var(--color-primary)'
 
   const scoreColor = isLive
@@ -198,22 +201,26 @@ function CompactSlotCard({
         </span>
       </div>
 
-      {/* User prediction row (only if prediction exists) */}
-      {prediction && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: '0.08rem',
-            paddingTop: '0.08rem',
-            borderTop: `1px dashed var(--color-border)`,
-            fontSize: '9px',
-            color: predColor,
-          }}
-        >
-          {prediction.home_score}×{prediction.away_score}
-        </div>
-      )}
+      {/* Prediction / placeholder row (always same height for consistency) */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop: '0.08rem',
+          paddingTop: '0.08rem',
+          borderTop: `1px dashed var(--color-border)`,
+          fontSize: '9px',
+          minHeight: '12px',
+          alignItems: 'center',
+          color: predColor,
+        }}
+      >
+        {prediction
+          ? `${prediction.home_score}×${prediction.away_score}`
+          : hasGame
+            ? '-×-'
+            : ''}
+      </div>
     </div>
   )
 }
