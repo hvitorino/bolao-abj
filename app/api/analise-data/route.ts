@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service-server'
 import { calculateTeamStats, getRecentGames, GameRow } from '@/lib/analytics/team-stats'
+import { calculateGroupStandings } from '@/lib/analytics/group-standings'
 import type { ScoreBreakdown, Score } from '@/lib/types/score'
 import type { ParticipantEntry } from '@/lib/types/participant'
 
@@ -61,6 +62,21 @@ export async function GET(request: NextRequest) {
     .order('match_date', { ascending: true })
 
   const games: GameRow[] = allTeamGames ?? []
+
+  // 4b. Se for fase de grupos, buscar todos os jogos do grupo para calcular classificação
+  const isGroupStage = (game.round ?? '').startsWith('Grupo')
+  let allGroupGames: GameRow[] = []
+  if (isGroupStage) {
+    const { data: groupGameRows } = await supabase
+      .from('games')
+      .select(
+        'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date, match_day, status, round'
+      )
+      .eq('round', game.round)
+      .order('match_date', { ascending: true })
+
+    allGroupGames = groupGameRows ?? []
+  }
 
   const supabaseService = createServiceClient()
 
@@ -139,6 +155,11 @@ export async function GET(request: NextRequest) {
   const homeRecentGames = getRecentGames(games, game.home_team_code, game.match_date)
   const awayRecentGames = getRecentGames(games, game.away_team_code, game.match_date)
 
+  // 7b. Calcular classificação do grupo (null para mata-mata)
+  const groupStandings = isGroupStage
+    ? calculateGroupStandings(allGroupGames, game.match_date)
+    : null
+
   return NextResponse.json({
     game,
     participants,
@@ -146,5 +167,6 @@ export async function GET(request: NextRequest) {
     awayStats,
     homeRecentGames,
     awayRecentGames,
+    groupStandings,
   })
 }
