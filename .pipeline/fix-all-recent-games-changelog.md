@@ -3,7 +3,7 @@
 **Slug:** fix-all-recent-games
 **Branch:** feature/fix-all-recent-games
 **Data:** 2026-06-30
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
