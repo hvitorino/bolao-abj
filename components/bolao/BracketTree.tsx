@@ -557,7 +557,7 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
             bottom: 0,
             left: 0,
             width: '48px',
-            background: 'linear-gradient(to right, var(--color-bg), transparent)',
+            background: 'linear-gradient(to right, var(--color-surface), transparent)',
             pointerEvents: 'none',
             zIndex: 10,
           }}
@@ -571,7 +571,7 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
             bottom: 0,
             right: 0,
             width: '48px',
-            background: 'linear-gradient(to left, var(--color-bg), transparent)',
+            background: 'linear-gradient(to left, var(--color-surface), transparent)',
             pointerEvents: 'none',
             zIndex: 10,
           }}

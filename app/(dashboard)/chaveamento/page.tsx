@@ -123,8 +123,17 @@ export default async function ChaveamentoPage() {
         </h1>
       </div>
 
-      {/* Bracket visualization */}
-      <BracketTree roots={roots} predictions={predictionByGameId} groupId={groupId} currentUserId={user.id} />
+      {/* Bracket visualization — contained in card */}
+      <div
+        style={{
+          border: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-surface)',
+          overflow: 'hidden',
+          padding: '0.5rem',
+        }}
+      >
+        <BracketTree roots={roots} predictions={predictionByGameId} groupId={groupId} currentUserId={user.id} />
+      </div>
     </div>
   )
 }
