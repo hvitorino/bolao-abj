@@ -67,12 +67,6 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
         }
       }
 
-      // Build id → label index
-      const slotIdToLabel: Record<string, string> = {}
-      for (const slot of typedSlots) {
-        slotIdToLabel[slot.id] = slot.label
-      }
-
       // Build label → game map for buildBracketTree
       const gamesBySlotLabel: Record<string, Game | null> = {}
       for (const slot of typedSlots) {
