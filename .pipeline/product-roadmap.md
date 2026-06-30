@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 75 features
+- Total: 76 features
 - Concluídas: 75
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -994,3 +994,14 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Fetch dos dados do bracket (slots + games + predictions) é lazy — só ocorre ao expandir
 - Funciona em mobile (coluna única) com scroll horizontal no bracket
 **Dependências:** chaveamento (bracket_slots + BracketTree), palpites-ao-vivo
+
+---
+
+### 76. fix-all-recent-games — Exibir Todos os Jogos Anteriores na Análise — em progresso
+**Objetivo:** Alterar a seção "Últimos 3 jogos na Copa 2026" no drawer de análise de jogos para "Jogos", exibindo todos os jogos anteriores dos times na Copa 2026, em vez de apenas os 3 mais recentes.
+**Critérios de sucesso:**
+- Título da seção alterado de "► ÚLTIMOS 3 JOGOS NA COPA 2026" para "► JOGOS"
+- Lista de jogos inclui todos os jogos anteriores do time, sem limite de 3
+- Comportamento visual (cores, formatação, layout) permanece idêntico
+- Funciona na página `/jogos/[gameId]/analise` e no drawer de análise
+**Dependências:** palpites-analise-drawer, analise-confronto
