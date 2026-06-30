@@ -14,6 +14,10 @@ const FONT = "'JetBrains Mono', 'Courier New', monospace"
 const CARD_H = 36
 /** Gap between children inside a column, in px */
 const CHILD_GAP = 4
+/** Height of a parent card area (card + PhaseLabel), in px */
+const PARENT_CARD_H = 46
+/** Gap between stacked parent cards (FINAL → 3RD), in px */
+const PARENT_GAP = 5
 
 // ── Slot helpers ──────────────────────────────────────────────────
 
@@ -249,11 +253,11 @@ function PhaseLabel({ text }: { text: string }) {
 
 function BracketConnector({
   node,
-  extraTarget = false,
+  parentCount = 1,
 }: {
   node: BracketSlotWithGame
-  /** If true, draws a second horizontal line going right (for 3RD next to FINAL) */
-  extraTarget?: boolean
+  /** Number of parent cards on the right (1 = normal, 2 = FINAL+3RD) */
+  parentCount?: number
 }) {
   const children = node.children
   if (children.length === 0) return null
@@ -273,6 +277,18 @@ function BracketConnector({
   const lastCenter = childCenters[childCenters.length - 1]
   const midY = (firstCenter + lastCenter) / 2
 
+  // Compute Y positions for right-side horizontal lines
+  const parentLinesY: number[] = []
+  if (parentCount === 1) {
+    // Single card: centered at midY (flexbox centers the card in the row)
+    parentLinesY.push(midY)
+  } else {
+    // Two stacked cards: centered column, cards symmetrically around midY
+    const halfSpan = (PARENT_CARD_H + PARENT_GAP) / 2
+    parentLinesY.push(midY - halfSpan)  // top card center
+    parentLinesY.push(midY + halfSpan)  // bottom card center
+  }
+
   return (
     <div
       style={{
@@ -287,12 +303,10 @@ function BracketConnector({
       <svg width="12" height={totalHeight} viewBox={`0 0 12 ${totalHeight}`}>
         {/* Vertical line connecting children */}
         <line x1="6" y1={firstCenter} x2="6" y2={lastCenter} stroke="var(--color-border)" strokeWidth="1" />
-        {/* Main horizontal line to parent (right) */}
-        <line x1="6" y1={midY} x2="12" y2={midY} stroke="var(--color-border)" strokeWidth="1" />
-        {/* Extra horizontal line for 3RD (below main) */}
-        {extraTarget && (
-          <line x1="6" y1={midY + 16} x2="12" y2={midY + 16} stroke="var(--color-border)" strokeWidth="1" />
-        )}
+        {/* Horizontal lines to parent cards (right) */}
+        {parentLinesY.map((py, i) => (
+          <line key={i} x1="6" y1={py} x2="12" y2={py} stroke="var(--color-border)" strokeWidth="1" />
+        ))}
         {/* Horizontal lines to each child (left) */}
         {childCenters.map((cy, i) => (
           <line key={i} x1="0" y1={cy} x2="6" y2={cy} stroke="var(--color-border)" strokeWidth="1" />
@@ -397,8 +411,8 @@ function FinalAnd3rdColumn({
         ))}
       </div>
 
-      {/* Connector with extra line for 3RD */}
-      <BracketConnector node={final} extraTarget />
+      {/* Connector with 2 parent lines for FINAL + 3RD */}
+      <BracketConnector node={final} parentCount={2} />
 
       {/* FINAL + 3RD stacked (right) */}
       <div
