@@ -153,11 +153,27 @@ export default function CartolaClient() {
   const [error, setError] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
   const [todayPoints, setTodayPoints] = useState<Record<string, number>>({})
+  const [tiers, setTiers] = useState<Record<string, string>>({})
   const prevScoresKey = useRef('')
   const hasData = useRef(false)
+  const tiersFetched = useRef(false)
 
   const fetchAll = useCallback(async () => {
     try {
+      // Buscar tiers (só na primeira vez — não mudam durante a sessão)
+      if (!tiersFetched.current) {
+        const tRes = await fetch('/api/bolaofutebol/tiers')
+        if (tRes.ok) {
+          const tData = await tRes.json()
+          const map: Record<string, string> = {}
+          for (const e of tData.entries ?? []) {
+            map[e.user_id] = e.tier
+          }
+          setTiers(map)
+          tiersFetched.current = true
+        }
+      }
+
       // Buscar todos os jogos
       const mRes = await fetch('/api/bolaofutebol/matches')
       if (!mRes.ok) throw new Error(`Matches: ${mRes.status}`)
@@ -336,6 +352,7 @@ export default function CartolaClient() {
           key={m.id}
           match={m}
           predictions={predictions[m.id] ?? []}
+          tiers={tiers}
           isLive
         />
       ))}
@@ -346,6 +363,7 @@ export default function CartolaClient() {
           key={m.id}
           match={m}
           predictions={predictions[m.id] ?? []}
+          tiers={tiers}
           isLive={false}
         />
       ))}
@@ -356,6 +374,7 @@ export default function CartolaClient() {
           key={m.id}
           match={m}
           predictions={[]}
+          tiers={tiers}
           isLive={false}
         />
       ))}
@@ -364,6 +383,7 @@ export default function CartolaClient() {
       <RankingSection
         ranking={combinedRanking}
         todayPoints={todayPoints}
+        tiers={tiers}
       />
 
       {/* ── Footer: última atualização ── */}
@@ -393,10 +413,12 @@ export default function CartolaClient() {
 function MatchCard({
   match,
   predictions,
+  tiers,
   isLive,
 }: {
   match: BdfMatch
   predictions: BdfPrediction[]
+  tiers: Record<string, string>
   isLive: boolean
 }) {
   const label = statusLabel(match)
@@ -521,6 +543,9 @@ function MatchCard({
                     </td>
                     <td style={{ ...tdStyle, textAlign: 'left' }}>
                       {userName(p.user_id)}
+                      {tiers[p.user_id] === 'pro' && (
+                        <span style={{ marginLeft: '0.3rem', fontSize: '9px', fontWeight: 'bold', color: 'var(--color-accent)', verticalAlign: 'top' }}>PRO</span>
+                      )}
                     </td>
                     <td style={{ ...tdStyle, textAlign: 'center', color: 'var(--color-accent)', fontWeight: 'bold' }}>
                       {p.home_score}×{p.away_score}
@@ -590,12 +615,14 @@ function MatchCard({
 function RankingSection({
   ranking,
   todayPoints,
+  tiers,
 }: {
   ranking: (LeaderboardEntry & {
     combined_total: number
     today_points: number
   })[]
   todayPoints: Record<string, number>
+  tiers: Record<string, string>
 }) {
   if (ranking.length === 0) return null
 
@@ -692,6 +719,9 @@ function RankingSection({
                     }}
                   >
                     {name}
+                    {tiers[entry.user_id] === 'pro' && (
+                      <span style={{ marginLeft: '0.3rem', fontSize: '9px', fontWeight: 'bold', color: 'var(--color-accent)', verticalAlign: 'top' }}>PRO</span>
+                    )}
                   </td>
                   <td
                     style={{
