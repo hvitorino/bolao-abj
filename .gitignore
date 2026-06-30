@@ -37,3 +37,6 @@ next-env.d.ts
 
 # Supabase CLI temp files (generated, may contain sensitive project refs)
 supabase/.temp/
+
+# Temporary scripts
+/tmp
