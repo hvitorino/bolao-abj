@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useCallback } from 'react'
 import type { BracketSlotWithGame } from '@/lib/types/game'
 import type { Prediction } from '@/lib/types/prediction'
 import { getTeamFlag } from '@/lib/flags'
 import GameAnaliseDrawer from '@/components/bolao/GameAnaliseDrawer'
+import { createClient } from '@/lib/supabase/client'
 
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
@@ -451,8 +451,23 @@ interface BracketTreeProps {
 
 export function BracketTree({ roots, predictions, groupId, currentUserId }: BracketTreeProps) {
   const predictionMap = predictions ?? {}
+  const [predictionState, setPredictionState] = useState<Record<string, Prediction>>(predictionMap)
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
-  const router = useRouter()
+
+  // Re-fetch predictions from Supabase after submitting a prediction
+  const handlePredictionSubmitted = useCallback(async () => {
+    if (!currentUserId) return
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('predictions')
+      .select('*')
+      .eq('user_id', currentUserId)
+    if (data) {
+      const map: Record<string, Prediction> = {}
+      for (const p of data as Prediction[]) map[p.game_id] = p
+      setPredictionState(map)
+    }
+  }, [currentUserId])
 
   if (roots.length === 0) {
     return (
@@ -509,22 +524,22 @@ export function BracketTree({ roots, predictions, groupId, currentUserId }: Brac
         >
           {/* Other roots (should be none in practice) */}
           {otherRoots.map((root) => (
-            <BracketColumn key={root.id} node={root} predictionMap={predictionMap} onGameClick={setSelectedGameId} />
+            <BracketColumn key={root.id} node={root} predictionMap={predictionState} onGameClick={setSelectedGameId} />
           ))}
 
           {/* FINAL + 3RD merged column */}
           {finalRoot && thirdRoot && (
-            <FinalAnd3rdColumn final={finalRoot} third={thirdRoot} predictionMap={predictionMap} onGameClick={setSelectedGameId} />
+            <FinalAnd3rdColumn final={finalRoot} third={thirdRoot} predictionMap={predictionState} onGameClick={setSelectedGameId} />
           )}
 
           {/* If only FINAL exists (no 3RD), render solo */}
           {finalRoot && !thirdRoot && (
-            <BracketColumn node={finalRoot} predictionMap={predictionMap} onGameClick={setSelectedGameId} />
+            <BracketColumn node={finalRoot} predictionMap={predictionState} onGameClick={setSelectedGameId} />
           )}
 
           {/* If only 3RD exists (no FINAL), render solo */}
           {thirdRoot && !finalRoot && (
-            <BracketColumn node={thirdRoot} predictionMap={predictionMap} onGameClick={setSelectedGameId} />
+            <BracketColumn node={thirdRoot} predictionMap={predictionState} onGameClick={setSelectedGameId} />
           )}
         </div>
       </div>
@@ -536,7 +551,7 @@ export function BracketTree({ roots, predictions, groupId, currentUserId }: Brac
           groupId={groupId}
           currentUserId={currentUserId}
           onClose={() => setSelectedGameId(null)}
-          onPredictionSubmitted={() => router.refresh()}
+          onPredictionSubmitted={handlePredictionSubmitted}
         />
       )}
     </>
