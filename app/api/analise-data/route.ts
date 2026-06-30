@@ -63,17 +63,34 @@ export async function GET(request: NextRequest) {
 
   const games: GameRow[] = allTeamGames ?? []
 
-  // 4b. Se for fase de grupos, buscar todos os jogos do mesmo grupo para calcular classificação
-  const isGroupStage = (game.phase ?? '') === 'Fase de Grupos'
-  const groupLetter = game.group_letter
+  // 4b. Determinar o grupo dos times e buscar jogos para calcular classificação
+  let displayGroupLetter: string | null = game.group_letter ?? null
   let allGroupGames: GameRow[] = []
-  if (isGroupStage && groupLetter) {
+
+  if (!displayGroupLetter) {
+    // Mata-mata: descobre o grupo do time da casa (ou visitante) na fase de grupos
+    const { data: teamGroupRows } = await supabase
+      .from('games')
+      .select('group_letter')
+      .or(
+        `home_team_code.eq.${game.home_team_code},away_team_code.eq.${game.home_team_code}`
+      )
+      .eq('phase', 'Fase de Grupos')
+      .not('group_letter', 'is', null)
+      .limit(1)
+
+    if (teamGroupRows && teamGroupRows.length > 0) {
+      displayGroupLetter = teamGroupRows[0].group_letter
+    }
+  }
+
+  if (displayGroupLetter) {
     const { data: groupGameRows } = await supabase
       .from('games')
       .select(
         'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date, match_day, status, round, phase, group_letter'
       )
-      .eq('group_letter', groupLetter)
+      .eq('group_letter', displayGroupLetter)
       .order('match_date', { ascending: true })
 
     allGroupGames = groupGameRows ?? []
@@ -156,8 +173,8 @@ export async function GET(request: NextRequest) {
   const homeRecentGames = getRecentGames(games, game.home_team_code, game.match_date)
   const awayRecentGames = getRecentGames(games, game.away_team_code, game.match_date)
 
-  // 7b. Calcular classificação do grupo (null para mata-mata)
-  const groupStandings = isGroupStage
+  // 7b. Calcular classificação do grupo (qualquer fase — usa group_letter do time)
+  const groupStandings = displayGroupLetter
     ? calculateGroupStandings(allGroupGames, game.match_date)
     : null
 
