@@ -3,7 +3,7 @@
 **Slug:** group-standings-bottomsheet
 **Branch:** feature/group-standings-bottomsheet
 **Data:** 2026-06-29
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
