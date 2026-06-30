@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 74 features
+- Total: 75 features
 - Concluídas: 74
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -979,3 +979,18 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Trocar o grupo ativo reseta a tela para o modo Preencher
 - Não há regressão no fluxo de preenchimento de palpite no modo Preencher
 **Dependências:** public-date-view, predictions, scoring, palpites-ao-vivo, grupos
+
+---
+
+### 75. inline-bracket-expand — Chaveamento Expansível no Card de Palpites — em progresso
+**Objetivo:** Exibir o chaveamento do mata-mata de forma expansível inline no card de jogos do dia na aba Palpites, a partir de um ícone de expandir (⤢/⤡) no cabeçalho do card, visível apenas em dias de fases eliminatórias (16 avos de Final em diante). O bracket é o mesmo componente BracketTree já existente, reutilizado inline com fetch lazy dos dados.
+**Critérios de sucesso:**
+- Ícone ⤢ aparece no cabeçalho do PalpitesLiveCard apenas quando a fase do dia é >= 16 avos de Final
+- Clique no ícone expande o BracketTree inline abaixo da grade de jogos, com scroll horizontal
+- Ícone muda para ⤢ (expandir) / ⤡ (recolher) conforme estado
+- BracketTree exibe slots com times, placares e palpites do usuário (cores de acerto/erro)
+- Clique em um jogo do bracket abre GameAnaliseDrawer
+- Ao recolher, o card volta ao estado normal sem perder posição de scroll
+- Fetch dos dados do bracket (slots + games + predictions) é lazy — só ocorre ao expandir
+- Funciona em mobile (coluna única) com scroll horizontal no bracket
+**Dependências:** chaveamento (bracket_slots + BracketTree), palpites-ao-vivo
