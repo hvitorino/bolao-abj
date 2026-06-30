@@ -190,7 +190,7 @@ export default function RecentGamesSection({
           letterSpacing: '0.1em',
         }}
       >
-        ► ÚLTIMOS 3 JOGOS NA COPA 2026
+        ► JOGOS
       </div>
 
       {/* Grid de duas colunas — coluna única em mobile */}
