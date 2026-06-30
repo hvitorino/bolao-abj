@@ -15,7 +15,6 @@ const LINK_ITEMS = [
 ]
 
 const MAIS_ITEMS = [
-  { href: '/chaveamento', label: 'CHAVEAMENTO' },
   { href: '/grupos', label: 'GRUPOS' },
   { href: '/como-pontuar', label: 'REGRAS' },
   { href: '/configuracoes', label: 'CONFIG' },
@@ -232,7 +231,7 @@ export function TabBar({ groupId, currentUserId, activeGroupName }: TabBarProps)
                 position: 'absolute',
                 bottom: '100%',
                 right: 0,
-                left: 0,
+                minWidth: '140px',
                 backgroundColor: 'var(--color-surface)',
                 border: '1px solid var(--color-border)',
                 zIndex: 200,
