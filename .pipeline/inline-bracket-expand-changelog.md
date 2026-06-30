@@ -3,7 +3,7 @@
 **Slug:** inline-bracket-expand
 **Branch:** feature/inline-bracket-expand
 **Data:** 2026-06-30
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

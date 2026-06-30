@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [inline-bracket-expand] — Chaveamento Expansível no Card de Palpites — 2026-06-30
+
+- Adicionado ícone ⤢/⤡ no cabeçalho do `PalpitesLiveCard` visível apenas em dias de mata-mata (fase ≥ 16 avos)
+- Ao expandir, renderiza o `BracketTree` inline abaixo da grade de jogos, com scroll horizontal
+- Fetch lazy dos dados do bracket (slots + games + predictions) — só carrega ao expandir
+- `BracketTree` já gerencia seu próprio `GameAnaliseDrawer` para cliques nos jogos
+- Campo `phase` adicionado ao hook `usePalpitesAoVivo` e consumers públicos
+- Sem alterações no banco de dados — reutiliza `bracket_slots`, `games`, `predictions`
+
 ## [group-standings-bottomsheet] — Classificação do Grupo no Bottom Sheet — 2026-06-29
 
 - `lib/analytics/group-standings.ts` criado: módulo puro com tipo `StandingEntry` e função `calculateGroupStandings(allGroupGames, beforeDate)` — extrai times únicos, inicializa acumuladores zerados, filtra jogos `finished + match_date < beforeDate`, acumula (vitória +3, empate +1, derrota 0), ordena pontos DESC → saldo DESC → gols pró DESC → nome ASC, retorna array position 1-based
