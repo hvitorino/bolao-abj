@@ -144,7 +144,7 @@ export default async function ChaveamentoPage() {
             bottom: 0,
             left: 0,
             width: '48px',
-            background: 'linear-gradient(to right, var(--color-surface), transparent)',
+            background: 'linear-gradient(to right, var(--color-bg), transparent)',
             pointerEvents: 'none',
             zIndex: 10,
           }}
@@ -158,7 +158,7 @@ export default async function ChaveamentoPage() {
             bottom: 0,
             right: 0,
             width: '48px',
-            background: 'linear-gradient(to left, var(--color-surface), transparent)',
+            background: 'linear-gradient(to left, var(--color-bg), transparent)',
             pointerEvents: 'none',
             zIndex: 10,
           }}
