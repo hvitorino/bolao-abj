@@ -4,7 +4,6 @@ import { useState, useCallback } from 'react'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 import type { LiveGameWithPrediction } from '@/lib/hooks/usePalpitesAoVivo'
 import { BracketTree } from '@/components/bolao/BracketTree'
-import GameAnaliseDrawer from '@/components/bolao/GameAnaliseDrawer'
 import { buildBracketTree } from '@/lib/bracket'
 import { createClient } from '@/lib/supabase/client'
 import type { BracketSlot, BracketSlotWithGame, Game } from '@/lib/types/game'
@@ -37,7 +36,6 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
   const [bracketRoots, setBracketRoots] = useState<BracketSlotWithGame[] | null>(null)
   const [bracketPredictions, setBracketPredictions] = useState<Record<string, Prediction>>({})
   const [bracketLoading, setBracketLoading] = useState(false)
-  const [bracketGameId, setBracketGameId] = useState<string | null>(null)
 
   const isKnockoutDay = todayGames.length > 0 && KNOCKOUT_PHASES.includes(todayGames[0].phase)
 
@@ -105,20 +103,6 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
     setBracketExpanded(next)
     if (next) fetchBracketData()
   }, [bracketExpanded, fetchBracketData])
-
-  // ── Refresh predictions after submitting in drawer ──────────────
-  const handleBracketPredictionSubmitted = useCallback(async () => {
-    const supabase = createClient()
-    const { data } = await supabase
-      .from('predictions')
-      .select('*')
-      .eq('user_id', currentUserId)
-    if (data) {
-      const map: Record<string, Prediction> = {}
-      for (const p of data as Prediction[]) map[p.game_id] = p
-      setBracketPredictions(map)
-    }
-  }, [currentUserId])
 
   // ── Loading state ───────────────────────────────────────────────
   if (loading) {
@@ -289,15 +273,6 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
               </div>
             ) : null}
           </div>
-
-          {/* ── Game detail drawer for bracket clicks ──────────── */}
-          <GameAnaliseDrawer
-            gameId={bracketGameId}
-            groupId={groupId}
-            currentUserId={currentUserId}
-            onClose={() => setBracketGameId(null)}
-            onPredictionSubmitted={handleBracketPredictionSubmitted}
-          />
         </>
       )}
     </div>
