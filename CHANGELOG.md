@@ -6,6 +6,13 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-all-recent-games] — Exibir Todos os Jogos Anteriores na Análise — 2026-06-30
+
+- Seção "Últimos 3 jogos na Copa 2026" renomeada para "Jogos" no drawer de análise
+- Limite de 3 jogos removido — agora lista todos os jogos anteriores dos times na Copa 2026
+- Arquivos modificados: `lib/analytics/team-stats.ts`, `components/bolao/RecentGamesSection.tsx`, `app/(dashboard)/jogos/[gameId]/analise/page.tsx`
+- Sem alterações no banco de dados
+
 ## [inline-bracket-expand] — Chaveamento Expansível no Card de Palpites — 2026-06-30
 
 - Adicionado ícone ⤢/⤡ no cabeçalho do `PalpitesLiveCard` visível apenas em dias de mata-mata (fase ≥ 16 avos)
