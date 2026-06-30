@@ -228,7 +228,7 @@ export default async function AnalisePage({ params }: PageProps) {
   const homeStats = calculateTeamStats(games, game.home_team_code, game.match_date)
   const awayStats = calculateTeamStats(games, game.away_team_code, game.match_date)
 
-  // Calcular últimos 3 jogos por time
+  // Calcular jogos anteriores por time
   const homeRecentGames = getRecentGames(games, game.home_team_code, game.match_date)
   const awayRecentGames = getRecentGames(games, game.away_team_code, game.match_date)
 
@@ -270,7 +270,7 @@ export default async function AnalisePage({ params }: PageProps) {
         />
       </div>
 
-      {/* Seção de últimos 3 jogos */}
+      {/* Seção de jogos anteriores */}
       <div style={{ marginBottom: '1.5rem' }}>
         <RecentGamesSection
           homeTeamCode={game.home_team_code}
