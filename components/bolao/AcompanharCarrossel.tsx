@@ -3,10 +3,21 @@
 import { useEffect, useRef, useState } from 'react'
 import type { LiveGameWithPrediction, GameScoreEntry } from '@/lib/hooks/usePalpitesAoVivo'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
+import { BracketTree } from '@/components/bolao/BracketTree'
+import { useBracketExpansion } from '@/lib/hooks/useBracketExpansion'
 
 const MONO: React.CSSProperties = {
   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
 }
+
+const KNOCKOUT_PHASES = [
+  '16 avos de Final',
+  'Oitavas de Final',
+  'Quartas de Final',
+  'Semifinal',
+  'Terceiro Lugar',
+  'Final',
+]
 
 // --------------------------------------------------------------------------
 // Tipos e helpers
@@ -50,6 +61,8 @@ interface AcompanharCarrosselProps {
   currentUserGameScores: GameScoreEntry[]
   loading: boolean
   onGameClick?: (gameId: string) => void
+  currentUserId: string
+  onBracketExpandChange?: (expanded: boolean) => void
 }
 
 // --------------------------------------------------------------------------
@@ -201,10 +214,21 @@ export function AcompanharCarrossel({
   currentUserGameScores,
   loading,
   onGameClick,
+  currentUserId,
+  onBracketExpandChange,
 }: AcompanharCarrosselProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [showRightFade, setShowRightFade] = useState(false)
   const [showLeftFade, setShowLeftFade] = useState(false)
+
+  // ── Bracket expansion (shared hook) ─────────────────────────────
+  const bracket = useBracketExpansion(currentUserId)
+  const isKnockoutDay = todayGames.length > 0 && KNOCKOUT_PHASES.includes(todayGames[0].phase)
+
+  // Notify parent of expansion state for swipe lock
+  useEffect(() => {
+    onBracketExpandChange?.(bracket.expanded)
+  }, [bracket.expanded, onBracketExpandChange])
 
   useEffect(() => {
     const el = scrollRef.current
@@ -279,63 +303,155 @@ export function AcompanharCarrossel({
         padding: '0.6rem 0.75rem',
       }}
     >
+      <style>{`
+        @keyframes cardFadeIn {
+          from { opacity: 0; transform: translateY(4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
+      {/* ── Header: round + expand icon ─────────────────────────── */}
       <div
         style={{
-          fontSize: '11px',
-          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--color-muted)',
-          textAlign: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           marginBottom: '0.75rem',
+          position: 'relative',
         }}
       >
-        {todayGames[0].round}
+        <span
+          style={{
+            fontSize: '11px',
+            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            color: 'var(--color-muted)',
+          }}
+        >
+          {todayGames[0].round}
+        </span>
+
+        {isKnockoutDay && (
+          <button
+            onClick={bracket.toggle}
+            aria-label={bracket.expanded ? 'Recolher chaveamento' : 'Expandir chaveamento'}
+            aria-expanded={bracket.expanded}
+            style={{
+              position: 'absolute',
+              right: 0,
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0 0.15rem',
+              color: 'var(--color-accent)',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              fontSize: '16px',
+              lineHeight: 1,
+              opacity: bracket.expanded ? 1 : 0.85,
+            }}
+          >
+            {bracket.expanded ? '⤡' : '⤢'}
+          </button>
+        )}
       </div>
 
-      <div style={{ position: 'relative' }}>
-        <div
-          ref={scrollRef}
-          className="acompanhar-carrossel"
-          style={scrollStyle}
-        >
-          {todayGames.map((game) => (
-            <MiniCard
-              key={game.id}
-              game={game}
-              userScore={scoreByGameId[game.id]}
-              onClick={onGameClick ? () => onGameClick(game.id) : undefined}
-            />
-          ))}
-        </div>
+      {/* ── Content: carrossel OR bracket (swap with animation) ──── */}
+      <div
+        key={bracket.expanded ? 'bracket' : 'carrossel'}
+        style={{
+          opacity: bracket.isTransitioning ? 0 : 1,
+          transform: bracket.isTransitioning ? 'translateY(4px)' : 'translateY(0)',
+          transition: bracket.isTransitioning
+            ? 'opacity 160ms ease, transform 160ms ease'
+            : 'none',
+          animation: bracket.isTransitioning ? 'none' : 'cardFadeIn 200ms ease-out',
+        }}
+      >
+        {bracket.expanded ? (
+          /* ── Bracket view ──────────────────────────────────────── */
+          <>
+            <div
+              style={{
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                color: 'var(--color-muted)',
+                textAlign: 'center',
+                marginBottom: '0.35rem',
+              }}
+            >
+              CHAVEAMENTO — MATA-MATA
+            </div>
 
-        {showLeftFade && (
-          <div
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              width: '3rem',
-              background: 'linear-gradient(to left, transparent, var(--color-surface))',
-              pointerEvents: 'none',
-            }}
-          />
-        )}
-        {showRightFade && (
-          <div
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              bottom: 0,
-              width: '3rem',
-              background: 'linear-gradient(to right, transparent, var(--color-surface))',
-              pointerEvents: 'none',
-            }}
-          />
+            {bracket.loading ? (
+              <div
+                style={{
+                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                  fontSize: '10px',
+                  color: 'var(--color-muted)',
+                  textAlign: 'center',
+                  padding: '1rem 0',
+                }}
+              >
+                CARREGANDO...
+              </div>
+            ) : bracket.roots && bracket.roots.length > 0 ? (
+              <BracketTree
+                roots={bracket.roots}
+                predictions={bracket.predictions}
+                onGameClick={onGameClick}
+              />
+            ) : null}
+          </>
+        ) : (
+          /* ── Carrossel view ────────────────────────────────────── */
+          <div style={{ position: 'relative' }}>
+            <div
+              ref={scrollRef}
+              className="acompanhar-carrossel"
+              style={scrollStyle}
+            >
+              {todayGames.map((game) => (
+                <MiniCard
+                  key={game.id}
+                  game={game}
+                  userScore={scoreByGameId[game.id]}
+                  onClick={onGameClick ? () => onGameClick(game.id) : undefined}
+                />
+              ))}
+            </div>
+
+            {showLeftFade && (
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                  width: '3rem',
+                  background: 'linear-gradient(to left, transparent, var(--color-surface))',
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
+            {showRightFade && (
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  bottom: 0,
+                  width: '3rem',
+                  background: 'linear-gradient(to right, transparent, var(--color-surface))',
+                  pointerEvents: 'none',
+                }}
+              />
+            )}
+          </div>
         )}
       </div>
     </div>

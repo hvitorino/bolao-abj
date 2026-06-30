@@ -447,12 +447,18 @@ interface BracketTreeProps {
   predictions?: Record<string, Prediction>
   groupId?: string
   currentUserId?: string
+  /** When provided, emits game clicks to parent instead of rendering internal drawer */
+  onGameClick?: (gameId: string) => void
 }
 
-export function BracketTree({ roots, predictions, groupId, currentUserId }: BracketTreeProps) {
+export function BracketTree({ roots, predictions, groupId, currentUserId, onGameClick }: BracketTreeProps) {
   const predictionMap = predictions ?? {}
   const [predictionState, setPredictionState] = useState<Record<string, Prediction>>(predictionMap)
-  const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
+  const [internalGameId, setInternalGameId] = useState<string | null>(null)
+
+  // Use internal state when no external handler, otherwise delegate to parent
+  const selectedGameId = onGameClick ? null : internalGameId
+  const handleGameClick = onGameClick ?? setInternalGameId
 
   // Re-fetch predictions from Supabase after submitting a prediction
   const handlePredictionSubmitted = useCallback(async () => {
@@ -524,33 +530,33 @@ export function BracketTree({ roots, predictions, groupId, currentUserId }: Brac
         >
           {/* Other roots (should be none in practice) */}
           {otherRoots.map((root) => (
-            <BracketColumn key={root.id} node={root} predictionMap={predictionState} onGameClick={setSelectedGameId} />
+            <BracketColumn key={root.id} node={root} predictionMap={predictionState} onGameClick={handleGameClick} />
           ))}
 
           {/* FINAL + 3RD merged column */}
           {finalRoot && thirdRoot && (
-            <FinalAnd3rdColumn final={finalRoot} third={thirdRoot} predictionMap={predictionState} onGameClick={setSelectedGameId} />
+            <FinalAnd3rdColumn final={finalRoot} third={thirdRoot} predictionMap={predictionState} onGameClick={handleGameClick} />
           )}
 
           {/* If only FINAL exists (no 3RD), render solo */}
           {finalRoot && !thirdRoot && (
-            <BracketColumn node={finalRoot} predictionMap={predictionState} onGameClick={setSelectedGameId} />
+            <BracketColumn node={finalRoot} predictionMap={predictionState} onGameClick={handleGameClick} />
           )}
 
           {/* If only 3RD exists (no FINAL), render solo */}
           {thirdRoot && !finalRoot && (
-            <BracketColumn node={thirdRoot} predictionMap={predictionState} onGameClick={setSelectedGameId} />
+            <BracketColumn node={thirdRoot} predictionMap={predictionState} onGameClick={handleGameClick} />
           )}
         </div>
       </div>
 
-      {/* Game detail drawer */}
-      {groupId && currentUserId && (
+      {/* Game detail drawer — only when no external click handler */}
+      {!onGameClick && groupId && currentUserId && (
         <GameAnaliseDrawer
           gameId={selectedGameId}
           groupId={groupId}
           currentUserId={currentUserId}
-          onClose={() => setSelectedGameId(null)}
+          onClose={() => setInternalGameId(null)}
           onPredictionSubmitted={handlePredictionSubmitted}
         />
       )}

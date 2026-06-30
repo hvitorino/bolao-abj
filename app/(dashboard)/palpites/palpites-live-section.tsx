@@ -30,6 +30,7 @@ export function PalpitesLiveSection({
   )
 
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
+  const [bracketExpanded, setBracketExpanded] = useState(false)
 
   // Modo de visualização — persiste no sessionStorage entre trocas de data
   const [viewMode, setViewMode] = useState<'preencher' | 'acompanhar'>(() => {
@@ -106,7 +107,7 @@ export function PalpitesLiveSection({
           gameCount={gameCount}
           guessCount={guessCount}
           basePath="/palpites"
-          swipeDisabled={selectedGameId !== null}
+          swipeDisabled={selectedGameId !== null || bracketExpanded}
         />
 
         {/* Linha com toggle de modo e botão de compartilhar */}
@@ -137,6 +138,7 @@ export function PalpitesLiveSection({
               onGameClick={setSelectedGameId}
               groupId={groupId}
               currentUserId={currentUserId}
+              onBracketExpandChange={setBracketExpanded}
             />
           ) : (
             <AcompanharCarrossel
@@ -144,6 +146,8 @@ export function PalpitesLiveSection({
               currentUserGameScores={currentUserGameScores}
               loading={loading}
               onGameClick={setSelectedGameId}
+              currentUserId={currentUserId}
+              onBracketExpandChange={setBracketExpanded}
             />
           )}
         </div>

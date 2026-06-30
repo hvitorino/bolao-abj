@@ -1,13 +1,10 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 import type { LiveGameWithPrediction } from '@/lib/hooks/usePalpitesAoVivo'
 import { BracketTree } from '@/components/bolao/BracketTree'
-import { buildBracketTree } from '@/lib/bracket'
-import { createClient } from '@/lib/supabase/client'
-import type { BracketSlot, BracketSlotWithGame, Game } from '@/lib/types/game'
-import type { Prediction } from '@/lib/types/prediction'
+import { useBracketExpansion } from '@/lib/hooks/useBracketExpansion'
 
 const MONO: React.CSSProperties = {
   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
@@ -28,90 +25,18 @@ interface PalpitesLiveCardProps {
   onGameClick: (gameId: string) => void
   groupId: string
   currentUserId: string
+  onBracketExpandChange?: (expanded: boolean) => void
 }
 
-export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, currentUserId }: PalpitesLiveCardProps) {
-  // ── Bracket expansion state ──────────────────────────────────────
-  const [bracketExpanded, setBracketExpanded] = useState(false)
-  const [bracketRoots, setBracketRoots] = useState<BracketSlotWithGame[] | null>(null)
-  const [bracketPredictions, setBracketPredictions] = useState<Record<string, Prediction>>({})
-  const [bracketLoading, setBracketLoading] = useState(false)
-  const [isTransitioning, setIsTransitioning] = useState(false)
-  const transitionRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
+export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, currentUserId, onBracketExpandChange }: PalpitesLiveCardProps) {
+  // ── Bracket expansion (shared hook) ─────────────────────────────
+  const bracket = useBracketExpansion(currentUserId)
   const isKnockoutDay = todayGames.length > 0 && KNOCKOUT_PHASES.includes(todayGames[0].phase)
 
-  // ── Lazy fetch bracket data ─────────────────────────────────────
-  const fetchBracketData = useCallback(async () => {
-    if (bracketRoots !== null) return // already loaded
-    setBracketLoading(true)
-    try {
-      const supabase = createClient()
-
-      const [
-        { data: slots },
-        { data: games },
-        { data: predictions },
-      ] = await Promise.all([
-        supabase.from('bracket_slots').select('*').order('phase').order('position'),
-        supabase.from('games').select('*').not('bracket_slot_id', 'is', null),
-        supabase.from('predictions').select('*').eq('user_id', currentUserId),
-      ])
-
-      const typedSlots = (slots ?? []) as BracketSlot[]
-      const typedGames = (games ?? []) as Game[]
-
-      // Build slot-id → game map
-      const gameBySlotId: Record<string, Game> = {}
-      for (const game of typedGames) {
-        if (game.bracket_slot_id) {
-          gameBySlotId[game.bracket_slot_id] = game
-        }
-      }
-
-      // Build label → game map for buildBracketTree
-      const gamesBySlotLabel: Record<string, Game | null> = {}
-      for (const slot of typedSlots) {
-        gamesBySlotLabel[slot.label] = gameBySlotId[slot.id] ?? null
-      }
-
-      const roots = buildBracketTree(typedSlots, gamesBySlotLabel)
-
-      // Build game_id → prediction map
-      const typedPredictions = (predictions ?? []) as Prediction[]
-      const predMap: Record<string, Prediction> = {}
-      for (const p of typedPredictions) {
-        predMap[p.game_id] = p
-      }
-
-      setBracketRoots(roots)
-      setBracketPredictions(predMap)
-    } catch (err) {
-      console.error('[PalpitesLiveCard] erro ao carregar bracket:', err)
-    } finally {
-      setBracketLoading(false)
-    }
-  }, [bracketRoots, currentUserId])
-
-  // ── Toggle bracket with transition ──────────────────────────────
-  const toggleBracket = useCallback(() => {
-    if (isTransitioning) return
-    setIsTransitioning(true)
-    transitionRef.current = setTimeout(() => {
-      setBracketExpanded((v) => !v)
-      setIsTransitioning(false)
-    }, 160)
-  }, [isTransitioning])
-
-  // Trigger lazy fetch when expanding (after transition swap)
+  // Notify parent of expansion state for swipe lock
   useEffect(() => {
-    if (bracketExpanded) fetchBracketData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bracketExpanded])
-
-  useEffect(() => () => {
-    if (transitionRef.current) clearTimeout(transitionRef.current)
-  }, [])
+    onBracketExpandChange?.(bracket.expanded)
+  }, [bracket.expanded, onBracketExpandChange])
 
   // ── Loading state ───────────────────────────────────────────────
   if (loading) {
@@ -170,9 +95,9 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
 
         {isKnockoutDay && (
           <button
-            onClick={toggleBracket}
-            aria-label={bracketExpanded ? 'Recolher chaveamento' : 'Expandir chaveamento'}
-            aria-expanded={bracketExpanded}
+            onClick={bracket.toggle}
+            aria-label={bracket.expanded ? 'Recolher chaveamento' : 'Expandir chaveamento'}
+            aria-expanded={bracket.expanded}
             style={{
               position: 'absolute',
               right: 0,
@@ -184,27 +109,27 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
               fontSize: '16px',
               lineHeight: 1,
-              opacity: bracketExpanded ? 1 : 0.85,
+              opacity: bracket.expanded ? 1 : 0.85,
             }}
           >
-            {bracketExpanded ? '⤡' : '⤢'}
+            {bracket.expanded ? '⤡' : '⤢'}
           </button>
         )}
       </div>
 
       {/* ── Content: games grid OR bracket (swap with animation) ─── */}
       <div
-        key={bracketExpanded ? 'bracket' : 'games'}
+        key={bracket.expanded ? 'bracket' : 'games'}
         style={{
-          opacity: isTransitioning ? 0 : 1,
-          transform: isTransitioning ? 'translateY(4px)' : 'translateY(0)',
-          transition: isTransitioning
+          opacity: bracket.isTransitioning ? 0 : 1,
+          transform: bracket.isTransitioning ? 'translateY(4px)' : 'translateY(0)',
+          transition: bracket.isTransitioning
             ? 'opacity 160ms ease, transform 160ms ease'
             : 'none',
-          animation: isTransitioning ? 'none' : 'cardFadeIn 200ms ease-out',
+          animation: bracket.isTransitioning ? 'none' : 'cardFadeIn 200ms ease-out',
         }}
       >
-        {bracketExpanded ? (
+        {bracket.expanded ? (
           /* ── Bracket view ──────────────────────────────────────── */
           <>
             <div
@@ -221,7 +146,7 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
               CHAVEAMENTO — MATA-MATA
             </div>
 
-            {bracketLoading ? (
+            {bracket.loading ? (
               <div
                 style={{
                   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
@@ -233,14 +158,13 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
               >
                 CARREGANDO...
               </div>
-            ) : bracketRoots && bracketRoots.length > 0 ? (
+            ) : bracket.roots && bracket.roots.length > 0 ? (
               <BracketTree
-                roots={bracketRoots}
-                predictions={bracketPredictions}
-                groupId={groupId}
-                currentUserId={currentUserId}
+                roots={bracket.roots}
+                predictions={bracket.predictions}
+                onGameClick={onGameClick}
               />
-            ) : bracketRoots && bracketRoots.length === 0 ? (
+            ) : bracket.roots && bracket.roots.length === 0 ? (
               <div
                 style={{
                   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
