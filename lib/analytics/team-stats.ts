@@ -91,7 +91,6 @@ export function getRecentGames(
         new Date(g.match_date).getTime() < cutoff
     )
     .sort((a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime())
-    .slice(0, 3)
 
   return teamGames.map((game) => {
     const isHome = game.home_team_code === teamCode
