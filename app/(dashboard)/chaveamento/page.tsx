@@ -84,31 +84,22 @@ export default async function ChaveamentoPage() {
       <div
         style={{
           borderBottom: '1px solid var(--color-border)',
-          paddingBottom: '0.75rem',
-          marginBottom: '1rem',
+          paddingBottom: '0.35rem',
+          marginBottom: '0.5rem',
         }}
       >
         <h1
           style={{
-            fontSize: '15px',
+            fontSize: '14px',
             fontWeight: 'bold',
             textTransform: 'uppercase',
-            letterSpacing: '0.1em',
+            letterSpacing: '0.08em',
             color: 'var(--color-accent)',
             margin: 0,
           }}
         >
           CHAVEAMENTO — MATA-MATA
         </h1>
-        <p
-          style={{
-            fontSize: '11px',
-            color: 'var(--color-muted)',
-            margin: '0.25rem 0 0 0',
-          }}
-        >
-          COPA DO MUNDO FIFA 2026 · {typedSlots.length} SLOTS
-        </p>
       </div>
 
       {/* Bracket visualization */}
