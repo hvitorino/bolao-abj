@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 75 features
-- Concluídas: 74
-- Em progresso: 1
+- Concluídas: 75
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -982,7 +982,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 75. inline-bracket-expand — Chaveamento Expansível no Card de Palpites — em progresso
+### 75. inline-bracket-expand — Chaveamento Expansível no Card de Palpites — concluída
 **Objetivo:** Exibir o chaveamento do mata-mata de forma expansível inline no card de jogos do dia na aba Palpites, a partir de um ícone de expandir (⤢/⤡) no cabeçalho do card, visível apenas em dias de fases eliminatórias (16 avos de Final em diante). O bracket é o mesmo componente BracketTree já existente, reutilizado inline com fetch lazy dos dados.
 **Critérios de sucesso:**
 - Ícone ⤢ aparece no cabeçalho do PalpitesLiveCard apenas quando a fase do dia é >= 16 avos de Final
