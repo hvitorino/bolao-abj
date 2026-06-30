@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 73 features
+- Total: 74 features
 - Concluídas: 73
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -949,6 +949,19 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Visual segue DESIGN.md rigorosamente (JetBrains Mono, paleta verde/amarelo/azul, dense, sem ícones decorativos)
 - `npm run lint` e `npm run build` passam sem erros novos
 **Dependências:** public-game-view, public-game-view-group-fix, predictions, scoring, grupos, palpites-ao-vivo
+
+---
+
+### 74. group-standings-bottom-sheet — Classificação do Grupo no Bottom Sheet de Detalhes — em progresso
+**Objetivo:** Adicionar ao Bottom Sheet de detalhes do jogo a tabela de classificação do grupo ao qual os dois times pertencem, calculada considerando apenas os jogos da fase de grupos com status `finished` ocorridos antes do `match_date` do jogo exibido — mostrando o estado da tabela como estava na data daquele confronto.
+**Critérios de sucesso:**
+- A tabela do grupo aparece no bottom sheet para jogos da fase de grupos (round começando com "Grupo")
+- Para jogos de mata-mata, a seção não aparece (ou exibe mensagem adequada)
+- A classificação reflete o estado da tabela ANTES daquele jogo (não inclui o próprio jogo nem jogos posteriores)
+- Colunas: posição, bandeira + nome do time, pontos (P), jogos (J), vitórias (V), empates (E), derrotas (D), gols marcados (GP), gols sofridos (GC), saldo (SG)
+- Times do grupo destacados visualmente em relação aos demais (se o grupo tiver mais de 4 times exibidos)
+- Design segue o padrão do DESIGN.md do projeto (JetBrains Mono, paleta verde/amarelo/azul, dense, sem border-radius excessivo, sem sombras)
+**Dependências:** game-navigation, analise-confronto
 
 ---
 
