@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import type { BracketSlotWithGame } from '@/lib/types/game'
 import type { Prediction } from '@/lib/types/prediction'
 import { getTeamFlag } from '@/lib/flags'
@@ -451,6 +452,7 @@ interface BracketTreeProps {
 export function BracketTree({ roots, predictions, groupId, currentUserId }: BracketTreeProps) {
   const predictionMap = predictions ?? {}
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
+  const router = useRouter()
 
   if (roots.length === 0) {
     return (
@@ -534,6 +536,7 @@ export function BracketTree({ roots, predictions, groupId, currentUserId }: Brac
           groupId={groupId}
           currentUserId={currentUserId}
           onClose={() => setSelectedGameId(null)}
+          onPredictionSubmitted={() => router.refresh()}
         />
       )}
     </>
