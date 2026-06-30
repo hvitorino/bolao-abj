@@ -15,6 +15,7 @@ const LINK_ITEMS = [
 ]
 
 const MAIS_ITEMS = [
+  { href: '/chaveamento', label: 'CHAVEAMENTO' },
   { href: '/grupos', label: 'GRUPOS' },
   { href: '/como-pontuar', label: 'REGRAS' },
   { href: '/configuracoes', label: 'CONFIG' },

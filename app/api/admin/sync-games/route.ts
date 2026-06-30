@@ -425,5 +425,55 @@ async function syncHandler(request: Request) {
     }
   }
 
+  // Link knockout games to bracket_slots
+  // For each knockout game without a bracket_slot_id, find an unlinked slot
+  // in the same phase and assign by match_date ordering.
+  const { data: unlinkedGames, error: unlinkedError } = await supabase
+    .from('games')
+    .select('id, phase, match_date')
+    .is('bracket_slot_id', null)
+    .neq('phase', 'Fase de Grupos')
+    .order('match_date', { ascending: true })
+
+  if (!unlinkedError && unlinkedGames && unlinkedGames.length > 0) {
+    const { data: allSlots, error: slotsError } = await supabase
+      .from('bracket_slots')
+      .select('id, label, phase')
+
+    if (!slotsError && allSlots) {
+      // Get currently linked slot IDs
+      const { data: linkedGames } = await supabase
+        .from('games')
+        .select('bracket_slot_id')
+        .not('bracket_slot_id', 'is', null)
+
+      const linkedSlotIds = new Set((linkedGames ?? []).map((g: { bracket_slot_id: string }) => g.bracket_slot_id))
+
+      // Group unlinked slots by phase
+      const availableSlots = new Map<string, { id: string; label: string }[]>()
+      for (const slot of allSlots) {
+        if (!linkedSlotIds.has(slot.id)) {
+          const list = availableSlots.get(slot.phase) ?? []
+          list.push(slot)
+          availableSlots.set(slot.phase, list)
+        }
+      }
+
+      // Assign slots to games by phase + match_date ordering
+      for (const game of (unlinkedGames as { id: string; phase: string; match_date: string }[])) {
+        const phaseSlots = availableSlots.get(game.phase)
+        if (!phaseSlots || phaseSlots.length === 0) continue
+
+        const slot = phaseSlots.shift()!
+        await supabase
+          .from('games')
+          .update({ bracket_slot_id: slot.id })
+          .eq('id', game.id)
+
+        console.log(`[sync-games] Linked game ${game.id} (${game.phase}) -> slot ${slot.label}`)
+      }
+    }
+  }
+
   return NextResponse.json(result)
 }
