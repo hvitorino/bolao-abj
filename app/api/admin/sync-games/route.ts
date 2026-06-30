@@ -435,15 +435,25 @@ async function syncHandler(request: Request) {
   // Static mapping: ESPN game ID → bracket slot label
   // Populate as knockout games become known from the ESPN API.
   const ESPN_SLOT_MAP: Record<string, string> = {
-    // 16 avos de Final (Round of 32) — 16 jogos, posições 1-16
-    '760486': 'R32-01',
-    '760487': 'R32-02',
-    '760488': 'R32-03',
-    '760489': 'R32-04',
-    '760490': 'R32-05',
-    '760491': 'R32-06',
-    '760492': 'R32-07',
-    // Add more mappings as games appear on ESPN
+    // 16 avos de Final — mapeamento oficial via CSV do chaveamento
+    // Pares: (R32-01,R32-02)→R16-01, (R32-03,R32-04)→R16-02, etc.
+    '760486': 'R32-01',  // J1: RSA×CAN
+    '760488': 'R32-02',  // J4: NED×MAR
+    '760489': 'R32-03',  // J3: GER×PAR
+    '760492': 'R32-04',  // J6: FRA×SWE
+    '760487': 'R32-05',  // J2: BRA×JPN
+    '760490': 'R32-06',  // J5: CIV×NOR
+    '760491': 'R32-07',  // J7: MEX×ECU
+    '760495': 'R32-08',  // J8: ENG×COD
+    '760496': 'R32-09',  // J12: POR×CRO
+    '760497': 'R32-10',  // J11: ESP×AUT
+    '760494': 'R32-11',  // J10: USA×BIH
+    '760493': 'R32-12',  // J9: BEL×SEN
+    '760500': 'R32-13',  // J15: ARG×CPV
+    '760499': 'R32-14',  // J14: AUS×EGY
+    '760498': 'R32-15',  // J13: SUI×ALG
+    '760501': 'R32-16',  // J16: COL×GHA
+    // Oitavas, Quartas, Semi, Final — preencher quando os jogos aparecerem na ESPN
   }
 
   const { data: unlinkedGames, error: unlinkedError } = await supabase
