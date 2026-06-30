@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
   const { data: game, error: gameError } = await supabase
     .from('games')
     .select(
-      'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date, match_day, status, round'
+      'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date, match_day, status, round, phase, group_letter'
     )
     .eq('id', gameId)
     .single()
@@ -63,16 +63,17 @@ export async function GET(request: NextRequest) {
 
   const games: GameRow[] = allTeamGames ?? []
 
-  // 4b. Se for fase de grupos, buscar todos os jogos do grupo para calcular classificação
-  const isGroupStage = (game.round ?? '').startsWith('Grupo')
+  // 4b. Se for fase de grupos, buscar todos os jogos do mesmo grupo para calcular classificação
+  const isGroupStage = (game.phase ?? '') === 'Fase de Grupos'
+  const groupLetter = game.group_letter
   let allGroupGames: GameRow[] = []
-  if (isGroupStage) {
+  if (isGroupStage && groupLetter) {
     const { data: groupGameRows } = await supabase
       .from('games')
       .select(
-        'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date, match_day, status, round'
+        'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date, match_day, status, round, phase, group_letter'
       )
-      .eq('round', game.round)
+      .eq('group_letter', groupLetter)
       .order('match_date', { ascending: true })
 
     allGroupGames = groupGameRows ?? []

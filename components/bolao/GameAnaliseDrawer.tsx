@@ -34,6 +34,7 @@ interface AnaliseData {
     match_day: string | null
     status: string
     round: string | null
+    group_letter: string | null
   }
   participants: ParticipantEntry[]
   homeStats: TeamStats
@@ -329,7 +330,7 @@ export default function GameAnaliseDrawer({
               {data.groupStandings !== null && data.game.round && (
                 <div style={{ marginBottom: '1.5rem' }}>
                   <GroupStandingsCard
-                    round={data.game.round}
+                    groupLetter={data.game.group_letter ?? '?'}
                     standings={data.groupStandings}
                     homeTeamCode={data.game.home_team_code}
                     awayTeamCode={data.game.away_team_code}

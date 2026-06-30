@@ -2,7 +2,7 @@ import { getTeamFlag } from '@/lib/flags'
 import type { StandingEntry } from '@/lib/analytics/group-standings'
 
 interface GroupStandingsCardProps {
-  round: string
+  groupLetter: string
   standings: StandingEntry[]
   homeTeamCode: string
   awayTeamCode: string
@@ -33,7 +33,7 @@ function SgCell({ value }: { value: number }) {
 }
 
 export default function GroupStandingsCard({
-  round,
+  groupLetter,
   standings,
   homeTeamCode,
   awayTeamCode,
@@ -63,7 +63,7 @@ export default function GroupStandingsCard({
           borderBottom: '1px solid var(--color-border)',
         }}
       >
-        ► CLASSIFICAÇÃO — {round}
+        ► CLASSIFICAÇÃO — GRUPO {groupLetter}
       </div>
 
       {standings.length === 0 ? (
