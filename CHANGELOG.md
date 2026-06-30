@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [group-standings-bottomsheet] — Classificação do Grupo no Bottom Sheet — 2026-06-29
+
+- `lib/analytics/group-standings.ts` criado: módulo puro com tipo `StandingEntry` e função `calculateGroupStandings(allGroupGames, beforeDate)` — extrai times únicos, inicializa acumuladores zerados, filtra jogos `finished + match_date < beforeDate`, acumula (vitória +3, empate +1, derrota 0), ordena pontos DESC → saldo DESC → gols pró DESC → nome ASC, retorna array position 1-based
+- `components/bolao/GroupStandingsCard.tsx` criado: tabela de classificação com header `color-primary`, grid `20px 1fr 22px 22px 20px 20px 20px 24px 24px 26px`, colunas `# TIME P J V E D GP GC SG`, linhas zebra, destaque dos times do confronto com `rgba(0,156,59,0.15)` + `fontWeight: bold`, posição destacada em `color-accent`, coluna SG colorida por sinal (`color-win` / `color-error` / `color-muted`), JetBrains Mono, sem `border-radius` nem `box-shadow`
+- `app/api/analise-data/route.ts` estendido: step 4b busca todos os jogos do grupo via `.eq('round', game.round)` quando `round.startsWith('Grupo')`; step 7b chama `calculateGroupStandings` e adiciona campo `groupStandings: StandingEntry[] | null` ao JSON de resposta (`null` para mata-mata)
+- `components/bolao/GameAnaliseDrawer.tsx` estendido: importa `GroupStandingsCard` e tipo `StandingEntry`; adiciona campo `groupStandings` à interface `AnaliseData`; renderiza `GroupStandingsCard` condicionalmente após `RecentGamesSection` quando `data.groupStandings !== null && data.game.round`
+- Sem alterações de banco de dados, migrations ou RLS — usa tabela `games` já existente
+
 ## [modo-acompanhar] — Modo Acompanhar na Aba Palpites — 2026-06-27
 
 - `components/bolao/AcompanharToggle.tsx` criado: botão toggle dois estados (outline "◉ ACOMPANHAR" / preenchido "● ACOMPANHANDO"), `flex: 1`, sem transição CSS, cor primária (#009c3b) como borda sempre

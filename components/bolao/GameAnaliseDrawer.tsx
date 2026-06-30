@@ -4,8 +4,10 @@ import { useState, useEffect, useRef } from 'react'
 import GameCard from '@/components/games/GameCard'
 import MatchupStatsCard from '@/components/bolao/MatchupStatsCard'
 import RecentGamesSection from '@/components/bolao/RecentGamesSection'
+import GroupStandingsCard from '@/components/bolao/GroupStandingsCard'
 import type { TeamStats } from '@/components/bolao/MatchupStatsCard'
 import type { RecentGame } from '@/components/bolao/RecentGamesSection'
+import type { StandingEntry } from '@/lib/analytics/group-standings'
 import type { ParticipantEntry } from '@/lib/types/participant'
 import type { Game } from '@/lib/types/game'
 import type { Prediction } from '@/lib/types/prediction'
@@ -38,6 +40,7 @@ interface AnaliseData {
   awayStats: TeamStats
   homeRecentGames: RecentGame[]
   awayRecentGames: RecentGame[]
+  groupStandings: StandingEntry[] | null
 }
 
 function DrawerSkeleton() {
@@ -323,6 +326,16 @@ export default function GameAnaliseDrawer({
                   awayRecentGames={data.awayRecentGames}
                 />
               </div>
+              {data.groupStandings !== null && data.game.round && (
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <GroupStandingsCard
+                    round={data.game.round}
+                    standings={data.groupStandings}
+                    homeTeamCode={data.game.home_team_code}
+                    awayTeamCode={data.game.away_team_code}
+                  />
+                </div>
+              )}
             </>
           )}
         </div>
