@@ -34,6 +34,7 @@ interface GameRaw {
   status: string
   match_date: string
   round: string
+  phase: string
 }
 
 function sortAndRank(
@@ -155,7 +156,7 @@ export default function PublicDateClient({
       const { data: gamesData } = await supabase
         .from('games')
         .select(
-          'id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date,round'
+          'id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date,round,phase'
         )
         .eq('match_day', date)
         .order('match_date', { ascending: true })
@@ -221,6 +222,7 @@ export default function PublicDateClient({
         status: g.status as 'pending' | 'live' | 'finished',
         match_date: g.match_date,
         round: g.round,
+        phase: g.phase,
         myPrediction: null,
       }))
 
@@ -270,7 +272,7 @@ export default function PublicDateClient({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <PalpitesLiveCard todayGames={games} loading={false} onGameClick={() => {}} />
+      <PalpitesLiveCard todayGames={games} loading={false} onGameClick={() => {}} groupId="" currentUserId="" />
       <PalpitesRanking
         currentUserId=""
         rankingWithDetails={ranking}

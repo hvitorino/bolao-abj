@@ -135,6 +135,8 @@ export function PalpitesLiveSection({
               todayGames={todayGames}
               loading={loading}
               onGameClick={setSelectedGameId}
+              groupId={groupId}
+              currentUserId={currentUserId}
             />
           ) : (
             <AcompanharCarrossel

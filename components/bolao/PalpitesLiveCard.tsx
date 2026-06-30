@@ -1,20 +1,104 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 import type { LiveGameWithPrediction } from '@/lib/hooks/usePalpitesAoVivo'
+import { BracketTree } from '@/components/bolao/BracketTree'
+import { buildBracketTree } from '@/lib/bracket'
+import { createClient } from '@/lib/supabase/client'
+import type { BracketSlot, BracketSlotWithGame, Game } from '@/lib/types/game'
+import type { Prediction } from '@/lib/types/prediction'
 
 const MONO: React.CSSProperties = {
   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
 }
 
+const KNOCKOUT_PHASES = [
+  '16 avos de Final',
+  'Oitavas de Final',
+  'Quartas de Final',
+  'Semifinal',
+  'Terceiro Lugar',
+  'Final',
+]
+
 interface PalpitesLiveCardProps {
   todayGames: LiveGameWithPrediction[]
   loading: boolean
   onGameClick: (gameId: string) => void
+  groupId: string
+  currentUserId: string
 }
 
-export function PalpitesLiveCard({ todayGames, loading, onGameClick }: PalpitesLiveCardProps) {
+export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, currentUserId }: PalpitesLiveCardProps) {
+  // ── Bracket expansion state ──────────────────────────────────────
+  const [bracketExpanded, setBracketExpanded] = useState(false)
+  const [bracketRoots, setBracketRoots] = useState<BracketSlotWithGame[] | null>(null)
+  const [bracketPredictions, setBracketPredictions] = useState<Record<string, Prediction>>({})
+  const [bracketLoading, setBracketLoading] = useState(false)
+
+  const isKnockoutDay = todayGames.length > 0 && KNOCKOUT_PHASES.includes(todayGames[0].phase)
+
+  // ── Lazy fetch bracket data ─────────────────────────────────────
+  const fetchBracketData = useCallback(async () => {
+    if (bracketRoots !== null) return // already loaded
+    setBracketLoading(true)
+    try {
+      const supabase = createClient()
+
+      const [
+        { data: slots },
+        { data: games },
+        { data: predictions },
+      ] = await Promise.all([
+        supabase.from('bracket_slots').select('*').order('phase').order('position'),
+        supabase.from('games').select('*').not('bracket_slot_id', 'is', null),
+        supabase.from('predictions').select('*').eq('user_id', currentUserId),
+      ])
+
+      const typedSlots = (slots ?? []) as BracketSlot[]
+      const typedGames = (games ?? []) as Game[]
+
+      // Build slot-id → game map
+      const gameBySlotId: Record<string, Game> = {}
+      for (const game of typedGames) {
+        if (game.bracket_slot_id) {
+          gameBySlotId[game.bracket_slot_id] = game
+        }
+      }
+
+      // Build label → game map for buildBracketTree
+      const gamesBySlotLabel: Record<string, Game | null> = {}
+      for (const slot of typedSlots) {
+        gamesBySlotLabel[slot.label] = gameBySlotId[slot.id] ?? null
+      }
+
+      const roots = buildBracketTree(typedSlots, gamesBySlotLabel)
+
+      // Build game_id → prediction map
+      const typedPredictions = (predictions ?? []) as Prediction[]
+      const predMap: Record<string, Prediction> = {}
+      for (const p of typedPredictions) {
+        predMap[p.game_id] = p
+      }
+
+      setBracketRoots(roots)
+      setBracketPredictions(predMap)
+    } catch (err) {
+      console.error('[PalpitesLiveCard] erro ao carregar bracket:', err)
+    } finally {
+      setBracketLoading(false)
+    }
+  }, [bracketRoots, currentUserId])
+
+  // ── Toggle bracket ──────────────────────────────────────────────
+  const toggleBracket = useCallback(() => {
+    const next = !bracketExpanded
+    setBracketExpanded(next)
+    if (next) fetchBracketData()
+  }, [bracketExpanded, fetchBracketData])
+
+  // ── Loading state ───────────────────────────────────────────────
   if (loading) {
     return (
       <div style={{ ...MONO, padding: '0.5rem', fontSize: '10px', color: 'var(--color-muted)', textAlign: 'center' }}>
@@ -23,6 +107,7 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick }: PalpitesL
     )
   }
 
+  // ── Empty state ─────────────────────────────────────────────────
   if (todayGames.length === 0) {
     return (
       <div style={{ ...MONO, padding: '0.5rem', fontSize: '10px', color: 'var(--color-muted)', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
@@ -39,20 +124,53 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick }: PalpitesL
         padding: '0.6rem 0.75rem',
       }}
     >
+      {/* ── Header: round + expand icon ─────────────────────────── */}
       <div
         style={{
-          fontSize: '11px',
-          fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--color-muted)',
-          textAlign: 'center',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           marginBottom: '0.75rem',
+          position: 'relative',
         }}
       >
-        {todayGames[0].round}
+        <span
+          style={{
+            fontSize: '11px',
+            fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            color: 'var(--color-muted)',
+          }}
+        >
+          {todayGames[0].round}
+        </span>
+
+        {isKnockoutDay && (
+          <button
+            onClick={toggleBracket}
+            aria-label={bracketExpanded ? 'Recolher chaveamento' : 'Expandir chaveamento'}
+            aria-expanded={bracketExpanded}
+            style={{
+              position: 'absolute',
+              right: 0,
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0 0.15rem',
+              color: 'var(--color-accent)',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              fontSize: '16px',
+              lineHeight: 1,
+              opacity: bracketExpanded ? 1 : 0.85,
+            }}
+          >
+            {bracketExpanded ? '⤡' : '⤢'}
+          </button>
+        )}
       </div>
 
+      {/* ── Games grid ──────────────────────────────────────────── */}
       <div
         style={{
           display: 'grid',
@@ -64,6 +182,93 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick }: PalpitesL
           <GameItem key={game.id} game={game} onGameClick={onGameClick} />
         ))}
       </div>
+
+      {/* ── Bracket section (expanded) ──────────────────────────── */}
+      {bracketExpanded && (
+        <>
+          <div
+            style={{
+              borderTop: '1px solid var(--color-border)',
+              marginTop: '0.75rem',
+              paddingTop: '0.5rem',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                marginBottom: '0.35rem',
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                  fontSize: '11px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  color: 'var(--color-muted)',
+                }}
+              >
+                CHAVEAMENTO — MATA-MATA
+              </span>
+
+              <button
+                onClick={toggleBracket}
+                aria-label="Recolher chaveamento"
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0 0.15rem',
+                  color: 'var(--color-accent)',
+                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                  fontSize: '16px',
+                  lineHeight: 1,
+                }}
+              >
+                ⤡
+              </button>
+            </div>
+
+            {bracketLoading ? (
+              <div
+                style={{
+                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                  fontSize: '10px',
+                  color: 'var(--color-muted)',
+                  textAlign: 'center',
+                  padding: '1rem 0',
+                }}
+              >
+                CARREGANDO...
+              </div>
+            ) : bracketRoots && bracketRoots.length > 0 ? (
+              <BracketTree
+                roots={bracketRoots}
+                predictions={bracketPredictions}
+                groupId={groupId}
+                currentUserId={currentUserId}
+              />
+            ) : bracketRoots && bracketRoots.length === 0 ? (
+              <div
+                style={{
+                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                  fontSize: '10px',
+                  color: 'var(--color-muted)',
+                  textAlign: 'center',
+                  padding: '0.5rem 0',
+                }}
+              >
+                NENHUM SLOT DE CHAVEAMENTO ENCONTRADO
+              </div>
+            ) : null}
+          </div>
+        </>
+      )}
     </div>
   )
 }

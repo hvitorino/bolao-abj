@@ -24,6 +24,7 @@ export interface LiveGameWithPrediction {
   status: 'pending' | 'live' | 'finished'
   match_date: string
   round: string
+  phase: string
   myPrediction: { home_score: number; away_score: number } | null
 }
 
@@ -77,6 +78,7 @@ interface GameRow {
   status: 'pending' | 'live' | 'finished'
   match_date: string
   round: string
+  phase: string
 }
 
 interface PredictionRow {
@@ -150,7 +152,7 @@ export function usePalpitesAoVivo(
       // 2. Buscar todos os jogos do dia selecionado (mesmo critério da aba Jogos)
       const { data: gamesData, error: gamesError } = await supabase
         .from('games')
-        .select('id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date,round')
+        .select('id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date,round,phase')
         .eq('match_day', selectedDate)
         .order('match_date', { ascending: true })
 
@@ -235,6 +237,7 @@ export function usePalpitesAoVivo(
           status: g.status,
           match_date: g.match_date,
           round: g.round,
+          phase: g.phase,
           myPrediction: myPred
             ? { home_score: myPred.home_score, away_score: myPred.away_score }
             : null,
