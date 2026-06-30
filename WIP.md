@@ -1,3 +1,13 @@
+# WIP — Chaveamento Circular
+
+## Status
+
+Branch `feature/chaveamento-circular` contém uma primeira implementação de layout radial em SVG puro (componente `CircularBracket.tsx`). Resultado visual não ficou bom — não mergear na main. Trabalho arquivado na branch para referência futura.
+
+**Commit:** `49d0335` na branch `feature/chaveamento-circular`
+
+---
+
 # WIP — Auto-refresh de Token bolaodefutebol.com
 
 ## Objetivo
