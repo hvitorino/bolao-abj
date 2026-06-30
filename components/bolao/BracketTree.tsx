@@ -501,9 +501,7 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
       <div
         style={{
           fontFamily: FONT,
-          overflowX: 'auto',
-          padding: '0.25rem 0',
-          scrollbarWidth: 'none',
+          position: 'relative',
         }}
       >
         <style>{`
@@ -525,7 +523,9 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
             minWidth: 'max-content',
             alignItems: 'flex-start',
             justifyContent: 'flex-start',
-            padding: '0 0.5rem',
+            padding: '0.25rem 0.5rem',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
           }}
         >
           {/* Other roots (should be none in practice) */}
@@ -548,6 +548,34 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
             <BracketColumn node={thirdRoot} predictionMap={predictionState} onGameClick={handleGameClick} />
           )}
         </div>
+
+        {/* Left scroll fade indicator */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: '48px',
+            background: 'linear-gradient(to right, var(--color-bg), transparent)',
+            pointerEvents: 'none',
+            zIndex: 10,
+          }}
+        />
+
+        {/* Right scroll fade indicator */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            right: 0,
+            width: '48px',
+            background: 'linear-gradient(to left, var(--color-bg), transparent)',
+            pointerEvents: 'none',
+            zIndex: 10,
+          }}
+        />
       </div>
 
       {/* Game detail drawer — only when no external click handler */}
