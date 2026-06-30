@@ -1,11 +1,17 @@
 'use client'
 
 import type { BracketSlotWithGame } from '@/lib/types/game'
-import { PHASE_ORDER } from '@/lib/bracket'
 
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
-// ── Helpers ──────────────────────────────────────────────────────
+// ── Constants ─────────────────────────────────────────────────────
+
+/** Card height in px (used to compute connector SVG positions) */
+const CARD_H = 20
+/** Gap between children inside a column, in px */
+const CHILD_GAP = 4
+
+// ── Slot helpers ──────────────────────────────────────────────────
 
 function winnerCode(slot: BracketSlotWithGame): string | null {
   const g = slot.game
@@ -18,18 +24,14 @@ function winnerCode(slot: BracketSlotWithGame): string | null {
 function teamCode(slot: BracketSlotWithGame, side: 'home' | 'away'): string {
   const g = slot.game
   if (g) return side === 'home' ? g.home_team_code : g.away_team_code
-  // For empty slots, use source description or slot label as short identifier
+  // For empty slots, derive short code from source description
   const source = side === 'home' ? slot.source_home : slot.source_away
   if (source) {
-    // "Venc. R32-01" → "R32-01"
     const slotRef = source.match(/[A-Z]+\d*-?\d+/)
     if (slotRef) return slotRef[0]
-    // "1º Grupo A" → "1A"
     const groupRef = source.match(/([12])º Grupo ([A-L])/)
     if (groupRef) return `${groupRef[1]}${groupRef[2]}`
-    // "Melhor 3º ..." → "3º+"
     if (source.startsWith('Melhor 3º')) return '3º+'
-    // "Perd. SF-01" → "LSF-01"
     if (source.startsWith('Perd.')) {
       const ref = source.match(/[A-Z]+\d*-?\d+/)
       return ref ? `L${ref[0]}` : source.substring(0, 6)
@@ -57,40 +59,19 @@ function slotStatus(slot: BracketSlotWithGame): SlotStatus {
   return 'pending'
 }
 
-// ── Collect all nodes from tree, indexed by phase ────────────────
+// ── Column-height calculator (for SVG connectors) ─────────────────
 
-function collectByPhase(roots: BracketSlotWithGame[]): Map<string, BracketSlotWithGame[]> {
-  const map = new Map<string, BracketSlotWithGame[]>()
-  const visited = new Set<string>()
-
-  function walk(node: BracketSlotWithGame) {
-    if (visited.has(node.id)) return
-    visited.add(node.id)
-
-    const phase = node.phase
-    if (!map.has(phase)) map.set(phase, [])
-    map.get(phase)!.push(node)
-
-    for (const child of node.children) {
-      walk(child)
-    }
-  }
-
-  for (const root of roots) {
-    walk(root)
-  }
-
-  // Sort within each phase by position
-  map.forEach((nodes) => {
-    nodes.sort((a, b) => a.position - b.position)
-  })
-
-  return map
+/** Recursively compute the rendered height of a subtree column */
+function columnHeight(node: BracketSlotWithGame): number {
+  if (node.children.length === 0) return CARD_H
+  const childrenTotal = node.children.reduce((sum, c) => sum + columnHeight(c), 0)
+  const gaps = (node.children.length - 1) * CHILD_GAP
+  return childrenTotal + gaps
 }
 
-// ── Compact Match Card ───────────────────────────────────────────
+// ── Compact Slot Card ─────────────────────────────────────────────
 
-function CompactMatchCard({ slot }: { slot: BracketSlotWithGame }) {
+function CompactSlotCard({ slot }: { slot: BracketSlotWithGame }) {
   const status = slotStatus(slot)
   const isLive = status === 'live'
   const isFinished = status === 'finished'
@@ -116,18 +97,19 @@ function CompactMatchCard({ slot }: { slot: BracketSlotWithGame }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        gap: '0.3rem',
+        gap: '0.25rem',
         border: `1px solid ${borderColor}`,
         backgroundColor: 'var(--color-surface)',
-        padding: '0.15rem 0.35rem',
+        padding: '0.1rem 0.3rem',
         fontFamily: FONT,
         fontSize: '10px',
-        lineHeight: 1.4,
+        lineHeight: 1.3,
         whiteSpace: 'nowrap',
         overflow: 'hidden',
+        minWidth: '115px',
       }}
     >
-      {/* Home team */}
+      {/* Home */}
       <span
         style={{
           fontWeight: winner === slot.game?.home_team_code ? 'bold' : 'normal',
@@ -145,18 +127,14 @@ function CompactMatchCard({ slot }: { slot: BracketSlotWithGame }) {
         style={{
           color: scoreColor,
           fontWeight: 'bold',
-          fontSize: '11px',
+          fontSize: '10px',
           flexShrink: 0,
         }}
       >
-        {isLive ? (
-          <span className="blink">{score}</span>
-        ) : (
-          score
-        )}
+        {isLive ? <span className="blink">{score}</span> : score}
       </span>
 
-      {/* Away team */}
+      {/* Away */}
       <span
         style={{
           fontWeight: winner === slot.game?.away_team_code ? 'bold' : 'normal',
@@ -173,7 +151,139 @@ function CompactMatchCard({ slot }: { slot: BracketSlotWithGame }) {
   )
 }
 
-// ── BracketTree (public export) ──────────────────────────────────
+// ── Phase label ───────────────────────────────────────────────────
+
+function PhaseLabel({ text }: { text: string }) {
+  return (
+    <div
+      style={{
+        fontFamily: FONT,
+        color: 'var(--color-muted)',
+        fontSize: '8px',
+        textTransform: 'uppercase',
+        letterSpacing: '0.06em',
+        textAlign: 'center',
+        marginBottom: '0.15rem',
+      }}
+    >
+      {text}
+    </div>
+  )
+}
+
+// ── Bracket connector SVG ─────────────────────────────────────────
+
+function BracketConnector({ node }: { node: BracketSlotWithGame }) {
+  const children = node.children
+  if (children.length === 0) return null
+
+  const totalHeight = columnHeight(node)
+  const childHeights = children.map((c) => columnHeight(c))
+
+  // Compute Y positions of each child's vertical center
+  const childCenters: number[] = []
+  let y = 0
+  for (let i = 0; i < children.length; i++) {
+    const center = y + childHeights[i] / 2
+    childCenters.push(center)
+    y += childHeights[i] + CHILD_GAP
+  }
+
+  const firstCenter = childCenters[0]
+  const lastCenter = childCenters[childCenters.length - 1]
+  const midY = (firstCenter + lastCenter) / 2
+
+  return (
+    <div
+      style={{
+        width: 12,
+        flexShrink: 0,
+        height: totalHeight,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
+    >
+      <svg width="12" height={totalHeight} viewBox={`0 0 12 ${totalHeight}`}>
+        {/* Vertical line connecting children */}
+        <line
+          x1="6" y1={firstCenter}
+          x2="6" y2={lastCenter}
+          stroke="var(--color-border)"
+          strokeWidth="1"
+        />
+        {/* Horizontal line to parent (right) */}
+        <line
+          x1="6" y1={midY}
+          x2="12" y2={midY}
+          stroke="var(--color-border)"
+          strokeWidth="1"
+        />
+        {/* Horizontal lines to each child (left) */}
+        {childCenters.map((cy, i) => (
+          <line
+            key={i}
+            x1="0" y1={cy}
+            x2="6" y2={cy}
+            stroke="var(--color-border)"
+            strokeWidth="1"
+          />
+        ))}
+      </svg>
+    </div>
+  )
+}
+
+// ── Recursive bracket column ──────────────────────────────────────
+
+function BracketColumn({ node }: { node: BracketSlotWithGame }) {
+  const hasChildren = node.children.length > 0
+
+  if (!hasChildren) {
+    // Leaf slot (R32 or orphan like 3RD)
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <CompactSlotCard slot={node} />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: '0.35rem',
+      }}
+    >
+      {/* Children column (left) */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: `${CHILD_GAP}px`,
+          alignItems: 'stretch',
+        }}
+      >
+        {node.children.map((child) => (
+          <BracketColumn key={child.id} node={child} />
+        ))}
+      </div>
+
+      {/* Connector lines */}
+      <BracketConnector node={node} />
+
+      {/* Current node card (right) */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <PhaseLabel text={node.phase} />
+        <CompactSlotCard slot={node} />
+      </div>
+    </div>
+  )
+}
+
+// ── Public component ──────────────────────────────────────────────
 
 interface BracketTreeProps {
   roots: BracketSlotWithGame[]
@@ -196,17 +306,17 @@ export function BracketTree({ roots }: BracketTreeProps) {
     )
   }
 
-  const phaseMap = collectByPhase(roots)
-  const orderedPhases = PHASE_ORDER.filter((p) => phaseMap.has(p))
-
   return (
     <div
       style={{
         fontFamily: FONT,
+        overflowX: 'auto',
         padding: '0.25rem 0',
+        scrollbarWidth: 'none',
       }}
     >
       <style>{`
+        .bracket-scroll::-webkit-scrollbar { display: none; }
         @keyframes blink {
           50% { opacity: 0; }
         }
@@ -216,54 +326,20 @@ export function BracketTree({ roots }: BracketTreeProps) {
       `}</style>
 
       <div
+        className="bracket-scroll"
         style={{
           display: 'flex',
-          flexDirection: 'column',
-          gap: '0.4rem',
+          flexDirection: 'row',
+          gap: '0.5rem',
+          minWidth: 'max-content',
+          alignItems: 'flex-start',
+          justifyContent: 'flex-start',
+          padding: '0 0.5rem',
         }}
       >
-        {orderedPhases.map((phase) => {
-          const matches = phaseMap.get(phase)!
-          return (
-            <div key={phase}>
-              {/* Phase header */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.3rem',
-                  color: 'var(--color-accent)',
-                  fontSize: '10px',
-                  fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                  borderBottom: '1px solid var(--color-border)',
-                  paddingBottom: '0.1rem',
-                  marginBottom: '0.2rem',
-                }}
-              >
-                <span>█</span>
-                <span>{phase}</span>
-                <span style={{ color: 'var(--color-muted)', fontWeight: 'normal', fontSize: '9px' }}>
-                  {matches.length} {matches.length === 1 ? 'JOGO' : 'JOGOS'}
-                </span>
-              </div>
-
-              {/* Match grid: 2 cols on md+, 1 col on mobile */}
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
-                  gap: '0.15rem',
-                }}
-              >
-                {matches.map((match) => (
-                  <CompactMatchCard key={match.id} slot={match} />
-                ))}
-              </div>
-            </div>
-          )
-        })}
+        {roots.map((root) => (
+          <BracketColumn key={root.id} node={root} />
+        ))}
       </div>
     </div>
   )
