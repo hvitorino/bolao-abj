@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 74 features
-- Concluídas: 73
-- Em progresso: 1
+- Concluídas: 74
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -952,7 +952,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 74. group-standings-bottom-sheet — Classificação do Grupo no Bottom Sheet de Detalhes — em progresso
+### 74. group-standings-bottom-sheet — Classificação do Grupo no Bottom Sheet de Detalhes — concluída
 **Objetivo:** Adicionar ao Bottom Sheet de detalhes do jogo a tabela de classificação do grupo ao qual os dois times pertencem, calculada considerando apenas os jogos da fase de grupos com status `finished` ocorridos antes do `match_date` do jogo exibido — mostrando o estado da tabela como estava na data daquele confronto.
 **Critérios de sucesso:**
 - A tabela do grupo aparece no bottom sheet para jogos da fase de grupos (round começando com "Grupo")
