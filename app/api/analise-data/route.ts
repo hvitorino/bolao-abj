@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service-server'
 import { calculateTeamStats, getRecentGames, GameRow } from '@/lib/analytics/team-stats'
 import { calculateGroupStandings } from '@/lib/analytics/group-standings'
+import type { StandingEntry } from '@/lib/analytics/group-standings'
 import type { ScoreBreakdown, Score } from '@/lib/types/score'
 import type { ParticipantEntry } from '@/lib/types/participant'
 
@@ -63,37 +64,27 @@ export async function GET(request: NextRequest) {
 
   const games: GameRow[] = allTeamGames ?? []
 
-  // 4b. Determinar o grupo dos times e buscar jogos para calcular classificação
-  let displayGroupLetter: string | null = game.group_letter ?? null
-  let allGroupGames: GameRow[] = []
+  // 4b. Determinar os grupos dos times e buscar jogos para calcular classificação
+  type GroupStandingData = { groupLetter: string; standings: StandingEntry[] }
+  const groupLetters = new Set<string>()
 
-  if (!displayGroupLetter) {
-    // Mata-mata: descobre o grupo do time da casa (ou visitante) na fase de grupos
-    const { data: teamGroupRows } = await supabase
-      .from('games')
-      .select('group_letter')
-      .or(
-        `home_team_code.eq.${game.home_team_code},away_team_code.eq.${game.home_team_code}`
-      )
-      .eq('phase', 'Fase de Grupos')
-      .not('group_letter', 'is', null)
-      .limit(1)
+  if (game.group_letter) {
+    groupLetters.add(game.group_letter)
+  } else {
+    // Mata-mata: descobre os grupos de AMBOS os times
+    for (const teamCode of [game.home_team_code, game.away_team_code]) {
+      const { data: rows } = await supabase
+        .from('games')
+        .select('group_letter')
+        .or(`home_team_code.eq.${teamCode},away_team_code.eq.${teamCode}`)
+        .eq('phase', 'Fase de Grupos')
+        .not('group_letter', 'is', null)
+        .limit(1)
 
-    if (teamGroupRows && teamGroupRows.length > 0) {
-      displayGroupLetter = teamGroupRows[0].group_letter
+      if (rows && rows.length > 0 && rows[0].group_letter) {
+        groupLetters.add(rows[0].group_letter)
+      }
     }
-  }
-
-  if (displayGroupLetter) {
-    const { data: groupGameRows } = await supabase
-      .from('games')
-      .select(
-        'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date, match_day, status, round, phase, group_letter'
-      )
-      .eq('group_letter', displayGroupLetter)
-      .order('match_date', { ascending: true })
-
-    allGroupGames = groupGameRows ?? []
   }
 
   const supabaseService = createServiceClient()
@@ -173,10 +164,23 @@ export async function GET(request: NextRequest) {
   const homeRecentGames = getRecentGames(games, game.home_team_code, game.match_date)
   const awayRecentGames = getRecentGames(games, game.away_team_code, game.match_date)
 
-  // 7b. Calcular classificação do grupo (qualquer fase — usa group_letter do time)
-  const groupStandings = displayGroupLetter
-    ? calculateGroupStandings(allGroupGames, game.match_date)
-    : null
+  // 7b. Calcular classificação de cada grupo identificado
+  const groupStandings: GroupStandingData[] = []
+  for (const gl of groupLetters) {
+    const { data: groupGameRows } = await supabase
+      .from('games')
+      .select(
+        'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date, match_day, status, round, phase, group_letter'
+      )
+      .eq('group_letter', gl)
+      .order('match_date', { ascending: true })
+
+    const gamesInGroup = (groupGameRows ?? []) as GameRow[]
+    groupStandings.push({
+      groupLetter: gl,
+      standings: calculateGroupStandings(gamesInGroup, game.match_date),
+    })
+  }
 
   return NextResponse.json({
     game,

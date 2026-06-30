@@ -41,7 +41,7 @@ interface AnaliseData {
   awayStats: TeamStats
   homeRecentGames: RecentGame[]
   awayRecentGames: RecentGame[]
-  groupStandings: StandingEntry[] | null
+  groupStandings: { groupLetter: string; standings: StandingEntry[] }[]
 }
 
 function DrawerSkeleton() {
@@ -327,14 +327,18 @@ export default function GameAnaliseDrawer({
                   awayRecentGames={data.awayRecentGames}
                 />
               </div>
-              {data.groupStandings !== null && data.game.round && (
+              {data.groupStandings.length > 0 && data.game.round && (
                 <div style={{ marginBottom: '1.5rem' }}>
-                  <GroupStandingsCard
-                    groupLetter={data.game.group_letter ?? '?'}
-                    standings={data.groupStandings}
-                    homeTeamCode={data.game.home_team_code}
-                    awayTeamCode={data.game.away_team_code}
-                  />
+                  {data.groupStandings.map((gs) => (
+                    <div key={gs.groupLetter} style={{ marginBottom: '0.75rem' }}>
+                      <GroupStandingsCard
+                        groupLetter={gs.groupLetter}
+                        standings={gs.standings}
+                        homeTeamCode={data.game.home_team_code}
+                        awayTeamCode={data.game.away_team_code}
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
             </>
