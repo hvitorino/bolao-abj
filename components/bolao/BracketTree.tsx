@@ -519,7 +519,6 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
             display: 'flex',
             flexDirection: 'row',
             gap: '0.5rem',
-            minWidth: 'max-content',
             alignItems: 'flex-start',
             justifyContent: 'flex-start',
             padding: '0.25rem 0.5rem',
