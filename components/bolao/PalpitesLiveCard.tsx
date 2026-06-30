@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { getTeamFlag } from '@/lib/utils/teamFlag'
 import type { LiveGameWithPrediction } from '@/lib/hooks/usePalpitesAoVivo'
 import { BracketTree } from '@/components/bolao/BracketTree'
@@ -36,6 +36,8 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
   const [bracketRoots, setBracketRoots] = useState<BracketSlotWithGame[] | null>(null)
   const [bracketPredictions, setBracketPredictions] = useState<Record<string, Prediction>>({})
   const [bracketLoading, setBracketLoading] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const transitionRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const isKnockoutDay = todayGames.length > 0 && KNOCKOUT_PHASES.includes(todayGames[0].phase)
 
@@ -91,12 +93,25 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
     }
   }, [bracketRoots, currentUserId])
 
-  // ── Toggle bracket ──────────────────────────────────────────────
+  // ── Toggle bracket with transition ──────────────────────────────
   const toggleBracket = useCallback(() => {
-    const next = !bracketExpanded
-    setBracketExpanded(next)
-    if (next) fetchBracketData()
-  }, [bracketExpanded, fetchBracketData])
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    transitionRef.current = setTimeout(() => {
+      setBracketExpanded((v) => !v)
+      setIsTransitioning(false)
+    }, 160)
+  }, [isTransitioning])
+
+  // Trigger lazy fetch when expanding (after transition swap)
+  useEffect(() => {
+    if (bracketExpanded) fetchBracketData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bracketExpanded])
+
+  useEffect(() => () => {
+    if (transitionRef.current) clearTimeout(transitionRef.current)
+  }, [])
 
   // ── Loading state ───────────────────────────────────────────────
   if (loading) {
@@ -124,6 +139,13 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
         padding: '0.6rem 0.75rem',
       }}
     >
+      <style>{`
+        @keyframes cardFadeIn {
+          from { opacity: 0; transform: translateY(4px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
+
       {/* ── Header: round + expand icon ─────────────────────────── */}
       <div
         style={{
@@ -170,68 +192,33 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
         )}
       </div>
 
-      {/* ── Games grid ──────────────────────────────────────────── */}
+      {/* ── Content: games grid OR bracket (swap with animation) ─── */}
       <div
+        key={bracketExpanded ? 'bracket' : 'games'}
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '0.75rem',
+          opacity: isTransitioning ? 0 : 1,
+          transform: isTransitioning ? 'translateY(4px)' : 'translateY(0)',
+          transition: isTransitioning
+            ? 'opacity 160ms ease, transform 160ms ease'
+            : 'none',
+          animation: isTransitioning ? 'none' : 'cardFadeIn 200ms ease-out',
         }}
       >
-        {todayGames.map((game) => (
-          <GameItem key={game.id} game={game} onGameClick={onGameClick} />
-        ))}
-      </div>
-
-      {/* ── Bracket section (expanded) ──────────────────────────── */}
-      {bracketExpanded && (
-        <>
-          <div
-            style={{
-              borderTop: '1px solid var(--color-border)',
-              marginTop: '0.75rem',
-              paddingTop: '0.5rem',
-            }}
-          >
+        {bracketExpanded ? (
+          /* ── Bracket view ──────────────────────────────────────── */
+          <>
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                position: 'relative',
+                fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                color: 'var(--color-muted)',
+                textAlign: 'center',
                 marginBottom: '0.35rem',
               }}
             >
-              <span
-                style={{
-                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                  fontSize: '11px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  color: 'var(--color-muted)',
-                }}
-              >
-                CHAVEAMENTO — MATA-MATA
-              </span>
-
-              <button
-                onClick={toggleBracket}
-                aria-label="Recolher chaveamento"
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '0 0.15rem',
-                  color: 'var(--color-accent)',
-                  fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                  fontSize: '16px',
-                  lineHeight: 1,
-                }}
-              >
-                ⤡
-              </button>
+              CHAVEAMENTO — MATA-MATA
             </div>
 
             {bracketLoading ? (
@@ -266,9 +253,22 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
                 NENHUM SLOT DE CHAVEAMENTO ENCONTRADO
               </div>
             ) : null}
+          </>
+        ) : (
+          /* ── Games grid ────────────────────────────────────────── */
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: '0.75rem',
+            }}
+          >
+            {todayGames.map((game) => (
+              <GameItem key={game.id} game={game} onGameClick={onGameClick} />
+            ))}
           </div>
-        </>
-      )}
+        )}
+      </div>
     </div>
   )
 }
