@@ -1,6 +1,8 @@
 'use client'
 
 import type { BracketSlotWithGame } from '@/lib/types/game'
+import type { Prediction } from '@/lib/types/prediction'
+import { getTeamFlag } from '@/lib/flags'
 
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
@@ -21,9 +23,13 @@ function winnerCode(slot: BracketSlotWithGame): string | null {
   return null
 }
 
-function teamCode(slot: BracketSlotWithGame, side: 'home' | 'away'): string {
+/** Returns the display label for a side: flag + code for teams, short text for empty slots */
+function sideLabel(slot: BracketSlotWithGame, side: 'home' | 'away'): string {
   const g = slot.game
-  if (g) return side === 'home' ? g.home_team_code : g.away_team_code
+  if (g) {
+    const code = side === 'home' ? g.home_team_code : g.away_team_code
+    return getTeamFlag(code) + ' ' + code
+  }
   // For empty slots, derive short code from source description
   const source = side === 'home' ? slot.source_home : slot.source_away
   if (source) {
@@ -39,6 +45,12 @@ function teamCode(slot: BracketSlotWithGame, side: 'home' | 'away'): string {
     return source.substring(0, 6)
   }
   return '???'
+}
+
+function gameCode(slot: BracketSlotWithGame, side: 'home' | 'away'): string {
+  const g = slot.game
+  if (g) return side === 'home' ? g.home_team_code : g.away_team_code
+  return ''
 }
 
 function scoreStr(slot: BracketSlotWithGame): string {
@@ -61,7 +73,6 @@ function slotStatus(slot: BracketSlotWithGame): SlotStatus {
 
 // ── Column-height calculator (for SVG connectors) ─────────────────
 
-/** Recursively compute the rendered height of a subtree column */
 function columnHeight(node: BracketSlotWithGame): number {
   if (node.children.length === 0) return CARD_H
   const childrenTotal = node.children.reduce((sum, c) => sum + columnHeight(c), 0)
@@ -69,16 +80,39 @@ function columnHeight(node: BracketSlotWithGame): number {
   return childrenTotal + gaps
 }
 
+// ── Prediction color helper ───────────────────────────────────────
+
+function predictionColor(game: BracketSlotWithGame['game'], pred: Prediction | null | undefined): string {
+  if (!game || !pred || game.status === 'pending') return 'var(--color-muted)'
+  if (game.home_score == null || game.away_score == null) return 'var(--color-muted)'
+  if (pred.home_score === game.home_score && pred.away_score === game.away_score) return 'var(--color-win)'
+  // Check if hit winner (for knockout, winner matters most)
+  const actualWinner = game.home_score > game.away_score ? game.home_team_code
+    : game.away_score > game.home_score ? game.away_team_code : null
+  const predWinner = pred.home_score > pred.away_score ? game.home_team_code
+    : pred.away_score > pred.home_score ? game.away_team_code : null
+  if (actualWinner && actualWinner === predWinner) return 'var(--color-accent)'
+  return 'var(--color-error)'
+}
+
 // ── Compact Slot Card ─────────────────────────────────────────────
 
-function CompactSlotCard({ slot }: { slot: BracketSlotWithGame }) {
+function CompactSlotCard({
+  slot,
+  prediction,
+}: {
+  slot: BracketSlotWithGame
+  prediction?: Prediction | null
+}) {
   const status = slotStatus(slot)
   const isLive = status === 'live'
   const isFinished = status === 'finished'
 
   const winner = winnerCode(slot)
-  const homeCode = teamCode(slot, 'home')
-  const awayCode = teamCode(slot, 'away')
+  const homeLabel = sideLabel(slot, 'home')
+  const awayLabel = sideLabel(slot, 'away')
+  const homeCode = gameCode(slot, 'home')
+  const awayCode = gameCode(slot, 'away')
   const score = scoreStr(slot)
 
   let borderColor = 'var(--color-border)'
@@ -91,62 +125,86 @@ function CompactSlotCard({ slot }: { slot: BracketSlotWithGame }) {
       ? 'var(--color-accent)'
       : 'var(--color-muted)'
 
+  const predColor = predictionColor(slot.game, prediction)
+
   return (
     <div
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '0.25rem',
         border: `1px solid ${borderColor}`,
         backgroundColor: 'var(--color-surface)',
         padding: '0.1rem 0.3rem',
         fontFamily: FONT,
         fontSize: '10px',
         lineHeight: 1.3,
-        whiteSpace: 'nowrap',
+        minWidth: '120px',
         overflow: 'hidden',
-        minWidth: '115px',
       }}
     >
-      {/* Home */}
-      <span
+      {/* Main row: home — score — away */}
+      <div
         style={{
-          fontWeight: winner === slot.game?.home_team_code ? 'bold' : 'normal',
-          color: winner === slot.game?.home_team_code ? 'var(--color-accent)' : 'var(--color-text)',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          minWidth: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '0.25rem',
+          whiteSpace: 'nowrap',
         }}
       >
-        {homeCode}
-      </span>
+        <span
+          style={{
+            fontWeight: winner === homeCode ? 'bold' : 'normal',
+            color: winner === homeCode ? 'var(--color-accent)' : 'var(--color-text)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            minWidth: 0,
+          }}
+          title={slot.game?.home_team ?? homeLabel}
+        >
+          {homeLabel}
+        </span>
 
-      {/* Score */}
-      <span
-        style={{
-          color: scoreColor,
-          fontWeight: 'bold',
-          fontSize: '10px',
-          flexShrink: 0,
-        }}
-      >
-        {isLive ? <span className="blink">{score}</span> : score}
-      </span>
+        <span
+          style={{
+            color: scoreColor,
+            fontWeight: 'bold',
+            fontSize: '10px',
+            flexShrink: 0,
+          }}
+        >
+          {isLive ? <span className="blink">{score}</span> : score}
+        </span>
 
-      {/* Away */}
-      <span
-        style={{
-          fontWeight: winner === slot.game?.away_team_code ? 'bold' : 'normal',
-          color: winner === slot.game?.away_team_code ? 'var(--color-accent)' : 'var(--color-text)',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          textAlign: 'right',
-          minWidth: 0,
-        }}
-      >
-        {awayCode}
-      </span>
+        <span
+          style={{
+            fontWeight: winner === awayCode ? 'bold' : 'normal',
+            color: winner === awayCode ? 'var(--color-accent)' : 'var(--color-text)',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            textAlign: 'right',
+            minWidth: 0,
+          }}
+          title={slot.game?.away_team ?? awayLabel}
+        >
+          {awayLabel}
+        </span>
+      </div>
+
+      {/* User prediction row (only if prediction exists) */}
+      {prediction && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '0.08rem',
+            paddingTop: '0.08rem',
+            borderTop: `1px dashed var(--color-border)`,
+            fontSize: '9px',
+            color: predColor,
+          }}
+        >
+          ▸ seu {prediction.home_score}×{prediction.away_score}
+        </div>
+      )}
     </div>
   )
 }
@@ -173,14 +231,20 @@ function PhaseLabel({ text }: { text: string }) {
 
 // ── Bracket connector SVG ─────────────────────────────────────────
 
-function BracketConnector({ node }: { node: BracketSlotWithGame }) {
+function BracketConnector({
+  node,
+  extraTarget = false,
+}: {
+  node: BracketSlotWithGame
+  /** If true, draws a second horizontal line going right (for 3RD next to FINAL) */
+  extraTarget?: boolean
+}) {
   const children = node.children
   if (children.length === 0) return null
 
   const totalHeight = columnHeight(node)
   const childHeights = children.map((c) => columnHeight(c))
 
-  // Compute Y positions of each child's vertical center
   const childCenters: number[] = []
   let y = 0
   for (let i = 0; i < children.length; i++) {
@@ -206,28 +270,16 @@ function BracketConnector({ node }: { node: BracketSlotWithGame }) {
     >
       <svg width="12" height={totalHeight} viewBox={`0 0 12 ${totalHeight}`}>
         {/* Vertical line connecting children */}
-        <line
-          x1="6" y1={firstCenter}
-          x2="6" y2={lastCenter}
-          stroke="var(--color-border)"
-          strokeWidth="1"
-        />
-        {/* Horizontal line to parent (right) */}
-        <line
-          x1="6" y1={midY}
-          x2="12" y2={midY}
-          stroke="var(--color-border)"
-          strokeWidth="1"
-        />
+        <line x1="6" y1={firstCenter} x2="6" y2={lastCenter} stroke="var(--color-border)" strokeWidth="1" />
+        {/* Main horizontal line to parent (right) */}
+        <line x1="6" y1={midY} x2="12" y2={midY} stroke="var(--color-border)" strokeWidth="1" />
+        {/* Extra horizontal line for 3RD (below main) */}
+        {extraTarget && (
+          <line x1="6" y1={midY + 16} x2="12" y2={midY + 16} stroke="var(--color-border)" strokeWidth="1" />
+        )}
         {/* Horizontal lines to each child (left) */}
         {childCenters.map((cy, i) => (
-          <line
-            key={i}
-            x1="0" y1={cy}
-            x2="6" y2={cy}
-            stroke="var(--color-border)"
-            strokeWidth="1"
-          />
+          <line key={i} x1="0" y1={cy} x2="6" y2={cy} stroke="var(--color-border)" strokeWidth="1" />
         ))}
       </svg>
     </div>
@@ -236,14 +288,20 @@ function BracketConnector({ node }: { node: BracketSlotWithGame }) {
 
 // ── Recursive bracket column ──────────────────────────────────────
 
-function BracketColumn({ node }: { node: BracketSlotWithGame }) {
+function BracketColumn({
+  node,
+  predictionMap,
+}: {
+  node: BracketSlotWithGame
+  predictionMap: Record<string, Prediction>
+}) {
   const hasChildren = node.children.length > 0
 
   if (!hasChildren) {
-    // Leaf slot (R32 or orphan like 3RD)
+    const pred = node.game ? predictionMap[node.game.id] : undefined
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <CompactSlotCard slot={node} />
+        <CompactSlotCard slot={node} prediction={pred} />
       </div>
     )
   }
@@ -267,7 +325,7 @@ function BracketColumn({ node }: { node: BracketSlotWithGame }) {
         }}
       >
         {node.children.map((child) => (
-          <BracketColumn key={child.id} node={child} />
+          <BracketColumn key={child.id} node={child} predictionMap={predictionMap} />
         ))}
       </div>
 
@@ -277,7 +335,71 @@ function BracketColumn({ node }: { node: BracketSlotWithGame }) {
       {/* Current node card (right) */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <PhaseLabel text={node.phase} />
-        <CompactSlotCard slot={node} />
+        <CompactSlotCard slot={node} prediction={node.game ? predictionMap[node.game.id] : undefined} />
+      </div>
+    </div>
+  )
+}
+
+// ── Final + 3rd Place merged column ───────────────────────────────
+
+function FinalAnd3rdColumn({
+  final,
+  third,
+  predictionMap,
+}: {
+  final: BracketSlotWithGame
+  third: BracketSlotWithGame
+  predictionMap: Record<string, Prediction>
+}) {
+  const sfChildren = final.children // SF-01, SF-02
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: '0.35rem',
+      }}
+    >
+      {/* SF subtree (left) */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: `${CHILD_GAP}px`,
+          alignItems: 'stretch',
+        }}
+      >
+        {sfChildren.map((child) => (
+          <BracketColumn key={child.id} node={child} predictionMap={predictionMap} />
+        ))}
+      </div>
+
+      {/* Connector with extra line for 3RD */}
+      <BracketConnector node={final} extraTarget />
+
+      {/* FINAL + 3RD stacked (right) */}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '0.3rem',
+        }}
+      >
+        {/* FINAL */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <PhaseLabel text={final.phase} />
+          <CompactSlotCard slot={final} prediction={final.game ? predictionMap[final.game.id] : undefined} />
+        </div>
+
+        {/* 3RD PLACE */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <PhaseLabel text={third.phase} />
+          <CompactSlotCard slot={third} prediction={third.game ? predictionMap[third.game.id] : undefined} />
+        </div>
       </div>
     </div>
   )
@@ -287,9 +409,12 @@ function BracketColumn({ node }: { node: BracketSlotWithGame }) {
 
 interface BracketTreeProps {
   roots: BracketSlotWithGame[]
+  predictions?: Record<string, Prediction>
 }
 
-export function BracketTree({ roots }: BracketTreeProps) {
+export function BracketTree({ roots, predictions }: BracketTreeProps) {
+  const predictionMap = predictions ?? {}
+
   if (roots.length === 0) {
     return (
       <div
@@ -305,6 +430,11 @@ export function BracketTree({ roots }: BracketTreeProps) {
       </div>
     )
   }
+
+  // Separate FINAL and 3RD from other roots so they render in the same column
+  const finalRoot = roots.find((r) => r.label === 'FINAL')
+  const thirdRoot = roots.find((r) => r.label === '3RD')
+  const otherRoots = roots.filter((r) => r.label !== 'FINAL' && r.label !== '3RD')
 
   return (
     <div
@@ -337,9 +467,25 @@ export function BracketTree({ roots }: BracketTreeProps) {
           padding: '0 0.5rem',
         }}
       >
-        {roots.map((root) => (
-          <BracketColumn key={root.id} node={root} />
+        {/* Other roots (should be none in practice) */}
+        {otherRoots.map((root) => (
+          <BracketColumn key={root.id} node={root} predictionMap={predictionMap} />
         ))}
+
+        {/* FINAL + 3RD merged column */}
+        {finalRoot && thirdRoot && (
+          <FinalAnd3rdColumn final={finalRoot} third={thirdRoot} predictionMap={predictionMap} />
+        )}
+
+        {/* If only FINAL exists (no 3RD), render solo */}
+        {finalRoot && !thirdRoot && (
+          <BracketColumn node={finalRoot} predictionMap={predictionMap} />
+        )}
+
+        {/* If only 3RD exists (no FINAL), render solo */}
+        {thirdRoot && !finalRoot && (
+          <BracketColumn node={thirdRoot} predictionMap={predictionMap} />
+        )}
       </div>
     </div>
   )
