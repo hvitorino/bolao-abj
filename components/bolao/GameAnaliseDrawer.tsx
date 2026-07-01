@@ -75,6 +75,7 @@ export default function GameAnaliseDrawer({
 }: GameAnaliseDrawerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const [isMaximized, setIsMaximized] = useState(false)
   const [data, setData] = useState<AnaliseData | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -99,6 +100,7 @@ export default function GameAnaliseDrawer({
     // Mover setState para microtask evita cascata de renders (react-hooks/set-state-in-effect)
     Promise.resolve().then(() => {
       setIsVisible(true)
+      setIsMaximized(false)
       setLoading(true)
       setError(null)
       setData(null)
@@ -135,6 +137,7 @@ export default function GameAnaliseDrawer({
   // Fechamento do drawer
   function handleClose() {
     setIsOpen(false)
+    setIsMaximized(false)
     setTimeout(() => {
       setIsVisible(false)
       onClose()
@@ -242,15 +245,19 @@ export default function GameAnaliseDrawer({
           left: '1.5rem',
           right: '1.5rem',
           zIndex: 51,
-          maxHeight: '72vh',
+          maxHeight: isMaximized
+            ? 'calc(100dvh - 52px - env(safe-area-inset-bottom, 0px) - env(safe-area-inset-top, 0px))'
+            : '72vh',
           backgroundColor: 'var(--color-surface)',
           border: '1px solid var(--color-border)',
           borderBottom: 'none',
-          borderRadius: '8px 8px 0 0',
+          borderRadius: isMaximized ? '0' : '8px 8px 0 0',
           transform: isOpen
             ? isDragging ? `translateY(${dragOffset}px)` : 'translateY(0)'
             : 'translateY(100%)',
-          transition: isDragging ? 'none' : 'transform 250ms ease',
+          transition: isDragging
+            ? 'none'
+            : 'transform 250ms ease, max-height 250ms ease, border-radius 250ms ease',
           display: 'flex',
           flexDirection: 'column',
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
@@ -262,14 +269,17 @@ export default function GameAnaliseDrawer({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           style={{
+            position: 'relative',
             display: 'flex',
+            alignItems: 'center',
             justifyContent: 'center',
-            padding: '10px 0 6px',
+            padding: '10px 0.75rem 6px',
             flexShrink: 0,
             cursor: 'grab',
             touchAction: 'none',
           }}
         >
+          {/* Pill de arraste — permanece centralizado */}
           <div
             style={{
               width: '32px',
@@ -278,6 +288,43 @@ export default function GameAnaliseDrawer({
               backgroundColor: 'var(--color-border)',
             }}
           />
+
+          {/* Botão de maximizar/restaurar */}
+          <button
+            type="button"
+            aria-label={isMaximized ? 'Restaurar tamanho padrão' : 'Maximizar análise'}
+            onClick={(e) => {
+              e.stopPropagation()
+              setIsMaximized((prev) => !prev)
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation()
+              setIsDragging(false)
+              setDragOffset(0)
+              touchStartY.current = null
+            }}
+            style={{
+              position: 'absolute',
+              right: '0.75rem',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--color-muted)',
+              fontSize: '14px',
+              fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+              minWidth: '44px',
+              minHeight: '44px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '0',
+              lineHeight: 1,
+            }}
+          >
+            {isMaximized ? '▼' : '▲'}
+          </button>
         </div>
 
         {/* Conteúdo com scroll */}
