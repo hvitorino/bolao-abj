@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [ranking-por-scout] — Ranking por Scout — 2026-06-30
+
+- Chips de seleção de scout ("GERAL" + 6 categorias) adicionados acima da tabela de ranking
+- Ao selecionar um scout, o ranking é reordenado pela contagem daquele scout (decrescente, client-side)
+- Coluna PONTOS muda para o label do scout selecionado e exibe a contagem por participante
+- Nova interface `ScoutCounts` com 6 campos: `exact`, `winner`, `winner_score`, `diff`, `loser_score`, `goleada`
+- Migration `20260630100000_add_scout_counts_to_ranking_scouts.sql` estende `get_ranking_scouts()` com 4 novas colunas
+- Endpoint `/api/ranking` retorna campo `scout_counts` com as 6 contagens (modo Geral) ou `null` (modo por rodada)
+- Arquivos modificados: `lib/types/ranking.ts`, `app/api/ranking/route.ts`, `components/bolao/RankingTable.tsx`, `components/bolao/RankingRow.tsx`
+
 ## [fix-all-recent-games] — Exibir Todos os Jogos Anteriores na Análise — 2026-06-30
 
 - Seção "Últimos 3 jogos na Copa 2026" renomeada para "Jogos" no drawer de análise
