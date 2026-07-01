@@ -49,6 +49,8 @@ interface BdfPrediction {
   away_score: number
   predicted_winner: string
   predicted_diff: number
+  extra_time_winner_prediction?: string
+  penalties_winner_prediction?: string
   points_earned: number
   status: string
   scoring_state: string
@@ -117,6 +119,14 @@ function statusLabel(match: BdfMatch): string {
 function matchScore(m: BdfMatch): string {
   if (m.home_score == null || m.away_score == null) return '×'
   return `${m.home_score} × ${m.away_score}`
+}
+
+function sideLabel(side: string | undefined, match: BdfMatch): string {
+  if (!side) return '—'
+  if (side === 'draw') return 'EMP'
+  if (side === 'home') return match.home_team.slice(0, 3).toUpperCase()
+  if (side === 'away') return match.away_team.slice(0, 3).toUpperCase()
+  return '—'
 }
 
 function predictionIndicator(
@@ -426,6 +436,7 @@ function MatchCard({
     predictions.length > 0 &&
     (match.status === 'live' || match.status === 'finished')
   const pending = match.status !== 'live' && match.status !== 'finished'
+  const isKnockout = match.allow_extra_time || match.allow_penalties
 
   // Ordenar palpites por pontos
   const sorted = [...predictions].sort((a, b) => {
@@ -519,6 +530,12 @@ function MatchCard({
                 <th style={thStyle}>#</th>
                 <th style={{ ...thStyle, textAlign: 'left' }}>Participante</th>
                 <th style={thStyle}>Palpite</th>
+                {isKnockout && match.allow_extra_time && (
+                  <th style={{ ...thStyle, color: 'var(--color-muted)' }}>Prorr.</th>
+                )}
+                {isKnockout && match.allow_penalties && (
+                  <th style={{ ...thStyle, color: 'var(--color-muted)' }}>Pênaltis</th>
+                )}
                 {!pending && (
                   <>
                     <th style={thStyle}>Acertos</th>
@@ -548,6 +565,26 @@ function MatchCard({
                     <td style={{ ...tdStyle, textAlign: 'center', color: 'var(--color-accent)', fontWeight: 'bold' }}>
                       {p.home_score}×{p.away_score}
                     </td>
+                    {isKnockout && match.allow_extra_time && (
+                      <td style={{ ...tdStyle, textAlign: 'center', fontSize: '11px', color: 'var(--color-muted)' }}>
+                        {sideLabel(p.extra_time_winner_prediction, match)}
+                      </td>
+                    )}
+                    {isKnockout && match.allow_penalties && (
+                      <td style={{
+                        ...tdStyle,
+                        textAlign: 'center',
+                        fontSize: '11px',
+                        color: match.status === 'finished' && match.penalties_winner === p.penalties_winner_prediction
+                          ? 'var(--color-win)'
+                          : 'var(--color-muted)',
+                        fontWeight: match.status === 'finished' && match.penalties_winner === p.penalties_winner_prediction
+                          ? 'bold'
+                          : 'normal',
+                      }}>
+                        {sideLabel(p.penalties_winner_prediction, match)}
+                      </td>
+                    )}
                     {!pending && (
                       <>
                         <td style={{ ...tdStyle, textAlign: 'center', fontSize: '11px' }}>

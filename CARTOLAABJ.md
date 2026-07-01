@@ -160,9 +160,15 @@ ON CONFLICT (id) DO UPDATE
 |---|-------------|---------|----------|
 | 73 | `18a7ab8b-2f8f-4001-9cc7-4a6a1ce232a5` | África do Sul × Canadá | 2026-06-28T19:00 |
 
-### Oitavas em diante
+### Oitavas de Final
 
-Os `match_id` do bolaodefutebol para Oitavas, Quartas, Semi e Final ainda não são conhecidos — serão capturados via Proxyman quando os jogos forem agendados no app. Quando disponíveis:
+| # | BDF match_id | Partida | Data UTC |
+|---|-------------|---------|----------|
+| 80 | `48db382c-22bf-4e47-b78b-6aa5548061ff` | England × DR Congo | 2026-07-01T16:00 |
+
+### Quartas, Semi e Final
+
+Os `match_id` do bolaodefutebol para Quartas, Semi e Final ainda não são conhecidos — serão capturados via Proxyman quando os jogos forem agendados no app. Quando disponíveis:
 
 1. Adicionar os `match_id` na tabela acima (seção "Rodada N")
 2. Criar novas rotinas one-shot nesta sessão Claude Code (ou nova sessão)
@@ -185,3 +191,4 @@ Os `match_id` do bolaodefutebol para Oitavas, Quartas, Semi e Final ainda não s
 | 2026-06-28 | Jogo #70 — Congo DR × Uzbequistão | 1 | 11 |
 | 2026-06-28 | Jogo #72 — Jordan × Argentina | 1 | 12 |
 | 2026-06-28 | Jogo #71 — Argélia × Áustria | 1 | 12 |
+| 2026-07-01 | Jogo #80 — Inglaterra × Congo DR | 1 | 12 |
