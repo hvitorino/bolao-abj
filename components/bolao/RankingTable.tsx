@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useRankingRealtime } from '@/lib/hooks/useRankingRealtime'
 import { useLivePointsByUser } from '@/lib/hooks/useLivePointsByUser'
 import type { RankingEntry, ScoutCounts } from '@/lib/types/ranking'
@@ -20,6 +20,17 @@ export const SCOUT_FILTERS: Record<string, { label: string; key: keyof ScoutCoun
   loser_score:   { label: 'GOLS DO PERDEDOR',     key: 'loser_score' },
   goleada:       { label: 'GOLEADA',              key: 'goleada' },
 }
+
+// Ordem cíclica para navegação por gestos (swipe)
+const SCOUT_ORDER: (string | null)[] = [
+  null,        // GERAL
+  'exact',     // PLACAR CRAVADO
+  'winner',    // ACERTOU VENCEDOR
+  'winner_score', // GOLS DO VENCEDOR
+  'diff',      // DIFERENÇA DE GOLS
+  'loser_score',  // GOLS DO PERDEDOR
+  'goleada',   // GOLEADA
+]
 
 // Reordena o ranking pela contagem do scout selecionado (client-side).
 // Aplica empate: mesma contagem = mesma posição (RANK).
@@ -101,6 +112,30 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
   const { ranking, loading, error, lastUpdatedAt } = useRankingRealtime(groupId)
   const { livePoints, loading: livePointsLoading } = useLivePointsByUser(groupId)
   const [activeScout, setActiveScout] = useState<string | null>(null)
+  const touchStartX = useRef<number | null>(null)
+
+  // Navegação por gestos (swipe horizontal)
+  function cycleScout(direction: 1 | -1) {
+    const currentIdx = SCOUT_ORDER.indexOf(activeScout)
+    const nextIdx = (currentIdx + direction + SCOUT_ORDER.length) % SCOUT_ORDER.length
+    setActiveScout(SCOUT_ORDER[nextIdx])
+  }
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return
+    const endX = e.changedTouches[0].clientX
+    const deltaX = endX - touchStartX.current
+    touchStartX.current = null
+
+    // Ignora scroll vertical — só swipe com deslocamento horizontal mínimo de 50px
+    if (Math.abs(deltaX) < 50) return
+
+    cycleScout(deltaX > 0 ? -1 : 1)
+  }
 
   const hasLivePoints = Object.values(livePoints).some((points) => points > 0)
   const adjustedRanking = applyLivePoints(ranking, livePoints)
@@ -178,6 +213,8 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
 
   return (
     <div
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       style={{
         border: '1px solid var(--color-border)',
         backgroundColor: 'var(--color-surface)',
