@@ -251,7 +251,7 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
             <th style={{ ...thStyle, textAlign: 'right', width: '2.5rem' }}>#</th>
             <th style={{ ...thStyle, textAlign: 'left' }}>PARTICIPANTE</th>
             <th style={{ ...thStyle, textAlign: 'center', width: '5rem' }}>
-              {scoutKey ? SCOUT_FILTERS[activeScout!].label : 'PONTOS'}
+              {scoutKey ? 'TOTAL' : 'PONTOS'}
             </th>
             {!scoutKey && (
               <th style={{ ...thStyle, textAlign: 'center', width: '3.5rem' }}>PALP.</th>
