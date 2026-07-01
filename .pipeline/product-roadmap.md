@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 79 features
-- Concluídas: 78
-- Em progresso: 1
+- Concluídas: 79
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -1020,7 +1020,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 79. maximize-analise-drawer — Maximizar Bottom Sheet de Análise de Jogo — em progresso
+### 79. maximize-analise-drawer — Maximizar Bottom Sheet de Análise de Jogo — concluída
 **Objetivo:** Permitir que o usuário expanda o `GameAnaliseDrawer` (bottom sheet de análise de jogo) para ocupar a quase totalidade da tela, melhorando a leitura das informações sem rolagem excessiva, com transição animada e botão de restauração ao tamanho padrão.
 **Critérios de sucesso:**
 - Bottom sheet possui botão/controle para alternar entre altura padrão (72vh) e maximizado (≥90vh ou full height descontando safe-area)
