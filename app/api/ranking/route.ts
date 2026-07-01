@@ -93,6 +93,7 @@ export async function GET(request: NextRequest) {
       predictions_count: 0,
       scouts: [] as string[],
       streak: 0,
+      scout_counts: null,
     }))
 
     return NextResponse.json(rankingByRound)
@@ -129,6 +130,10 @@ export async function GET(request: NextRequest) {
     pred_active: number
     pred_total: number
     pred_last_two_rounds: number
+    winner_score_count: number
+    diff_count: number
+    loser_score_count: number
+    goleada_count: number
   }
 
   const scoutsData: ScoutRow[] = (scoutsResult.data ?? []).map((r: ScoutRow) => ({
@@ -139,6 +144,10 @@ export async function GET(request: NextRequest) {
     pred_active: Number(r.pred_active),
     pred_total: Number(r.pred_total),
     pred_last_two_rounds: Number(r.pred_last_two_rounds),
+    winner_score_count: Number(r.winner_score_count),
+    diff_count: Number(r.diff_count),
+    loser_score_count: Number(r.loser_score_count),
+    goleada_count: Number(r.goleada_count),
   }))
 
   const maxExact  = scoutsData.length ? Math.max(...scoutsData.map(r => r.exact_count))  : 0
@@ -171,6 +180,19 @@ export async function GET(request: NextRequest) {
     scoutsByUser[row.user_id] = badges
   }
 
+  // --- Mapear scout_counts por user_id ---
+  const scoutCountsByUser: Record<string, Record<string, number>> = {}
+  for (const row of scoutsData) {
+    scoutCountsByUser[row.user_id] = {
+      exact: row.exact_count,
+      winner: row.winner_count,
+      winner_score: row.winner_score_count,
+      diff: row.diff_count,
+      loser_score: row.loser_score_count,
+      goleada: row.goleada_count,
+    }
+  }
+
   // --- Mapear streaks por user_id ---
   const streakByUser: Record<string, number> = {}
   for (const row of (streakResult.data ?? [])) {
@@ -195,6 +217,7 @@ export async function GET(request: NextRequest) {
     predictions_count: Number(entry.predictions_count),
     scouts: scoutsByUser[entry.user_id] ?? [],
     streak: streakByUser[entry.user_id] ?? 0,
+    scout_counts: scoutCountsByUser[entry.user_id] ?? null,
   }))
 
   return NextResponse.json(ranking)

@@ -1,3 +1,12 @@
+export interface ScoutCounts {
+  exact: number
+  winner: number
+  winner_score: number
+  diff: number
+  loser_score: number
+  goleada: number
+}
+
 export interface RankingEntry {
   rank_position: number
   user_id: string
@@ -8,4 +17,5 @@ export interface RankingEntry {
   predictions_count: number
   scouts: string[]
   streak: number
+  scout_counts: ScoutCounts | null
 }
