@@ -3,7 +3,7 @@
 **Slug:** fix-chaveamento
 **Branch:** feature/fix-chaveamento
 **Data:** 2026-07-01
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

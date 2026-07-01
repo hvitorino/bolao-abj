@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-chaveamento] — Correção do Chaveamento (Cruzamentos + Layout Simétrico) — 2026-07-01
+
+- Migration `supabase/migrations/20260701000000_fix_bracket_slot_pairings.sql` corrige `next_slot_label` de 10 slots R32 e `source_home`/`source_away` de 7 slots R16 para refletir o chaveamento oficial FIFA 2026
+- `BracketConnector` recebe prop `reversed?: boolean` que inverte as coordenadas x do SVG para suporte ao lado espelhado
+- Novo `BracketColumnRight`: espelho recursivo de `BracketColumn` — card à esquerda, conector reversed, filhos à direita
+- Novo `SymmetricBracket`: substitui `FinalAnd3rdColumn` com layout clássico simétrico (chave esq | FINAL+3RD ao centro | chave dir espelhada)
+- `FinalAnd3rdColumn` removido; `BracketTree` passa a usar `SymmetricBracket`
+- Scroll horizontal, `GameAnaliseDrawer` e propagação de `onGameClick` preservados sem regressão
+
 ## [ranking-por-scout] — Ranking por Scout — 2026-06-30
 
 - Chips de seleção de scout ("GERAL" + 6 categorias) adicionados acima da tabela de ranking
