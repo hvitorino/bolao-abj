@@ -1,4 +1,4 @@
-import type { RankingEntry } from '@/lib/types/ranking'
+import type { RankingEntry, ScoutCounts } from '@/lib/types/ranking'
 import { ScoutBadges } from '@/components/bolao/ScoutBadges'
 
 interface RankingRowProps {
@@ -7,9 +7,10 @@ interface RankingRowProps {
   isLeader: boolean
   hideScouts?: boolean
   hidePalpites?: boolean
+  scoutKey?: keyof ScoutCounts
 }
 
-export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false, hidePalpites = false }: RankingRowProps) {
+export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false, hidePalpites = false, scoutKey }: RankingRowProps) {
   // Determinar cor do texto da linha
   let rowColor = 'var(--color-text)'
   if (isLeader) {
@@ -21,6 +22,11 @@ export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false,
   const aprovColor = entry.aproveitamento >= 60
     ? 'var(--color-win)'
     : 'var(--color-muted)'
+
+  // Valor exibido na coluna PONTOS: contagem do scout ou total_points
+  const pointsValue = scoutKey
+    ? (entry.scout_counts?.[scoutKey] ?? 0)
+    : entry.total_points
 
   return (
     <tr
@@ -102,7 +108,7 @@ export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false,
           minWidth: '5rem',
         }}
       >
-        {entry.total_points}
+        {pointsValue}
       </td>
 
       {/* Palpites — oculto no modo por rodada */}
