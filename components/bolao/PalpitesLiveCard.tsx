@@ -101,18 +101,18 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
             style={{
               position: 'absolute',
               right: 0,
-              background: 'none',
+              background: 'var(--color-primary)',
               border: 'none',
               cursor: 'pointer',
-              padding: '0 0.15rem',
-              color: 'var(--color-accent)',
+              padding: '0.2rem 0.4rem',
+              color: 'var(--color-bg)',
               fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-              fontSize: '16px',
+              fontSize: '14px',
+              fontWeight: 'bold',
               lineHeight: 1,
-              opacity: bracket.expanded ? 1 : 0.85,
             }}
           >
-            {bracket.expanded ? '⤡' : '⤢'}
+            {bracket.expanded ? '▲' : '▼'}
           </button>
         )}
       </div>
