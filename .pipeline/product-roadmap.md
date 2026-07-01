@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 78 features
+- Total: 79 features
 - Concluídas: 78
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -1017,6 +1017,19 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Clique nos cards continua abrindo o GameAnaliseDrawer
 **Dependências:** inline-bracket-expand, analise-confronto
 **Observação de conclusão:** aprovada e mergeada na main em 2026-07-01. Migration SQL corrige pareamentos R32/R16 para refletir o chaveamento oficial FIFA 2026. Layout simétrico clássico implementado: chave esquerda | FINAL+3RD ao centro | chave direita espelhada. Novo componente BracketColumnRight (espelho recursivo) e SymmetricBracket (substitui FinalAnd3rdColumn). Scroll horizontal, interatividade de cards e prop onGameClick preservados sem regressão.
+
+---
+
+### 79. maximize-analise-drawer — Maximizar Bottom Sheet de Análise de Jogo — em progresso
+**Objetivo:** Permitir que o usuário expanda o `GameAnaliseDrawer` (bottom sheet de análise de jogo) para ocupar a quase totalidade da tela, melhorando a leitura das informações sem rolagem excessiva, com transição animada e botão de restauração ao tamanho padrão.
+**Critérios de sucesso:**
+- Bottom sheet possui botão/controle para alternar entre altura padrão (72vh) e maximizado (≥90vh ou full height descontando safe-area)
+- Transição entre os dois estados é animada e suave (250ms ease)
+- Usuário pode restaurar o tamanho padrão após maximizar
+- Gesto de swipe-to-close e teclado ESC continuam funcionando em ambos os estados
+- Em desktop, o comportamento maximizado é adequado (modal centralizado mais alto)
+- Nenhuma regressão nas funcionalidades existentes do drawer (palpite, análise, standings)
+**Dependências:** palpites-analise-drawer, analise-confronto
 
 ---
 
