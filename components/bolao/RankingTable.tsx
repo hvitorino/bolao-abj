@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { useRankingRealtime } from '@/lib/hooks/useRankingRealtime'
 import { useLivePointsByUser } from '@/lib/hooks/useLivePointsByUser'
 import type { RankingEntry, ScoutCounts } from '@/lib/types/ranking'
@@ -116,9 +116,26 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
   const chipContainerRef = useRef<HTMLDivElement>(null)
   const [transitionKey, setTransitionKey] = useState(0)
   const swipeDir = useRef<1 | -1>(1)
+  const prevRowTopsRef = useRef<Map<string, number>>(new Map())
+  const isFirstRender = useRef(true)
+  const mainContainerRef = useRef<HTMLDivElement>(null)
+
+  // Captura as posições atuais das linhas (antes da reordenação)
+  function captureRowPositions() {
+    const container = mainContainerRef.current
+    if (!container) return
+    const rows = container.querySelectorAll<HTMLTableRowElement>('[data-user-id]')
+    const tops = new Map<string, number>()
+    rows.forEach((row) => {
+      const userId = row.dataset.userId
+      if (userId) tops.set(userId, row.getBoundingClientRect().top)
+    })
+    prevRowTopsRef.current = tops
+  }
 
   // Navegação por gestos (swipe horizontal)
   function cycleScout(direction: 1 | -1) {
+    captureRowPositions()
     const currentIdx = SCOUT_ORDER.indexOf(activeScout)
     const nextIdx = (currentIdx + direction + SCOUT_ORDER.length) % SCOUT_ORDER.length
     swipeDir.current = direction
@@ -159,6 +176,67 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
     : adjustedRanking
 
   const scoutKey = activeScout ? SCOUT_FILTERS[activeScout].key : undefined
+
+  // FLIP animation: anima as linhas do ranking quando as posições mudam
+  useLayoutEffect(() => {
+    const container = mainContainerRef.current
+    if (!container) return
+
+    const rows = container.querySelectorAll<HTMLTableRowElement>('[data-user-id]')
+    if (rows.length === 0) return
+
+    // Last: lê posições atuais (pós-render)
+    const newTops = new Map<string, number>()
+    rows.forEach((row) => {
+      const userId = row.dataset.userId
+      if (userId) newTops.set(userId, row.getBoundingClientRect().top)
+    })
+
+    // Pula o primeiro render
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      prevRowTopsRef.current = newTops
+      return
+    }
+
+    const prevTops = prevRowTopsRef.current
+    if (prevTops.size === 0) return
+
+    // Invert + Play
+    rows.forEach((row) => {
+      const userId = row.dataset.userId
+      if (!userId) return
+      const prevTop = prevTops.get(userId)
+      const newTop = newTops.get(userId)
+      if (prevTop === undefined || newTop === undefined) return
+      const delta = prevTop - newTop
+      if (delta === 0) return
+
+      // Invert: move visualmente para a posição antiga
+      row.style.transform = `translateY(${delta}px)`
+      row.style.transition = 'none'
+
+      // Força reflow
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      row.offsetHeight
+
+      // Play: anima para a nova posição
+      row.style.transition = 'transform 0.3s ease'
+      row.style.transform = 'translateY(0)'
+
+      const cleanup = () => {
+        row.style.transition = ''
+        row.style.transform = ''
+      }
+      row.addEventListener('transitionend', cleanup, { once: true })
+      // Fallback de segurança caso transitionend não dispare
+      setTimeout(() => {
+        if (row.style.transform === 'translateY(0)') cleanup()
+      }, 350)
+    })
+
+    prevRowTopsRef.current = newTops
+  }, [displayRanking, activeScout])
 
   if (loading || livePointsLoading) {
     return (
@@ -226,6 +304,7 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
 
   return (
     <div
+      ref={mainContainerRef}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       style={{
@@ -250,7 +329,7 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
       >
         <button
           data-scout="geral"
-          onClick={() => setActiveScout(null)}
+          onClick={() => { captureRowPositions(); setActiveScout(null) }}
           style={{
             ...MONO,
             fontSize: '11px',
@@ -272,7 +351,7 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
           <button
             key={slug}
             data-scout={slug}
-            onClick={() => setActiveScout(slug)}
+            onClick={() => { captureRowPositions(); setActiveScout(slug) }}
             style={{
               ...MONO,
               fontSize: '11px',

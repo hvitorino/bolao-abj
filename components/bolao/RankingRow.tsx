@@ -30,6 +30,7 @@ export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false,
 
   return (
     <tr
+      data-user-id={entry.user_id}
       style={{
         borderBottom: '1px solid var(--color-border)',
         color: rowColor,
