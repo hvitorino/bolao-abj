@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRankingRealtime } from '@/lib/hooks/useRankingRealtime'
 import { useLivePointsByUser } from '@/lib/hooks/useLivePointsByUser'
 import type { RankingEntry, ScoutCounts } from '@/lib/types/ranking'
@@ -113,13 +113,26 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
   const { livePoints, loading: livePointsLoading } = useLivePointsByUser(groupId)
   const [activeScout, setActiveScout] = useState<string | null>(null)
   const touchStartX = useRef<number | null>(null)
+  const chipContainerRef = useRef<HTMLDivElement>(null)
+  const [transitionKey, setTransitionKey] = useState(0)
+  const swipeDir = useRef<1 | -1>(1)
 
   // Navegação por gestos (swipe horizontal)
   function cycleScout(direction: 1 | -1) {
     const currentIdx = SCOUT_ORDER.indexOf(activeScout)
     const nextIdx = (currentIdx + direction + SCOUT_ORDER.length) % SCOUT_ORDER.length
+    swipeDir.current = direction
+    setTransitionKey((k) => k + 1)
     setActiveScout(SCOUT_ORDER[nextIdx])
   }
+
+  // Scrolla o chip ativo para dentro da área visível
+  useEffect(() => {
+    if (!chipContainerRef.current) return
+    const selector = activeScout === null ? '[data-scout="geral"]' : `[data-scout="${activeScout}"]`
+    const chip = chipContainerRef.current.querySelector(selector) as HTMLElement | null
+    chip?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+  }, [activeScout])
 
   function handleTouchStart(e: React.TouchEvent) {
     touchStartX.current = e.touches[0].clientX
@@ -223,6 +236,7 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
     >
       {/* Chips de seleção de scout */}
       <div
+        ref={chipContainerRef}
         style={{
           display: 'flex',
           gap: '0.35rem',
@@ -235,6 +249,7 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
         }}
       >
         <button
+          data-scout="geral"
           onClick={() => setActiveScout(null)}
           style={{
             ...MONO,
@@ -256,6 +271,7 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
         {Object.entries(SCOUT_FILTERS).map(([slug, { label }]) => (
           <button
             key={slug}
+            data-scout={slug}
             onClick={() => setActiveScout(slug)}
             style={{
               ...MONO,
@@ -276,6 +292,21 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
           </button>
         ))}
       </div>
+
+      <style>{`
+        @keyframes rank-slide-in {
+          from { opacity: 0; transform: translateX(var(--slide-x, 0px)); }
+          to   { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
+
+      <div
+        key={transitionKey}
+        style={{
+          animation: 'rank-slide-in 0.2s ease-out',
+          ['--slide-x' as string]: `${swipeDir.current * 24}px`,
+        }}
+      >
 
       <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <thead>
@@ -387,6 +418,7 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
             {emoji} {label}
           </span>
         ))}
+      </div>
       </div>
     </div>
   )
