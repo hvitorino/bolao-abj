@@ -255,10 +255,13 @@ function PhaseLabel({ text }: { text: string }) {
 function BracketConnector({
   node,
   parentCount = 1,
+  reversed = false,
 }: {
   node: BracketSlotWithGame
   /** Number of parent cards on the right (1 = normal, 2 = FINAL+3RD) */
   parentCount?: number
+  /** When true, inverts x coordinates for right-side (mirrored) bracket */
+  reversed?: boolean
 }) {
   const children = node.children
   if (children.length === 0) return null
@@ -278,7 +281,7 @@ function BracketConnector({
   const lastCenter = childCenters[childCenters.length - 1]
   const midY = (firstCenter + lastCenter) / 2
 
-  // Compute Y positions for right-side horizontal lines
+  // Compute Y positions for parent horizontal lines
   const parentLinesY: number[] = []
   if (parentCount === 1) {
     // Single card: centered at midY (flexbox centers the card in the row)
@@ -289,6 +292,11 @@ function BracketConnector({
     parentLinesY.push(midY - halfSpan)  // top card center
     parentLinesY.push(midY + halfSpan)  // bottom card center
   }
+
+  // In reversed mode: parent is on the LEFT (x=0), children are on the RIGHT (x=12)
+  // Normal mode:      parent is on the RIGHT (x=12), children are on the LEFT (x=0)
+  const parentX = reversed ? 0 : 12
+  const childX = reversed ? 12 : 0
 
   return (
     <div
@@ -304,13 +312,13 @@ function BracketConnector({
       <svg width="12" height={totalHeight} viewBox={`0 0 12 ${totalHeight}`}>
         {/* Vertical line connecting children */}
         <line x1="6" y1={firstCenter} x2="6" y2={lastCenter} stroke="var(--color-border)" strokeWidth="1" />
-        {/* Horizontal lines to parent cards (right) */}
+        {/* Horizontal lines to parent cards */}
         {parentLinesY.map((py, i) => (
-          <line key={i} x1="6" y1={py} x2="12" y2={py} stroke="var(--color-border)" strokeWidth="1" />
+          <line key={i} x1="6" y1={py} x2={parentX} y2={py} stroke="var(--color-border)" strokeWidth="1" />
         ))}
-        {/* Horizontal lines to each child (left) */}
+        {/* Horizontal lines to each child */}
         {childCenters.map((cy, i) => (
-          <line key={i} x1="0" y1={cy} x2="6" y2={cy} stroke="var(--color-border)" strokeWidth="1" />
+          <line key={i} x1={childX} y1={cy} x2="6" y2={cy} stroke="var(--color-border)" strokeWidth="1" />
         ))}
       </svg>
     </div>
@@ -374,20 +382,27 @@ function BracketColumn({
   )
 }
 
-// ── Final + 3rd Place merged column ───────────────────────────────
+// ── Recursive bracket column (right/mirrored side) ───────────────
 
-function FinalAnd3rdColumn({
-  final,
-  third,
+function BracketColumnRight({
+  node,
   predictionMap,
   onGameClick,
 }: {
-  final: BracketSlotWithGame
-  third: BracketSlotWithGame
+  node: BracketSlotWithGame
   predictionMap: Record<string, Prediction>
   onGameClick?: (gameId: string) => void
 }) {
-  const sfChildren = final.children // SF-01, SF-02
+  const hasChildren = node.children.length > 0
+
+  if (!hasChildren) {
+    const pred = node.game ? predictionMap[node.game.id] : undefined
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <CompactSlotCard slot={node} prediction={pred} onGameClick={onGameClick} />
+      </div>
+    )
+  }
 
   return (
     <div
@@ -398,7 +413,16 @@ function FinalAnd3rdColumn({
         gap: '0.35rem',
       }}
     >
-      {/* SF subtree (left) */}
+      {/* Current node card (left) */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <PhaseLabel text={node.phase} />
+        <CompactSlotCard slot={node} prediction={node.game ? predictionMap[node.game.id] : undefined} onGameClick={onGameClick} />
+      </div>
+
+      {/* Connector lines (reversed: children to the right, parent to the left) */}
+      <BracketConnector node={node} reversed={true} />
+
+      {/* Children column (right) */}
       <div
         style={{
           display: 'flex',
@@ -407,15 +431,84 @@ function FinalAnd3rdColumn({
           alignItems: 'stretch',
         }}
       >
-        {sfChildren.map((child) => (
-          <BracketColumn key={child.id} node={child} predictionMap={predictionMap} onGameClick={onGameClick} />
+        {node.children.map((child) => (
+          <BracketColumnRight key={child.id} node={child} predictionMap={predictionMap} onGameClick={onGameClick} />
         ))}
       </div>
+    </div>
+  )
+}
 
-      {/* Connector with 2 parent lines for FINAL + 3RD */}
-      <BracketConnector node={final} parentCount={2} />
+// ── Symmetric bracket (left half | FINAL+3RD center | right half) ─
 
-      {/* FINAL + 3RD stacked (right) */}
+function SymmetricBracket({
+  finalRoot,
+  thirdRoot,
+  predictionMap,
+  onGameClick,
+}: {
+  finalRoot: BracketSlotWithGame
+  thirdRoot: BracketSlotWithGame
+  predictionMap: Record<string, Prediction>
+  onGameClick?: (gameId: string) => void
+}) {
+  // Safety fallback: if FINAL doesn't have 2 SF children, render legacy layout
+  if (finalRoot.children.length < 2) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: '0.35rem',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: `${CHILD_GAP}px`,
+            alignItems: 'stretch',
+          }}
+        >
+          {finalRoot.children.map((child) => (
+            <BracketColumn key={child.id} node={child} predictionMap={predictionMap} onGameClick={onGameClick} />
+          ))}
+        </div>
+        <BracketConnector node={finalRoot} parentCount={2} />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.3rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <PhaseLabel text={finalRoot.phase} />
+            <CompactSlotCard slot={finalRoot} prediction={finalRoot.game ? predictionMap[finalRoot.game.id] : undefined} onGameClick={onGameClick} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <PhaseLabel text={thirdRoot.phase} />
+            <CompactSlotCard slot={thirdRoot} prediction={thirdRoot.game ? predictionMap[thirdRoot.game.id] : undefined} onGameClick={onGameClick} />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const sf01 = finalRoot.children[0]
+  const sf02 = finalRoot.children[1]
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: '0.35rem',
+      }}
+    >
+      {/* Chave esquerda: SF-01 e toda a subárvore (QF→R16→R32) */}
+      <BracketColumn node={sf01} predictionMap={predictionMap} onGameClick={onGameClick} />
+
+      {/* Conector esquerdo SF-01 → FINAL */}
+      <div style={{ width: 8, height: 1, flexShrink: 0, background: 'var(--color-border)' }} />
+
+      {/* Centro: FINAL + 3º LUGAR empilhados */}
       <div
         style={{
           display: 'flex',
@@ -424,18 +517,21 @@ function FinalAnd3rdColumn({
           gap: '0.3rem',
         }}
       >
-        {/* FINAL */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <PhaseLabel text={final.phase} />
-          <CompactSlotCard slot={final} prediction={final.game ? predictionMap[final.game.id] : undefined} onGameClick={onGameClick} />
+          <PhaseLabel text={finalRoot.phase} />
+          <CompactSlotCard slot={finalRoot} prediction={finalRoot.game ? predictionMap[finalRoot.game.id] : undefined} onGameClick={onGameClick} />
         </div>
-
-        {/* 3RD PLACE */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <PhaseLabel text={third.phase} />
-          <CompactSlotCard slot={third} prediction={third.game ? predictionMap[third.game.id] : undefined} onGameClick={onGameClick} />
+          <PhaseLabel text={thirdRoot.phase} />
+          <CompactSlotCard slot={thirdRoot} prediction={thirdRoot.game ? predictionMap[thirdRoot.game.id] : undefined} onGameClick={onGameClick} />
         </div>
       </div>
+
+      {/* Conector FINAL → SF-02 (direita) */}
+      <div style={{ width: 8, height: 1, flexShrink: 0, background: 'var(--color-border)' }} />
+
+      {/* Chave direita: SF-02 e toda a subárvore (QF→R16→R32), espelhada */}
+      <BracketColumnRight node={sf02} predictionMap={predictionMap} onGameClick={onGameClick} />
     </div>
   )
 }
@@ -531,9 +627,9 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
             <BracketColumn key={root.id} node={root} predictionMap={predictionState} onGameClick={handleGameClick} />
           ))}
 
-          {/* FINAL + 3RD merged column */}
+          {/* FINAL + 3RD — layout simétrico */}
           {finalRoot && thirdRoot && (
-            <FinalAnd3rdColumn final={finalRoot} third={thirdRoot} predictionMap={predictionState} onGameClick={handleGameClick} />
+            <SymmetricBracket finalRoot={finalRoot} thirdRoot={thirdRoot} predictionMap={predictionState} onGameClick={handleGameClick} />
           )}
 
           {/* If only FINAL exists (no 3RD), render solo */}
