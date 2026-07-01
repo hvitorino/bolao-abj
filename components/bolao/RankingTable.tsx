@@ -1,14 +1,59 @@
 'use client'
 
+import { useState } from 'react'
 import { useRankingRealtime } from '@/lib/hooks/useRankingRealtime'
 import { useLivePointsByUser } from '@/lib/hooks/useLivePointsByUser'
-import type { RankingEntry } from '@/lib/types/ranking'
+import type { RankingEntry, ScoutCounts } from '@/lib/types/ranking'
 import { RankingRow } from './RankingRow'
 import { SCOUT_META } from './ScoutBadges'
 
 interface RankingTableProps {
   currentUserId: string
   groupId: string
+}
+
+export const SCOUT_FILTERS: Record<string, { label: string; key: keyof ScoutCounts }> = {
+  exact:         { label: 'PLACAR CRAVADO',      key: 'exact' },
+  winner:        { label: 'ACERTOU VENCEDOR',     key: 'winner' },
+  winner_score:  { label: 'GOLS DO VENCEDOR',     key: 'winner_score' },
+  diff:          { label: 'DIFERENÇA DE GOLS',    key: 'diff' },
+  loser_score:   { label: 'GOLS DO PERDEDOR',     key: 'loser_score' },
+  goleada:       { label: 'GOLEADA',              key: 'goleada' },
+}
+
+// Reordena o ranking pela contagem do scout selecionado (client-side).
+// Aplica empate: mesma contagem = mesma posição (RANK).
+function applyScoutFilter(
+  ranking: RankingEntry[],
+  activeScout: string
+): RankingEntry[] {
+  const key = SCOUT_FILTERS[activeScout].key
+
+  const sorted = [...ranking].sort((a, b) => {
+    const countA = a.scout_counts?.[key] ?? 0
+    const countB = b.scout_counts?.[key] ?? 0
+    if (countB !== countA) return countB - countA
+    // Desempate: total_points desc
+    if (b.total_points !== a.total_points) return b.total_points - a.total_points
+    // Desempate final: nome A-Z
+    return a.participant_name.localeCompare(b.participant_name, 'pt-BR')
+  })
+
+  let previousRank = 0
+  let previousCount: number | null = null
+
+  return sorted.map((entry, index) => {
+    const count = entry.scout_counts?.[key] ?? 0
+    const rank =
+      previousCount !== null && count === previousCount
+        ? previousRank
+        : index + 1
+
+    previousRank = rank
+    previousCount = count
+
+    return { ...entry, rank_position: rank }
+  })
 }
 
 // Soma a pontuação parcial de jogos `live` à pontuação oficial e recalcula
@@ -55,9 +100,17 @@ const MONO: React.CSSProperties = {
 export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
   const { ranking, loading, error, lastUpdatedAt } = useRankingRealtime(groupId)
   const { livePoints, loading: livePointsLoading } = useLivePointsByUser(groupId)
+  const [activeScout, setActiveScout] = useState<string | null>(null)
 
   const hasLivePoints = Object.values(livePoints).some((points) => points > 0)
   const adjustedRanking = applyLivePoints(ranking, livePoints)
+
+  // Aplica filtro de scout (client-side) após live points
+  const displayRanking = activeScout
+    ? applyScoutFilter(adjustedRanking, activeScout)
+    : adjustedRanking
+
+  const scoutKey = activeScout ? SCOUT_FILTERS[activeScout].key : undefined
 
   if (loading || livePointsLoading) {
     return (
@@ -131,6 +184,62 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
         overflow: 'hidden',
       }}
     >
+      {/* Chips de seleção de scout */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '0.35rem',
+          overflowX: 'auto',
+          padding: '0.5rem 0.75rem',
+          borderBottom: '1px solid var(--color-border)',
+          whiteSpace: 'nowrap',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        }}
+      >
+        <button
+          onClick={() => setActiveScout(null)}
+          style={{
+            ...MONO,
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            padding: '0.25rem 0.6rem',
+            border: '1px solid var(--color-border)',
+            backgroundColor: activeScout === null ? 'var(--color-accent)' : 'transparent',
+            color: activeScout === null ? 'var(--color-bg)' : 'var(--color-muted)',
+            fontWeight: activeScout === null ? 'bold' : 'normal',
+            cursor: 'pointer',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+          }}
+        >
+          GERAL
+        </button>
+        {Object.entries(SCOUT_FILTERS).map(([slug, { label }]) => (
+          <button
+            key={slug}
+            onClick={() => setActiveScout(slug)}
+            style={{
+              ...MONO,
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              padding: '0.25rem 0.6rem',
+              border: '1px solid var(--color-border)',
+              backgroundColor: activeScout === slug ? 'var(--color-accent)' : 'transparent',
+              color: activeScout === slug ? 'var(--color-bg)' : 'var(--color-muted)',
+              fontWeight: activeScout === slug ? 'bold' : 'normal',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
         <thead>
           <tr
@@ -141,8 +250,12 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
           >
             <th style={{ ...thStyle, textAlign: 'right', width: '2.5rem' }}>#</th>
             <th style={{ ...thStyle, textAlign: 'left' }}>PARTICIPANTE</th>
-            <th style={{ ...thStyle, textAlign: 'center', width: '4.5rem' }}>PONTOS</th>
-            <th style={{ ...thStyle, textAlign: 'center', width: '3.5rem' }}>PALP.</th>
+            <th style={{ ...thStyle, textAlign: 'center', width: '5rem' }}>
+              {scoutKey ? SCOUT_FILTERS[activeScout!].label : 'PONTOS'}
+            </th>
+            {!scoutKey && (
+              <th style={{ ...thStyle, textAlign: 'center', width: '3.5rem' }}>PALP.</th>
+            )}
             <th
               className="hidden md:table-cell"
               style={{ ...thStyle, textAlign: 'center', width: '5rem' }}
@@ -152,12 +265,14 @@ export function RankingTable({ currentUserId, groupId }: RankingTableProps) {
           </tr>
         </thead>
         <tbody>
-          {adjustedRanking.map((entry) => (
+          {displayRanking.map((entry) => (
             <RankingRow
               key={entry.user_id}
               entry={entry}
               isCurrentUser={entry.user_id === currentUserId}
-              isLeader={entry.rank_position === 1 && entry.total_points > 0}
+              isLeader={entry.rank_position === 1 && (scoutKey ? (entry.scout_counts?.[scoutKey] ?? 0) : entry.total_points) > 0}
+              hidePalpites={!!scoutKey}
+              scoutKey={scoutKey}
             />
           ))}
         </tbody>
