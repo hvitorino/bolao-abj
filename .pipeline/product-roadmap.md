@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 77 features
-- Concluídas: 76
-- Em progresso: 1
+- Concluídas: 77
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -1008,7 +1008,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 77. ranking-por-scout — Ranking por Scout — em progresso
+### 77. ranking-por-scout — Ranking por Scout — concluída
 **Objetivo:** Permitir que o usuário selecione uma categoria de pontuação (scout) na aba Ranking via chips e veja o ranking reordenado instantaneamente pela quantidade de vezes que cada participante atingiu aquele scout, com a contagem exibida como métrica principal no lugar dos pontos totais.
 **Critérios de sucesso:**
 - Seletor de scout com chips acima da tabela: "Geral" (padrão) + 6 scouts derivados do breakdown de scores
