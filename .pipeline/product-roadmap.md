@@ -4,8 +4,8 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 78 features
-- Concluídas: 77
-- Em progresso: 1
+- Concluídas: 78
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -1008,7 +1008,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 
 ---
 
-### 78. fix-chaveamento — Correção do Chaveamento (Cruzamentos + Layout Simétrico) — em progresso
+### 78. fix-chaveamento — Correção do Chaveamento (Cruzamentos + Layout Simétrico) — concluída
 **Objetivo:** Corrigir os cruzamentos incorretos nos dados do bracket_slots (next_slot_label e source_home/source_away divergem do chaveamento oficial da FIFA 2026) e reformular o layout visual do BracketTree.tsx para exibição simétrica clássica: chave esquerda | FINAL+3º LUGAR ao centro | chave direita espelhada.
 **Critérios de sucesso:**
 - Migration SQL aplicada: next_slot_label e source_home/source_away dos bracket_slots refletem o chaveamento oficial da FIFA 2026
@@ -1016,6 +1016,7 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Scroll horizontal funciona em mobile
 - Clique nos cards continua abrindo o GameAnaliseDrawer
 **Dependências:** inline-bracket-expand, analise-confronto
+**Observação de conclusão:** aprovada e mergeada na main em 2026-07-01. Migration SQL corrige pareamentos R32/R16 para refletir o chaveamento oficial FIFA 2026. Layout simétrico clássico implementado: chave esquerda | FINAL+3RD ao centro | chave direita espelhada. Novo componente BracketColumnRight (espelho recursivo) e SymmetricBracket (substitui FinalAnd3rdColumn). Scroll horizontal, interatividade de cards e prop onGameClick preservados sem regressão.
 
 ---
 
