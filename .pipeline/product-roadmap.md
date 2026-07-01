@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 76 features
+- Total: 77 features
 - Concluídas: 76
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -1005,3 +1005,17 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Comportamento visual (cores, formatação, layout) permanece idêntico
 - Funciona na página `/jogos/[gameId]/analise` e no drawer de análise
 **Dependências:** palpites-analise-drawer, analise-confronto
+
+---
+
+### 77. ranking-por-scout — Ranking por Scout — em progresso
+**Objetivo:** Permitir que o usuário selecione uma categoria de pontuação (scout) na aba Ranking via chips e veja o ranking reordenado instantaneamente pela quantidade de vezes que cada participante atingiu aquele scout, com a contagem exibida como métrica principal no lugar dos pontos totais.
+**Critérios de sucesso:**
+- Seletor de scout com chips acima da tabela: "Geral" (padrão) + 6 scouts derivados do breakdown de scores
+- Ao selecionar um scout, ranking reordenado por contagem (decrescente), com nova numeração de posição
+- Coluna PONTOS substituída pela contagem do scout, com cabeçalho refletindo o nome do scout
+- Troca entre scouts instantânea (client-side, sem chamada extra à API)
+- Chip ativo destacado visualmente seguindo o padrão de chips do design system
+- Layout segue DESIGN.md: monospace, paleta verde/amarelo/azul, dense, sem ícones decorativos
+- Funciona em mobile (coluna única)
+**Dependências:** ranking, ranking-scouts
