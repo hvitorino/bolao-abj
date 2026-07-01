@@ -531,14 +531,14 @@ function MatchCard({
                 <th style={{ ...thStyle, textAlign: 'left' }}>Participante</th>
                 <th style={thStyle}>Palpite</th>
                 {isKnockout && match.allow_extra_time && (
-                  <th style={{ ...thStyle, color: 'var(--color-muted)' }}>Prorr.</th>
+                  <th style={{ ...thStyle, color: 'var(--color-muted)' }}>PT</th>
                 )}
                 {isKnockout && match.allow_penalties && (
-                  <th style={{ ...thStyle, color: 'var(--color-muted)' }}>Pênaltis</th>
+                  <th style={{ ...thStyle, color: 'var(--color-muted)' }}>PEN</th>
                 )}
                 {!pending && (
                   <>
-                    <th style={thStyle}>Acertos</th>
+                    <th style={thStyle}>✓</th>
                     <th style={{ ...thStyle, textAlign: 'right' }}>Pts</th>
                   </>
                 )}
