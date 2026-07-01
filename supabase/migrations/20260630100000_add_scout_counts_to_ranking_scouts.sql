@@ -1,5 +1,6 @@
 -- Migration: estende get_ranking_scouts com contagens dos 4 scouts restantes
 -- (winner_score_count, diff_count, loser_score_count, goleada_count)
+-- Versão otimizada: consolida 6 LEFT JOINs em scores num único CTE com agregação condicional
 -- Necessário DROP pois o tipo de retorno (TABLE) mudou com as novas colunas
 
 DROP FUNCTION IF EXISTS get_ranking_scouts(uuid);
@@ -29,58 +30,39 @@ AS $$
     GROUP BY round
     ORDER BY MAX(match_date) DESC
     LIMIT 2
+  ),
+  -- Única passagem em scores + games: extrai todos os breakdowns de uma vez
+  scored_games AS (
+    SELECT
+      s.user_id,
+      s.game_id,
+      (s.breakdown->>'exact')::int         AS exact_val,
+      (s.breakdown->>'winner')::int        AS winner_val,
+      (s.breakdown->>'winner_score')::int  AS winner_score_val,
+      (s.breakdown->>'diff')::int          AS diff_val,
+      (s.breakdown->>'loser_score')::int   AS loser_score_val,
+      (s.breakdown->>'goleada')::int       AS goleada_val
+    FROM scores s
+    JOIN games g ON g.id = s.game_id AND g.status IN ('live', 'finished')
+    WHERE s.group_id = p_group_id
   )
   SELECT
     p.id AS user_id,
-    COALESCE(COUNT(DISTINCT s_exact.game_id), 0)          AS exact_count,
-    COALESCE(COUNT(DISTINCT s_winner.game_id), 0)         AS winner_count,
-    COALESCE(miss_agg.miss_count, 0)                      AS miss_count,
-    COALESCE(pred_active_agg.cnt, 0)                      AS pred_active,
-    COALESCE(pred_total_agg.cnt, 0)                       AS pred_total,
-    COALESCE(pred_last2_agg.cnt, 0)                       AS pred_last_two_rounds,
-    COALESCE(COUNT(DISTINCT s_ws.game_id), 0)             AS winner_score_count,
-    COALESCE(COUNT(DISTINCT s_diff.game_id), 0)           AS diff_count,
-    COALESCE(COUNT(DISTINCT s_ls.game_id), 0)             AS loser_score_count,
-    COALESCE(COUNT(DISTINCT s_gol.game_id), 0)            AS goleada_count
+    COALESCE(COUNT(DISTINCT CASE WHEN sg.exact_val > 0         THEN sg.game_id END), 0) AS exact_count,
+    COALESCE(COUNT(DISTINCT CASE WHEN sg.winner_val > 0        THEN sg.game_id END), 0) AS winner_count,
+    COALESCE(miss_agg.miss_count, 0)                                                    AS miss_count,
+    COALESCE(pred_active_agg.cnt, 0)                                                    AS pred_active,
+    COALESCE(pred_total_agg.cnt, 0)                                                     AS pred_total,
+    COALESCE(pred_last2_agg.cnt, 0)                                                     AS pred_last_two_rounds,
+    COALESCE(COUNT(DISTINCT CASE WHEN sg.winner_score_val > 0  THEN sg.game_id END), 0) AS winner_score_count,
+    COALESCE(COUNT(DISTINCT CASE WHEN sg.diff_val > 0          THEN sg.game_id END), 0) AS diff_count,
+    COALESCE(COUNT(DISTINCT CASE WHEN sg.loser_score_val > 0   THEN sg.game_id END), 0) AS loser_score_count,
+    COALESCE(COUNT(DISTINCT CASE WHEN sg.goleada_val > 0       THEN sg.game_id END), 0) AS goleada_count
   FROM group_members gm
   JOIN profiles p ON p.id = gm.user_id
-  -- exact_count
-  LEFT JOIN scores s_exact
-    ON s_exact.user_id = gm.user_id
-   AND s_exact.group_id = p_group_id
-   AND (s_exact.breakdown->>'exact')::int > 0
-   AND EXISTS (SELECT 1 FROM games g WHERE g.id = s_exact.game_id AND g.status IN ('live','finished'))
-  -- winner_count
-  LEFT JOIN scores s_winner
-    ON s_winner.user_id = gm.user_id
-   AND s_winner.group_id = p_group_id
-   AND (s_winner.breakdown->>'winner')::int > 0
-   AND EXISTS (SELECT 1 FROM games g WHERE g.id = s_winner.game_id AND g.status IN ('live','finished'))
-  -- winner_score_count
-  LEFT JOIN scores s_ws
-    ON s_ws.user_id = gm.user_id
-   AND s_ws.group_id = p_group_id
-   AND (s_ws.breakdown->>'winner_score')::int > 0
-   AND EXISTS (SELECT 1 FROM games g WHERE g.id = s_ws.game_id AND g.status IN ('live','finished'))
-  -- diff_count
-  LEFT JOIN scores s_diff
-    ON s_diff.user_id = gm.user_id
-   AND s_diff.group_id = p_group_id
-   AND (s_diff.breakdown->>'diff')::int > 0
-   AND EXISTS (SELECT 1 FROM games g WHERE g.id = s_diff.game_id AND g.status IN ('live','finished'))
-  -- loser_score_count
-  LEFT JOIN scores s_ls
-    ON s_ls.user_id = gm.user_id
-   AND s_ls.group_id = p_group_id
-   AND (s_ls.breakdown->>'loser_score')::int > 0
-   AND EXISTS (SELECT 1 FROM games g WHERE g.id = s_ls.game_id AND g.status IN ('live','finished'))
-  -- goleada_count
-  LEFT JOIN scores s_gol
-    ON s_gol.user_id = gm.user_id
-   AND s_gol.group_id = p_group_id
-   AND (s_gol.breakdown->>'goleada')::int > 0
-   AND EXISTS (SELECT 1 FROM games g WHERE g.id = s_gol.game_id AND g.status IN ('live','finished'))
-  -- miss_count
+  -- Única junção com scored_games (substitui 6 LEFT JOINs anteriores)
+  LEFT JOIN scored_games sg ON sg.user_id = gm.user_id
+  -- miss_count: jogos live/finished com palpite mas sem winner > 0 em scores
   LEFT JOIN (
     SELECT pr.user_id, COUNT(*) AS miss_count
     FROM predictions pr
@@ -95,7 +77,7 @@ AS $$
       )
     GROUP BY pr.user_id
   ) miss_agg ON miss_agg.user_id = gm.user_id
-  -- pred_active
+  -- pred_active: palpites em jogos live/finished
   LEFT JOIN (
     SELECT pr.user_id, COUNT(*) AS cnt
     FROM predictions pr
@@ -103,7 +85,7 @@ AS $$
     WHERE pr.group_id = p_group_id
     GROUP BY pr.user_id
   ) pred_active_agg ON pred_active_agg.user_id = gm.user_id
-  -- pred_total
+  -- pred_total: palpites em qualquer status
   LEFT JOIN (
     SELECT pr.user_id, COUNT(*) AS cnt
     FROM predictions pr
