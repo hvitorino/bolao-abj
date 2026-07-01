@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 77 features
+- Total: 78 features
 - Concluídas: 77
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -1005,6 +1005,17 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Comportamento visual (cores, formatação, layout) permanece idêntico
 - Funciona na página `/jogos/[gameId]/analise` e no drawer de análise
 **Dependências:** palpites-analise-drawer, analise-confronto
+
+---
+
+### 78. fix-chaveamento — Correção do Chaveamento (Cruzamentos + Layout Simétrico) — em progresso
+**Objetivo:** Corrigir os cruzamentos incorretos nos dados do bracket_slots (next_slot_label e source_home/source_away divergem do chaveamento oficial da FIFA 2026) e reformular o layout visual do BracketTree.tsx para exibição simétrica clássica: chave esquerda | FINAL+3º LUGAR ao centro | chave direita espelhada.
+**Critérios de sucesso:**
+- Migration SQL aplicada: next_slot_label e source_home/source_away dos bracket_slots refletem o chaveamento oficial da FIFA 2026
+- Layout simétrico: BracketColumn (chave esquerda) | FINAL+3RD (centro) | BracketColumnRight espelhada (chave direita)
+- Scroll horizontal funciona em mobile
+- Clique nos cards continua abrindo o GameAnaliseDrawer
+**Dependências:** inline-bracket-expand, analise-confronto
 
 ---
 
