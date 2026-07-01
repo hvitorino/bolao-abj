@@ -543,9 +543,7 @@ function MatchCard({
                     </td>
                     <td style={{ ...tdStyle, textAlign: 'left' }}>
                       {userName(p.user_id)}
-                      {tiers[p.user_id] === 'pro' && (
-                        <span style={{ marginLeft: '0.3rem', fontSize: '9px', fontWeight: 'bold', color: 'var(--color-accent)', verticalAlign: 'top' }}>PRO</span>
-                      )}
+                      <span style={{ marginLeft: '0.3rem', fontSize: '9px', fontWeight: 'bold', color: 'var(--color-accent)', verticalAlign: 'top' }}>PRO</span>
                     </td>
                     <td style={{ ...tdStyle, textAlign: 'center', color: 'var(--color-accent)', fontWeight: 'bold' }}>
                       {p.home_score}×{p.away_score}
@@ -719,9 +717,7 @@ function RankingSection({
                     }}
                   >
                     {name}
-                    {tiers[entry.user_id] === 'pro' && (
-                      <span style={{ marginLeft: '0.3rem', fontSize: '9px', fontWeight: 'bold', color: 'var(--color-accent)', verticalAlign: 'top' }}>PRO</span>
-                    )}
+                    <span style={{ marginLeft: '0.3rem', fontSize: '9px', fontWeight: 'bold', color: 'var(--color-accent)', verticalAlign: 'top' }}>PRO</span>
                   </td>
                   <td
                     style={{
