@@ -3,7 +3,7 @@
 **Slug:** maximize-analise-drawer
 **Branch:** feature/maximize-analise-drawer
 **Data:** 2026-07-01
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

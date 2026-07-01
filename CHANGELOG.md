@@ -6,6 +6,17 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [maximize-analise-drawer] — Maximizar Bottom Sheet de Análise de Jogo — 2026-07-01
+
+- Botão `▲`/`▼` adicionado à direita do drag handle do `GameAnaliseDrawer` para expandir/restaurar o bottom sheet
+- Estado `isMaximized: boolean` (padrão `false`) controla o tamanho do painel: `72vh` (normal) vs `calc(100dvh - 52px - env(safe-area-inset-bottom) - env(safe-area-inset-top))` (maximizado)
+- `borderRadius` do painel transiciona de `8px 8px 0 0` para `0` ao maximizar
+- Animação de `250ms ease` em `transform`, `max-height` e `border-radius` via `transition` expandida
+- `onTouchEnd` no botão limpa estado residual de drag em mobile (`isDragging`, `dragOffset`, `touchStartY`)
+- `isMaximized` resetado ao fechar o drawer e ao abrir para um novo jogo
+- Botão acessível por teclado com `aria-label` dinâmico em português e área de toque mínima de 44×44px
+- Arquivo modificado: `components/bolao/GameAnaliseDrawer.tsx` (único)
+
 ## [fix-chaveamento] — Correção do Chaveamento (Cruzamentos + Layout Simétrico) — 2026-07-01
 
 - Migration `supabase/migrations/20260701000000_fix_bracket_slot_pairings.sql` corrige `next_slot_label` de 10 slots R32 e `source_home`/`source_away` de 7 slots R16 para refletir o chaveamento oficial FIFA 2026
