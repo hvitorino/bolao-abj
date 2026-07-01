@@ -255,10 +255,13 @@ function PhaseLabel({ text }: { text: string }) {
 function BracketConnector({
   node,
   parentCount = 1,
+  reversed = false,
 }: {
   node: BracketSlotWithGame
   /** Number of parent cards on the right (1 = normal, 2 = FINAL+3RD) */
   parentCount?: number
+  /** When true, inverts x coordinates for right-side (mirrored) bracket */
+  reversed?: boolean
 }) {
   const children = node.children
   if (children.length === 0) return null
@@ -278,7 +281,7 @@ function BracketConnector({
   const lastCenter = childCenters[childCenters.length - 1]
   const midY = (firstCenter + lastCenter) / 2
 
-  // Compute Y positions for right-side horizontal lines
+  // Compute Y positions for parent horizontal lines
   const parentLinesY: number[] = []
   if (parentCount === 1) {
     // Single card: centered at midY (flexbox centers the card in the row)
@@ -289,6 +292,11 @@ function BracketConnector({
     parentLinesY.push(midY - halfSpan)  // top card center
     parentLinesY.push(midY + halfSpan)  // bottom card center
   }
+
+  // In reversed mode: parent is on the LEFT (x=0), children are on the RIGHT (x=12)
+  // Normal mode:      parent is on the RIGHT (x=12), children are on the LEFT (x=0)
+  const parentX = reversed ? 0 : 12
+  const childX = reversed ? 12 : 0
 
   return (
     <div
@@ -304,13 +312,13 @@ function BracketConnector({
       <svg width="12" height={totalHeight} viewBox={`0 0 12 ${totalHeight}`}>
         {/* Vertical line connecting children */}
         <line x1="6" y1={firstCenter} x2="6" y2={lastCenter} stroke="var(--color-border)" strokeWidth="1" />
-        {/* Horizontal lines to parent cards (right) */}
+        {/* Horizontal lines to parent cards */}
         {parentLinesY.map((py, i) => (
-          <line key={i} x1="6" y1={py} x2="12" y2={py} stroke="var(--color-border)" strokeWidth="1" />
+          <line key={i} x1="6" y1={py} x2={parentX} y2={py} stroke="var(--color-border)" strokeWidth="1" />
         ))}
-        {/* Horizontal lines to each child (left) */}
+        {/* Horizontal lines to each child */}
         {childCenters.map((cy, i) => (
-          <line key={i} x1="0" y1={cy} x2="6" y2={cy} stroke="var(--color-border)" strokeWidth="1" />
+          <line key={i} x1={childX} y1={cy} x2="6" y2={cy} stroke="var(--color-border)" strokeWidth="1" />
         ))}
       </svg>
     </div>
