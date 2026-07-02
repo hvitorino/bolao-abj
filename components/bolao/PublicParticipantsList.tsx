@@ -3,8 +3,12 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ParticipantEntry } from '@/lib/types/participant'
 import { calculateLiveScore } from '@/lib/scoring'
-import { createClient } from '@/lib/supabase/client'
-import type { ScoreBreakdown } from '@/lib/types/score'
+import {
+  acquirePointsCache,
+  releasePointsCache,
+  ensurePointsForGame,
+  subscribeToPointsUpdates,
+} from '@/lib/cache/points-cache'
 
 interface PublicParticipantsListProps {
   participants: ParticipantEntry[]
@@ -178,48 +182,35 @@ export default function PublicParticipantsList({
     capturePositions()
   }, [sortedParticipants])
 
-  // Realtime de scores — somente para jogos encerrados
+  // Pontuação de jogos encerrados via PointsCache (substitui canal public-scores-*)
   // (ao vivo, pontuação é calculada no cliente; pending, não há pontuação)
   useEffect(() => {
     if (gameStatus !== 'finished') return
 
-    const supabase = createClient()
+    acquirePointsCache(groupId)
 
-    const channel = supabase
-      .channel(`public-scores-${gameId}-${groupId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'scores',
-          filter: `game_id=eq.${gameId}`,
-        },
-        (payload) => {
-          const newScore = payload.new as {
-            user_id: string
-            points: number
-            breakdown: ScoreBreakdown
-          }
-          if (!newScore?.user_id) return
+    // Carrega scores deste jogo no cache (one-shot fetch, sem data específica)
+    ensurePointsForGame(groupId, gameId)
 
-          // Captura posições ANTES de atualizar o estado (step FIRST do FLIP)
-          capturePositions()
+    // Listener granular: atualiza apenas o participante cujo score mudou
+    const unsub = subscribeToPointsUpdates(groupId, 'PublicParticipantsList', (pts) => {
+      if (pts.game_id !== gameId) return
 
-          // Atualiza apenas participantes que pertencem ao grupo (já filtrados via SSR)
-          setParticipants((prev) =>
-            prev.map((p) =>
-              p.userId === newScore.user_id
-                ? { ...p, points: newScore.points, breakdown: newScore.breakdown }
-                : p
-            )
-          )
-        }
+      // Captura posições ANTES de atualizar o estado (step FIRST do FLIP)
+      capturePositions()
+
+      setParticipants((prev) =>
+        prev.map((p) =>
+          p.userId === pts.user_id
+            ? { ...p, points: pts.points, breakdown: pts.breakdown }
+            : p
+        )
       )
-      .subscribe()
+    })
 
     return () => {
-      supabase.removeChannel(channel)
+      unsub()
+      releasePointsCache(groupId)
     }
   }, [gameId, groupId, gameStatus])
 
