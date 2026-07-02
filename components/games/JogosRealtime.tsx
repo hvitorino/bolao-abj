@@ -46,6 +46,7 @@ export default function JogosRealtime({
   if (scoresLoading && liveGames.length === 0) {
     return (
       <div
+        suppressHydrationWarning
         style={{
           fontFamily: "'JetBrains Mono', 'Courier New', monospace",
           color: 'var(--color-muted)',
@@ -64,6 +65,7 @@ export default function JogosRealtime({
   if (liveGames.length === 0) {
     return (
       <div
+        suppressHydrationWarning
         style={{
           border: '1px solid var(--color-border)',
           backgroundColor: 'var(--color-surface)',
