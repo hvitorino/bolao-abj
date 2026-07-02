@@ -3,9 +3,9 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 80 features
+- Total: 81 features
 - Concluídas: 80
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
@@ -1046,6 +1046,19 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Em desktop, o comportamento maximizado é adequado (modal centralizado mais alto)
 - Nenhuma regressão nas funcionalidades existentes do drawer (palpite, análise, standings)
 **Dependências:** palpites-analise-drawer, analise-confronto
+
+---
+
+### 81. centralizar-cache-v2 — Centralização de Caches (ScoreCache + PredictionCache + PointsCache) — em progresso
+**Objetivo:** Centralizar todos os acessos a games/predictions/scores em três caches singleton (ScoreCache, PredictionCache, PointsCache — novo), eliminando canais Realtime redundantes e garantindo máximo 3 canais por usuário conectado.
+**Critérios de sucesso:**
+- Máximo 3 canais Realtime por usuário (live-scores-global, predictions-*, points-*)
+- Hooks/componentes não abrem canal próprio nem consultam tabela crua
+- Arquivos deletados: useGameRealtime.ts, useScoreRealtime.ts, useParticipantsRealtime.ts
+- npm run build passa ao fim de cada stage
+- Zero regressão em funcionalidades existentes
+**Dependências:** score-prediction-cache (ScoreCache + PredictionCache já existentes)
+**Spec:** `.pipeline/centralizar-cache-v2.md` (8 stages; Stage 0 confirmado sem migration)
 
 ---
 
