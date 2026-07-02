@@ -1065,10 +1065,10 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Stage 2 — `useRankingRealtime` no event-bus do PointsCache: concluído
 - Stage 3 — `useLivePointsByUser` + `useLiveTodayRanking` leem dos caches: concluído
 - Stage 4 — `usePalpitesAoVivo` lê dos caches: concluído
-- Stage 5 — Migrar `GameCard` e apagar o trio legado: pendente
-- Stage 6 — `PublicParticipantsList` no PointsCache: pendente
-- Stage 7 — `useDailyRecap` lê dos caches: pendente
-- Stage 8 — Convergir páginas públicas de agregado: pendente
+- Stage 5 — Migrar `GameCard` e apagar o trio legado: concluído
+- Stage 6 — `PublicParticipantsList` no PointsCache: concluído
+- Stage 7 — `useDailyRecap` lê dos caches: concluído
+- Stage 8 — Convergir páginas públicas de agregado: concluído
 
 ---
 
