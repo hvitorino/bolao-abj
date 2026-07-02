@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { calculateLiveScore } from '@/lib/scoring'
 import { subscribeToGameUpdates, acquireGlobalChannel, releaseGlobalChannel } from '@/lib/cache/score-cache'
+import { subscribeToPredictionInvalidations, acquirePredictionCache, releasePredictionCache } from '@/lib/cache/prediction-cache'
 import type { ScoreBreakdown } from '@/lib/types/score'
 import type { RankingEntry } from '@/lib/types/ranking'
 
@@ -364,9 +365,17 @@ export function usePalpitesAoVivo(
     acquireGlobalChannel()
 
     let debounceTimer: number | undefined
-    const unsub = subscribeToGameUpdates(() => {
+    const unsubGame = subscribeToGameUpdates(() => {
       window.clearTimeout(debounceTimer)
       debounceTimer = window.setTimeout(() => { void fetchAll() }, 1000)
+    })
+
+    // Também escuta mudanças de palpites via PredictionCache (palpites de outros usuários)
+    acquirePredictionCache(groupId)
+    let debouncePredTimer: number | undefined
+    const unsubPred = subscribeToPredictionInvalidations(groupId, () => {
+      window.clearTimeout(debouncePredTimer)
+      debouncePredTimer = window.setTimeout(() => { void fetchAll() }, 500)
     })
 
     function onVisibilityChange() {
@@ -379,8 +388,11 @@ export function usePalpitesAoVivo(
     return () => {
       window.clearTimeout(initialTimer)
       window.clearTimeout(debounceTimer)
-      unsub()
+      window.clearTimeout(debouncePredTimer)
+      unsubGame()
       releaseGlobalChannel()
+      unsubPred()
+      releasePredictionCache(groupId)
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
