@@ -1062,8 +1062,8 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 **Progresso:**
 - Stage 0 — Verificação DB (sem código): concluído — pré-requisitos confirmados, nenhuma migration necessária
 - Stage 1 — Criar `lib/cache/points-cache.ts`: concluído — PointsCache singleton implementado como dead code seguro
-- Stage 2 — `useRankingRealtime` no event-bus do PointsCache: pendente
-- Stage 3 — `useLivePointsByUser` + `useLiveTodayRanking` leem dos caches: pendente
+- Stage 2 — `useRankingRealtime` no event-bus do PointsCache: concluído
+- Stage 3 — `useLivePointsByUser` + `useLiveTodayRanking` leem dos caches: concluído
 - Stage 4 — `usePalpitesAoVivo` lê dos caches: pendente
 - Stage 5 — Migrar `GameCard` e apagar o trio legado: pendente
 - Stage 6 — `PublicParticipantsList` no PointsCache: pendente
