@@ -3,7 +3,7 @@
 **Slug:** centralizar-cache-v2-stage1
 **Branch:** feature/centralizar-cache-v2-stage1
 **Data:** 2026-07-02
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 

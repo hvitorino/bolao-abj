@@ -6,6 +6,15 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [centralizar-cache-v2-stage1] — PointsCache (Singleton de Pontuações) — 2026-07-02
+
+- **Novo módulo:** `lib/cache/points-cache.ts` — singleton de cache para a tabela `scores`, escopado por `groupId`
+- **Estrutura interna:** `Map<gameId, Map<userId, CachedPoints>>` nativa (sem flat-key) — evita o bug de upsert silenciosamente descartado do `PredictionCache`
+- **API exportada:** `ensurePoints`, `ensurePointsForGame`, `getCachedPoints`, `getPointsFor`, `subscribeToPointsUpdates`, `subscribeToPointsInvalidations`, `acquirePointsCache`, `releasePointsCache`, `clearPointsCache`
+- **Realtime:** canal `points-${groupId}` na tabela `scores` com filtro `group_id=eq.${groupId}`, INSERT/UPDATE/DELETE com upsert incondicional
+- **Polling:** intervalo 60s + `visibilitychange` como fallback para reconexão após sleep
+- **Dead code seguro:** arquivo não importado em nenhum outro módulo até Stage 2
+
 ## [score-prediction-cache] — Cache Centralizado de Placar e Palpites — 2026-07-01
 
 - **Infraestrutura:** `lib/cache/score-cache.ts` (singleton com Realtime global para `games` — 1 canal vs N canais) + `lib/cache/prediction-cache.ts` (singleton com Realtime para `predictions` por grupo + Polling 60s)
