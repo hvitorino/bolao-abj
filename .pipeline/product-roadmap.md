@@ -3,12 +3,28 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 79 features
+- Total: 80 features
 - Concluídas: 79
-- Em progresso: 0
+- Em progresso: 1
 - Pendentes: 0
 
 ## Features Priorizadas
+
+### 80. score-prediction-cache — Cache Centralizado de Placar e Palpites — em progresso
+**Objetivo:** Centralizar a atualização de placares ao vivo e palpites em dois caches module-level (ScoreCache + PredictionCache), eliminando a duplicação atual de 6 hooks com queries redundantes. Placar usa Realtime + Polling 30s gerenciado por status do jogo. Palpites usam Realtime + Polling 60s como fallback. Ranking passa a ser puramente derivado dos caches, sem buscas próprias.
+**Critérios de sucesso:**
+- Reduzir de 6 hooks para 2 hooks principais (useLiveScores + usePredictionsRealtime)
+- Reduzir de N canais Realtime (games) para 1 canal global
+- Palpites serem reativos: palpites de outros usuários chegam instantaneamente via Realtime (hoje até 10s via polling)
+- Ranking puramente derivado client-side (computeLiveRanking), sem buscas próprias
+- Cache entre datas mantido em memória, sem refetch ao navegar
+- Polling de placar centralizado 30s (só jogos live)
+- Polling de palpites 60s fallback com Realtime como caminho primário
+- Migration SQL para habilitar `predictions` no Supabase Realtime
+- `npm run lint` e `npm run build` limpos
+**Dependências:** auth, game-navigation, predictions, live-scores, live-scores-realtime, scoring, ranking, live-scoring, palpites-ao-vivo, fix-predictions-reveal-on-live, prediction-visibility
+
+---
 
 ### 1. auth — Autenticação — concluída
 **Objetivo:** Permitir que participantes se cadastrem e façam login no bolão, criando um perfil associado à conta Supabase Auth. Sem autenticação, nenhuma outra feature pode funcionar.
