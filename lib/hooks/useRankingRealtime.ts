@@ -2,22 +2,27 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import {
+  acquirePointsCache,
+  releasePointsCache,
+  subscribeToPointsInvalidations,
+} from '@/lib/cache/points-cache'
 import type { RankingEntry } from '@/lib/types/ranking'
 
 /**
- * Hook que busca o ranking de um grupo específico e subscreve ao canal
- * Realtime do Supabase para a tabela `scores`, filtrado por `group_id`.
+ * Hook que busca o ranking de um grupo específico e se inscreve no event-bus
+ * do PointsCache para receber invalidações da tabela `scores`.
  *
  * Quando qualquer mudança ocorre em `scores` daquele grupo (INSERT ou UPDATE —
- * quando um jogo é encerrado e o trigger calcula pontuações), o ranking é
- * rebuscado automaticamente via GET /api/ranking?group_id=.
+ * quando um jogo é encerrado e o trigger calcula pontuações), o PointsCache
+ * notifica este hook via `subscribeToPointsInvalidations`, e o ranking é
+ * rebuscado automaticamente via GET /api/ranking?group_id= com debounce de 1s.
  *
- * Configuração necessária no Supabase (migration 20260614_enable_realtime_publications.sql):
- *   ALTER TABLE scores REPLICA IDENTITY FULL;
- *   ALTER PUBLICATION supabase_realtime ADD TABLE scores;
+ * O hook não abre canal Realtime próprio — usa o canal `points-${groupId}`
+ * gerenciado pelo PointsCache (centralizar-cache-v2, Stage 2).
  *
- * @param groupId grupo ativo — trocar de grupo desmonta a subscription antiga
- * e cria uma nova (incluído no array de dependências do useEffect).
+ * @param groupId grupo ativo — trocar de grupo desmonta o efeito anterior
+ * e adquire/registra no PointsCache do novo grupo.
  * @returns { ranking, loading, error, lastUpdatedAt }
  */
 export function useRankingRealtime(groupId: string): {
@@ -72,39 +77,31 @@ export function useRankingRealtime(groupId: string): {
       void fetchRanking()
     }, 0)
 
-    // Subscription Supabase Realtime: qualquer mudança em scores DESTE grupo
-    // refaz o fetch. Canal escopado por groupId para não colidir com outras
-    // instâncias do hook (ex: troca rápida de grupo) e para reduzir ruído de
-    // eventos de outros grupos.
-    const supabase = createClient()
+    // Usa o PointsCache em vez de abrir canal Realtime próprio para `scores`.
+    // O PointsCache já mantém 1 canal `points-${groupId}` assinando a tabela
+    // `scores` filtrada por group_id. Qualquer mudança nesse canal dispara os
+    // listeners registrados via subscribeToPointsInvalidations — incluindo este.
+    // Debounce de 1s para evitar avalanche de requests quando o trigger Postgres
+    // calcula pontuações de múltiplos usuários ao final de um jogo.
+    acquirePointsCache(groupId)
     let debounceTimer: number | undefined
 
-    const channel = supabase
-      .channel(`ranking-scores-${groupId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*', // INSERT, UPDATE, DELETE
-          schema: 'public',
-          table: 'scores',
-          filter: `group_id=eq.${groupId}`,
-        },
-        () => {
-          // Ao detectar qualquer mudança em scores deste grupo, rebusca o
-          // ranking completo. Usamos debounce para evitar avalanche de
-          // requests quando muitos usuários pontuam ao mesmo tempo.
-          window.clearTimeout(debounceTimer)
-          debounceTimer = window.setTimeout(() => {
-            void fetchRanking()
-          }, 1000)
-        }
-      )
-      .subscribe()
+    const unsub = subscribeToPointsInvalidations(
+      groupId,
+      'useRankingRealtime',
+      () => {
+        window.clearTimeout(debounceTimer)
+        debounceTimer = window.setTimeout(() => {
+          void fetchRanking()
+        }, 1000)
+      }
+    )
 
     return () => {
       window.clearTimeout(initialFetchTimer)
       window.clearTimeout(debounceTimer)
-      supabase.removeChannel(channel)
+      unsub()
+      releasePointsCache(groupId)
     }
   }, [fetchRanking, groupId])
 
