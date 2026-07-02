@@ -1,14 +1,32 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { calculateLiveScore } from '@/lib/scoring'
+import {
+  subscribeToGameUpdates,
+  acquireGlobalChannel,
+  releaseGlobalChannel,
+  ensureDate,
+  getCachedGames,
+} from '@/lib/cache/score-cache'
+import {
+  acquirePredictionCache,
+  releasePredictionCache,
+  ensurePredictions,
+  getCachedPredictions,
+  subscribeToPredictionUpdates,
+} from '@/lib/cache/prediction-cache'
+import {
+  acquirePointsCache,
+  releasePointsCache,
+  ensurePoints,
+  getCachedPoints,
+  subscribeToPointsUpdates,
+} from '@/lib/cache/points-cache'
 import { PalpitesLiveCard } from '@/components/bolao/PalpitesLiveCard'
 import { PalpitesRanking } from '@/components/bolao/PalpitesRanking'
 import type { LiveGameWithPrediction, RankingParticipantDetail, GameScoreEntry } from '@/lib/hooks/usePalpitesAoVivo'
 import type { ScoreBreakdown } from '@/lib/types/score'
-
-const POLL_INTERVAL_MS = 10_000
 
 export interface PublicMember {
   id: string
@@ -23,25 +41,11 @@ interface PublicDateClientProps {
   members: PublicMember[]
 }
 
-interface GameRaw {
-  id: string
-  home_team: string
-  away_team: string
-  home_team_code: string
-  away_team_code: string
-  home_score: number | null
-  away_score: number | null
-  status: string
-  match_date: string
-  round: string
-  phase: string
-}
-
 function sortAndRank(
   members: PublicMember[],
-  predByUserGame: Record<string, Record<string, { home_score: number; away_score: number }>>,
-  scoreByUserGame: Record<string, Record<string, { points: number; breakdown: ScoreBreakdown }>>,
-  gamesRaw: GameRaw[]
+  gamesRaw: LiveGameWithPrediction[],
+  predByUserGame: Map<string, Map<string, { home_score: number; away_score: number }>>,
+  pointsByUserGame: Map<string, Map<string, { points: number; breakdown: ScoreBreakdown }>>
 ): RankingParticipantDetail[] {
   const liveGames = gamesRaw.filter((g) => g.status === 'live')
 
@@ -50,17 +54,19 @@ function sortAndRank(
 
   // Pontos oficiais de jogos finalizados
   for (const userId of members.map((m) => m.id)) {
-    const userScores = scoreByUserGame[userId] ?? {}
-    for (const s of Object.values(userScores)) {
+    const userScores = pointsByUserGame.get(userId)
+    if (!userScores) continue
+    for (const [, s] of userScores) {
       todayPointsByUser[userId] = (todayPointsByUser[userId] ?? 0) + s.points
     }
   }
 
   // Pontos provisórios de jogos ao vivo
   for (const userId of members.map((m) => m.id)) {
-    const userPreds = predByUserGame[userId] ?? {}
+    const userPreds = predByUserGame.get(userId)
+    if (!userPreds) continue
     for (const game of liveGames) {
-      const pred = userPreds[game.id]
+      const pred = userPreds.get(game.id)
       if (!pred) continue
       const result = calculateLiveScore(
         { home_score: game.home_score, away_score: game.away_score },
@@ -89,12 +95,12 @@ function sortAndRank(
     prevRank = rank_position
     prevPoints = item.total_points
 
-    const userPreds = predByUserGame[item.id] ?? {}
-    const userScores = scoreByUserGame[item.id] ?? {}
+    const userPreds = predByUserGame.get(item.id)
+    const userScores = pointsByUserGame.get(item.id)
 
     const userGames: GameScoreEntry[] = gamesRaw.map((g) => {
-      const pred = g.status !== 'pending' ? (userPreds[g.id] ?? null) : null
-      const score = userScores[g.id] ?? null
+      const pred = g.status !== 'pending' ? (userPreds?.get(g.id) ?? null) : null
+      const score = userScores?.get(g.id) ?? null
 
       let livePoints: number | null = null
       let liveBreakdown: ScoreBreakdown | null = null
@@ -136,6 +142,13 @@ function sortAndRank(
   })
 }
 
+/**
+ * Cliente público para a rota /publico/[groupId]/[date].
+ *
+ * Substitui o polling de 10s (setInterval) por Realtime via caches centralizados.
+ * Dados SSR (initialGames, initialRanking, members) são usados apenas como fallback
+ * inicial — atualizações vêm dos caches.
+ */
 export default function PublicDateClient({
   groupId,
   date,
@@ -149,122 +162,134 @@ export default function PublicDateClient({
   const hasData = useRef(false)
   const prevScoresKey = useRef<string>('')
 
-  const fetchUpdates = async () => {
+  // Recálculo síncrono a partir dos caches — chamado por listeners e initialize
+  function computeAndSetState() {
+    const cachedGames = getCachedGames(date)
+    const allPreds = getCachedPredictions(groupId)   // Map<gameId, Map<userId, CachedPrediction>>
+    const allPoints = getCachedPoints(groupId)        // Map<gameId, Map<userId, CachedPoints>>
+
+    if (cachedGames.length === 0) return
+
+    // Converter game format para LiveGameWithPrediction
+    const gamesRaw: LiveGameWithPrediction[] = cachedGames.map((g) => ({
+      id: g.id,
+      home_team: g.home_team,
+      away_team: g.away_team,
+      home_team_code: g.home_team_code,
+      away_team_code: g.away_team_code,
+      home_score: g.home_score,
+      away_score: g.away_score,
+      status: g.status,
+      match_date: g.match_date,
+      round: g.round,
+      phase: g.phase,
+      myPrediction: null, // público — sem palpite do usuário
+    }))
+
+    // Converter predictions: Map<gameId, Map<userId, CachedPrediction>> → Map<userId, Map<gameId, {...}>>
+    const predByUserId = new Map<string, Map<string, { home_score: number; away_score: number }>>()
+    for (const [gameId, userMap] of allPreds) {
+      for (const [userId, pred] of userMap) {
+        if (!predByUserId.has(userId)) {
+          predByUserId.set(userId, new Map())
+        }
+        predByUserId.get(userId)!.set(gameId, {
+          home_score: pred.home_score,
+          away_score: pred.away_score,
+        })
+      }
+    }
+
+    // Converter points: Map<gameId, Map<userId, CachedPoints>> → Map<userId, Map<gameId, {...}>>
+    const pointsByUserId = new Map<string, Map<string, { points: number; breakdown: ScoreBreakdown }>>()
+    for (const [gameId, userMap] of allPoints) {
+      for (const [userId, pts] of userMap) {
+        if (!pointsByUserId.has(userId)) {
+          pointsByUserId.set(userId, new Map())
+        }
+        pointsByUserId.get(userId)!.set(gameId, {
+          points: pts.points,
+          breakdown: pts.breakdown,
+        })
+      }
+    }
+
+    // Guard FLIP: fingerprint de placares
+    const scoresKey = gamesRaw
+      .map((g) => `${g.id}:${g.status}:${g.home_score}:${g.away_score}`)
+      .join('|')
+    if (scoresKey === prevScoresKey.current && hasData.current) return
+    prevScoresKey.current = scoresKey
+
+    const newGames: LiveGameWithPrediction[] = gamesRaw
+    const newRanking = sortAndRank(members, gamesRaw, predByUserId, pointsByUserId)
+
+    setGames(newGames)
+    setRanking(newRanking)
+    hasData.current = true
+  }
+
+  // Inicialização assíncrona — carrega caches e dispara compute
+  const initialize = async () => {
     try {
-      const supabase = createClient()
-
-      const { data: gamesData } = await supabase
-        .from('games')
-        .select(
-          'id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date,round,phase'
-        )
-        .eq('match_day', date)
-        .order('match_date', { ascending: true })
-
-      const gamesRaw: GameRaw[] = gamesData ?? []
-      const liveOrFinishedIds = gamesRaw.filter((g) => g.status !== 'pending').map((g) => g.id)
-      const finishedIds = gamesRaw.filter((g) => g.status === 'finished').map((g) => g.id)
-
-      const scoresKey = gamesRaw
-        .map((g) => `${g.id}:${g.status}:${g.home_score}:${g.away_score}`)
-        .join('|')
-      if (scoresKey === prevScoresKey.current && hasData.current) return
-      prevScoresKey.current = scoresKey
-
-      // Palpites (apenas jogos não-pending)
-      const predByUserGame: Record<
-        string,
-        Record<string, { home_score: number; away_score: number }>
-      > = {}
-      if (liveOrFinishedIds.length > 0) {
-        const { data: predsData } = await supabase
-          .from('predictions')
-          .select('user_id,game_id,home_score,away_score')
-          .eq('group_id', groupId)
-          .in('game_id', liveOrFinishedIds)
-        for (const p of predsData ?? []) {
-          if (!predByUserGame[p.user_id]) predByUserGame[p.user_id] = {}
-          predByUserGame[p.user_id][p.game_id] = {
-            home_score: p.home_score,
-            away_score: p.away_score,
-          }
-        }
-      }
-
-      // Scores (jogos finalizados)
-      const scoreByUserGame: Record<
-        string,
-        Record<string, { points: number; breakdown: ScoreBreakdown }>
-      > = {}
-      if (finishedIds.length > 0) {
-        const { data: scoresData } = await supabase
-          .from('scores')
-          .select('user_id,game_id,points,breakdown')
-          .eq('group_id', groupId)
-          .in('game_id', finishedIds)
-        for (const s of scoresData ?? []) {
-          if (!scoreByUserGame[s.user_id]) scoreByUserGame[s.user_id] = {}
-          scoreByUserGame[s.user_id][s.game_id] = {
-            points: s.points,
-            breakdown: s.breakdown as ScoreBreakdown,
-          }
-        }
-      }
-
-      const newGames: LiveGameWithPrediction[] = gamesRaw.map((g) => ({
-        id: g.id,
-        home_team: g.home_team,
-        away_team: g.away_team,
-        home_team_code: g.home_team_code,
-        away_team_code: g.away_team_code,
-        home_score: g.home_score,
-        away_score: g.away_score,
-        status: g.status as 'pending' | 'live' | 'finished',
-        match_date: g.match_date,
-        round: g.round,
-        phase: g.phase,
-        myPrediction: null,
-      }))
-
-      const newRanking = sortAndRank(members, predByUserGame, scoreByUserGame, gamesRaw)
-
-      setGames(newGames)
-      setRanking(newRanking)
-      hasData.current = true
+      await Promise.all([
+        ensureDate(date),
+        ensurePredictions(groupId, date),
+        ensurePoints(groupId, date),
+      ])
+      computeAndSetState()
     } catch (err) {
-      console.error('[PublicDateClient] polling error:', err)
+      console.error('[PublicDateClient] erro:', err)
     }
   }
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | null = null
+    // 1. Adquirir os três caches (anon client para Realtime público)
+    acquireGlobalChannel()
+    acquirePredictionCache(groupId)
+    acquirePointsCache(groupId)
 
-    function startPolling() {
-      void fetchUpdates()
-      interval = setInterval(() => void fetchUpdates(), POLL_INTERVAL_MS)
-    }
+    // 2. Inicialização assíncrona
+    void initialize()
 
-    function stopPolling() {
-      if (interval !== null) {
-        clearInterval(interval)
-        interval = null
-      }
-    }
+    // 3. Listeners reativos — recálculo síncrono sem IO, sem polling
+    let debounceGame: number | undefined
+    const unsubGame = subscribeToGameUpdates('PublicDateClient', () => {
+      window.clearTimeout(debounceGame)
+      debounceGame = window.setTimeout(computeAndSetState, 1000)
+    })
 
+    let debouncePred: number | undefined
+    const unsubPred = subscribeToPredictionUpdates(groupId, 'PublicDateClient', () => {
+      window.clearTimeout(debouncePred)
+      debouncePred = window.setTimeout(computeAndSetState, 500)
+    })
+
+    let debouncePoints: number | undefined
+    const unsubPoints = subscribeToPointsUpdates(groupId, 'PublicDateClient', () => {
+      window.clearTimeout(debouncePoints)
+      debouncePoints = window.setTimeout(computeAndSetState, 500)
+    })
+
+    // 4. visibilitychange → reinicialização
     function onVisibilityChange() {
       if (document.visibilityState === 'visible') {
-        startPolling()
-      } else {
-        stopPolling()
+        void initialize()
       }
     }
-
-    const initialTimer = window.setTimeout(startPolling, 0)
     document.addEventListener('visibilitychange', onVisibilityChange)
 
+    // 5. Cleanup
     return () => {
-      window.clearTimeout(initialTimer)
-      stopPolling()
+      window.clearTimeout(debounceGame)
+      window.clearTimeout(debouncePred)
+      window.clearTimeout(debouncePoints)
+      unsubGame()
+      unsubPred()
+      unsubPoints()
+      releaseGlobalChannel()
+      releasePredictionCache(groupId)
+      releasePointsCache(groupId)
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
