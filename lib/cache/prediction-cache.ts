@@ -23,7 +23,8 @@ interface GroupCache {
   channel: ReturnType<ReturnType<typeof createClient>['channel']> | null
   pollingInterval: ReturnType<typeof setInterval> | null
   connectionStatus: 'connecting' | 'connected' | 'error'
-  listeners: Set<() => void> // callbacks de invalidação
+  listeners: Set<() => void> // callbacks de invalidação completa (fallback)
+  detailListeners: Set<(pred: CachedPrediction, eventType: string) => void> // callbacks com detalhes
   loadedDates: Set<string>
   refCount: number
 }
@@ -45,6 +46,7 @@ function getOrCreateGroupCache(groupId: string): GroupCache {
       pollingInterval: null,
       connectionStatus: 'connecting',
       listeners: new Set(),
+      detailListeners: new Set(),
       loadedDates: new Set(),
       refCount: 0,
     }
@@ -183,8 +185,24 @@ function ensurePredictionRealtime(groupId: string): void {
         const matchup = teams ? `${teams.home} x ${teams.away}` : '? x ?'
         console.log(`%c[PredictionCache] %c◄ RECEBIDO %c${eventType} %c| ${matchup} %c| palpite ${score} %c| ${ts}`,
           'color:#FFDF00;font-weight:bold', 'color:#00d26a', 'color:#f0f4f8', 'color:#f0f4f8', 'color:#5a7a6a', 'color:#5a7a6a')
-        // Invalida cache para forçar refetch no próximo acesso
-        invalidatePredictionCache(groupId)
+
+        if (eventType === 'DELETE') {
+          const deleted = payload.old as CachedPrediction | null
+          if (deleted) removePredictionFromCache(groupId, deleted.game_id, deleted.user_id)
+        } else if (row && row.game_id && row.user_id) {
+          upsertPredictionInCache(groupId, row)
+        }
+
+        // Notifica listeners com detalhes do palpite alterado
+        if (row) {
+          for (const listener of cache.detailListeners) {
+            listener(row, eventType)
+          }
+        }
+        // Fallback: listeners antigos que precisam de refetch completo
+        for (const listener of cache.listeners) {
+          listener()
+        }
       }
     )
     .subscribe((status) => {
@@ -248,13 +266,37 @@ function invalidatePredictionCache(groupId: string): void {
   console.log(`%c[PredictionCache] %c► INVALIDANDO %c| ${listenerCount} listener(s) %c| ${ts}`,
     'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')
 
-  // Limpa todas as datas carregadas para forçar refetch
   cache.predictions.clear()
   cache.loadedDates.clear()
 
-  // Notifica listeners
   for (const listener of cache.listeners) {
     listener()
+  }
+}
+
+/**
+ * Atualiza diretamente um palpite no cache, sem invalidar tudo.
+ */
+function upsertPredictionInCache(groupId: string, pred: CachedPrediction): void {
+  const cache = cachesByGroup.get(groupId)
+  if (!cache) return
+
+  const key = `${pred.game_id}:${pred.user_id}`
+  for (const [, dateMap] of cache.predictions) {
+    if (dateMap.has(key)) {
+      dateMap.set(key, pred)
+      return
+    }
+  }
+}
+
+function removePredictionFromCache(groupId: string, gameId: string, userId: string): void {
+  const cache = cachesByGroup.get(groupId)
+  if (!cache) return
+
+  const key = `${gameId}:${userId}`
+  for (const [, dateMap] of cache.predictions) {
+    dateMap.delete(key)
   }
 }
 
@@ -270,6 +312,21 @@ export function subscribeToPredictionInvalidations(
   cache.listeners.add(listener)
   return () => {
     cache.listeners.delete(listener)
+  }
+}
+
+/**
+ * Registra listener que recebe o palpite alterado + tipo do evento.
+ * Usado por hooks que suportam atualização granular (sem refetch completo).
+ */
+export function subscribeToPredictionUpdates(
+  groupId: string,
+  listener: (pred: CachedPrediction, eventType: string) => void
+): () => void {
+  const cache = getOrCreateGroupCache(groupId)
+  cache.detailListeners.add(listener)
+  return () => {
+    cache.detailListeners.delete(listener)
   }
 }
 
@@ -294,6 +351,7 @@ export function releasePredictionCache(groupId: string): void {
       cache.channel = null
     }
     cache.listeners.clear()
+    cache.detailListeners.clear()
   }
 }
 

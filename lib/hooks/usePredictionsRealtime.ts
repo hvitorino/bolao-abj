@@ -6,10 +6,12 @@ import {
   getCachedPredictions,
   getMyPredictions,
   subscribeToPredictionInvalidations,
+  subscribeToPredictionUpdates,
   acquirePredictionCache,
   releasePredictionCache,
   clearPredictionCache,
 } from '@/lib/cache/prediction-cache'
+import type { CachedPrediction } from '@/lib/cache/prediction-cache'
 
 export interface Prediction {
   user_id: string
@@ -99,14 +101,43 @@ export function usePredictionsRealtime(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, groupId, currentUserId])
 
-  // Subscrever a invalidações do cache (Realtime + polling)
+  // Subscrever a atualizações do cache — granular (Realtime) + fallback (polling)
   useEffect(() => {
     acquirePredictionCache(groupId)
 
-    const unsub = subscribeToPredictionInvalidations(groupId, () => {
-      // Recarregar após invalidação
+    // Listener granular: atualiza estado diretamente sem refetch
+    const unsubDetail = subscribeToPredictionUpdates(groupId, (pred: CachedPrediction, eventType: string) => {
       const ts = new Date().toLocaleTimeString('pt-BR')
-      console.log(`%c[usePredictionsRealtime] %c↻ REFETCH %c| cache invalidado %c| ${ts}`,
+      console.log(`%c[usePredictionsRealtime] %c↻ ATUALIZANDO %c| ${eventType} ${pred.home_score}×${pred.away_score} %c| ${ts}`,
+        'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')
+
+      setPredictionsByGame((prev) => {
+        const next = new Map(prev)
+        const gameMap = next.get(pred.game_id)
+        if (eventType === 'DELETE') {
+          gameMap?.delete(pred.user_id)
+          if (gameMap && gameMap.size === 0) next.delete(pred.game_id)
+        } else {
+          if (!gameMap) next.set(pred.game_id, new Map([[pred.user_id, pred]]))
+          else gameMap.set(pred.user_id, pred)
+        }
+        return next
+      })
+
+      if (pred.user_id === currentUserId) {
+        setMyPredictions((prev) => {
+          const next = new Map(prev)
+          if (eventType === 'DELETE') next.delete(pred.game_id)
+          else next.set(pred.game_id, pred)
+          return next
+        })
+      }
+    })
+
+    // Fallback: refetch completo no polling (60s)
+    const unsubFallback = subscribeToPredictionInvalidations(groupId, () => {
+      const ts = new Date().toLocaleTimeString('pt-BR')
+      console.log(`%c[usePredictionsRealtime] %c↻ REFETCH %c| fallback %c| ${ts}`,
         'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')
       ensurePredictions(groupId, selectedDate).then(() => {
         setPredictionsByGame(getCachedPredictions(groupId))
@@ -115,7 +146,8 @@ export function usePredictionsRealtime(
     })
 
     return () => {
-      unsub()
+      unsubDetail()
+      unsubFallback()
       releasePredictionCache(groupId)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
