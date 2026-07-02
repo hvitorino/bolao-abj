@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [centralizar-cache-v2-stage3] — useLivePointsByUser + useLiveTodayRanking leem dos caches — 2026-07-02
+
+- **Hooks migrados:** `useLivePointsByUser` e `useLiveTodayRanking` eliminam todas as queries diretas a `games`, `predictions` e `scores`; todo acesso passa pelos três caches singleton
+- **Nova função:** `getLiveGames(): Game[]` adicionada e exportada em `lib/cache/score-cache.ts` — iteração síncrona sem IO
+- **`useLivePointsByUser`:** lê jogos ao vivo via `getLiveGames()` (ScoreCache) e palpites via `getCachedPredictions()` (PredictionCache); gerencia lifecycle dos 3 caches; dois listeners com debounce 1000ms
+- **`useLiveTodayRanking`:** elimina 3 queries diretas; mantém apenas one-shot de `group_members` (nomes fora de cache); 3 listeners (ScoreCache + PointsCache + PredictionCache) com debounce 1000ms; `membersRef` para closure estável; cálculo síncrono em `computeAndSetEntries`
+- **Canais Realtime:** nenhum canal novo criado — ambos os hooks consomem os canais existentes via acquire/release
+
 ## [centralizar-cache-v2-stage1] — PointsCache (Singleton de Pontuações) — 2026-07-02
 
 - **Novo módulo:** `lib/cache/points-cache.ts` — singleton de cache para a tabela `scores`, escopado por `groupId`
