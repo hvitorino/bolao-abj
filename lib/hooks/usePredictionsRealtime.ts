@@ -105,6 +105,9 @@ export function usePredictionsRealtime(
 
     const unsub = subscribeToPredictionInvalidations(groupId, () => {
       // Recarregar após invalidação
+      const ts = new Date().toLocaleTimeString('pt-BR')
+      console.log(`%c[usePredictionsRealtime] %c↻ REFETCH %c| cache invalidado %c| ${ts}`,
+        'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')
       ensurePredictions(groupId, selectedDate).then(() => {
         setPredictionsByGame(getCachedPredictions(groupId))
         setMyPredictions(getMyPredictions(groupId, currentUserId))

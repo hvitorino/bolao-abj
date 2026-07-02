@@ -172,10 +172,9 @@ function ensurePredictionRealtime(groupId: string): void {
       (payload) => {
         const eventType = payload.eventType ?? 'UPDATE'
         const ts = new Date().toLocaleTimeString('pt-BR')
-        const row = payload.new as CachedPrediction | null
-        const userId = row?.user_id?.slice(0, 8) ?? '?'
-        const gameId = row?.game_id?.slice(0, 8) ?? '?'
-        console.log(`%c[PredictionCache] %c◄ RECEBIDO %c${eventType} %c| user=${userId} game=${gameId} %c| ${ts}`,
+        const row = (payload.new as CachedPrediction | null) ?? (payload.old as CachedPrediction | null)
+        const score = row ? `${row.home_score}×${row.away_score}` : '?×?'
+        console.log(`%c[PredictionCache] %c◄ RECEBIDO %c${eventType} %c| palpite ${score} %c| ${ts}`,
           'color:#FFDF00;font-weight:bold', 'color:#00d26a', 'color:#f0f4f8', 'color:#5a7a6a', 'color:#5a7a6a')
         // Invalida cache para forçar refetch no próximo acesso
         invalidatePredictionCache(groupId)
