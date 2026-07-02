@@ -165,6 +165,7 @@ ON CONFLICT (id) DO UPDATE
 | # | BDF match_id | Partida | Data UTC |
 |---|-------------|---------|----------|
 | 80 | `48db382c-22bf-4e47-b78b-6aa5548061ff` | England × DR Congo | 2026-07-01T16:00 |
+| 81 | `25c2b6a3-005b-4ff3-8c5e-472c3d469b64` | Estados Unidos × Bósnia e Herzegovina | 2026-07-02T00:00 |
 
 ### Quartas, Semi e Final
 
@@ -192,3 +193,5 @@ Os `match_id` do bolaodefutebol para Quartas, Semi e Final ainda não são conhe
 | 2026-06-28 | Jogo #72 — Jordan × Argentina | 1 | 12 |
 | 2026-06-28 | Jogo #71 — Argélia × Áustria | 1 | 12 |
 | 2026-07-01 | Jogo #80 — Inglaterra × Congo DR | 1 | 12 |
+| 2026-07-01 | Jogo #81 — Estados Unidos × Bósnia e Herzegovina | 1 | 12 |
+| 2026-07-01 | Jogo — Bélgica × Senegal | 1 | 12 |
