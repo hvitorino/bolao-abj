@@ -3,7 +3,7 @@
 **Slug:** score-prediction-cache
 **Branch:** feature/score-prediction-cache
 **Data:** 2026-07-01
-**Status:** aguardando revisão
+**Status:** aprovado (fix-1)
 
 ---
 
