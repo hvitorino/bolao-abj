@@ -244,6 +244,17 @@ export function getScore(gameId: string): {
 }
 
 /**
+ * Retorna os códigos dos times de um jogo do cache (para logs).
+ */
+export function getTeamCodes(gameId: string): { home: string; away: string } | null {
+  for (const [, games] of gamesByDate) {
+    const g = games.find((g) => g.id === gameId)
+    if (g) return { home: g.home_team_code, away: g.away_team_code }
+  }
+  return null
+}
+
+/**
  * Registra um listener que será chamado sempre que um jogo no cache for atualizado.
  * Retorna função de cleanup.
  */

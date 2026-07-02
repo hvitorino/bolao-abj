@@ -1,6 +1,7 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
+import { getTeamCodes } from '@/lib/cache/score-cache'
 
 // ---------------------------------------------------------------------------
 // Tipos
@@ -174,8 +175,10 @@ function ensurePredictionRealtime(groupId: string): void {
         const ts = new Date().toLocaleTimeString('pt-BR')
         const row = (payload.new as CachedPrediction | null) ?? (payload.old as CachedPrediction | null)
         const score = row ? `${row.home_score}×${row.away_score}` : '?×?'
-        console.log(`%c[PredictionCache] %c◄ RECEBIDO %c${eventType} %c| palpite ${score} %c| ${ts}`,
-          'color:#FFDF00;font-weight:bold', 'color:#00d26a', 'color:#f0f4f8', 'color:#5a7a6a', 'color:#5a7a6a')
+        const teams = row ? getTeamCodes(row.game_id) : null
+        const matchup = teams ? `${teams.home} x ${teams.away}` : '? x ?'
+        console.log(`%c[PredictionCache] %c◄ RECEBIDO %c${eventType} %c| ${matchup} %c| palpite ${score} %c| ${ts}`,
+          'color:#FFDF00;font-weight:bold', 'color:#00d26a', 'color:#f0f4f8', 'color:#f0f4f8', 'color:#5a7a6a', 'color:#5a7a6a')
         // Invalida cache para forçar refetch no próximo acesso
         invalidatePredictionCache(groupId)
       }
