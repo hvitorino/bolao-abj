@@ -212,6 +212,10 @@ export default function PredictionForm({
 
       if (res.ok) {
         const updatedPrediction = data as Prediction
+        const ts = new Date().toLocaleTimeString('pt-BR')
+        const action = initialPrediction ? 'EDITADO' : 'ENVIADO'
+        console.log(`%c[PredictionForm] %c► ${action} %c${homeTeamCode} ${home}×${away} ${awayTeamCode} %c| group=${groupId.slice(0,8)} %c| ${ts}`,
+          'color:#FFDF00;font-weight:bold', 'color:#00d26a', 'color:#f0f4f8', 'color:#5a7a6a', 'color:#5a7a6a')
         setSubmittedPrediction(updatedPrediction)
         // Sempre vai para 'propagating' — criação e edição
         setStatus('propagating')

@@ -111,6 +111,11 @@ function updateGameInCache(game: Game): void {
       }
 
       // Notificar listeners
+      const listenerCount = listeners.size
+      if (listenerCount > 0) {
+        console.log(`%c[ScoreCache] %c► PROPAGANDO %cpara ${listenerCount} listener(s) %c| ${game.home_team_code} ${game.home_score}×${game.away_score} ${game.away_team_code} %c| ${game.status}`,
+          'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a', 'color:#f0f4f8', 'color:#5a7a6a')
+      }
       for (const listener of listeners) {
         listener(game)
       }
@@ -136,6 +141,9 @@ function ensureGlobalChannel(): void {
       (payload) => {
         const updated = payload.new as Partial<Game>
         if (updated.id) {
+          const ts = new Date().toLocaleTimeString('pt-BR')
+          console.log(`%c[ScoreCache] %c◄ RECEBIDO %c${updated.home_team_code ?? '?'} ${updated.home_score ?? '?'}×${updated.away_score ?? '?'} ${updated.away_team_code ?? '?'} %c| ${updated.status ?? '?'} %c| ${ts}`,
+            'color:#FFDF00;font-weight:bold', 'color:#00d26a', 'color:#f0f4f8', 'color:#5a7a6a', 'color:#5a7a6a')
           // Busca o jogo completo (ou funde com cache existente)
           for (const [, games] of gamesByDate) {
             const existing = games.find((g) => g.id === updated.id)
