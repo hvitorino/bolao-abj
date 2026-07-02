@@ -51,7 +51,6 @@ export async function createMcpHandler(request: NextRequest): Promise<Response> 
   // Usar transporte stateless (sem gerenciamento de sessão no servidor)
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
-    enableJsonResponse: true,
   })
 
   await server.connect(transport)
