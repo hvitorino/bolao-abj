@@ -321,6 +321,20 @@ export function releaseGlobalChannel(): void {
 }
 
 /**
+ * Retorna todos os jogos com status 'live' de todas as datas carregadas no cache.
+ * Leitura síncrona — sem IO.
+ */
+export function getLiveGames(): Game[] {
+  const result: Game[] = []
+  for (const games of gamesByDate.values()) {
+    for (const g of games) {
+      if (g.status === 'live') result.push(g)
+    }
+  }
+  return result
+}
+
+/**
  * Limpa todo o cache (útil ao trocar de grupo).
  */
 export function clearScoreCache(): void {
