@@ -6,7 +6,7 @@ import { usePredictionsRealtime } from '@/lib/hooks/usePredictionsRealtime'
 import type { Prediction as PredictionType } from '@/lib/types/prediction'
 import type { Score } from '@/lib/types/score'
 import type { ParticipantEntry } from '@/lib/types/participant'
-import GameCard from '@/components/games/GameCard'
+import GameCardView from '@/components/games/GameCardView'
 
 interface JogosRealtimeProps {
   selectedDate: string
@@ -147,10 +147,9 @@ export default function JogosRealtime({
           }}
         >
           {liveGames.map((liveGame: LiveGameScore) => (
-            <GameCard
+            <GameCardView
               key={liveGame.id}
               game={liveGame}
-              liveGame={liveGame}
               prediction={ssrPredictions[liveGame.id] ?? null}
               score={ssrScores[liveGame.id] ?? null}
               participants={getParticipantsForGame(liveGame.id)}
