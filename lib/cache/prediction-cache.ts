@@ -93,15 +93,12 @@ export async function ensurePredictions(
 
   if (error) throw new Error(`Erro ao buscar palpites: ${error.message}`)
 
-  const gameUserMap = new Map<string, Map<string, CachedPrediction>>()
+  const flatMap = new Map<string, CachedPrediction>()
   for (const row of (predictionsData ?? []) as CachedPrediction[]) {
-    if (!gameUserMap.has(row.game_id)) {
-      gameUserMap.set(row.game_id, new Map())
-    }
-    gameUserMap.get(row.game_id)!.set(row.user_id, row)
+    flatMap.set(`${row.game_id}:${row.user_id}`, row)
   }
 
-  cache.predictions.set(date, gameUserMap)
+  cache.predictions.set(date, flatMap)
   cache.loadedDates.add(date)
 
   // Iniciar Realtime se ainda não iniciado
@@ -122,20 +119,18 @@ export function getCachedPredictions(
   const cache = cachesByGroup.get(groupId)
   if (!cache) return new Map()
 
-  // Merge de todas as datas carregadas
-  const merged = new Map<string, Map<string, CachedPrediction>>()
+  // Merge de todas as datas carregadas, convertendo flat → nested
+  const nested = new Map<string, Map<string, CachedPrediction>>()
   for (const dateMap of cache.predictions.values()) {
-    for (const [gameId, userMap] of dateMap) {
-      if (!merged.has(gameId)) {
-        merged.set(gameId, new Map())
+    for (const [key, pred] of dateMap) {
+      const [gameId, userId] = key.split(':')
+      if (!nested.has(gameId)) {
+        nested.set(gameId, new Map())
       }
-      const target = merged.get(gameId)!
-      for (const [userId, pred] of userMap) {
-        target.set(userId, pred)
-      }
+      nested.get(gameId)!.set(userId, pred)
     }
   }
-  return merged
+  return nested
 }
 
 /**
