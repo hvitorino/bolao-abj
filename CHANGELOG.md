@@ -19,7 +19,12 @@ Histórico de implementações aprovadas pelo Revisor.
 
 ## [fix-chaveamento] — Correção do Chaveamento (Cruzamentos + Layout Simétrico) — 2026-07-01
 
-- Migration `supabase/migrations/20260701000000_fix_bracket_slot_pairings.sql` corrige `next_slot_label` de 10 slots R32 e `source_home`/`source_away` de 7 slots R16 para refletir o chaveamento oficial FIFA 2026
+- Migration `20260701000000_fix_bracket_slot_pairings.sql` (v1) alterava cruzamentos R32→R16 com pareamento não-sequencial — **REVERTIDA**
+- Migration `20260701000001_fix_bracket_slot_pairings_v2.sql` (v2) restaura pareamento sequencial e corrige o que realmente estava errado:
+  - R32→R16: pareamento sequencial preservado (01+02→R16-01, 03+04→R16-02, …, 15+16→R16-08)
+  - QF→SF corrigido: QF-02 → **SF-02** (antes SF-01) e QF-03 → **SF-01** (antes SF-02), agrupando Lado Esquerdo (R32 01-04 + 09-12 → SF-01) e Lado Direito (R32 05-08 + 13-16 → SF-02)
+  - `source_home`/`source_away` das SFs atualizados: SF-01 = QF-01 × QF-03, SF-02 = QF-02 × QF-04
+  - `source_home`/`source_away` dos R16 restaurados ao sequencial (v1 havia alterado 7 slots)
 - `BracketConnector` recebe prop `reversed?: boolean` que inverte as coordenadas x do SVG para suporte ao lado espelhado
 - Novo `BracketColumnRight`: espelho recursivo de `BracketColumn` — card à esquerda, conector reversed, filhos à direita
 - Novo `SymmetricBracket`: substitui `FinalAnd3rdColumn` com layout clássico simétrico (chave esq | FINAL+3RD ao centro | chave dir espelhada)
