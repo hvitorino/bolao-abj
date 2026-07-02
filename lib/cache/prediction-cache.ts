@@ -213,6 +213,10 @@ function ensurePredictionRealtime(groupId: string): void {
             ? 'error'
             : 'connecting'
       cache.connectionStatus = newStatus
+      const icon = status === 'SUBSCRIBED' ? '✓' : status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' ? '✗' : '…'
+      const color = status === 'SUBSCRIBED' ? 'color:#00d26a' : 'color:#ff453a'
+      console.log(`%c[PredictionCache] %c${icon} ${status} %c| canal predictions-${groupId.slice(0,8)} %c| ${new Date().toLocaleTimeString('pt-BR')}`,
+        'color:#FFDF00;font-weight:bold', color, 'color:#f0f4f8', 'color:#5a7a6a')
     })
 }
 
