@@ -1058,7 +1058,17 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - npm run build passa ao fim de cada stage
 - Zero regressão em funcionalidades existentes
 **Dependências:** score-prediction-cache (ScoreCache + PredictionCache já existentes)
-**Spec:** `.pipeline/centralizar-cache-v2.md` (8 stages; Stage 0 confirmado sem migration)
+**Spec:** `.pipeline/centralizar-cache-v2.md` (8 stages)
+**Progresso:**
+- Stage 0 — Verificação DB (sem código): concluído — pré-requisitos confirmados, nenhuma migration necessária
+- Stage 1 — Criar `lib/cache/points-cache.ts`: concluído — PointsCache singleton implementado como dead code seguro
+- Stage 2 — `useRankingRealtime` no event-bus do PointsCache: pendente
+- Stage 3 — `useLivePointsByUser` + `useLiveTodayRanking` leem dos caches: pendente
+- Stage 4 — `usePalpitesAoVivo` lê dos caches: pendente
+- Stage 5 — Migrar `GameCard` e apagar o trio legado: pendente
+- Stage 6 — `PublicParticipantsList` no PointsCache: pendente
+- Stage 7 — `useDailyRecap` lê dos caches: pendente
+- Stage 8 — Convergir páginas públicas de agregado: pendente
 
 ---
 
