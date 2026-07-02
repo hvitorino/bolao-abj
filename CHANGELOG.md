@@ -6,6 +6,18 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [centralizar-cache-v2-stage4] — usePalpitesAoVivo lê dos caches — 2026-07-02
+
+- **Hook modificado:** `lib/hooks/usePalpitesAoVivo.ts` — reescrita completa do sistema de dados
+- **Arquitetura:** separação em Fluxo A (`initialize`, assíncrono com IO, mount + visibilitychange) e Fluxo B (`computeAndSetState`, síncrono sem IO, listeners de cache com debounce)
+- **Caches consumidos:** ScoreCache (`ensureDate`, `getCachedGames`), PredictionCache (`ensurePredictions`, `getCachedPredictions`, `subscribeToPredictionUpdates`), PointsCache (`ensurePoints`, `getCachedPoints`, `subscribeToPointsUpdates`)
+- **Canal novo adicionado:** `points-${groupId}` via `acquirePointsCache`/`releasePointsCache`
+- **Queries eliminadas:** 4 chamadas Supabase por tick (`games`, `predictions`, `scores` + `/api/ranking`) — reduzido a 3 `ensure*` no mount + 1 `fetchParticipants` (nomes)
+- **`/api/ranking`:** chamado apenas em `fetchParticipants()` (mount + visibilitychange), nunca disparado por tick de jogo ao vivo
+- **Guard FLIP preservado:** `prevScoresKey` computado de `getCachedGames(selectedDate)`
+- **Tipos removidos:** `GameRow`, `PredictionRow`, `ScoreRow` (agora usando tipos dos caches)
+- **Interface pública:** `UsePalpitesAoVivoResult` mantida sem breaking changes
+
 ## [centralizar-cache-v2-stage3] — useLivePointsByUser + useLiveTodayRanking leem dos caches — 2026-07-02
 
 - **Hooks migrados:** `useLivePointsByUser` e `useLiveTodayRanking` eliminam todas as queries diretas a `games`, `predictions` e `scores`; todo acesso passa pelos três caches singleton
