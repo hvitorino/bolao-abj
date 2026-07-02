@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ensurePredictions,
   getCachedPredictions,
@@ -10,7 +10,6 @@ import {
   releasePredictionCache,
   clearPredictionCache,
 } from '@/lib/cache/prediction-cache'
-import type { CachedPrediction } from '@/lib/cache/prediction-cache'
 
 export interface Prediction {
   user_id: string
@@ -84,9 +83,12 @@ export function usePredictionsRealtime(
     // Verificar se já há cache para esta data
     const cached = getCachedPredictions(groupId)
     if (cached.size > 0) {
-      setPredictionsByGame(cached)
-      setMyPredictions(getMyPredictions(groupId, currentUserId))
-      setLoading(false)
+      // Cache hit: usar imediatamente (deferido para evitar setState síncrono no effect)
+      window.setTimeout(() => {
+        setPredictionsByGame(cached)
+        setMyPredictions(getMyPredictions(groupId, currentUserId))
+        setLoading(false)
+      }, 0)
     } else {
       void load()
     }

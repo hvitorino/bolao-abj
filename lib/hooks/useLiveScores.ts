@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import {
   ensureDate,
   getCachedGames,
@@ -8,8 +8,6 @@ import {
   subscribeToConnectionStatus,
   acquireGlobalChannel,
   releaseGlobalChannel,
-  isLive,
-  getScore,
   clearScoreCache,
 } from '@/lib/cache/score-cache'
 import type { Game } from '@/lib/types/game'
@@ -84,15 +82,17 @@ export function useLiveScores(
 
     const cached = getCachedGames(selectedDate)
     if (cached.length > 0) {
-      // Cache hit: usar imediatamente
-      setGames(
-        cached.map((g) => ({
-          ...g,
-          lastUpdatedAt: null,
-          connectionStatus,
-        }))
-      )
-      setLoading(false)
+      // Cache hit: usar imediatamente (deferido para evitar setState síncrono no effect)
+      window.setTimeout(() => {
+        setGames(
+          cached.map((g) => ({
+            ...g,
+            lastUpdatedAt: null,
+            connectionStatus,
+          }))
+        )
+        setLoading(false)
+      }, 0)
     } else {
       void load()
     }

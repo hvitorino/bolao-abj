@@ -33,28 +33,10 @@ const connectionListeners = new Set<(status: 'connecting' | 'connected' | 'error
 
 const POLL_INTERVAL_MS = 30_000
 const PRE_START_WINDOW_MS = 5 * 60 * 1000 // 5 min antes do início
-const ACTIVE_WINDOW_MS = 3 * 60 * 60 * 1000 // 3h após início
 
 // ---------------------------------------------------------------------------
 // Funções internas
 // ---------------------------------------------------------------------------
-
-function getScoreFingerprint(game: Game): string {
-  return `${game.id}:${game.status}:${game.home_score}:${game.away_score}`
-}
-
-function isInActiveWindow(game: Game): boolean {
-  if (game.status === 'finished') return false
-  const matchDate = new Date(game.match_date).getTime()
-  const now = Date.now()
-  const windowStart = matchDate - PRE_START_WINDOW_MS
-  const windowEnd = matchDate + ACTIVE_WINDOW_MS
-  return now >= windowStart && now <= windowEnd
-}
-
-function isGameLive(game: Game): boolean {
-  return game.status === 'live'
-}
 
 function schedulePendingTimer(game: Game): void {
   const matchDate = new Date(game.match_date).getTime()
@@ -111,7 +93,7 @@ function stopLivePolling(gameId: string): void {
 }
 
 function updateGameInCache(game: Game): void {
-  for (const [date, games] of gamesByDate) {
+  for (const [, games] of gamesByDate) {
     const idx = games.findIndex((g) => g.id === game.id)
     if (idx !== -1) {
       const oldGame = games[idx]

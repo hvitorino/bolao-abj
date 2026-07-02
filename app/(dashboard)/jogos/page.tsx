@@ -17,7 +17,7 @@ import { Score } from '@/lib/types/score'
 import type { ScoreBreakdown } from '@/lib/types/score'
 import { ParticipantEntry } from '@/lib/types/participant'
 import DateChipsNav from '@/components/games/DateChipsNav'
-import GameList from '@/components/games/GameList'
+import JogosRealtime from '@/components/games/JogosRealtime'
 
 interface JogosPageProps {
   searchParams: Promise<{ date?: string; group?: string }>
@@ -278,15 +278,14 @@ export default async function JogosPage({ searchParams }: JogosPageProps) {
         />
       </div>
 
-      {/* Lista de jogos com palpites e pontuações */}
-      <GameList
-        games={games ?? []}
-        date={currentDate}
-        predictionsByGameId={predictionsByGameId}
-        scoresByGameId={scoresByGameId}
-        participantsByGameId={participantsByGameId}
-        userId={user?.id}
+      {/* Lista de jogos com palpites e pontuações — reativo via ScoreCache + PredictionCache */}
+      <JogosRealtime
+        selectedDate={currentDate}
         groupId={activeGroupId}
+        userId={user?.id ?? ''}
+        ssrPredictions={predictionsByGameId}
+        ssrScores={scoresByGameId}
+        ssrParticipants={participantsByGameId}
       />
     </div>
   )

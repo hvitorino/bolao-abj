@@ -52,15 +52,6 @@ function getOrCreateGroupCache(groupId: string): GroupCache {
   return cache
 }
 
-function buildCacheKey(gameId: string, userId: string): string {
-  return `${gameId}:${userId}`
-}
-
-function parseCacheKey(key: string): { gameId: string; userId: string } {
-  const [gameId, userId] = key.split(':')
-  return { gameId, userId }
-}
-
 // ---------------------------------------------------------------------------
 // API do cache
 // ---------------------------------------------------------------------------
