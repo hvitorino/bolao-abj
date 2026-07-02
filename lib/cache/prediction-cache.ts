@@ -158,6 +158,10 @@ function ensurePredictionRealtime(groupId: string): void {
   const cache = getOrCreateGroupCache(groupId)
   if (cache.channel) return
 
+  const ts = new Date().toLocaleTimeString('pt-BR')
+  console.log(`%c[PredictionCache] %c● CONECTANDO %c| canal predictions-${groupId.slice(0,8)} %c| ${ts}`,
+    'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')
+
   const supabase = createClient()
 
   cache.channel = supabase
@@ -272,6 +276,9 @@ export function subscribeToPredictionInvalidations(
 export function acquirePredictionCache(groupId: string): void {
   const cache = getOrCreateGroupCache(groupId)
   cache.refCount++
+  // Garante que o canal Realtime existe — sem isso, subscribers em páginas
+  // que não chamam ensurePredictions (ex: /palpites) nunca recebem eventos.
+  ensurePredictionRealtime(groupId)
 }
 
 export function releasePredictionCache(groupId: string): void {
