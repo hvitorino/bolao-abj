@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [score-prediction-cache] — Cache Centralizado de Placar e Palpites — 2026-07-01
+
+- **Infraestrutura:** `lib/cache/score-cache.ts` (singleton com Realtime global para `games` — 1 canal vs N canais) + `lib/cache/prediction-cache.ts` (singleton com Realtime para `predictions` por grupo + Polling 60s)
+- **Hooks:** `lib/hooks/useLiveScores.ts` (substitui `useGameRealtime` — cache entre datas, 1 canal global) + `lib/hooks/usePredictionsRealtime.ts` (substitui polling 10s por Realtime instantâneo + fallback 60s)
+- **Ranking derivado:** `lib/ranking-derived.ts` — `computeLiveRanking()` unifica lógica espalhada em 4 hooks (usePalpitesAoVivo, useLivePointsByUser, useLiveTodayRanking, RankingTable.applyLivePoints)
+- **Componentes:** `components/games/JogosRealtime.tsx` (wrapper conectando caches ao GameCard) + `GameCard` atualizado com props `liveGame`/`liveParticipants` (backward compat)
+- **Página:** `app/(dashboard)/jogos/page.tsx` migrado para ScoreCache + PredictionCache — dados de jogos agora são reativos com 1 canal global
+- **Migration:** `supabase/migrations/20260701000000_enable_realtime_predictions.sql` — habilita `predictions` para Supabase Realtime (REPLICA IDENTITY FULL + ALTER PUBLICATION)
+- **Pendências (fix-1):** `/palpites`, `RankingTable`, `LiveTodayBottomSheet`, `PublicGameClient` ainda usam hooks antigos — migração incremental em fases futuras. Migration SQL pendente de aplicação no Supabase.
+
 ## [maximize-analise-drawer] — Maximizar Bottom Sheet de Análise de Jogo — 2026-07-01
 
 - Botão `▲`/`▼` adicionado à direita do drag handle do `GameAnaliseDrawer` para expandir/restaurar o bottom sheet

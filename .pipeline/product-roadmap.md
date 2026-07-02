@@ -4,13 +4,13 @@ Criado em: 2026-06-13
 
 ## Status Geral
 - Total: 80 features
-- Concluídas: 79
-- Em progresso: 1
+- Concluídas: 80
+- Em progresso: 0
 - Pendentes: 0
 
 ## Features Priorizadas
 
-### 80. score-prediction-cache — Cache Centralizado de Placar e Palpites — em progresso
+### 80. score-prediction-cache — Cache Centralizado de Placar e Palpites — concluída
 **Objetivo:** Centralizar a atualização de placares ao vivo e palpites em dois caches module-level (ScoreCache + PredictionCache), eliminando a duplicação atual de 6 hooks com queries redundantes. Placar usa Realtime + Polling 30s gerenciado por status do jogo. Palpites usam Realtime + Polling 60s como fallback. Ranking passa a ser puramente derivado dos caches, sem buscas próprias.
 **Critérios de sucesso:**
 - Reduzir de 6 hooks para 2 hooks principais (useLiveScores + usePredictionsRealtime)

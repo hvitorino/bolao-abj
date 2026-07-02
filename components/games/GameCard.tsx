@@ -25,6 +25,10 @@ interface GameCardProps {
   groupId: string // grupo ativo — enviado no POST/PATCH de predictions
   hideAnalysisLink?: boolean
   onPredictionChange?: () => void
+  /** Quando fornecido, substitui useGameRealtime — o jogo já é reativo vindo do ScoreCache */
+  liveGame?: Game
+  /** Quando fornecido, substitui useParticipantsRealtime — participantes já são reativos */
+  liveParticipants?: ParticipantEntry[]
 }
 
 // Formata data e horário do jogo para exibição em BRT (UTC-3)
@@ -57,6 +61,8 @@ export default function GameCard({
   groupId,
   hideAnalysisLink = false,
   onPredictionChange,
+  liveGame: liveGameProp,
+  liveParticipants: liveParticipantsProp,
 }: GameCardProps) {
   // Estado local da prediction — permite atualizar após edição sem reload
   const [currentPrediction, setCurrentPrediction] = useState<Prediction | null>(
@@ -71,22 +77,25 @@ export default function GameCard({
   // Estado do botão de copiar link — feedback visual por 2s após cópia
   const [copied, setCopied] = useState(false)
 
-  // Subscreve ao canal Realtime do Supabase para este jogo específico.
-  const { game: liveGame } = useGameRealtime(game.id, game)
+  // Se liveGame foi fornecido pelo pai (JogosRealtime via ScoreCache), usa ele.
+  // Caso contrário, mantém o comportamento antigo com useGameRealtime.
+  const liveGameFromHook = useGameRealtime(game.id, game)
+  const liveGame = liveGameProp ?? liveGameFromHook.game
 
   // Subscreve ao score do usuário para este jogo.
   // liveScore atualiza quando o trigger Postgres calcula pontuação após jogo encerrado.
   const liveScore = useScoreRealtime(game.id, userId ?? '', score)
 
   // Gerencia palpites dos participantes em tempo real.
-  // Faz fetch dos palpites revelados quando o jogo muda para live/finished —
-  // resolve o bug em que participants ficavam como OCULTO/PENDENTE após a transição Realtime.
-  const liveParticipants = useParticipantsRealtime(
+  // Se liveParticipants foi fornecido pelo pai, usa ele.
+  // Caso contrário, mantém useParticipantsRealtime (comportamento antigo).
+  const liveParticipantsFromHook = useParticipantsRealtime(
     game.id,
     groupId,
     participants,
     liveGame.status as 'pending' | 'live' | 'finished'
   )
+  const liveParticipants = liveParticipantsProp ?? liveParticipantsFromHook
 
   const isLive = liveGame.status === 'live'
   const isFinished = liveGame.status === 'finished'
