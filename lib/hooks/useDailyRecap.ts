@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { ScoreBreakdown } from '@/lib/types/score'
+import { ensureDate, getCachedGames } from '@/lib/cache/score-cache'
+import { ensurePredictions, getCachedPredictions } from '@/lib/cache/prediction-cache'
+import { ensurePoints, getCachedPoints } from '@/lib/cache/points-cache'
 
 // ---------------------------------------------------------------------------
 // Tipos públicos
@@ -210,64 +213,75 @@ export function useDailyRecap(groupId: string): {
     let cancelled = false
 
     async function fetchFromSupabase(): Promise<DailyRecapData | null> {
-      const supabase = createClient()
       const yesterday = getESPNYesterday()
 
-      // 1. Jogos finalizados do dia anterior (filtrado por match_day do calendário ESPN)
-      const { data: gamesRaw, error: gamesError } = await supabase
-        .from('games')
-        .select(
-          'id, home_team, away_team, home_team_code, away_team_code, home_score, away_score, match_date'
-        )
-        .eq('status', 'finished')
-        .eq('match_day', yesterday)
+      // 1. Carregar caches centralizados para ontem (podem já estar populados)
+      await Promise.all([
+        ensureDate(yesterday),
+        ensurePredictions(groupId, yesterday),
+        ensurePoints(groupId, yesterday),
+      ])
 
-      if (gamesError || !gamesRaw || gamesRaw.length === 0) {
+      // 2. Ler jogos finalizados do cache
+      const cachedGames = getCachedGames(yesterday)
+      const gamesRaw = cachedGames.filter((g) => g.status === 'finished')
+
+      if (gamesRaw.length === 0) {
         return null
       }
 
       const gameIds = gamesRaw.map((g) => g.id)
 
-      // 2. Scores e predictions em paralelo
-      const [scoresResult, predictionsResult] = await Promise.all([
-        supabase
-          .from('scores')
-          .select(
-            'user_id, game_id, points, breakdown, profiles!inner(name)'
-          )
-          .in('game_id', gameIds)
-          .eq('group_id', groupId),
-        supabase
-          .from('predictions')
-          .select('user_id, game_id, home_score, away_score')
-          .in('game_id', gameIds)
-          .eq('group_id', groupId),
-      ])
+      // 3. Ler palpites e pontuações dos caches
+      const allPreds = getCachedPredictions(groupId)       // Map<gameId, Map<userId, CachedPrediction>>
+      const allPoints = getCachedPoints(groupId)            // Map<gameId, Map<userId, CachedPoints>>
 
-      if (scoresResult.error || predictionsResult.error) {
-        return null
-      }
+      // 4. Buscar nomes dos participantes (única query direta restante)
+      const supabase = createClient()
+      const { data: membersData } = await supabase
+        .from('group_members')
+        .select('user_id, profiles(name)')
+        .eq('group_id', groupId)
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const scoresRaw: RawScore[] = (scoresResult.data ?? []).map((s: any) => ({
-        user_id: s.user_id,
-        game_id: s.game_id,
-        points: s.points,
-        breakdown: s.breakdown as ScoreBreakdown,
-        participant_name: s.profiles?.name ?? s.user_id,
-      }))
-
-      const predictions: RawPrediction[] = (predictionsResult.data ?? []).map(
+      const nameByUserId: Record<string, string> = {}
+      for (const m of (membersData ?? [])) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (p: any) => ({
-          user_id: p.user_id,
-          game_id: p.game_id,
-          home_score: p.home_score ?? 0,
-          away_score: p.away_score ?? 0,
-        })
-      )
+        const name = (m as any).profiles?.name ?? (m as any).user_id
+        nameByUserId[(m as any).user_id] = name
+      }
 
-      // 3. Calcular rankingDay: agrupar scores por user_id
+      // 5. Construir arrays RawScore e RawPrediction a partir dos caches
+      const scoresRaw: RawScore[] = []
+      for (const gameId of gameIds) {
+        const gamePoints = allPoints.get(gameId)
+        if (!gamePoints) continue
+        for (const [userId, cached] of gamePoints) {
+          scoresRaw.push({
+            user_id: userId,
+            game_id: gameId,
+            points: cached.points,
+            breakdown: cached.breakdown,
+            participant_name: nameByUserId[userId] ?? userId,
+          })
+        }
+      }
+
+      const predictions: RawPrediction[] = []
+      for (const gameId of gameIds) {
+        const gamePreds = allPreds.get(gameId)
+        if (!gamePreds) continue
+        for (const [userId, pred] of gamePreds) {
+          predictions.push({
+            user_id: userId,
+            game_id: gameId,
+            home_score: pred.home_score,
+            away_score: pred.away_score,
+          })
+        }
+      }
+
+      // 6. Calcular rankingDay: agrupar scores por user_id
       const byUser: Record<
         string,
         { name: string; points: number; gameIds: Set<string> }
@@ -289,7 +303,7 @@ export function useDailyRecap(groupId: string): {
       for (const p of predictions) {
         if (!byUser[p.user_id]) {
           byUser[p.user_id] = {
-            name: p.user_id, // fallback; será sobrescrito se houver score
+            name: nameByUserId[p.user_id] ?? p.user_id,
             points: 0,
             gameIds: new Set(),
           }
@@ -306,10 +320,10 @@ export function useDailyRecap(groupId: string): {
         }))
         .sort((a, b) => b.points_yesterday - a.points_yesterday)
 
-      // 4. Badges
+      // 7. Badges
       const badges = calcBadges(rankingDay, scoresRaw, predictions)
 
-      // 5. Montar RecapGame
+      // 8. Montar RecapGame
       const games: RecapGame[] = gamesRaw.map((g) => ({
         id: g.id,
         home_team: g.home_team,
