@@ -203,7 +203,7 @@ export function useLiveTodayRanking(groupId: string): {
     acquireGlobalChannel()
     let debounceTimer: number | undefined
 
-    const unsub = subscribeToGameUpdates(() => {
+    const unsub = subscribeToGameUpdates('useLiveTodayRanking', () => {
       window.clearTimeout(debounceTimer)
       debounceTimer = window.setTimeout(() => { void fetchData() }, 1000)
     })

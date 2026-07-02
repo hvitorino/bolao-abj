@@ -28,7 +28,7 @@ export default function PublicGameClient({
 
   useEffect(() => {
     acquireGlobalChannel()
-    const unsub = subscribeToGameUpdates((updatedGame) => {
+    const unsub = subscribeToGameUpdates('PublicGameClient', (updatedGame) => {
       if (updatedGame.id === initialGame.id) {
         setLiveGame(updatedGame)
       }

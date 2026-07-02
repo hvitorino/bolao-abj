@@ -107,7 +107,7 @@ export function useLiveScores(
   useEffect(() => {
     acquireGlobalChannel()
 
-    const unsubGame = subscribeToGameUpdates((updatedGame: Game) => {
+    const unsubGame = subscribeToGameUpdates('useLiveScores', (updatedGame: Game) => {
       setGames((prev) =>
         prev.map((g) =>
           g.id === updatedGame.id
@@ -117,7 +117,7 @@ export function useLiveScores(
       )
     })
 
-    const unsubConn = subscribeToConnectionStatus((status) => {
+    const unsubConn = subscribeToConnectionStatus('useLiveScores', (status) => {
       setConnectionStatus(status)
       setGames((prev) => prev.map((g) => ({ ...g, connectionStatus: status })))
     })

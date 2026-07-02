@@ -108,7 +108,7 @@ export function useLivePointsByUser(groupId: string): { livePoints: LivePointsBy
     acquireGlobalChannel()
     let debounceTimer: number | undefined
 
-    const unsub = subscribeToGameUpdates(() => {
+    const unsub = subscribeToGameUpdates('useLivePointsByUser', () => {
       window.clearTimeout(debounceTimer)
       debounceTimer = window.setTimeout(() => {
         void fetchLivePoints()

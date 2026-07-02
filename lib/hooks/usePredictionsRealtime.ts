@@ -106,7 +106,7 @@ export function usePredictionsRealtime(
     acquirePredictionCache(groupId)
 
     // Listener granular: atualiza estado diretamente sem refetch
-    const unsubDetail = subscribeToPredictionUpdates(groupId, (pred: CachedPrediction, eventType: string) => {
+    const unsubDetail = subscribeToPredictionUpdates(groupId, "usePredictionsRealtime", (pred: CachedPrediction, eventType: string) => {
       const ts = new Date().toLocaleTimeString('pt-BR')
       console.log(`%c[usePredictionsRealtime] %c↻ ATUALIZANDO %c| ${eventType} ${pred.home_score}×${pred.away_score} %c| ${ts}`,
         'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')
@@ -135,7 +135,7 @@ export function usePredictionsRealtime(
     })
 
     // Fallback: refetch completo no polling (60s)
-    const unsubFallback = subscribeToPredictionInvalidations(groupId, () => {
+    const unsubFallback = subscribeToPredictionInvalidations(groupId, "usePredictionsRealtime", () => {
       const ts = new Date().toLocaleTimeString('pt-BR')
       console.log(`%c[usePredictionsRealtime] %c↻ REFETCH %c| fallback %c| ${ts}`,
         'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')

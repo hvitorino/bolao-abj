@@ -25,11 +25,13 @@ let globalChannel: ReturnType<ReturnType<typeof createClient>['channel']> | null
 let subscribers = 0
 // Callbacks registrados por componente — cada um recebe o game atualizado
 type GameUpdateListener = (game: Game) => void
-const listeners = new Set<GameUpdateListener>()
+const listenerMap = new Map<string, GameUpdateListener>()
+let listenerIdCounter = 0
 
 // Estado da conexão Realtime global
 let globalConnectionStatus: 'connecting' | 'connected' | 'error' = 'connecting'
-const connectionListeners = new Set<(status: 'connecting' | 'connected' | 'error') => void>()
+type ConnectionListener = (status: 'connecting' | 'connected' | 'error') => void
+const connectionListenerMap = new Map<string, ConnectionListener>()
 
 const POLL_INTERVAL_MS = 30_000
 const PRE_START_WINDOW_MS = 5 * 60 * 1000 // 5 min antes do início
@@ -111,12 +113,12 @@ function updateGameInCache(game: Game): void {
       }
 
       // Notificar listeners
-      const listenerCount = listeners.size
-      if (listenerCount > 0) {
-        console.log(`%c[ScoreCache] %c► PROPAGANDO %cpara ${listenerCount} listener(s) %c| ${game.home_team_code} ${game.home_score}×${game.away_score} ${game.away_team_code} %c| ${game.status}`,
+      const names = Array.from(listenerMap.keys())
+      if (names.length > 0) {
+        console.log(`%c[ScoreCache] %c► PROPAGANDO %cpara ${names.join(', ')} %c| ${game.home_team_code} ${game.home_score}×${game.away_score} ${game.away_team_code} %c| ${game.status}`,
           'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a', 'color:#f0f4f8', 'color:#5a7a6a')
       }
-      for (const listener of listeners) {
+      for (const listener of listenerMap.values()) {
         listener(game)
       }
       return
@@ -164,7 +166,7 @@ function ensureGlobalChannel(): void {
             : 'connecting'
 
       globalConnectionStatus = newStatus
-      for (const cb of connectionListeners) {
+      for (const cb of connectionListenerMap.values()) {
         cb(newStatus)
       }
     })
@@ -256,27 +258,28 @@ export function getTeamCodes(gameId: string): { home: string; away: string } | n
 
 /**
  * Registra um listener que será chamado sempre que um jogo no cache for atualizado.
- * Retorna função de cleanup.
+ * @param source nome do componente para identificação nos logs (ex: "GameCard", "usePalpitesAoVivo")
  */
-export function subscribeToGameUpdates(listener: GameUpdateListener): () => void {
-  listeners.add(listener)
+export function subscribeToGameUpdates(source: string, listener: GameUpdateListener): () => void {
+  const id = `${source}#${++listenerIdCounter}`
+  listenerMap.set(id, listener)
   return () => {
-    listeners.delete(listener)
+    listenerMap.delete(id)
   }
 }
 
 /**
  * Registra um listener para mudanças no status da conexão Realtime global.
- * Retorna função de cleanup.
  */
 export function subscribeToConnectionStatus(
-  cb: (status: 'connecting' | 'connected' | 'error') => void
+  source: string,
+  cb: ConnectionListener
 ): () => void {
-  // Notifica estado atual imediatamente
   cb(globalConnectionStatus)
-  connectionListeners.add(cb)
+  const id = `${source}#${++listenerIdCounter}`
+  connectionListenerMap.set(id, cb)
   return () => {
-    connectionListeners.delete(cb)
+    connectionListenerMap.delete(id)
   }
 }
 
@@ -312,8 +315,8 @@ export function releaseGlobalChannel(): void {
     pendingTimers.clear()
 
     // Limpar listeners
-    listeners.clear()
-    connectionListeners.clear()
+    listenerMap.clear()
+    connectionListenerMap.clear()
   }
 }
 

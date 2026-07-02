@@ -365,7 +365,7 @@ export function usePalpitesAoVivo(
     acquireGlobalChannel()
 
     let debounceTimer: number | undefined
-    const unsubGame = subscribeToGameUpdates(() => {
+    const unsubGame = subscribeToGameUpdates('usePalpitesAoVivo', () => {
       window.clearTimeout(debounceTimer)
       debounceTimer = window.setTimeout(() => { void fetchAll() }, 1000)
     })
@@ -373,7 +373,7 @@ export function usePalpitesAoVivo(
     // Também escuta mudanças de palpites via PredictionCache (palpites de outros usuários)
     acquirePredictionCache(groupId)
     let debouncePredTimer: number | undefined
-    const unsubPred = subscribeToPredictionInvalidations(groupId, () => {
+    const unsubPred = subscribeToPredictionInvalidations(groupId, "usePalpitesAoVivo", () => {
       window.clearTimeout(debouncePredTimer)
       debouncePredTimer = window.setTimeout(() => { void fetchAll() }, 500)
     })

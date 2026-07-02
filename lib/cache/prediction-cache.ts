@@ -19,17 +19,18 @@ export interface CachedPrediction {
 // ---------------------------------------------------------------------------
 
 interface GroupCache {
-  predictions: Map<string, Map<string, CachedPrediction>> // date → gameId:userId → pred
+  predictions: Map<string, Map<string, CachedPrediction>>
   channel: ReturnType<ReturnType<typeof createClient>['channel']> | null
   pollingInterval: ReturnType<typeof setInterval> | null
   connectionStatus: 'connecting' | 'connected' | 'error'
-  listeners: Set<() => void> // callbacks de invalidação completa (fallback)
-  detailListeners: Set<(pred: CachedPrediction, eventType: string) => void> // callbacks com detalhes
+  listeners: Map<string, () => void>
+  detailListeners: Map<string, (pred: CachedPrediction, eventType: string) => void>
   loadedDates: Set<string>
   refCount: number
 }
 
 const cachesByGroup = new Map<string, GroupCache>()
+let listenerCounter = 0
 
 const POLL_INTERVAL_MS = 60_000
 
@@ -45,8 +46,8 @@ function getOrCreateGroupCache(groupId: string): GroupCache {
       channel: null,
       pollingInterval: null,
       connectionStatus: 'connecting',
-      listeners: new Set(),
-      detailListeners: new Set(),
+      listeners: new Map(),
+      detailListeners: new Map(),
       loadedDates: new Set(),
       refCount: 0,
     }
@@ -195,12 +196,12 @@ function ensurePredictionRealtime(groupId: string): void {
 
         // Notifica listeners com detalhes do palpite alterado
         if (row) {
-          for (const listener of cache.detailListeners) {
+          for (const listener of cache.detailListeners.values()) {
             listener(row, eventType)
           }
         }
         // Fallback: listeners antigos que precisam de refetch completo
-        for (const listener of cache.listeners) {
+        for (const listener of cache.listeners.values()) {
           listener()
         }
       }
@@ -265,15 +266,17 @@ function invalidatePredictionCache(groupId: string): void {
   const cache = cachesByGroup.get(groupId)
   if (!cache) return
 
-  const listenerCount = cache.listeners.size
+  const names = Array.from(cache.listeners.keys())
   const ts = new Date().toLocaleTimeString('pt-BR')
-  console.log(`%c[PredictionCache] %c► INVALIDANDO %c| ${listenerCount} listener(s) %c| ${ts}`,
-    'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')
+  if (names.length > 0) {
+    console.log(`%c[PredictionCache] %c► INVALIDANDO %c| ${names.join(', ')} %c| ${ts}`,
+      'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')
+  }
 
   cache.predictions.clear()
   cache.loadedDates.clear()
 
-  for (const listener of cache.listeners) {
+  for (const listener of cache.listeners.values()) {
     listener()
   }
 }
@@ -310,12 +313,14 @@ function removePredictionFromCache(groupId: string, gameId: string, userId: stri
 
 export function subscribeToPredictionInvalidations(
   groupId: string,
+  source: string,
   listener: () => void
 ): () => void {
   const cache = getOrCreateGroupCache(groupId)
-  cache.listeners.add(listener)
+  const id = `${source}#${++listenerCounter}`
+  cache.listeners.set(id, listener)
   return () => {
-    cache.listeners.delete(listener)
+    cache.listeners.delete(id)
   }
 }
 
@@ -325,12 +330,14 @@ export function subscribeToPredictionInvalidations(
  */
 export function subscribeToPredictionUpdates(
   groupId: string,
+  source: string,
   listener: (pred: CachedPrediction, eventType: string) => void
 ): () => void {
   const cache = getOrCreateGroupCache(groupId)
-  cache.detailListeners.add(listener)
+  const id = `${source}#${++listenerCounter}`
+  cache.detailListeners.set(id, listener)
   return () => {
-    cache.detailListeners.delete(listener)
+    cache.detailListeners.delete(id)
   }
 }
 
