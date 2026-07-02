@@ -3,13 +3,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { calculateLiveScore } from '@/lib/scoring'
+import { subscribeToGameUpdates, acquireGlobalChannel, releaseGlobalChannel } from '@/lib/cache/score-cache'
 import type { ScoreBreakdown } from '@/lib/types/score'
 import type { RankingEntry } from '@/lib/types/ranking'
 
-// Intervalo de polling configurável
-const POLL_INTERVAL_MS = 10_000
-
-// --------------------------------------------------------------------------
 // Tipos exportados
 // --------------------------------------------------------------------------
 
@@ -360,36 +357,30 @@ export function usePalpitesAoVivo(
   }
 
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval> | null = null
+    // Fetch inicial
+    const initialTimer = window.setTimeout(() => { void fetchAll() }, 0)
 
-    function startPolling() {
-      void fetchAll()
-      interval = setInterval(() => void fetchAll(), POLL_INTERVAL_MS)
-    }
+    // Usa o canal Realtime global do ScoreCache em vez de polling 10s próprio
+    acquireGlobalChannel()
 
-    function stopPolling() {
-      if (interval !== null) {
-        clearInterval(interval)
-        interval = null
-      }
-    }
+    let debounceTimer: number | undefined
+    const unsub = subscribeToGameUpdates(() => {
+      window.clearTimeout(debounceTimer)
+      debounceTimer = window.setTimeout(() => { void fetchAll() }, 1000)
+    })
 
     function onVisibilityChange() {
       if (document.visibilityState === 'visible') {
-        // Página voltou ao foco (ex: desbloqueio do celular) — reinicia polling limpo
-        startPolling()
-      } else {
-        stopPolling()
+        void fetchAll()
       }
     }
-
-    // Iniciar polling diferido para evitar setState síncrono dentro do effect
-    const initialTimer = window.setTimeout(startPolling, 0)
     document.addEventListener('visibilitychange', onVisibilityChange)
 
     return () => {
       window.clearTimeout(initialTimer)
-      stopPolling()
+      window.clearTimeout(debounceTimer)
+      unsub()
+      releaseGlobalChannel()
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

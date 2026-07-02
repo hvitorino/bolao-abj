@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { calculateLiveScore } from '@/lib/scoring'
+import { subscribeToGameUpdates, acquireGlobalChannel, releaseGlobalChannel } from '@/lib/cache/score-cache'
 
 export interface LivePointsByUser {
   [userId: string]: number // soma de pontos parciais de todos os jogos `live` para aquele usuário
@@ -26,22 +27,10 @@ interface PredictionRow {
  * grupo específico para esses jogos, calcula a pontuação parcial client-side
  * via `calculateLiveScore`, e soma por usuário.
  *
- * Usado pelo ranking (`/ranking`) para somar à pontuação oficial (tabela `scores`,
- * jogos `finished`) a pontuação provisória de jogos em andamento — sem nenhuma escrita
- * em `scores` e sem novo endpoint Ruby/Next.
+ * Usa o canal Realtime global do ScoreCache (em vez de canal próprio) para
+ * detectar mudanças em games e recalcular.
  *
- * Subscreve ao canal `live-points-games-${groupId}` (tabela `games`, evento UPDATE,
- * sem filtro de coluna — games é global, sem group_id) para recalcular quando o
- * status ou o placar de qualquer jogo mudar — com debounce de 1000ms, mesmo padrão
- * usado em `useRankingRealtime`. O recálculo interno após cada evento filtra as
- * predictions pelo `groupId` recebido como argumento do hook.
- *
- * Em caso de erro de rede/consulta, falha de forma graciosa: loga no console e mantém
- * `livePoints` no último valor calculado com sucesso (ou `{}` se nunca calculou),
- * permitindo que o ranking degrade para exibir apenas a pontuação oficial.
- *
- * @param groupId grupo ativo — trocar de grupo desmonta a subscription antiga
- * e cria uma nova (incluído no array de dependências do useEffect).
+ * @param groupId grupo ativo
  * @returns { livePoints, loading }
  */
 export function useLivePointsByUser(groupId: string): { livePoints: LivePointsByUser; loading: boolean } {
@@ -115,35 +104,22 @@ export function useLivePointsByUser(groupId: string): { livePoints: LivePointsBy
       void fetchLivePoints()
     }, 0)
 
-    // Subscription Realtime: qualquer UPDATE em games pode mudar quem está `live`
-    // ou o placar de quem já está — sem filtro de coluna/id (games é global,
-    // sem group_id). Canal escopado por groupId apenas para nomear a subscription
-    // de forma única por instância do hook.
-    const supabase = createClient()
+    // Usa o canal Realtime global do ScoreCache em vez de criar canal próprio
+    acquireGlobalChannel()
     let debounceTimer: number | undefined
 
-    const channel = supabase
-      .channel(`live-points-games-${groupId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'games',
-        },
-        () => {
-          window.clearTimeout(debounceTimer)
-          debounceTimer = window.setTimeout(() => {
-            void fetchLivePoints()
-          }, 1000)
-        }
-      )
-      .subscribe()
+    const unsub = subscribeToGameUpdates(() => {
+      window.clearTimeout(debounceTimer)
+      debounceTimer = window.setTimeout(() => {
+        void fetchLivePoints()
+      }, 1000)
+    })
 
     return () => {
       window.clearTimeout(initialFetchTimer)
       window.clearTimeout(debounceTimer)
-      supabase.removeChannel(channel)
+      unsub()
+      releaseGlobalChannel()
     }
   }, [fetchLivePoints, groupId])
 
