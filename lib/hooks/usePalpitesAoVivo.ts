@@ -3,8 +3,27 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { calculateLiveScore } from '@/lib/scoring'
-import { subscribeToGameUpdates, acquireGlobalChannel, releaseGlobalChannel } from '@/lib/cache/score-cache'
-import { subscribeToPredictionInvalidations, acquirePredictionCache, releasePredictionCache } from '@/lib/cache/prediction-cache'
+import {
+  acquireGlobalChannel,
+  releaseGlobalChannel,
+  subscribeToGameUpdates,
+  ensureDate,
+  getCachedGames,
+} from '@/lib/cache/score-cache'
+import {
+  acquirePredictionCache,
+  releasePredictionCache,
+  ensurePredictions,
+  getCachedPredictions,
+  subscribeToPredictionUpdates,
+} from '@/lib/cache/prediction-cache'
+import {
+  acquirePointsCache,
+  releasePointsCache,
+  ensurePoints,
+  getCachedPoints,
+  subscribeToPointsUpdates,
+} from '@/lib/cache/points-cache'
 import type { ScoreBreakdown } from '@/lib/types/score'
 import type { RankingEntry } from '@/lib/types/ranking'
 
@@ -62,38 +81,6 @@ export interface UsePalpitesAoVivoResult {
 }
 
 // --------------------------------------------------------------------------
-// Tipos internos (Supabase rows)
-// --------------------------------------------------------------------------
-
-interface GameRow {
-  id: string
-  home_team: string
-  away_team: string
-  home_team_code: string
-  away_team_code: string
-  home_score: number | null
-  away_score: number | null
-  status: 'pending' | 'live' | 'finished'
-  match_date: string
-  round: string
-  phase: string
-}
-
-interface PredictionRow {
-  user_id: string
-  game_id: string
-  home_score: number
-  away_score: number
-}
-
-interface ScoreRow {
-  user_id: string
-  game_id: string
-  points: number
-  breakdown: ScoreBreakdown
-}
-
-// --------------------------------------------------------------------------
 // Ordenação do ranking
 // --------------------------------------------------------------------------
 
@@ -130,7 +117,7 @@ export function usePalpitesAoVivo(
   const [rankingWithDetails, setRankingWithDetails] = useState<RankingParticipantDetail[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [lastPolledAt, setLastPolledAt] = useState<Date | null>(null)
+  const [lastPolledAt] = useState<Date | null>(null)
 
   // Controla se é o primeiro fetch (para setLoading correto)
   const isFirstFetch = useRef(true)
@@ -138,216 +125,174 @@ export function usePalpitesAoVivo(
   const prevScoresKey = useRef<string>('')
   // Indica se já temos dados válidos — erros transientes não sobrescrevem a UI
   const hasData = useRef(false)
+  // Nomes dos participantes — populado por fetchParticipants(), consumido por computeAndSetState()
+  const rankingEntriesRef = useRef<RankingEntry[]>([])
 
-  const fetchAll = async (forceUpdate = false) => {
-    try {
-      const supabase = createClient()
+  // Busca os participantes do grupo via /api/ranking (apenas para nomes)
+  // Chamado somente no mount e no visibilitychange — nunca em listeners de Realtime
+  const fetchParticipants = async (): Promise<void> => {
+    const supabase = createClient()
+    const { data: sessionData } = await supabase.auth.getSession()
+    const token = sessionData.session?.access_token
+    if (!token) return
+    const res = await fetch(`/api/ranking?group_id=${groupId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (res.ok) {
+      rankingEntriesRef.current = (await res.json()) as RankingEntry[]
+    }
+  }
 
-      // 1. Buscar sessão para token de autorização
-      const { data: sessionData } = await supabase.auth.getSession()
-      const token = sessionData.session?.access_token
+  // Recálculo síncrono sem IO — chamado pelos listeners dos caches via debounce
+  // Não faz nenhuma chamada a Supabase nem a /api/ranking
+  function computeAndSetState(forceUpdate = false): void {
+    const games = getCachedGames(selectedDate)                           // ScoreCache
+    const allPredictions = getCachedPredictions(groupId)                 // PredictionCache — Map<gameId, Map<userId, CachedPrediction>>
+    const allPoints = getCachedPoints(groupId)                           // PointsCache — Map<gameId, Map<userId, CachedPoints>>
+    const rankingEntries = rankingEntriesRef.current
 
-      // 2. Buscar todos os jogos do dia selecionado (mesmo critério da aba Jogos)
-      const { data: gamesData, error: gamesError } = await supabase
-        .from('games')
-        .select('id,home_team,away_team,home_team_code,away_team_code,home_score,away_score,status,match_date,round,phase')
-        .eq('match_day', selectedDate)
-        .order('match_date', { ascending: true })
+    const liveGameIds = games.filter(g => g.status === 'live').map(g => g.id)
+    const finishedGameIds = games.filter(g => g.status === 'finished').map(g => g.id)
 
-      if (gamesError) throw new Error(`jogos: ${gamesError.message}`)
-
-      const games = (gamesData ?? []) as GameRow[]
-      const gameIds = games.map((g) => g.id)
-      const liveGameIds = games.filter((g) => g.status === 'live').map((g) => g.id)
-      const finishedGameIds = games.filter((g) => g.status === 'finished').map((g) => g.id)
-
-      // 3. Buscar palpites de todos os jogos de hoje do grupo
-      let allPredictions: PredictionRow[] = []
-      if (gameIds.length > 0) {
-        const { data: predictionsData, error: predictionsError } = await supabase
-          .from('predictions')
-          .select('user_id,game_id,home_score,away_score')
-          .eq('group_id', groupId)
-          .in('game_id', gameIds)
-
-        if (predictionsError) throw new Error(`palpites: ${predictionsError.message}`)
-        allPredictions = (predictionsData ?? []) as PredictionRow[]
+    // --- todayGames: jogos do dia com palpite do usuário atual ---
+    const newTodayGames: LiveGameWithPrediction[] = games.map(g => {
+      const myPred = allPredictions.get(g.id)?.get(currentUserId) ?? null
+      return {
+        id: g.id,
+        home_team: g.home_team,
+        away_team: g.away_team,
+        home_team_code: g.home_team_code,
+        away_team_code: g.away_team_code,
+        home_score: g.home_score,
+        away_score: g.away_score,
+        status: g.status,
+        match_date: g.match_date,
+        round: g.round,
+        phase: g.phase,
+        myPrediction: myPred
+          ? { home_score: myPred.home_score, away_score: myPred.away_score }
+          : null,
       }
+    })
 
-      // 4. Buscar scores dos jogos finalizados de hoje
-      let allScores: ScoreRow[] = []
-      if (finishedGameIds.length > 0) {
-        const { data: scoresData, error: scoresError } = await supabase
-          .from('scores')
-          .select('user_id,game_id,points,breakdown')
-          .eq('group_id', groupId)
-          .in('game_id', finishedGameIds)
+    // --- Pontos do dia por usuário ---
 
-        if (scoresError) throw new Error(`scores: ${scoresError.message}`)
-        allScores = (scoresData ?? []) as ScoreRow[]
+    // Jogos finalizados: pontuação oficial do PointsCache
+    const todayPointsByUser: Record<string, number> = {}
+    for (const gameId of finishedGameIds) {
+      const gamePoints = allPoints.get(gameId)
+      if (!gamePoints) continue
+      for (const [userId, cached] of gamePoints) {
+        todayPointsByUser[userId] = (todayPointsByUser[userId] ?? 0) + cached.points
       }
+    }
 
-      // 5. Buscar lista de participantes do grupo via API ranking
-      let rankingEntries: RankingEntry[] = []
-      if (token) {
-        const rankingRes = await fetch(`/api/ranking?group_id=${groupId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        if (rankingRes.ok) {
-          const rankingJson = await rankingRes.json()
-          rankingEntries = (rankingJson as RankingEntry[]) ?? []
+    // Jogos ao vivo: pontuação parcial calculada client-side
+    const hasLiveByUser: Record<string, boolean> = {}
+    for (const gameId of liveGameIds) {
+      const game = games.find(g => g.id === gameId)
+      if (!game) continue
+      const userPreds = allPredictions.get(gameId)
+      if (!userPreds) continue
+      for (const [userId, pred] of userPreds) {
+        const result = calculateLiveScore(
+          { home_score: game.home_score, away_score: game.away_score },
+          { home_score: pred.home_score, away_score: pred.away_score }
+        )
+        if (result && result.points > 0) {
+          todayPointsByUser[userId] = (todayPointsByUser[userId] ?? 0) + result.points
+          hasLiveByUser[userId] = true
         }
       }
+    }
 
-      // ---------- Montar índices para lookup rápido ----------
+    // --- Ranking com detalhes por participante ---
+    const adjustedRanking = sortRanking(
+      rankingEntries.map(entry => ({
+        entry,
+        total_points: todayPointsByUser[entry.user_id] ?? 0,
+        hasLivePoints: hasLiveByUser[entry.user_id] ?? false,
+      }))
+    )
 
-      const gamesById: Record<string, GameRow> = {}
-      for (const g of games) gamesById[g.id] = g
+    const newRankingWithDetails: RankingParticipantDetail[] = adjustedRanking.map(
+      ({ entry, total_points, hasLivePoints, rank_position }) => {
+        const userGames: GameScoreEntry[] = games.map(g => {
+          const pred = allPredictions.get(g.id)?.get(entry.user_id) ?? null
+          const score = allPoints.get(g.id)?.get(entry.user_id) ?? null
 
-      // Palpites indexados por userId → gameId
-      const predByUserGame: Record<string, Record<string, PredictionRow>> = {}
-      for (const p of allPredictions) {
-        if (!predByUserGame[p.user_id]) predByUserGame[p.user_id] = {}
-        predByUserGame[p.user_id][p.game_id] = p
-      }
-
-      // Scores indexados por userId → gameId
-      const scoreByUserGame: Record<string, Record<string, ScoreRow>> = {}
-      for (const s of allScores) {
-        if (!scoreByUserGame[s.user_id]) scoreByUserGame[s.user_id] = {}
-        scoreByUserGame[s.user_id][s.game_id] = s
-      }
-
-      // ---------- Jogos de hoje para o card (todos os status, com palpite do usuário atual) ----------
-
-      const myPredsByGame = predByUserGame[currentUserId] ?? {}
-
-      const newTodayGames: LiveGameWithPrediction[] = games.map((g) => {
-        const myPred = myPredsByGame[g.id] ?? null
-        return {
-          id: g.id,
-          home_team: g.home_team,
-          away_team: g.away_team,
-          home_team_code: g.home_team_code,
-          away_team_code: g.away_team_code,
-          home_score: g.home_score,
-          away_score: g.away_score,
-          status: g.status,
-          match_date: g.match_date,
-          round: g.round,
-          phase: g.phase,
-          myPrediction: myPred
-            ? { home_score: myPred.home_score, away_score: myPred.away_score }
-            : null,
-        }
-      })
-
-      // ---------- Calcular pontos do dia por usuário (apenas jogos de hoje) ----------
-
-      // Pontos de jogos finalizados hoje (da tabela scores)
-      const todayPointsByUser: Record<string, number> = {}
-      for (const s of allScores) {
-        todayPointsByUser[s.user_id] = (todayPointsByUser[s.user_id] ?? 0) + s.points
-      }
-
-      // Pontos estimados de jogos ao vivo hoje
-      const hasLiveByUser: Record<string, boolean> = {}
-      if (liveGameIds.length > 0) {
-        for (const userId of Object.keys(predByUserGame)) {
-          const userPreds = predByUserGame[userId]
-          for (const gameId of liveGameIds) {
-            const pred = userPreds[gameId]
-            if (!pred) continue
-            const game = gamesById[gameId]
-            if (!game) continue
+          let livePoints: number | null = null
+          let liveBreakdown: ScoreBreakdown | null = null
+          if (g.status === 'live' && pred) {
             const result = calculateLiveScore(
-              { home_score: game.home_score, away_score: game.away_score },
+              { home_score: g.home_score, away_score: g.away_score },
               { home_score: pred.home_score, away_score: pred.away_score }
             )
-            if (result && result.points > 0) {
-              todayPointsByUser[userId] = (todayPointsByUser[userId] ?? 0) + result.points
-              hasLiveByUser[userId] = true
-            }
+            livePoints = result?.points ?? null
+            liveBreakdown = result?.breakdown ?? null
           }
-        }
-      }
-
-      // ---------- Montar ranking com pontos apenas do dia ----------
-
-      const adjustedRanking = sortRanking(
-        rankingEntries.map((entry) => ({
-          entry,
-          total_points: todayPointsByUser[entry.user_id] ?? 0,
-          hasLivePoints: hasLiveByUser[entry.user_id] ?? false,
-        }))
-      )
-
-      const newRankingWithDetails: RankingParticipantDetail[] = adjustedRanking.map(
-        ({ entry, total_points, hasLivePoints, rank_position }) => {
-          const userPreds = predByUserGame[entry.user_id] ?? {}
-          const userScores = scoreByUserGame[entry.user_id] ?? {}
-
-          const userGames: GameScoreEntry[] = games.map((g) => {
-            const pred = userPreds[g.id] ?? null
-            const score = userScores[g.id] ?? null
-
-            let livePoints: number | null = null
-            let liveBreakdown: ScoreBreakdown | null = null
-            if (g.status === 'live' && pred) {
-              const result = calculateLiveScore(
-                { home_score: g.home_score, away_score: g.away_score },
-                { home_score: pred.home_score, away_score: pred.away_score }
-              )
-              livePoints = result?.points ?? null
-              liveBreakdown = result?.breakdown ?? null
-            }
-
-            return {
-              gameId: g.id,
-              home_team: g.home_team,
-              away_team: g.away_team,
-              home_team_code: g.home_team_code,
-              away_team_code: g.away_team_code,
-              home_score: g.home_score,
-              away_score: g.away_score,
-              status: g.status,
-              match_date: g.match_date,
-              userPrediction: pred
-                ? { home_score: pred.home_score, away_score: pred.away_score }
-                : null,
-              officialPoints: score?.points ?? null,
-              officialBreakdown: score?.breakdown ?? null,
-              livePoints,
-              liveBreakdown,
-            }
-          })
 
           return {
-            userId: entry.user_id,
-            name: entry.participant_name,
-            rank_position,
-            total_points,
-            hasLivePoints,
-            games: userGames,
+            gameId: g.id,
+            home_team: g.home_team,
+            away_team: g.away_team,
+            home_team_code: g.home_team_code,
+            away_team_code: g.away_team_code,
+            home_score: g.home_score,
+            away_score: g.away_score,
+            status: g.status,
+            match_date: g.match_date,
+            userPrediction: pred
+              ? { home_score: pred.home_score, away_score: pred.away_score }
+              : null,
+            officialPoints: score?.points ?? null,
+            officialBreakdown: score?.breakdown ?? null,
+            livePoints,
+            liveBreakdown,
           }
+        })
+
+        return {
+          userId: entry.user_id,
+          name: entry.participant_name,
+          rank_position,
+          total_points,
+          hasLivePoints,
+          games: userGames,
         }
-      )
-
-      // Só atualiza estado (e dispara animação FLIP) se algum placar mudou, ou se forçado
-      const scoresKey = games.map((g) => `${g.id}:${g.status}:${g.home_score}:${g.away_score}`).join('|')
-      const scoresChanged = scoresKey !== prevScoresKey.current
-      prevScoresKey.current = scoresKey
-
-      if (scoresChanged || forceUpdate) {
-        setTodayGames(newTodayGames)
-        setRankingWithDetails(newRankingWithDetails)
       }
+    )
+
+    // --- Guard FLIP: só atualiza estado se placar/status mudou, ou se forçado ---
+    const scoresKey = games
+      .map(g => `${g.id}:${g.status}:${g.home_score}:${g.away_score}`)
+      .join('|')
+    const scoresChanged = scoresKey !== prevScoresKey.current
+    prevScoresKey.current = scoresKey
+
+    if (scoresChanged || forceUpdate) {
+      setTodayGames(newTodayGames)
+      setRankingWithDetails(newRankingWithDetails)
+    }
+  }
+
+  // Inicialização assíncrona — executa no mount e no visibilitychange
+  // Carrega os três caches e os nomes dos participantes, depois computa o estado
+  const initialize = async (): Promise<void> => {
+    try {
+      await Promise.all([
+        ensureDate(selectedDate),                   // ScoreCache
+        ensurePredictions(groupId, selectedDate),    // PredictionCache
+        ensurePoints(groupId, selectedDate),         // PointsCache
+      ])
+      await fetchParticipants()
+      computeAndSetState(true)
       hasData.current = true
       setError(null)
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro desconhecido'
       console.error('[usePalpitesAoVivo] erro:', message)
-      // Só exibe erro se ainda não há dados — erros transientes (ex: unlock do celular) são silenciosos
+      // Só exibe erro se ainda não há dados — erros transientes são silenciosos
       if (!hasData.current) setError(message)
     } finally {
       if (isFirstFetch.current) {
@@ -358,45 +303,56 @@ export function usePalpitesAoVivo(
   }
 
   useEffect(() => {
-    // Fetch inicial
-    const initialTimer = window.setTimeout(() => { void fetchAll() }, 0)
+    // 1. Adquirir os três caches
+    acquireGlobalChannel()           // ScoreCache — canal live-scores-global
+    acquirePredictionCache(groupId)  // PredictionCache — canal predictions-${groupId}
+    acquirePointsCache(groupId)      // PointsCache — canal points-${groupId}
 
-    // Usa o canal Realtime global do ScoreCache em vez de polling 10s próprio
-    acquireGlobalChannel()
+    // 2. Inicialização assíncrona (ensure* + fetchParticipants + compute)
+    void initialize()
 
-    let debounceTimer: number | undefined
+    // 3. Listeners reativos — recálculo síncrono sem IO
+    let debounceGame: number | undefined
     const unsubGame = subscribeToGameUpdates('usePalpitesAoVivo', () => {
-      window.clearTimeout(debounceTimer)
-      debounceTimer = window.setTimeout(() => { void fetchAll() }, 1000)
+      window.clearTimeout(debounceGame)
+      debounceGame = window.setTimeout(() => { computeAndSetState() }, 1000)
     })
 
-    // Também escuta mudanças de palpites via PredictionCache (palpites de outros usuários)
-    acquirePredictionCache(groupId)
-    let debouncePredTimer: number | undefined
-    const unsubPred = subscribeToPredictionInvalidations(groupId, "usePalpitesAoVivo", () => {
-      window.clearTimeout(debouncePredTimer)
-      debouncePredTimer = window.setTimeout(() => { void fetchAll() }, 500)
+    let debouncePred: number | undefined
+    const unsubPred = subscribeToPredictionUpdates(groupId, 'usePalpitesAoVivo', () => {
+      window.clearTimeout(debouncePred)
+      debouncePred = window.setTimeout(() => { computeAndSetState() }, 500)
     })
 
+    let debouncePoints: number | undefined
+    const unsubPoints = subscribeToPointsUpdates(groupId, 'usePalpitesAoVivo', () => {
+      window.clearTimeout(debouncePoints)
+      debouncePoints = window.setTimeout(() => { computeAndSetState() }, 500)
+    })
+
+    // 4. visibilitychange → reinicialização completa (ensure* + fetchParticipants + compute)
     function onVisibilityChange() {
       if (document.visibilityState === 'visible') {
-        void fetchAll()
+        void initialize()
       }
     }
     document.addEventListener('visibilitychange', onVisibilityChange)
 
+    // 5. Cleanup
     return () => {
-      window.clearTimeout(initialTimer)
-      window.clearTimeout(debounceTimer)
-      window.clearTimeout(debouncePredTimer)
+      window.clearTimeout(debounceGame)
+      window.clearTimeout(debouncePred)
+      window.clearTimeout(debouncePoints)
       unsubGame()
-      releaseGlobalChannel()
       unsubPred()
+      unsubPoints()
+      releaseGlobalChannel()
       releasePredictionCache(groupId)
+      releasePointsCache(groupId)
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupId, currentUserId, selectedDate])
 
-  return { todayGames, rankingWithDetails, loading, error, lastPolledAt, refresh: () => fetchAll(true) }
+  return { todayGames, rankingWithDetails, loading, error, lastPolledAt, refresh: () => initialize() }
 }
