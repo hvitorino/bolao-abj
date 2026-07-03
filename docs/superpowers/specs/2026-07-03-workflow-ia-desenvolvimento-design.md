@@ -8,7 +8,7 @@
 
 ## Contexto e Problema
 
-O time já usa IA de forma individual e ad-hoc (Copilot, ChatGPT), sem padrão compartilhado. Isso gera três dores centrais:
+O time já usa IA de forma individual e ad-hoc (Cursor, Claude), sem padrão compartilhado. Isso gera três dores centrais:
 
 1. **Reuniões longas de refinamento** — spec técnica ainda é feita manualmente
 2. **Excesso de documentação** — gerada por humanos, raramente atualizada
@@ -43,12 +43,12 @@ O time já usa IA de forma individual e ad-hoc (Copilot, ChatGPT), sem padrão c
 ---
 
 ### Slide 3 — Fase 1: O Problema
-**Título:** "Código gerado com Copilot ainda exige muito do dev"
+**Título:** "Código gerado com Cursor ainda exige muito do dev"
 
 - Dev escreve ticket → interpreta a spec sozinho → codifica → abre PR → espera review
 - A IA ajuda a escrever código, mas não entende o ticket nem revisa o resultado
 - Review humano é feito sobre código não validado: encontra bugs que a IA poderia ter pego
-- **Gap de IA aqui:** o Copilot é reativo — responde ao que o dev digita, não ao que o ticket pede
+- **Gap de IA aqui:** o Cursor é reativo — responde ao que o dev digita, não ao que o ticket pede
 
 ---
 
