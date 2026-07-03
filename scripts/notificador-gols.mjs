@@ -66,18 +66,75 @@ async function sendToGroup(text) {
   if (!res.ok) console.error('[notificador] erro ao enviar:', res.status)
 }
 
+// ── Nomes em português ────────────────────────────────────────────────────────
+
+const NOMES_PT = {
+  'Algeria':                'Argélia',
+  'Argentina':              'Argentina',
+  'Australia':              'Austrália',
+  'Austria':                'Áustria',
+  'Belgium':                'Bélgica',
+  'Bosnia and Herzegovina': 'Bósnia e Herzegovina',
+  'Brazil':                 'Brasil',
+  'Canada':                 'Canadá',
+  'Cape Verde':             'Cabo Verde',
+  'Colombia':               'Colômbia',
+  'Croatia':                'Croácia',
+  'Curacao':                'Curaçao',
+  'Czechia':                'República Tcheca',
+  'DR Congo':               'Congo',
+  'Ecuador':                'Equador',
+  'Egypt':                  'Egito',
+  'England':                'Inglaterra',
+  'France':                 'França',
+  'Germany':                'Alemanha',
+  'Ghana':                  'Gana',
+  'Haiti':                  'Haiti',
+  'Iran':                   'Irã',
+  'Iraq':                   'Iraque',
+  'Ivory Coast':            'Costa do Marfim',
+  'Japan':                  'Japão',
+  'Jordan':                 'Jordânia',
+  'Mexico':                 'México',
+  'Morocco':                'Marrocos',
+  'Netherlands':            'Holanda',
+  'New Zealand':            'Nova Zelândia',
+  'Norway':                 'Noruega',
+  'Panama':                 'Panamá',
+  'Paraguay':               'Paraguai',
+  'Portugal':               'Portugal',
+  'Qatar':                  'Catar',
+  'Saudi Arabia':           'Arábia Saudita',
+  'Scotland':               'Escócia',
+  'Senegal':                'Senegal',
+  'South Africa':           'África do Sul',
+  'South Korea':            'Coreia do Sul',
+  'Spain':                  'Espanha',
+  'Sweden':                 'Suécia',
+  'Switzerland':            'Suíça',
+  'Tunisia':                'Tunísia',
+  'Turkey':                 'Turquia',
+  'USA':                    'Estados Unidos',
+  'Uruguay':                'Uruguai',
+  'Uzbekistan':             'Uzbequistão',
+}
+
+function pt(name) {
+  return NOMES_PT[name] ?? name
+}
+
 // ── Formatação ────────────────────────────────────────────────────────────────
 
 function mensagemGol(match, scoringTeam) {
   const custom = MENSAGENS_GOL[scoringTeam]
-    ?? `⚽ *GOL de ${scoringTeam}!*`
+    ?? `⚽ *GOL de ${pt(scoringTeam)}!*`
 
-  const score = `${match.home_team} *${match.home_score}×${match.away_score}* ${match.away_team}`
+  const score = `${pt(match.home_team)} *${match.home_score}×${match.away_score}* ${pt(match.away_team)}`
   return `${custom}\n\n${score}\n_!palpites para ver os palpites_`
 }
 
 function mensagemFim(match) {
-  const score = `${match.home_team} *${match.home_score}×${match.away_score}* ${match.away_team}`
+  const score = `${pt(match.home_team)} *${match.home_score}×${match.away_score}* ${pt(match.away_team)}`
   return `🏁 *FIM DE JOGO*\n${score}\n_!ranking para ver a classificação_`
 }
 
