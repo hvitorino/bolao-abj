@@ -8,7 +8,9 @@ Branch `feature/chaveamento-circular` contém uma primeira implementação de la
 
 ---
 
-# WIP — Auto-refresh de Token bolaodefutebol.com
+# ~~WIP~~ IMPLEMENTADO — Auto-refresh de Token bolaodefutebol.com
+
+**Status:** implementado em 2026-07-03. Ver `CARTOLAABJ.md` para documentação de operação e bootstrap.
 
 ## Objetivo
 

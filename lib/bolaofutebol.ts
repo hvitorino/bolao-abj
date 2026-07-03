@@ -19,9 +19,59 @@ let cachedJwt: string | null = null
 let cachedJwtAt = 0
 const JWT_CACHE_TTL_MS = 60_000 // 1 minuto
 
+function jwtExp(token: string): number {
+  try {
+    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString())
+    return typeof payload.exp === 'number' ? payload.exp : 0
+  } catch {
+    return 0
+  }
+}
+
+async function refreshBdfTokens(refreshToken: string): Promise<string> {
+  const res = await fetch('https://bolaodefutebol.com/auth/session/refresh', {
+    method: 'POST',
+    headers: {
+      rid: 'session',
+      'fdi-version': '4.1',
+      'st-auth-mode': 'header',
+      authorization: `Bearer ${refreshToken}`,
+      'Content-Length': '0',
+    },
+    cache: 'no-store',
+  })
+
+  if (!res.ok) throw new Error(`BDF refresh falhou: ${res.status}`)
+
+  const newAccess = res.headers.get('st-access-token')
+  const newRefresh = res.headers.get('st-refresh-token')
+  if (!newAccess || !newRefresh) throw new Error('Tokens ausentes na resposta do refresh')
+
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/integration_tokens?id=eq.bolaodefutebol`,
+    {
+      method: 'PATCH',
+      headers: { ...SUPABASE_HEADERS, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: newAccess,
+        refresh_token: newRefresh,
+        updated_at: new Date().toISOString(),
+      }),
+      cache: 'no-store',
+    }
+  )
+
+  // Invalidar cache local para que a próxima chamada leia o token novo
+  cachedJwt = null
+  cachedJwtAt = 0
+
+  return newAccess
+}
+
 /**
  * Obtém o JWT do bolaodefutebol.com via Supabase integration_tokens.
- * Cache de 1 minuto para evitar chamadas excessivas ao Supabase.
+ * Cache de 1 minuto em memória. Renova automaticamente via refresh token
+ * se o access token expirar em menos de 10 minutos.
  */
 export async function getBdfJwt(): Promise<string> {
   const now = Date.now()
@@ -30,19 +80,35 @@ export async function getBdfJwt(): Promise<string> {
   }
 
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/integration_tokens?id=eq.bolaodefutebol&select=token`,
+    `${SUPABASE_URL}/rest/v1/integration_tokens?id=eq.bolaodefutebol&select=token,refresh_token`,
     { headers: SUPABASE_HEADERS, cache: 'no-store' }
   )
 
   if (!res.ok) {
-    throw new Error(`Falha ao obter JWT do bolaodefutebol: ${res.status}`)
+    throw new Error(`Falha ao obter tokens do bolaodefutebol: ${res.status}`)
   }
 
-  const data = (await res.json()) as { token: string }[]
-  const token = data[0]?.token
+  const data = (await res.json()) as { token: string; refresh_token: string | null }[]
+  const row = data[0]
 
-  if (!token) {
+  if (!row?.token) {
     throw new Error('Token JWT do bolaodefutebol não encontrado no Supabase')
+  }
+
+  const nowSec = Math.floor(now / 1000)
+  const exp = jwtExp(row.token)
+  const expiresInSec = exp - nowSec
+
+  let token = row.token
+
+  if (expiresInSec < 600 && row.refresh_token) {
+    try {
+      token = await refreshBdfTokens(row.refresh_token)
+    } catch (err) {
+      // Se o refresh falhar mas o access token ainda for válido, continua
+      if (expiresInSec <= 0) throw err
+      console.error('[bdfJwt] refresh falhou, usando token atual:', err)
+    }
   }
 
   cachedJwt = token

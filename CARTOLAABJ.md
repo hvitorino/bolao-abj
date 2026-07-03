@@ -114,28 +114,40 @@ As rotinas ficam em: **https://claude.ai/code/routines**
 4. Converte os `user_id` do bolaodefutebol para os `user_id` do ABJ (mapeamento acima)
 5. Faz upsert em `predictions` com `group_id = 49496d29-90d8-49c4-9a04-594c12e760e6`
 
-### Atualização do Token JWT
+### Tokens de Autenticação — Auto-refresh
 
-O token JWT do bolaodefutebol.com é **válido ~8 horas** e obtido via proxy (Proxyman/Charles) no app mobile.
+O acesso ao bolaodefutebol.com usa **SuperTokens**:
 
-**Quando atualizar:** antes da primeira rodada de jogos de cada dia em que haja rotina agendada.
+| Token | Validade | Onde fica |
+|-------|----------|-----------|
+| `St-Access-Token` (JWT) | ~8h | `integration_tokens.token` |
+| `St-Refresh-Token` (opaco) | longa (~100 dias) | `integration_tokens.refresh_token` |
 
-**Como atualizar:** execute no SQL Editor do Supabase Dashboard:
+O script de importação faz **auto-refresh automático**: se o access token expirar em menos de 10 minutos, chama `POST https://bolaodefutebol.com/auth/session/refresh` e salva os novos tokens no Supabase antes de prosseguir.
+
+**Intervenção manual só é necessária se o refresh token for invalidado** (logout do app ou token muito antigo). Nesse caso:
+
+1. Abra o Proxyman com o app mobile do bolaodefutebol.com
+2. Faça login no app (via Google) e capture a resposta de `POST /auth/signinup`
+3. Copie `St-Access-Token` e `St-Refresh-Token` dos **response headers**
+4. Execute no SQL Editor do Supabase Dashboard:
 
 ```sql
-INSERT INTO integration_tokens (id, token, notes)
+INSERT INTO integration_tokens (id, token, refresh_token, notes)
 VALUES (
   'bolaodefutebol',
-  '<COLE_O_JWT_AQUI>',
-  'JWT bolaodefutebol.com — válido ~8h'
+  '<St-Access-Token>',
+  '<St-Refresh-Token>',
+  'Tokens bolaodefutebol.com — auto-refresh via SuperTokens /auth/session/refresh'
 )
 ON CONFLICT (id) DO UPDATE
-  SET token = EXCLUDED.token,
-      updated_at = now();
+  SET token         = EXCLUDED.token,
+      refresh_token = EXCLUDED.refresh_token,
+      notes         = EXCLUDED.notes,
+      updated_at    = now();
 ```
 
-> **Tabela:** `integration_tokens` — RLS habilitado, apenas `service_role` acessa.
-> O SQL acima deve ser executado no Dashboard (que usa `service_role` internamente).
+> **Timing crítico:** SuperTokens usa token rotation. Salvar imediatamente após capturar — se o app fizer outro refresh antes, o token capturado fica inválido.
 
 ### Rodada 3 — Rotinas one-shot criadas (jogos #49–72)
 
