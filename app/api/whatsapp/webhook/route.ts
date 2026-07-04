@@ -10,6 +10,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { bdfFetch } from '@/lib/bolaofutebol'
+import { fetchEspnScores, overlayEspnScore } from '@/lib/espn'
 
 const EVOLUTION_URL = process.env.EVOLUTION_API_URL!
 const EVOLUTION_KEY = process.env.EVOLUTION_API_KEY!
@@ -132,11 +133,12 @@ async function sendMessage(to: string, text: string): Promise<void> {
 // ── Comandos ─────────────────────────────────────────────────────────────────
 
 async function cmdRanking(): Promise<string> {
-  const [lbData, allMatches] = await Promise.all([
+  const [lbData, allMatches, espnScores] = await Promise.all([
     bdfFetch<{ entries: LeaderboardEntry[] }>(
       `/groups/${BDF_GROUP_ID}/leaderboard?limit=1000&tiebreaker=true`
     ),
     bdfFetch<BdfMatch[]>('/matches'),
+    fetchEspnScores(),
   ])
 
   const entries = lbData.entries ?? []
@@ -187,17 +189,20 @@ async function cmdRanking(): Promise<string> {
     return `${medal} *${name}* — ${total} pts${todayStr}`
   })
 
-  // Indicar jogos ao vivo no rodapé
+  // Indicar jogos ao vivo no rodapé (placar ESPN)
   const liveNow = liveOrFinished.filter((m) => m.status === 'live')
   const liveStr = liveNow.length > 0
-    ? `\n\n🔴 *Ao vivo:* ${liveNow.map((m) => `${m.home_team} ${m.home_score ?? 0}×${m.away_score ?? 0} ${m.away_team}`).join(' · ')}`
+    ? `\n\n🔴 *Ao vivo:* ${liveNow.map((m) => { const s = overlayEspnScore(m, espnScores); return `${s.home_team} ${s.home_score ?? 0}×${s.away_score ?? 0} ${s.away_team}` }).join(' · ')}`
     : ''
 
   return `🏆 *RANKING — CARTOLA ABJ*\n\n${lines.join('\n')}${liveStr}`
 }
 
 async function cmdHoje(): Promise<string> {
-  const allMatches = await bdfFetch<BdfMatch[]>('/matches')
+  const [allMatches, espnScores] = await Promise.all([
+    bdfFetch<BdfMatch[]>('/matches'),
+    fetchEspnScores(),
+  ])
   const today = todayBRT()
 
   const todayMatches = allMatches.filter((m) => {
@@ -208,12 +213,13 @@ async function cmdHoje(): Promise<string> {
   if (todayMatches.length === 0) return '📅 Nenhum jogo hoje.'
 
   const lines = todayMatches.map((m) => {
+    const s = overlayEspnScore(m, espnScores)
     const time = toBrtTime(m.start_time)
     if (m.status === 'finished') {
-      return `✅ *${m.home_team} ${m.home_score} × ${m.away_score} ${m.away_team}*`
+      return `✅ *${s.home_team} ${s.home_score} × ${s.away_score} ${s.away_team}*`
     }
     if (m.status === 'live') {
-      return `🔴 *${m.home_team} ${m.home_score ?? 0} × ${m.away_score ?? 0} ${m.away_team}* — AO VIVO`
+      return `🔴 *${s.home_team} ${s.home_score ?? 0} × ${s.away_score ?? 0} ${s.away_team}* — AO VIVO`
     }
     return `🕐 ${time} BRT — ${m.home_team} × ${m.away_team} _(${m.stage})_`
   })
@@ -248,7 +254,10 @@ function predIcon(p: BdfPrediction, m: BdfMatch): string {
 }
 
 async function cmdPalpites(): Promise<string> {
-  const allMatches = await bdfFetch<BdfMatch[]>('/matches')
+  const [allMatches, espnScores] = await Promise.all([
+    bdfFetch<BdfMatch[]>('/matches'),
+    fetchEspnScores(),
+  ])
   const liveMatches = allMatches.filter((m) => m.status === 'live')
 
   if (liveMatches.length === 0) return '📭 Nenhum jogo ao vivo agora.'
@@ -260,7 +269,8 @@ async function cmdPalpites(): Promise<string> {
       `/matches/${encodeURIComponent(m.id)}/predictions?groupId=${BDF_GROUP_ID}`
     )
 
-    const header = `⚽ *${m.home_team} ${m.home_score ?? 0}×${m.away_score ?? 0} ${m.away_team}*\n🔴 ${subStatusLabel(m.sub_status)}`
+    const s = overlayEspnScore(m, espnScores)
+    const header = `⚽ *${s.home_team} ${s.home_score ?? 0}×${s.away_score ?? 0} ${s.away_team}*\n🔴 ${subStatusLabel(m.sub_status)}`
 
     const sorted = [...preds].sort((a, b) => {
       // Prioridade: ✅ > ⚡ > 🏆 > ❌, desempate por nome
