@@ -120,7 +120,7 @@ function pts(raw: number): string {
 }
 
 async function sendMessage(to: string, text: string): Promise<void> {
-  await fetch(`${EVOLUTION_URL}/message/sendText/${EVOLUTION_INSTANCE}`, {
+  const res = await fetch(`${EVOLUTION_URL}/message/sendText/${EVOLUTION_INSTANCE}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -128,6 +128,9 @@ async function sendMessage(to: string, text: string): Promise<void> {
     },
     body: JSON.stringify({ number: to, text }),
   })
+  if (!res.ok) {
+    console.error('[whatsapp/webhook] sendText falhou', res.status, await res.text())
+  }
 }
 
 // ── Comandos ─────────────────────────────────────────────────────────────────
@@ -296,6 +299,24 @@ async function cmdPalpites(): Promise<string> {
   return sections.join('\n\n─────────────\n\n')
 }
 
+const RESETA_REPLIES = [
+  'Resetar pra quê? Pra tu perder de novo?',
+  'Esse comando é exclusivo do 1º colocado. Tu não.',
+  'O ranking não, mas tua vergonha bem que precisava de um reset',
+  'Chora menos e palpita mais, macho',
+]
+
+const FALLBACK_REPLIES = [
+  'Que diabo de comando é esse, mah?',
+  'Isso aí não existe não. Manda !ajuda que tu aprende.',
+  'Hã?? Fala direito, criatura.',
+  'Comando inválido. Igual teus palpites.',
+]
+
+function pick(replies: string[]): string {
+  return replies[Math.floor(Math.random() * replies.length)]
+}
+
 function cmdAjuda(): string {
   return [
     '⚽ *Bolão Cartola ABJ*',
@@ -304,6 +325,7 @@ function cmdAjuda(): string {
     '*!hoje* — jogos do dia',
     '*!palpites* — palpites do jogo ao vivo',
     '*!reseta* — comando secreto',
+    '*!chupa* — grito de guerra',
     '*!ajuda* — esta mensagem',
   ].join('\n')
 }
@@ -316,6 +338,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (body.event !== 'messages.upsert') return NextResponse.json({ ok: true })
 
   const text = extractText(body.data)?.trim().toLowerCase()
+  console.log(
+    '[whatsapp/webhook] upsert',
+    JSON.stringify({
+      jid: body.data.key?.remoteJid,
+      fromMe: body.data.key?.fromMe,
+      type: body.data.messageType,
+      text: text?.slice(0, 40) ?? null,
+    })
+  )
   if (!text?.startsWith('!')) return NextResponse.json({ ok: true })
 
   const jid = body.data.key.remoteJid
@@ -325,9 +356,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (text === '!ranking') reply = await cmdRanking()
     else if (text === '!hoje') reply = await cmdHoje()
     else if (text === '!palpites') reply = await cmdPalpites()
-    else if (text === '!reseta') reply = 'Reseta teu cu'
+    else if (text === '!reseta') reply = pick(RESETA_REPLIES)
+    else if (text === '!chupa') reply = 'KAAAAANAAAAAAALLLLL'
     else if (text === '!ajuda') reply = cmdAjuda()
-    else return NextResponse.json({ ok: true })
+    else reply = pick(FALLBACK_REPLIES)
 
     await sendMessage(jid, reply)
   } catch (err) {
