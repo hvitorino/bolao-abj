@@ -17,6 +17,9 @@ const EVOLUTION_KEY = process.env.EVOLUTION_API_KEY!
 const EVOLUTION_INSTANCE = process.env.EVOLUTION_INSTANCE!
 const BDF_GROUP_ID = 'ba08470f-94e7-4e51-b324-dc65c60c78af'
 
+// Chats onde o bot NÃO responde (adicionar JIDs aqui para silenciá-lo)
+const IGNORED_JIDS = new Set<string>([])
+
 // ── Tipos Evolution API ──────────────────────────────────────────────────────
 
 interface EvolutionWebhook {
@@ -306,11 +309,48 @@ const RESETA_REPLIES = [
   'Chora menos e palpita mais, macho',
 ]
 
+const CHUPA_REPLIES = [
+  'KAAAAANAAAAAAALLLLL',
+  'É O ANO TODO DE CHIBATA PAPAI!!!',
+  'QUE FODA MEU IRMÃO!!!',
+  'BOM DIA (TARDE E NOITE) COM ALEGRIA!!!',
+  'BOOOOMMMM !!! DÍVIDA TÁ DIMINUINDO EM RELAÇÃO AOS OUTROS ANOS !!!',
+]
+
+const TUTEMPENA_REPLIES = [
+  'Quem refresca cu de pato é lagoa!',
+  'Eu quero é que se lasque!',
+  'Pode baixar as portas!',
+  'Se acaba nãããããooooo KANAAAAAALLLL!',
+  'Se eu fosse de ter pena eu teria pena, como eu não sou, EU QUERO É QUE SE LASQUE!',
+  'Como ter pena da extinta raça dos kanalaenses!?',
+]
+
 const FALLBACK_REPLIES = [
   'Que diabo de comando é esse, mah?',
   'Isso aí não existe não. Manda !ajuda que tu aprende.',
   'Hã?? Fala direito, criatura.',
   'Comando inválido. Igual teus palpites.',
+  'Tu digitou isso com o cotovelo foi?',
+  'Nem o VAR salva um comando desse.',
+  'Esse comando tá mais perdido que zagueiro em contra-ataque.',
+  'Oxe, inventando comando agora? Manda !ajuda, vai.',
+  'Errou o comando igual erra placar. Impressionante a consistência.',
+  'Isso aí não roda nem no computador da NASA, macho.',
+  'Comando desconhecido. Que nem tu no topo do ranking.',
+  'Aprende a digitar primeiro, depois tu aprende a palpitar.',
+  'Vish, esse comando foi pra fora igual pênalti do teu time.',
+  'Tá inventando moda? Aqui só funciona o que tá no !ajuda.',
+  'Se palpite fosse comando, o teu também não funcionava.',
+  'Digitou de olho fechado foi, criatura?',
+  'Esse comando aí só existe na tua imaginação, mah.',
+  'Nem o Google acha o que tu quis dizer.',
+  'Impedimento! Comando irregular, jogada anulada.',
+  'Tu quer que eu adivinhe? Nem teus palpites eu entendo.',
+  'Comando errado. Vai treinar no !ajuda antes de voltar pro jogo.',
+  'Isso é comando ou tu dormiu em cima do teclado?',
+  'Cartão amarelo por tentativa de comando inexistente.',
+  'Aqui não é o ChatGPT não, macho. Manda !ajuda.',
 ]
 
 function pick(replies: string[]): string {
@@ -326,6 +366,7 @@ function cmdAjuda(): string {
     '*!palpites* — palpites do jogo ao vivo',
     '*!reseta* — comando secreto',
     '*!chupa* — grito de guerra',
+    '*!tutempena* — resposta pra quem tá chorando',
     '*!ajuda* — esta mensagem',
   ].join('\n')
 }
@@ -350,6 +391,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!text?.startsWith('!')) return NextResponse.json({ ok: true })
 
   const jid = body.data.key.remoteJid
+  if (IGNORED_JIDS.has(jid)) return NextResponse.json({ ok: true })
 
   try {
     let reply: string
@@ -357,7 +399,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     else if (text === '!hoje') reply = await cmdHoje()
     else if (text === '!palpites') reply = await cmdPalpites()
     else if (text === '!reseta') reply = pick(RESETA_REPLIES)
-    else if (text === '!chupa') reply = 'KAAAAANAAAAAAALLLLL'
+    else if (text === '!chupa') reply = pick(CHUPA_REPLIES)
+    else if (text === '!tutempena') reply = pick(TUTEMPENA_REPLIES)
     else if (text === '!ajuda') reply = cmdAjuda()
     else reply = pick(FALLBACK_REPLIES)
 
