@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react'
 
 // ── Mapeamento de usuários (bolaodefutebol → nome) ──────────────────────
 const USERS: Record<string, string> = {
@@ -64,6 +64,7 @@ interface LeaderboardEntry {
   tiebreaker_stats: {
     winner_count: number
     exact_score_count: number
+    winner_goals_count: number
     goal_diff_count: number
     loser_goals_count: number
     goleada_count: number
@@ -647,10 +648,43 @@ function MatchCard({
 
 // ── Ranking ──────────────────────────────────────────────────────────────
 
+const SCOUTS = [
+  { chave: 'cravadas', rotulo: 'Cravadas' },
+  { chave: 'vencedores', rotulo: 'Vencedor' },
+  { chave: 'diferenca', rotulo: 'Dif. Gols' },
+  { chave: 'placarVencedor', rotulo: 'Plac. Venc.' },
+  { chave: 'placarPerdedor', rotulo: 'Plac. Perd.' },
+  { chave: 'goleadas', rotulo: 'Goleadas' },
+] as const
+
+type Criterio = 'pontos' | (typeof SCOUTS)[number]['chave']
+
+const ROTULOS: Record<Criterio, string> = {
+  pontos: 'Pontos',
+  cravadas: 'Cravadas',
+  vencedores: 'Vencedor',
+  diferenca: 'Dif. Gols',
+  placarVencedor: 'Plac. Venc.',
+  placarPerdedor: 'Plac. Perd.',
+  goleadas: 'Goleadas',
+}
+
+function metricas(entry: LeaderboardEntry & { combined_total: number }): Record<Criterio, number> {
+  const ts = entry.tiebreaker_stats
+  return {
+    pontos: Math.round(entry.combined_total / 100),
+    cravadas: ts.exact_score_count,
+    vencedores: ts.winner_count,
+    diferenca: ts.goal_diff_count,
+    placarVencedor: ts.winner_goals_count,
+    placarPerdedor: ts.loser_goals_count,
+    goleadas: ts.goleada_count,
+  }
+}
+
 function RankingSection({
   ranking,
   todayPoints,
-  tiers,
 }: {
   ranking: (LeaderboardEntry & {
     combined_total: number
@@ -659,20 +693,81 @@ function RankingSection({
   todayPoints: Record<string, number>
   tiers: Record<string, string>
 }) {
+  const [criterio, setCriterio] = useState<Criterio>('pontos')
+  const itemRefs = useRef(new Map<string, HTMLDivElement>())
+  const prevTops = useRef<Map<string, number> | null>(null)
+
+  // FLIP: anima o deslocamento de cada bloco após a reordenação
+  useLayoutEffect(() => {
+    if (!prevTops.current) return
+    for (const [id, el] of itemRefs.current) {
+      const prev = prevTops.current.get(id)
+      if (prev == null) continue
+      const delta = prev - el.getBoundingClientRect().top
+      if (!delta) continue
+      el.animate(
+        [{ transform: `translateY(${delta}px)` }, { transform: 'translateY(0)' }],
+        { duration: 450, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+      )
+    }
+    prevTops.current = null
+  }, [criterio])
+
   if (ranking.length === 0) return null
 
+  function reordenar(chave: Criterio) {
+    if (chave === criterio) return
+    const tops = new Map<string, number>()
+    for (const [id, el] of itemRefs.current) {
+      tops.set(id, el.getBoundingClientRect().top)
+    }
+    prevTops.current = tops
+    setCriterio(chave)
+  }
+
+  const ordenado = [...ranking].sort((a, b) => {
+    const ma = metricas(a)
+    const mb = metricas(b)
+    return mb[criterio] - ma[criterio] || mb.pontos - ma.pontos
+  })
+
+  // posição compartilhada em caso de empate no critério ativo
+  const posicoes: number[] = []
+  let pos = 0
+  let anterior: number | null = null
+  ordenado.forEach((entry, i) => {
+    const valor = metricas(entry)[criterio]
+    if (valor !== anterior) {
+      pos = i + 1
+      anterior = valor
+    }
+    posicoes.push(pos)
+  })
+
+  const cardBase: React.CSSProperties = {
+    fontFamily: 'inherit',
+    backgroundColor: 'rgba(0, 39, 118, 0.25)',
+    border: '1px solid var(--color-border)',
+    boxShadow: '0 2px 0 rgba(0, 0, 0, 0.4)',
+    color: 'var(--color-text)',
+    padding: '7px 4px 6px',
+    textAlign: 'center',
+    cursor: 'pointer',
+    transition: 'border-color 0.2s, background-color 0.2s',
+  }
+  const cardAtivo: React.CSSProperties = {
+    borderColor: 'var(--color-win)',
+    backgroundColor: 'rgba(0, 210, 106, 0.12)',
+  }
+
   return (
-    <div
-      style={{
-        border: '1px solid var(--color-border)',
-        backgroundColor: 'var(--color-surface)',
-        overflow: 'hidden',
-      }}
-    >
+    <div>
       <div
         style={{
           padding: '0.75rem 1rem',
-          borderBottom: '1px solid var(--color-border)',
+          border: '1px solid var(--color-border)',
+          borderBottom: 'none',
+          backgroundColor: 'var(--color-surface)',
           fontSize: '13px',
           fontWeight: 'bold',
           textTransform: 'uppercase',
@@ -683,131 +778,177 @@ function RankingSection({
       >
         🏆 RANKING — CARTOLA ABJ
       </div>
-
-      <div style={{ overflowX: 'auto' }}>
-        <table
-          style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            fontSize: '12px',
-          }}
-        >
-          <thead>
-            <tr
-              style={{
-                borderBottom: '1px solid var(--color-border)',
-                color: 'var(--color-muted)',
-                fontSize: '10px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-              }}
-            >
-              <th style={thStyle}>#</th>
-              <th style={{ ...thStyle, textAlign: 'left' }}>Participante</th>
-              <th style={{ ...thStyle, textAlign: 'right' }}>Total</th>
-              <th style={{ ...thStyle, textAlign: 'right' }}>Hoje</th>
-              <th style={{ ...thStyle, textAlign: 'center' }}>E/D/V</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ranking.map((entry, i) => {
-              const name = USERS[entry.user_id] ?? entry.user_name
-              const total = entry.combined_total / 100
-              const today = (todayPoints[entry.user_id] ?? 0) / 100
-              const ts = entry.tiebreaker_stats
-              const isLeader = i === 0
-
-              return (
-                <tr
-                  key={entry.user_id}
-                  style={{
-                    borderBottom: '1px solid var(--color-border)',
-                    height: '30px',
-                    ...(isLeader
-                      ? {
-                          backgroundColor: 'var(--color-bg)',
-                        }
-                      : {}),
-                  }}
-                >
-                  <td
-                    style={{
-                      ...tdStyle,
-                      textAlign: 'center',
-                      width: '2rem',
-                      color: isLeader
-                        ? 'var(--color-accent)'
-                        : 'var(--color-muted)',
-                      fontWeight: isLeader ? 'bold' : 'normal',
-                    }}
-                  >
-                    {isLeader ? '►' : ''} {i + 1}
-                  </td>
-                  <td
-                    style={{
-                      ...tdStyle,
-                      textAlign: 'left',
-                      color: isLeader
-                        ? 'var(--color-accent)'
-                        : 'var(--color-text)',
-                      fontWeight: isLeader ? 'bold' : 'normal',
-                    }}
-                  >
-                    {name}
-                    <span style={{ marginLeft: '0.3rem', fontSize: '9px', fontWeight: 'bold', color: 'var(--color-accent)', verticalAlign: 'top' }}>PRO</span>
-                  </td>
-                  <td
-                    style={{
-                      ...tdStyle,
-                      textAlign: 'right',
-                      fontWeight: 'bold',
-                      color: 'var(--color-accent)',
-                      width: '4.5rem',
-                    }}
-                  >
-                    {Math.round(total)}
-                  </td>
-                  <td
-                    style={{
-                      ...tdStyle,
-                      textAlign: 'right',
-                      color:
-                        today > 0 ? 'var(--color-win)' : 'var(--color-muted)',
-                      width: '4rem',
-                    }}
-                  >
-                    {today > 0 ? `+${Math.round(today)}` : '—'}
-                  </td>
-                  <td
-                    style={{
-                      ...tdStyle,
-                      textAlign: 'center',
-                      color: 'var(--color-muted)',
-                      fontSize: '10px',
-                      width: '5rem',
-                    }}
-                  >
-                    {ts.exact_score_count}/{ts.goal_diff_count}/
-                    {ts.winner_count}
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-
       <div
         style={{
           padding: '0.5rem 1rem',
+          border: '1px solid var(--color-border)',
+          borderBottom: 'none',
+          backgroundColor: 'var(--color-surface)',
           fontSize: '10px',
           color: 'var(--color-muted)',
-          borderTop: '1px solid var(--color-border)',
           textTransform: 'uppercase',
           letterSpacing: '0.05em',
         }}
       >
-        Total = Acumulado BDF + Pontos de hoje · E/D/V = Exatos / Diferença / Vencedores
+        Ordenado por{' '}
+        <b style={{ color: 'var(--color-win)' }}>{ROTULOS[criterio]}</b> — toque
+        num card para reordenar
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px' }}>
+        {ordenado.map((entry, i) => {
+          const name = USERS[entry.user_id] ?? entry.user_name
+          const m = metricas(entry)
+          const today = (todayPoints[entry.user_id] ?? 0) / 100
+          const isLeader = posicoes[i] === 1
+
+          return (
+            <div
+              key={entry.user_id}
+              ref={(el) => {
+                if (el) itemRefs.current.set(entry.user_id, el)
+                else itemRefs.current.delete(entry.user_id)
+              }}
+              style={{
+                border: `1px solid ${isLeader ? 'var(--color-accent)' : 'var(--color-border)'}`,
+                backgroundColor: 'var(--color-surface)',
+                padding: '10px 12px 12px',
+                willChange: 'transform',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  marginBottom: '10px',
+                }}
+              >
+                <span
+                  style={{
+                    color: isLeader ? 'var(--color-accent)' : 'var(--color-muted)',
+                    fontWeight: 'bold',
+                    minWidth: '2.2em',
+                    fontSize: 'clamp(14px, 3.5vw, 17px)',
+                  }}
+                >
+                  {posicoes[i]}
+                </span>
+                <span
+                  style={{
+                    flex: 1,
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                    fontSize: 'clamp(12px, 3.5vw, 15px)',
+                    color: isLeader ? 'var(--color-accent)' : 'var(--color-text)',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {name}
+                  <span style={{ marginLeft: '0.3rem', fontSize: '9px', fontWeight: 'bold', color: 'var(--color-accent)', verticalAlign: 'top' }}>PRO</span>
+                  {today > 0 && (
+                    <span style={{ marginLeft: '0.5rem', fontSize: '10px', fontWeight: 'bold', color: 'var(--color-win)' }}>
+                      +{Math.round(today)} hoje
+                    </span>
+                  )}
+                </span>
+                <button
+                  onClick={() => reordenar('pontos')}
+                  aria-label="Ordenar por pontos"
+                  style={{
+                    ...cardBase,
+                    ...(criterio === 'pontos' ? cardAtivo : {}),
+                    color: 'var(--color-accent)',
+                    fontWeight: 'bold',
+                    fontSize: 'clamp(16px, 5vw, 22px)',
+                    padding: '5px 10px 4px',
+                    textAlign: 'right',
+                    lineHeight: 1,
+                  }}
+                >
+                  {m.pontos}
+                  <small
+                    style={{
+                      display: 'block',
+                      marginTop: '3px',
+                      fontSize: '9px',
+                      fontWeight: 'normal',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                      color: criterio === 'pontos' ? 'var(--color-win)' : 'var(--color-muted)',
+                      textAlign: 'right',
+                    }}
+                  >
+                    pts
+                  </small>
+                </button>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(88px, 1fr))',
+                  gap: '6px',
+                }}
+              >
+                {SCOUTS.map((s) => (
+                  <button
+                    key={s.chave}
+                    onClick={() => reordenar(s.chave)}
+                    aria-label={`Ordenar por ${s.rotulo}`}
+                    style={{
+                      ...cardBase,
+                      ...(criterio === s.chave ? cardAtivo : {}),
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: 'block',
+                        fontSize: 'clamp(14px, 4vw, 18px)',
+                        fontWeight: 'bold',
+                        color: criterio === s.chave ? 'var(--color-accent)' : 'var(--color-win)',
+                        lineHeight: 1.1,
+                      }}
+                    >
+                      {m[s.chave]}
+                    </span>
+                    <span
+                      style={{
+                        display: 'block',
+                        marginTop: '3px',
+                        fontSize: '9px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        color: 'var(--color-muted)',
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {s.rotulo}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      <div
+        style={{
+          marginTop: '8px',
+          padding: '0.5rem 1rem',
+          border: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-surface)',
+          fontSize: '10px',
+          color: 'var(--color-muted)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+        }}
+      >
+        Pontos = Acumulado BDF + Pontos de hoje · Scouts do leaderboard oficial BDF
       </div>
     </div>
   )
