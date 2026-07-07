@@ -67,14 +67,24 @@
 
   .linha {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  .seta {
+    color: var(--color-muted);
+    font-size: 11px;
+    display: inline-block;
+    transition: transform 0.25s, color 0.25s;
+  }
+  .player.aberto .seta {
+    color: var(--color-win);
+    transform: rotate(90deg);
   }
   .pos {
     color: var(--color-muted);
     font-weight: 700;
-    min-width: 2.2em;
+    min-width: 1.6em;
     font-size: clamp(14px, 3.5vw, 17px);
   }
   .lider .pos { color: var(--color-accent); }
@@ -121,17 +131,26 @@
   }
   .pontos.ativo small { color: var(--color-win); }
 
+  .cards-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+  }
+  .player.aberto .cards-wrap { grid-template-rows: 1fr; }
+  .cards-inner { overflow: hidden; min-height: 0; }
   .cards {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 6px;
+    gap: 4px;
+    padding-top: 8px;
   }
   .card {
     font-family: inherit;
     background: rgba(0, 39, 118, 0.25);
     border: 1px solid var(--color-border);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
     color: var(--color-text);
-    padding: 7px 4px 6px;
+    padding: 4px 2px 3px;
     text-align: center;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
@@ -143,7 +162,7 @@
   }
   .card .valor {
     display: block;
-    font-size: clamp(14px, 4vw, 18px);
+    font-size: clamp(12px, 3.2vw, 15px);
     font-weight: 700;
     color: var(--color-win);
     line-height: 1.1;
@@ -151,16 +170,13 @@
   .card.ativo .valor { color: var(--color-accent); }
   .card .rotulo {
     display: block;
-    margin-top: 3px;
-    font-size: clamp(8px, 2vw, 9px);
+    margin-top: 2px;
+    font-size: 7px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.03em;
     color: var(--color-muted);
     line-height: 1.2;
-  }
-
-  @media (max-width: 480px) {
-    .cards { grid-template-columns: repeat(3, 1fr); }
+    white-space: nowrap;
   }
 
   footer {
@@ -181,7 +197,7 @@
     <div class="meta" id="meta"></div>
   </header>
 
-  <p class="sort-label">Ordenado por <b id="criterio-ativo">Pontos</b> — toque num card para reordenar</p>
+  <p class="sort-label">Ordenado por <b id="criterio-ativo">Pontos</b> — toque no jogador para ver os scouts · toque num scout para reordenar</p>
   <div id="ranking"></div>
 
   <footer>
@@ -195,12 +211,12 @@
 const DATA = {"atualizadoEm":"2026-07-07T13:12:40.484Z","totalJogos":94,"totalPalpites":1110,"players":[{"nome":"David Macedo","jogos":94,"pontos":429,"cravadas":11,"vencedores":63,"diferenca":23,"placarVencedor":19,"placarPerdedor":26,"goleadas":0},{"nome":"Civilizado","jogos":94,"pontos":428,"cravadas":13,"vencedores":61,"diferenca":30,"placarVencedor":17,"placarPerdedor":25,"goleadas":0},{"nome":"JoãoFilho","jogos":94,"pontos":425,"cravadas":12,"vencedores":61,"diferenca":25,"placarVencedor":19,"placarPerdedor":29,"goleadas":1},{"nome":"Fábio Oliveira","jogos":92,"pontos":412,"cravadas":13,"vencedores":57,"diferenca":26,"placarVencedor":20,"placarPerdedor":27,"goleadas":1},{"nome":"Hamon Vitorino","jogos":91,"pontos":380,"cravadas":13,"vencedores":59,"diferenca":26,"placarVencedor":17,"placarPerdedor":32,"goleadas":1},{"nome":"Josué","jogos":91,"pontos":373,"cravadas":13,"vencedores":53,"diferenca":24,"placarVencedor":17,"placarPerdedor":27,"goleadas":1},{"nome":"Michel Egidio","jogos":91,"pontos":368,"cravadas":10,"vencedores":58,"diferenca":22,"placarVencedor":15,"placarPerdedor":32,"goleadas":1},{"nome":"Raimundo Nonato","jogos":94,"pontos":367,"cravadas":13,"vencedores":53,"diferenca":25,"placarVencedor":16,"placarPerdedor":31,"goleadas":1},{"nome":"Roberto Sales","jogos":90,"pontos":365,"cravadas":8,"vencedores":59,"diferenca":22,"placarVencedor":13,"placarPerdedor":29,"goleadas":1},{"nome":"Thiago Brito","jogos":94,"pontos":345,"cravadas":7,"vencedores":56,"diferenca":22,"placarVencedor":14,"placarPerdedor":22,"goleadas":2},{"nome":"Hermes Junior","jogos":91,"pontos":335,"cravadas":9,"vencedores":53,"diferenca":21,"placarVencedor":15,"placarPerdedor":27,"goleadas":0},{"nome":"Henrique Saraiva","jogos":94,"pontos":332,"cravadas":8,"vencedores":53,"diferenca":22,"placarVencedor":14,"placarPerdedor":23,"goleadas":0}]};
 
 const SCOUTS = [
-  { chave: 'cravadas',       rotulo: 'Cravadas' },
-  { chave: 'vencedores',     rotulo: 'Vencedor' },
-  { chave: 'diferenca',      rotulo: 'Dif. Gols' },
-  { chave: 'placarVencedor', rotulo: 'Plac. Venc.' },
-  { chave: 'placarPerdedor', rotulo: 'Plac. Perd.' },
-  { chave: 'goleadas',       rotulo: 'Goleadas' },
+  { chave: 'cravadas',       rotulo: 'Cravadas',    abrev: 'CRAV' },
+  { chave: 'vencedores',     rotulo: 'Vencedor',    abrev: 'VENC' },
+  { chave: 'diferenca',      rotulo: 'Dif. Gols',   abrev: 'DIF' },
+  { chave: 'placarVencedor', rotulo: 'Plac. Venc.', abrev: 'P.VEN' },
+  { chave: 'placarPerdedor', rotulo: 'Plac. Perd.', abrev: 'P.PER' },
+  { chave: 'goleadas',       rotulo: 'Goleadas',    abrev: 'GOL' },
 ];
 const ROTULOS = Object.fromEntries([['pontos','Pontos'], ...SCOUTS.map(s => [s.chave, s.rotulo])]);
 
@@ -219,17 +235,22 @@ for (const p of DATA.players) {
   const el = document.createElement('div');
   el.className = 'player';
   el.innerHTML = `
-    <div class="linha">
+    <div class="linha" role="button" aria-expanded="false" aria-label="${p.nome}: mostrar scouts">
+      <span class="seta" aria-hidden>▶</span>
       <span class="pos"></span>
       <span class="nome">${p.nome}</span>
       <button class="pontos" data-chave="pontos" aria-label="Ordenar por pontos">${p.pontos}<small>pts</small></button>
     </div>
-    <div class="cards">
-      ${SCOUTS.map(s => `
-        <button class="card" data-chave="${s.chave}" aria-label="Ordenar por ${s.rotulo}">
-          <span class="valor">${p[s.chave]}</span>
-          <span class="rotulo">${s.rotulo}</span>
-        </button>`).join('')}
+    <div class="cards-wrap">
+      <div class="cards-inner">
+        <div class="cards">
+          ${SCOUTS.map(s => `
+            <button class="card" data-chave="${s.chave}" aria-label="Ordenar por ${s.rotulo}">
+              <span class="valor">${p[s.chave]}</span>
+              <span class="rotulo">${s.abrev}</span>
+            </button>`).join('')}
+        </div>
+      </div>
     </div>`;
   blocos.set(p.nome, el);
   ranking.appendChild(el);
@@ -237,7 +258,13 @@ for (const p of DATA.players) {
 
 ranking.addEventListener('click', e => {
   const btn = e.target.closest('[data-chave]');
-  if (btn) reordenar(btn.dataset.chave);
+  if (btn) { reordenar(btn.dataset.chave); return; }
+  const linha = e.target.closest('.linha');
+  if (linha) {
+    const player = linha.closest('.player');
+    const aberto = player.classList.toggle('aberto');
+    linha.setAttribute('aria-expanded', String(aberto));
+  }
 });
 
 function reordenar(chave) {

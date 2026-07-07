@@ -649,12 +649,12 @@ function MatchCard({
 // ── Ranking ──────────────────────────────────────────────────────────────
 
 const SCOUTS = [
-  { chave: 'cravadas', rotulo: 'Cravadas' },
-  { chave: 'vencedores', rotulo: 'Vencedor' },
-  { chave: 'diferenca', rotulo: 'Dif. Gols' },
-  { chave: 'placarVencedor', rotulo: 'Plac. Venc.' },
-  { chave: 'placarPerdedor', rotulo: 'Plac. Perd.' },
-  { chave: 'goleadas', rotulo: 'Goleadas' },
+  { chave: 'cravadas', rotulo: 'Cravadas', abrev: 'CRAV' },
+  { chave: 'vencedores', rotulo: 'Vencedor', abrev: 'VENC' },
+  { chave: 'diferenca', rotulo: 'Dif. Gols', abrev: 'DIF' },
+  { chave: 'placarVencedor', rotulo: 'Plac. Venc.', abrev: 'P.VEN' },
+  { chave: 'placarPerdedor', rotulo: 'Plac. Perd.', abrev: 'P.PER' },
+  { chave: 'goleadas', rotulo: 'Goleadas', abrev: 'GOL' },
 ] as const
 
 type Criterio = 'pontos' | (typeof SCOUTS)[number]['chave']
@@ -694,8 +694,18 @@ function RankingSection({
   tiers: Record<string, string>
 }) {
   const [criterio, setCriterio] = useState<Criterio>('pontos')
+  const [abertos, setAbertos] = useState<Set<string>>(new Set())
   const itemRefs = useRef(new Map<string, HTMLDivElement>())
   const prevTops = useRef<Map<string, number> | null>(null)
+
+  function alternarAberto(id: string) {
+    setAbertos((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
 
   // FLIP: anima o deslocamento de cada bloco após a reordenação
   useLayoutEffect(() => {
@@ -792,7 +802,7 @@ function RankingSection({
       >
         Ordenado por{' '}
         <b style={{ color: 'var(--color-win)' }}>{ROTULOS[criterio]}</b> — toque
-        num card para reordenar
+        no jogador para ver os scouts · toque num scout para reordenar
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px' }}>
@@ -801,6 +811,7 @@ function RankingSection({
           const m = metricas(entry)
           const today = (todayPoints[entry.user_id] ?? 0) / 100
           const isLeader = posicoes[i] === 1
+          const isAberto = abertos.has(entry.user_id)
 
           return (
             <div
@@ -812,23 +823,39 @@ function RankingSection({
               style={{
                 border: `1px solid ${isLeader ? 'var(--color-accent)' : 'var(--color-border)'}`,
                 backgroundColor: 'var(--color-surface)',
-                padding: '10px 12px 12px',
+                padding: '8px 10px 10px',
                 willChange: 'transform',
               }}
             >
               <div
+                onClick={() => alternarAberto(entry.user_id)}
+                role="button"
+                aria-expanded={isAberto}
+                aria-label={`${name}: mostrar scouts`}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px',
-                  marginBottom: '10px',
+                  cursor: 'pointer',
                 }}
               >
+                <span
+                  aria-hidden
+                  style={{
+                    color: isAberto ? 'var(--color-win)' : 'var(--color-muted)',
+                    fontSize: '11px',
+                    display: 'inline-block',
+                    transform: isAberto ? 'rotate(90deg)' : 'none',
+                    transition: 'transform 0.25s, color 0.25s',
+                  }}
+                >
+                  ▶
+                </span>
                 <span
                   style={{
                     color: isLeader ? 'var(--color-accent)' : 'var(--color-muted)',
                     fontWeight: 'bold',
-                    minWidth: '2.2em',
+                    minWidth: '1.6em',
                     fontSize: 'clamp(14px, 3.5vw, 17px)',
                   }}
                 >
@@ -856,7 +883,10 @@ function RankingSection({
                   )}
                 </span>
                 <button
-                  onClick={() => reordenar('pontos')}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    reordenar('pontos')
+                  }}
                   aria-label="Ordenar por pontos"
                   style={{
                     ...cardBase,
@@ -890,10 +920,19 @@ function RankingSection({
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(88px, 1fr))',
-                  gap: '6px',
+                  gridTemplateRows: isAberto ? '1fr' : '0fr',
+                  transition: 'grid-template-rows 0.3s ease',
                 }}
               >
+                <div style={{ overflow: 'hidden', minHeight: 0 }}>
+                  <div
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(6, 1fr)',
+                      gap: '4px',
+                      paddingTop: '8px',
+                    }}
+                  >
                 {SCOUTS.map((s) => (
                   <button
                     key={s.chave}
@@ -901,13 +940,15 @@ function RankingSection({
                     aria-label={`Ordenar por ${s.rotulo}`}
                     style={{
                       ...cardBase,
+                      padding: '4px 2px 3px',
+                      boxShadow: '0 1px 0 rgba(0, 0, 0, 0.4)',
                       ...(criterio === s.chave ? cardAtivo : {}),
                     }}
                   >
                     <span
                       style={{
                         display: 'block',
-                        fontSize: 'clamp(14px, 4vw, 18px)',
+                        fontSize: 'clamp(12px, 3.2vw, 15px)',
                         fontWeight: 'bold',
                         color: criterio === s.chave ? 'var(--color-accent)' : 'var(--color-win)',
                         lineHeight: 1.1,
@@ -918,18 +959,21 @@ function RankingSection({
                     <span
                       style={{
                         display: 'block',
-                        marginTop: '3px',
-                        fontSize: '9px',
+                        marginTop: '2px',
+                        fontSize: '7px',
                         textTransform: 'uppercase',
-                        letterSpacing: '0.05em',
+                        letterSpacing: '0.03em',
                         color: 'var(--color-muted)',
                         lineHeight: 1.2,
+                        whiteSpace: 'nowrap',
                       }}
                     >
-                      {s.rotulo}
+                      {s.abrev}
                     </span>
                   </button>
                 ))}
+                  </div>
+                </div>
               </div>
             </div>
           )
