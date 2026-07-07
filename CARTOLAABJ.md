@@ -207,3 +207,6 @@ Os `match_id` do bolaodefutebol para Quartas, Semi e Final ainda não são conhe
 | 2026-07-01 | Jogo #80 — Inglaterra × Congo DR | 1 | 12 |
 | 2026-07-01 | Jogo #81 — Estados Unidos × Bósnia e Herzegovina | 1 | 12 |
 | 2026-07-01 | Jogo — Bélgica × Senegal | 1 | 12 |
+| 2026-07-03 | Jogos #85, #88, #86 — Suíça × Argélia, Austrália × Egito, Argentina × Cape Verde | 3 | 35 |
+| 2026-07-03 | Jogo — Colômbia × Gana | 1 | 11 |
+| 2026-07-07 | Backfill Quartas/Semis — Canadá × Marrocos, Paraguai × França, Brasil × Noruega, México × Inglaterra, Portugal × Espanha, EUA × Bélgica | 6 | 69 |

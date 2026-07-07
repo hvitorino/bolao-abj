@@ -1,0 +1,1111 @@
+jogo_num,data_utc,fase,estagio,time_casa,time_fora,placar_casa,placar_fora,goleada,jogador,palpite_casa,palpite_fora,pontos_bdf,palpite_em
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,Civilizado,2,0,8,2026-06-09T00:00:29.314973Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,David Macedo,1,0,4,2026-06-08T14:17:09.781796Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,Henrique Saraiva,1,0,4,2026-06-08T21:24:35.120505Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,Raimundo Nonato,2,1,6,2026-06-09T02:05:56.09469Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,Roberto Sales,1,0,4,2026-06-10T13:53:58.632989Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,Hamon Vitorino,2,0,8,2026-06-08T15:58:06.404022Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,Josué,2,0,8,2026-06-09T00:53:40.962852Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,Thiago Brito,2,1,6,2026-06-10T15:01:09.697487Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,Fábio Oliveira,2,0,8,2026-06-11T00:05:52.586106Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,Hermes Junior,2,0,8,2026-06-11T01:23:16.640764Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,Michel Egidio,1,0,4,2026-06-11T12:23:06.852837Z
+1,2026-06-11T19:00:00Z,round1,Group A,Mexico,South Africa,2,0,false,JoãoFilho,2,0,8,2026-06-04T02:14:18.209899Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,Fábio Oliveira,1,1,0,2026-06-11T00:06:04.346727Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,David Macedo,1,2,0,2026-06-08T14:36:21.615199Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,Hermes Junior,1,1,0,2026-06-09T00:43:53.556077Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,Henrique Saraiva,1,2,0,2026-06-08T21:24:35.110961Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,Thiago Brito,1,0,6,2026-06-10T15:01:23.171931Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,Raimundo Nonato,1,1,0,2026-06-09T02:05:56.073539Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,Josué,1,1,0,2026-06-09T00:53:55.322297Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,Hamon Vitorino,1,1,0,2026-06-08T16:17:34.304515Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,Civilizado,1,0,6,2026-06-09T00:00:59.509333Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,Michel Egidio,1,0,6,2026-06-11T12:31:53.351501Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,Roberto Sales,1,0,6,2026-06-10T13:54:46.756288Z
+2,2026-06-12T02:00:00Z,round1,Group A,South Korea,Czechia,2,1,false,JoãoFilho,2,1,9,2026-06-04T02:14:55.498358Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,David Macedo,2,0,0,2026-06-08T14:36:36.317865Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,Raimundo Nonato,0,1,0,2026-06-09T02:05:56.082907Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,Civilizado,2,0,0,2026-06-09T00:01:13.81383Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,Michel Egidio,2,0,0,2026-06-12T11:04:16.940336Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,Henrique Saraiva,1,0,0,2026-06-09T20:32:44.983845Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,Josué,2,1,0,2026-06-09T18:47:02.108049Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,Fábio Oliveira,2,1,0,2026-06-11T00:06:22.066486Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,Hermes Junior,2,0,0,2026-06-12T14:06:28.003552Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,JoãoFilho,1,0,0,2026-06-11T21:48:17.34744Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,Thiago Brito,1,0,0,2026-06-12T12:59:57.599028Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,Hamon Vitorino,0,1,0,2026-06-08T16:17:47.044016Z
+3,2026-06-12T19:00:00Z,round1,Group B,Canada,Bosnia and Herzegovina,1,1,false,Roberto Sales,1,0,0,2026-06-10T13:55:06.491927Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,Roberto Sales,1,0,3,2026-06-10T13:55:31.129723Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,Hermes Junior,2,1,4,2026-06-12T14:06:56.44762Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,JoãoFilho,2,1,4,2026-06-12T04:18:04.708185Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,David Macedo,2,1,4,2026-06-08T14:37:33.328897Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,Raimundo Nonato,2,2,0,2026-06-09T02:05:56.052811Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,Fábio Oliveira,2,1,4,2026-06-11T00:06:39.705247Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,Hamon Vitorino,1,1,0,2026-06-08T16:17:53.855839Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,Josué,2,1,4,2026-06-09T18:47:09.787249Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,Henrique Saraiva,2,1,4,2026-06-09T20:33:04.649623Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,Civilizado,1,1,0,2026-06-09T00:01:26.674551Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,Michel Egidio,2,1,4,2026-06-12T23:20:55.499634Z
+4,2026-06-13T01:00:00Z,round1,Group D,USA,Paraguay,4,1,true,Thiago Brito,2,0,3,2026-06-12T13:00:11.709527Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,David Macedo,0,2,0,2026-06-09T23:18:59.445828Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,Hamon Vitorino,0,2,0,2026-06-08T16:18:05.500625Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,Roberto Sales,0,2,0,2026-06-10T13:55:43.30064Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,Michel Egidio,0,2,0,2026-06-13T18:33:24.58875Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,Hermes Junior,0,2,0,2026-06-13T14:27:37.997132Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,Henrique Saraiva,0,2,0,2026-06-13T01:36:09.830881Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,Raimundo Nonato,1,2,0,2026-06-09T02:05:56.063919Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,Josué,0,2,0,2026-06-09T18:47:16.159633Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,Fábio Oliveira,0,2,0,2026-06-11T00:07:08.481936Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,Thiago Brito,0,1,0,2026-06-13T02:14:04.752774Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,JoãoFilho,0,2,0,2026-06-13T01:15:09.179901Z
+5,2026-06-13T19:00:00Z,round1,Group B,Qatar,Switzerland,1,1,false,Civilizado,0,3,0,2026-06-09T00:01:48.19275Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,Josué,2,0,0,2026-06-09T18:47:25.707741Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,Raimundo Nonato,3,1,0,2026-06-09T02:05:56.042066Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,JoãoFilho,2,1,0,2026-06-13T01:15:20.366377Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,Roberto Sales,2,0,0,2026-06-10T13:55:49.877377Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,David Macedo,2,0,0,2026-06-09T23:19:09.515649Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,Hermes Junior,1,0,0,2026-06-13T14:27:56.009963Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,Thiago Brito,2,1,0,2026-06-13T02:14:13.018924Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,Civilizado,2,1,0,2026-06-09T00:02:00.838535Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,Michel Egidio,2,1,0,2026-06-13T21:27:42.496088Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,Henrique Saraiva,2,1,0,2026-06-09T20:33:21.164342Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,Fábio Oliveira,1,1,11,2026-06-11T00:07:20.101801Z
+6,2026-06-13T22:00:00Z,round1,Group C,Brazil,Morocco,1,1,false,Hamon Vitorino,3,1,0,2026-06-08T16:18:11.244169Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,Civilizado,0,1,8,2026-06-09T00:02:08.31385Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,Roberto Sales,0,2,4,2026-06-10T13:55:54.6436Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,Michel Egidio,0,2,4,2026-06-13T21:34:42.216581Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,JoãoFilho,1,3,3,2026-06-13T01:15:58.648704Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,Hermes Junior,0,1,8,2026-06-13T14:28:07.43863Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,Henrique Saraiva,0,1,8,2026-06-13T15:14:00.719904Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,Hamon Vitorino,0,3,4,2026-06-08T16:18:19.535329Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,Thiago Brito,0,2,4,2026-06-13T02:14:21.495173Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,Raimundo Nonato,0,4,4,2026-06-09T02:27:19.817134Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,Fábio Oliveira,0,2,4,2026-06-11T00:07:30.52976Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,David Macedo,0,1,8,2026-06-09T23:19:14.773549Z
+7,2026-06-14T01:00:00Z,round1,Group C,Haiti,Scotland,0,1,false,Josué,1,3,3,2026-06-09T18:47:39.948517Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,Raimundo Nonato,1,1,0,2026-06-09T02:27:52.966125Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,David Macedo,1,1,0,2026-06-09T23:19:23.647782Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,Roberto Sales,0,1,0,2026-06-10T13:55:59.559839Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,Fábio Oliveira,1,1,0,2026-06-11T00:07:44.545594Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,Civilizado,1,1,0,2026-06-09T00:02:29.66453Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,JoãoFilho,1,2,0,2026-06-13T22:19:29.490978Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,Thiago Brito,1,1,0,2026-06-14T03:06:54.637297Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,Hermes Junior,1,2,0,2026-06-13T14:28:32.400912Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,Hamon Vitorino,0,1,0,2026-06-08T16:18:27.65545Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,Josué,0,2,0,2026-06-09T18:48:11.152289Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,Michel Egidio,1,2,0,2026-06-13T22:01:41.166205Z
+8,2026-06-14T04:00:00Z,round1,Group D,Australia,Turkey,2,0,false,Henrique Saraiva,1,2,0,2026-06-13T15:14:23.581796Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,Civilizado,3,0,1,2026-06-09T00:02:39.700448Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,Michel Egidio,4,0,2,2026-06-14T16:32:36.958427Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,Hermes Junior,3,0,1,2026-06-13T14:28:42.645857Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,Hamon Vitorino,3,0,1,2026-06-08T16:18:32.856001Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,JoãoFilho,4,0,2,2026-06-14T14:18:54.495103Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,Fábio Oliveira,4,0,2,2026-06-11T00:07:57.071193Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,Josué,4,0,2,2026-06-09T18:48:17.310795Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,David Macedo,3,0,1,2026-06-09T23:19:30.650904Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,Roberto Sales,4,0,2,2026-06-10T13:56:14.741881Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,Thiago Brito,5,0,2,2026-06-14T11:51:12.365786Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,Henrique Saraiva,3,0,1,2026-06-14T04:17:07.469977Z
+9,2026-06-14T17:00:00Z,round1,Group E,Germany,Curacao,7,1,true,Raimundo Nonato,5,0,2,2026-06-10T14:52:57.534108Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,Hamon Vitorino,1,2,0,2026-06-08T16:18:44.447232Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,Roberto Sales,2,1,0,2026-06-10T13:56:25.386366Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,Raimundo Nonato,3,1,0,2026-06-10T14:53:23.470853Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,Henrique Saraiva,2,1,0,2026-06-14T04:17:30.39725Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,Michel Egidio,2,1,0,2026-06-14T19:24:49.403926Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,David Macedo,2,1,0,2026-06-09T23:19:38.121433Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,Josué,2,1,0,2026-06-14T14:12:20.884003Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,JoãoFilho,2,1,0,2026-06-14T14:19:09.603834Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,Hermes Junior,1,1,8,2026-06-13T14:28:54.276662Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,Fábio Oliveira,2,1,0,2026-06-11T00:08:18.947161Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,Thiago Brito,3,1,0,2026-06-14T11:51:22.596833Z
+10,2026-06-14T20:00:00Z,round1,Group F,Netherlands,Japan,2,2,false,Civilizado,3,2,0,2026-06-09T00:02:49.010335Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,Hamon Vitorino,2,1,8,2026-06-08T16:18:58.311222Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,Civilizado,0,1,0,2026-06-09T00:03:10.820803Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,David Macedo,1,1,0,2026-06-09T23:19:49.618812Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,Henrique Saraiva,2,1,8,2026-06-14T04:17:39.132018Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,Fábio Oliveira,1,1,0,2026-06-11T00:08:40.691203Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,Hermes Junior,0,1,0,2026-06-13T14:29:22.138033Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,Thiago Brito,1,1,0,2026-06-14T11:51:34.824528Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,Raimundo Nonato,1,1,0,2026-06-10T14:53:47.251818Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,Josué,2,2,0,2026-06-14T14:12:51.853108Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,JoãoFilho,1,1,0,2026-06-14T14:22:17.87678Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,Michel Egidio,0,1,0,2026-06-14T22:23:53.745723Z
+11,2026-06-14T23:00:00Z,round1,Group E,Ivory Coast,Ecuador,1,0,false,Roberto Sales,1,1,0,2026-06-10T13:57:15.806898Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,Hamon Vitorino,1,1,0,2026-06-08T16:19:04.214196Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,Civilizado,1,0,3,2026-06-09T00:03:17.986325Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,David Macedo,1,0,3,2026-06-09T23:19:59.464184Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,Henrique Saraiva,2,1,4,2026-06-14T04:17:56.093012Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,Roberto Sales,2,0,3,2026-06-10T13:57:20.652733Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,Fábio Oliveira,2,0,3,2026-06-11T00:08:58.328365Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,Hermes Junior,1,0,3,2026-06-13T14:29:41.443273Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,JoãoFilho,2,1,4,2026-06-14T14:22:24.8949Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,Thiago Brito,2,1,4,2026-06-14T11:51:43.736285Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,Raimundo Nonato,2,1,4,2026-06-10T14:55:15.490187Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,Josué,2,0,3,2026-06-14T14:13:05.981356Z
+12,2026-06-15T02:00:00Z,round1,Group F,Sweden,Tunisia,5,1,true,Michel Egidio,1,0,3,2026-06-14T23:40:07.615805Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,David Macedo,5,0,0,2026-06-09T23:20:07.836277Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,JoãoFilho,5,0,0,2026-06-15T01:07:28.780855Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,Civilizado,4,0,0,2026-06-09T00:03:28.13203Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,Hermes Junior,5,0,0,2026-06-15T09:10:11.379988Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,Raimundo Nonato,4,0,0,2026-06-10T14:57:07.855868Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,Thiago Brito,6,0,0,2026-06-15T14:24:31.466441Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,Josué,3,0,0,2026-06-14T22:51:46.497105Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,Michel Egidio,4,0,0,2026-06-15T15:03:56.021385Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,Hamon Vitorino,5,0,0,2026-06-08T16:19:10.027842Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,Henrique Saraiva,4,0,0,2026-06-15T01:17:23.867894Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,Roberto Sales,4,0,0,2026-06-10T13:57:26.452082Z
+13,2026-06-15T16:00:00Z,round1,Group H,Spain,Cape Verde,0,0,false,Fábio Oliveira,3,0,0,2026-06-11T00:09:13.197413Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,Michel Egidio,2,1,0,2026-06-15T18:14:59.915085Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,Civilizado,2,0,0,2026-06-09T00:03:34.993204Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,Hermes Junior,2,0,0,2026-06-15T09:10:40.822556Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,Fábio Oliveira,2,0,0,2026-06-11T00:09:23.848685Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,Roberto Sales,3,1,0,2026-06-10T13:57:32.561466Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,Thiago Brito,3,1,0,2026-06-15T14:24:42.300778Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,JoãoFilho,2,0,0,2026-06-15T01:07:54.53432Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,Hamon Vitorino,2,1,0,2026-06-08T16:19:18.136995Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,David Macedo,3,1,0,2026-06-09T23:20:17.815785Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,Raimundo Nonato,2,1,0,2026-06-10T14:57:30.287693Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,Henrique Saraiva,2,1,0,2026-06-15T01:17:40.066014Z
+14,2026-06-15T19:00:00Z,round1,Group G,Belgium,Egypt,1,1,false,Josué,2,1,0,2026-06-14T22:52:01.430402Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,Michel Egidio,0,1,0,2026-06-15T18:17:10.268946Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,Hamon Vitorino,0,2,0,2026-06-08T16:19:25.041285Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,Civilizado,1,3,0,2026-06-09T00:03:47.384563Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,Hermes Junior,1,2,0,2026-06-15T09:10:58.608374Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,David Macedo,1,2,0,2026-06-09T23:20:28.865464Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,Roberto Sales,0,3,0,2026-06-10T13:57:37.523639Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,Raimundo Nonato,1,2,0,2026-06-10T14:58:35.345169Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,Fábio Oliveira,0,2,0,2026-06-11T00:09:50.785185Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,Thiago Brito,1,2,0,2026-06-15T14:24:51.93567Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,Josué,0,2,0,2026-06-14T22:52:24.789215Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,JoãoFilho,0,2,0,2026-06-15T01:08:16.107182Z
+15,2026-06-15T22:00:00Z,round1,Group H,Saudi Arabia,Uruguay,1,1,false,Henrique Saraiva,0,1,0,2026-06-15T01:17:57.976716Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,Hamon Vitorino,1,0,0,2026-06-08T16:19:31.838989Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,Civilizado,1,1,8,2026-06-09T00:04:10.866528Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,David Macedo,1,1,8,2026-06-09T23:20:43.73699Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,Raimundo Nonato,1,0,0,2026-06-10T14:59:02.058207Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,Fábio Oliveira,2,0,0,2026-06-11T00:10:03.765958Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,Roberto Sales,1,1,8,2026-06-10T13:58:07.173292Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,Thiago Brito,1,1,8,2026-06-15T14:25:01.678863Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,Josué,1,0,0,2026-06-14T22:52:41.699195Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,Hermes Junior,1,1,8,2026-06-15T21:50:56.973431Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,Michel Egidio,1,0,0,2026-06-15T23:51:35.096506Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,JoãoFilho,1,0,0,2026-06-15T01:08:54.044457Z
+16,2026-06-16T01:00:00Z,round1,Group G,Iran,New Zealand,2,2,false,Henrique Saraiva,1,1,8,2026-06-15T01:19:08.349796Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,Raimundo Nonato,2,0,5,2026-06-10T14:59:28.668949Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,JoãoFilho,3,1,8,2026-06-15T21:28:45.218659Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,Hamon Vitorino,3,1,8,2026-06-08T16:19:41.013061Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,David Macedo,3,1,8,2026-06-09T23:20:51.56593Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,Fábio Oliveira,2,1,4,2026-06-11T00:10:15.351045Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,Michel Egidio,3,1,8,2026-06-16T03:03:01.747512Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,Hermes Junior,2,0,5,2026-06-16T18:17:43.565701Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,Thiago Brito,3,1,8,2026-06-16T12:45:01.329465Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,Henrique Saraiva,3,1,8,2026-06-15T01:19:34.482613Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,Civilizado,2,1,4,2026-06-09T00:04:21.939415Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,Josué,3,1,8,2026-06-15T13:29:47.525511Z
+17,2026-06-16T19:00:00Z,round1,Group I,France,Senegal,3,1,false,Roberto Sales,3,1,8,2026-06-10T13:58:13.944914Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,Henrique Saraiva,1,3,3,2026-06-15T01:52:00.881662Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,Michel Egidio,0,2,2,2026-06-16T20:36:59.368261Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,Fábio Oliveira,0,3,4,2026-06-11T00:10:31.776163Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,JoãoFilho,0,2,2,2026-06-16T02:29:46.275079Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,Raimundo Nonato,1,3,3,2026-06-10T14:59:50.231039Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,Civilizado,0,2,2,2026-06-09T00:04:30.485675Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,Hamon Vitorino,0,3,4,2026-06-08T16:19:47.323158Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,Roberto Sales,0,2,2,2026-06-10T13:58:23.593545Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,Josué,0,3,4,2026-06-15T13:29:54.189674Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,David Macedo,0,2,2,2026-06-09T23:21:09.881627Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,Thiago Brito,0,2,2,2026-06-16T12:45:12.310637Z
+18,2026-06-16T22:00:00Z,round1,Group I,Iraq,Norway,1,4,true,Hermes Junior,0,1,2,2026-06-16T18:22:39.88699Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,Hermes Junior,2,0,4,2026-06-16T18:24:38.639142Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,David Macedo,2,0,4,2026-06-09T23:21:15.666019Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,Josué,2,0,4,2026-06-16T01:20:41.994786Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,Roberto Sales,3,0,8,2026-06-10T13:58:29.828782Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,Henrique Saraiva,2,1,3,2026-06-15T01:52:23.03029Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,Hamon Vitorino,2,1,3,2026-06-08T16:19:54.321463Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,Thiago Brito,3,1,6,2026-06-16T12:45:20.898103Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,Civilizado,2,0,4,2026-06-09T00:04:35.983266Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,JoãoFilho,2,1,3,2026-06-16T02:30:07.704116Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,Raimundo Nonato,3,0,8,2026-06-10T15:00:09.704105Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,Fábio Oliveira,2,0,4,2026-06-11T00:10:40.256383Z
+19,2026-06-17T01:00:00Z,round1,Group J,Argentina,Algeria,3,0,false,Michel Egidio,3,1,6,2026-06-16T23:49:05.226156Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,Josué,3,1,7,2026-06-16T01:20:52.150997Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,Hamon Vitorino,1,0,2,2026-06-08T16:19:59.602312Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,David Macedo,2,0,4,2026-06-09T23:21:21.742882Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,Fábio Oliveira,2,0,4,2026-06-11T00:10:58.62915Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,Roberto Sales,2,0,4,2026-06-10T13:58:34.649817Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,Raimundo Nonato,3,1,7,2026-06-10T15:02:53.750721Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,Civilizado,2,0,4,2026-06-09T00:04:45.995142Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,Michel Egidio,2,1,3,2026-06-16T23:50:59.330117Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,Henrique Saraiva,2,0,4,2026-06-16T08:00:48.58847Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,Thiago Brito,2,1,3,2026-06-16T12:45:28.323229Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,JoãoFilho,2,1,3,2026-06-16T17:59:35.403319Z
+20,2026-06-17T04:00:00Z,round1,Group J,Austria,Jordan,3,1,false,Hermes Junior,1,0,2,2026-06-16T18:25:12.128809Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,Hamon Vitorino,3,0,0,2026-06-08T16:20:05.444271Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,Civilizado,2,0,0,2026-06-09T00:04:52.525469Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,JoãoFilho,4,0,0,2026-06-16T18:00:31.037259Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,Fábio Oliveira,2,0,0,2026-06-11T00:11:08.772328Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,Roberto Sales,3,0,0,2026-06-10T13:58:43.838059Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,David Macedo,3,0,0,2026-06-09T23:21:29.232846Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,Raimundo Nonato,1,1,12,2026-06-10T15:03:17.885238Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,Hermes Junior,2,0,0,2026-06-16T23:52:48.610645Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,Thiago Brito,3,0,0,2026-06-17T13:32:03.122858Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,Henrique Saraiva,3,0,0,2026-06-16T08:01:03.92196Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,Michel Egidio,3,1,0,2026-06-17T16:26:13.208235Z
+21,2026-06-17T17:00:00Z,round1,Group K,Portugal,DR Congo,1,1,false,Josué,2,0,0,2026-06-16T02:07:55.008724Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,Civilizado,2,1,3,2026-06-09T00:04:58.989128Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,Josué,2,1,3,2026-06-16T02:08:03.767944Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,Henrique Saraiva,1,1,0,2026-06-16T08:01:19.256772Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,Roberto Sales,2,1,3,2026-06-10T13:58:49.231772Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,Fábio Oliveira,2,1,3,2026-06-11T00:11:35.329577Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,Thiago Brito,2,1,3,2026-06-17T13:32:12.101818Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,David Macedo,2,1,3,2026-06-09T23:21:36.395944Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,JoãoFilho,2,1,3,2026-06-16T18:00:44.590474Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,Michel Egidio,2,1,3,2026-06-17T16:31:23.964573Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,Raimundo Nonato,1,0,3,2026-06-10T15:03:38.393422Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,Hamon Vitorino,2,1,3,2026-06-08T16:20:12.947139Z
+22,2026-06-17T20:00:00Z,round1,Group L,England,Croatia,4,2,true,Hermes Junior,0,0,0,2026-06-16T23:54:24.004693Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,Hamon Vitorino,2,1,6,2026-06-08T16:20:28.454509Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,Josué,1,0,9,2026-06-16T02:08:16.742612Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,Raimundo Nonato,2,0,5,2026-06-10T15:03:54.394755Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,Civilizado,2,1,6,2026-06-09T00:05:08.07116Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,David Macedo,2,1,6,2026-06-09T23:21:44.821521Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,Roberto Sales,2,1,6,2026-06-10T13:58:55.266743Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,Michel Egidio,1,1,0,2026-06-17T22:19:41.256365Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,Fábio Oliveira,2,1,6,2026-06-11T00:11:59.070756Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,Hermes Junior,2,1,6,2026-06-16T23:54:58.953079Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,Thiago Brito,2,1,6,2026-06-17T13:32:20.930941Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,Henrique Saraiva,2,1,6,2026-06-16T08:01:32.469607Z
+23,2026-06-17T23:00:00Z,round1,Group L,Ghana,Panama,1,0,false,JoãoFilho,2,1,6,2026-06-16T18:01:12.488002Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,Hamon Vitorino,0,2,5,2026-06-08T16:20:35.739672Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,Civilizado,0,1,3,2026-06-09T00:05:16.362027Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,David Macedo,0,2,5,2026-06-09T23:31:34.925191Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,Fábio Oliveira,1,2,4,2026-06-11T00:12:14.966344Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,Josué,0,2,5,2026-06-16T02:08:23.768051Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,Michel Egidio,1,3,8,2026-06-17T22:23:20.759296Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,Roberto Sales,0,2,5,2026-06-10T13:58:59.690098Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,Raimundo Nonato,0,2,5,2026-06-10T15:04:09.407538Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,Henrique Saraiva,1,2,4,2026-06-17T20:01:44.50013Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,Hermes Junior,0,1,3,2026-06-16T23:55:36.974783Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,Thiago Brito,0,2,5,2026-06-17T13:32:28.535878Z
+24,2026-06-18T02:00:00Z,round1,Group K,Uzbekistan,Colombia,1,3,false,JoãoFilho,0,2,5,2026-06-16T18:01:01.509055Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,Civilizado,2,1,0,2026-06-09T00:05:39.672404Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,David Macedo,1,1,11,2026-06-09T23:31:48.880428Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,Raimundo Nonato,2,1,0,2026-06-10T15:04:26.562254Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,Fábio Oliveira,2,0,0,2026-06-11T00:12:34.971191Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,Hermes Junior,2,1,0,2026-06-16T23:57:30.085688Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,Hamon Vitorino,1,1,11,2026-06-17T16:25:46.719287Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,Josué,2,0,0,2026-06-18T01:40:22.392509Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,Henrique Saraiva,2,1,0,2026-06-17T20:02:03.108946Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,JoãoFilho,2,0,0,2026-06-17T14:53:48.457001Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,Roberto Sales,1,0,0,2026-06-10T13:59:04.745684Z
+25,2026-06-18T16:00:00Z,round2,Group A,Czechia,South Africa,1,1,false,Thiago Brito,2,1,0,2026-06-18T13:47:36.772199Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,Raimundo Nonato,1,1,0,2026-06-10T15:04:40.954054Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,Michel Egidio,2,1,4,2026-06-18T17:21:20.430301Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,David Macedo,2,0,3,2026-06-15T06:39:38.383596Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,Henrique Saraiva,1,1,0,2026-06-18T04:12:03.639149Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,Thiago Brito,1,1,0,2026-06-18T13:47:53.687879Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,Josué,2,0,3,2026-06-18T01:40:29.858822Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,Hermes Junior,1,0,3,2026-06-18T09:23:26.5435Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,JoãoFilho,1,1,0,2026-06-18T00:10:14.098171Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,Civilizado,2,0,3,2026-06-09T00:05:45.960051Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,Fábio Oliveira,2,1,4,2026-06-11T00:13:05.244044Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,Roberto Sales,2,0,3,2026-06-10T13:59:09.484832Z
+26,2026-06-18T19:00:00Z,round2,Group B,Switzerland,Bosnia and Herzegovina,4,1,true,Hamon Vitorino,2,1,4,2026-06-17T16:25:52.405517Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,David Macedo,2,1,2,2026-06-15T06:40:00.315717Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,Civilizado,2,0,3,2026-06-09T00:05:52.170816Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,Roberto Sales,3,0,3,2026-06-10T13:59:13.275597Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,Fábio Oliveira,2,0,3,2026-06-11T00:13:18.126259Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,Henrique Saraiva,2,1,2,2026-06-18T04:12:40.101008Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,Hermes Junior,2,0,3,2026-06-18T09:23:46.564728Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,Thiago Brito,2,1,2,2026-06-18T13:48:14.133598Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,Josué,1,0,3,2026-06-18T01:40:40.94659Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,Hamon Vitorino,2,1,2,2026-06-17T16:25:57.915757Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,Raimundo Nonato,1,0,3,2026-06-10T15:05:06.626474Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,JoãoFilho,2,1,2,2026-06-18T00:09:19.909758Z
+27,2026-06-18T22:00:00Z,round2,Group B,Canada,Qatar,6,0,true,Michel Egidio,1,0,3,2026-06-18T20:53:24.7177Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,Michel Egidio,2,1,5,2026-06-19T00:29:01.520766Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,Roberto Sales,2,1,5,2026-06-10T13:59:18.488595Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,Raimundo Nonato,2,2,0,2026-06-10T15:05:26.418467Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,David Macedo,2,1,5,2026-06-15T06:40:15.179737Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,Fábio Oliveira,2,1,5,2026-06-11T00:13:31.776603Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,Hermes Junior,2,2,0,2026-06-18T09:25:52.126615Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,Henrique Saraiva,2,1,5,2026-06-18T04:13:04.247628Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,Civilizado,2,1,5,2026-06-09T00:05:58.984694Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,Josué,2,2,0,2026-06-18T01:40:46.857836Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,Hamon Vitorino,2,1,5,2026-06-17T16:26:06.895014Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,Thiago Brito,2,1,5,2026-06-18T13:48:30.271937Z
+28,2026-06-19T01:00:00Z,round2,Group A,Mexico,South Korea,1,0,false,JoãoFilho,1,1,0,2026-06-18T18:11:16.52383Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,Civilizado,2,0,8,2026-06-09T00:06:10.856733Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,Roberto Sales,3,1,5,2026-06-10T13:59:22.68211Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,Raimundo Nonato,1,0,4,2026-06-10T15:05:39.508644Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,Fábio Oliveira,2,0,8,2026-06-11T00:13:48.423234Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,Henrique Saraiva,3,1,5,2026-06-18T04:13:20.487838Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,Hamon Vitorino,2,0,8,2026-06-17T16:26:12.333883Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,JoãoFilho,2,1,6,2026-06-18T18:13:57.360935Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,David Macedo,2,1,6,2026-06-15T06:40:27.213049Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,Josué,2,1,6,2026-06-18T05:27:58.087273Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,Hermes Junior,2,1,6,2026-06-19T12:06:24.775863Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,Michel Egidio,2,1,6,2026-06-19T18:35:37.881443Z
+29,2026-06-19T19:00:00Z,round2,Group D,USA,Australia,2,0,false,Thiago Brito,3,1,5,2026-06-19T14:12:30.482087Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,Henrique Saraiva,0,2,4,2026-06-18T04:13:38.957542Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,Hermes Junior,0,2,4,2026-06-19T12:06:44.681659Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,Roberto Sales,0,1,8,2026-06-10T13:59:27.56998Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,Raimundo Nonato,1,2,5,2026-06-10T15:05:53.516925Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,Fábio Oliveira,1,2,5,2026-06-11T00:14:25.11667Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,Josué,1,2,5,2026-06-18T05:27:47.271623Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,Civilizado,1,3,3,2026-06-09T00:06:20.650041Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,David Macedo,1,2,5,2026-06-17T21:57:55.708549Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,JoãoFilho,1,2,5,2026-06-18T18:14:10.001105Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,Hamon Vitorino,0,1,8,2026-06-17T16:26:22.065838Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,Michel Egidio,1,2,5,2026-06-19T18:48:45.545544Z
+30,2026-06-19T22:00:00Z,round2,Group C,Scotland,Morocco,0,1,false,Thiago Brito,1,2,5,2026-06-19T14:12:42.189328Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,Hermes Junior,3,0,7,2026-06-19T12:07:35.638351Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,Thiago Brito,5,0,3,2026-06-19T14:12:53.832888Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,Michel Egidio,2,0,3,2026-06-19T18:49:13.382491Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,JoãoFilho,4,0,3,2026-06-18T18:14:19.866095Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,Civilizado,4,0,3,2026-06-09T00:06:25.969766Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,Roberto Sales,4,0,3,2026-06-10T13:59:38.180598Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,Raimundo Nonato,4,0,3,2026-06-10T15:06:15.823742Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,Fábio Oliveira,3,0,7,2026-06-11T00:14:38.170178Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,Henrique Saraiva,3,1,5,2026-06-18T04:13:56.433236Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,Josué,3,0,7,2026-06-18T05:27:38.511054Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,David Macedo,3,0,7,2026-06-17T21:58:04.902069Z
+31,2026-06-20T00:30:00Z,round2,Group C,Brazil,Haiti,3,0,false,Hamon Vitorino,4,0,3,2026-06-17T16:26:26.666367Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,Civilizado,1,1,0,2026-06-09T00:06:40.028069Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,Raimundo Nonato,1,2,8,2026-06-10T15:06:40.74897Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,Fábio Oliveira,2,1,0,2026-06-11T00:14:51.602065Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,Josué,2,1,0,2026-06-18T05:28:14.399387Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,Michel Egidio,2,1,0,2026-06-20T02:36:24.713302Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,Hermes Junior,1,1,0,2026-06-19T12:10:10.406768Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,David Macedo,2,0,0,2026-06-17T21:58:16.936355Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,JoãoFilho,2,1,0,2026-06-18T18:14:36.483506Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,Henrique Saraiva,1,0,0,2026-06-19T06:58:51.79912Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,Roberto Sales,2,1,0,2026-06-19T18:34:56.035216Z
+32,2026-06-20T03:00:00Z,round2,Group D,Turkey,Paraguay,0,1,false,Thiago Brito,1,0,0,2026-06-20T01:33:14.403975Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,Raimundo Nonato,1,1,0,2026-06-10T15:06:56.448569Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,Hamon Vitorino,2,1,4,2026-06-20T09:37:46.976559Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,David Macedo,2,1,4,2026-06-17T21:58:25.295935Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,Josué,2,2,0,2026-06-18T05:28:27.600873Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,Henrique Saraiva,2,1,4,2026-06-19T06:59:13.686758Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,Michel Egidio,2,1,4,2026-06-20T13:32:13.247023Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,Fábio Oliveira,1,1,0,2026-06-11T00:15:03.70096Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,JoãoFilho,2,1,4,2026-06-18T18:14:47.295492Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,Civilizado,2,1,4,2026-06-09T00:06:45.099174Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,Hermes Junior,2,1,4,2026-06-19T12:10:40.647085Z
+33,2026-06-20T17:00:00Z,round2,Group F,Netherlands,Sweden,5,1,true,Thiago Brito,3,1,4,2026-06-20T14:03:35.902363Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,Civilizado,3,1,4,2026-06-09T00:06:49.998858Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,Raimundo Nonato,2,1,8,2026-06-10T15:07:07.381795Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,David Macedo,4,1,4,2026-06-17T21:58:34.269529Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,Josué,2,0,6,2026-06-18T05:28:45.305597Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,Fábio Oliveira,2,1,8,2026-06-11T00:15:20.588023Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,JoãoFilho,2,1,8,2026-06-18T18:14:53.153534Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,Henrique Saraiva,2,1,8,2026-06-19T06:59:50.338931Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,Hamon Vitorino,3,1,4,2026-06-20T09:37:54.184909Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,Michel Egidio,2,1,8,2026-06-20T18:18:05.750208Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,Roberto Sales,2,0,6,2026-06-20T17:58:51.254323Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,Hermes Junior,2,0,6,2026-06-20T13:37:40.552501Z
+34,2026-06-20T20:00:00Z,round2,Group E,Germany,Ivory Coast,2,1,false,Thiago Brito,3,1,4,2026-06-20T14:03:46.85029Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,Civilizado,3,0,0,2026-06-09T00:06:57.738477Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,Raimundo Nonato,2,0,0,2026-06-10T15:09:31.478616Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,Roberto Sales,3,0,0,2026-06-20T17:58:59.994747Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,Henrique Saraiva,2,0,0,2026-06-19T07:00:15.517466Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,Fábio Oliveira,3,0,0,2026-06-11T00:15:30.922464Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,Michel Egidio,2,0,0,2026-06-20T19:56:39.179866Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,Hermes Junior,3,1,0,2026-06-20T13:38:24.44925Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,David Macedo,3,1,0,2026-06-17T21:58:44.40831Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,JoãoFilho,2,1,0,2026-06-18T18:16:26.363146Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,Hamon Vitorino,2,0,0,2026-06-20T09:37:58.809061Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,Josué,4,0,0,2026-06-18T05:28:55.121607Z
+35,2026-06-21T00:00:00Z,round2,Group E,Ecuador,Curacao,0,0,false,Thiago Brito,3,0,0,2026-06-20T14:03:55.350427Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,Raimundo Nonato,0,2,4,2026-06-10T15:10:40.586503Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,Civilizado,0,2,4,2026-06-09T00:07:05.108986Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,Josué,0,2,4,2026-06-18T05:29:02.963602Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,Fábio Oliveira,0,2,4,2026-06-11T00:22:42.014062Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,Roberto Sales,0,2,4,2026-06-20T17:59:09.783524Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,David Macedo,0,1,4,2026-06-18T14:43:16.266798Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,JoãoFilho,0,2,4,2026-06-19T03:19:34.931515Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,Henrique Saraiva,1,1,0,2026-06-19T07:00:34.005164Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,Hamon Vitorino,0,4,9,2026-06-20T10:06:48.211574Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,Michel Egidio,0,2,4,2026-06-20T20:01:40.223641Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,Hermes Junior,0,2,4,2026-06-20T13:38:53.262252Z
+36,2026-06-21T04:00:00Z,round2,Group F,Tunisia,Japan,0,4,true,Thiago Brito,1,2,3,2026-06-20T14:04:02.798068Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,Civilizado,2,0,3,2026-06-09T00:07:11.049024Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,Josué,3,0,3,2026-06-21T12:11:57.167298Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,Thiago Brito,2,1,2,2026-06-21T15:44:06.857731Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,Hermes Junior,3,0,3,2026-06-20T13:39:14.96082Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,Fábio Oliveira,3,0,3,2026-06-11T00:23:02.410715Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,Raimundo Nonato,3,0,3,2026-06-10T15:10:58.482714Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,Henrique Saraiva,3,0,3,2026-06-20T09:07:09.828812Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,David Macedo,2,0,3,2026-06-18T14:43:45.463444Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,Hamon Vitorino,3,0,3,2026-06-21T09:28:00.165208Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,JoãoFilho,3,0,3,2026-06-19T03:20:05.377458Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,Michel Egidio,2,0,3,2026-06-21T15:10:42.425506Z
+37,2026-06-21T16:00:00Z,round2,Group H,Spain,Saudi Arabia,4,0,true,Roberto Sales,2,0,3,2026-06-21T14:38:51.881488Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,Civilizado,2,1,0,2026-06-09T00:07:18.168293Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,Hamon Vitorino,2,0,0,2026-06-21T09:28:05.186114Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,Fábio Oliveira,2,1,0,2026-06-11T00:23:15.14445Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,Hermes Junior,3,0,0,2026-06-21T14:31:57.135894Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,Michel Egidio,2,1,0,2026-06-21T15:35:41.289345Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,Henrique Saraiva,2,1,0,2026-06-20T09:07:28.64583Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,Raimundo Nonato,2,1,0,2026-06-10T15:11:22.554332Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,JoãoFilho,2,0,0,2026-06-19T03:20:25.635651Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,David Macedo,2,1,0,2026-06-18T14:44:09.180811Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,Roberto Sales,2,0,0,2026-06-21T14:38:55.461885Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,Josué,2,1,0,2026-06-21T12:12:06.834632Z
+38,2026-06-21T19:00:00Z,round2,Group G,Belgium,Iran,0,0,false,Thiago Brito,2,1,0,2026-06-21T15:44:14.047655Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,Raimundo Nonato,4,1,0,2026-06-10T15:11:34.829835Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,Fábio Oliveira,2,0,0,2026-06-11T00:23:30.692474Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,Civilizado,2,0,0,2026-06-09T00:07:24.517608Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,Josué,2,0,0,2026-06-21T12:14:07.061232Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,Hamon Vitorino,2,0,0,2026-06-21T09:28:08.852942Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,Thiago Brito,1,0,0,2026-06-21T15:44:20.049956Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,David Macedo,2,0,0,2026-06-18T14:44:19.166811Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,Roberto Sales,2,0,0,2026-06-21T14:38:58.785153Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,JoãoFilho,2,0,0,2026-06-19T13:24:53.011264Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,Henrique Saraiva,2,0,0,2026-06-20T09:08:03.265788Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,Michel Egidio,1,0,0,2026-06-21T15:38:00.408524Z
+39,2026-06-21T22:00:00Z,round2,Group H,Uruguay,Cape Verde,2,2,false,Hermes Junior,2,0,0,2026-06-21T14:32:33.492755Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,Civilizado,1,1,0,2026-06-09T00:07:30.07154Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,Raimundo Nonato,0,1,3,2026-06-10T15:11:48.094381Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,Henrique Saraiva,1,1,0,2026-06-20T09:08:27.070183Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,Fábio Oliveira,0,2,5,2026-06-11T00:24:31.198409Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,JoãoFilho,1,2,4,2026-06-21T12:38:08.005022Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,Hermes Junior,0,1,3,2026-06-21T14:32:51.013286Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,Roberto Sales,1,2,4,2026-06-21T14:39:03.704852Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,Josué,1,1,0,2026-06-21T12:14:14.755179Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,David Macedo,1,2,4,2026-06-18T14:44:51.417475Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,Thiago Brito,0,1,3,2026-06-21T15:44:29.22226Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,Michel Egidio,0,1,3,2026-06-21T21:25:09.895316Z
+40,2026-06-22T01:00:00Z,round2,Group G,New Zealand,Egypt,1,3,false,Hamon Vitorino,1,2,4,2026-06-21T09:28:15.014226Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,Raimundo Nonato,1,1,0,2026-06-10T15:12:05.341755Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,Civilizado,2,0,8,2026-06-09T00:07:35.60794Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,Josué,1,0,4,2026-06-21T12:14:22.779598Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,Fábio Oliveira,2,1,6,2026-06-11T00:24:46.85579Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,Henrique Saraiva,2,0,8,2026-06-21T18:55:39.738342Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,Hamon Vitorino,2,0,8,2026-06-22T09:06:10.741786Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,Thiago Brito,3,1,5,2026-06-22T13:54:43.143138Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,David Macedo,3,0,4,2026-06-18T14:44:58.688445Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,Hermes Junior,1,0,4,2026-06-21T14:33:07.171624Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,Michel Egidio,2,0,8,2026-06-22T02:02:54.413298Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,JoãoFilho,2,0,8,2026-06-21T21:07:12.448406Z
+41,2026-06-22T17:00:00Z,round2,Group J,Argentina,Austria,2,0,false,Roberto Sales,3,0,4,2026-06-22T14:59:17.578003Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,Fábio Oliveira,3,0,7,2026-06-11T00:25:15.397718Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,David Macedo,2,0,3,2026-06-18T14:45:06.915684Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,Michel Egidio,3,0,7,2026-06-22T02:10:48.947632Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,Raimundo Nonato,3,0,7,2026-06-10T15:12:22.637588Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,Henrique Saraiva,4,0,3,2026-06-22T00:08:02.75486Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,Josué,4,0,3,2026-06-21T23:46:10.826609Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,Civilizado,3,0,7,2026-06-09T00:07:41.10273Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,Hermes Junior,5,0,3,2026-06-21T14:33:45.412272Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,JoãoFilho,4,0,3,2026-06-21T21:07:24.295373Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,Hamon Vitorino,5,0,3,2026-06-22T09:06:16.217853Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,Thiago Brito,3,0,7,2026-06-22T13:54:51.917294Z
+42,2026-06-22T21:00:00Z,round2,Group I,France,Iraq,3,0,false,Roberto Sales,4,0,3,2026-06-22T14:59:22.010779Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,Hermes Junior,0,1,0,2026-06-21T14:33:55.639223Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,Henrique Saraiva,2,1,6,2026-06-22T00:08:19.654828Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,Fábio Oliveira,1,1,0,2026-06-11T00:25:25.455437Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,Thiago Brito,2,1,6,2026-06-22T13:54:59.403033Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,David Macedo,3,1,7,2026-06-18T21:12:59.513084Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,Roberto Sales,2,1,6,2026-06-22T14:59:29.297082Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,Hamon Vitorino,2,1,6,2026-06-22T09:06:21.950041Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,Civilizado,2,1,6,2026-06-09T00:07:48.169946Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,Raimundo Nonato,1,0,6,2026-06-10T15:12:39.09894Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,JoãoFilho,2,1,6,2026-06-21T21:08:46.961736Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,Josué,2,1,6,2026-06-21T23:46:19.512938Z
+43,2026-06-23T00:00:00Z,round2,Group I,Norway,Senegal,3,2,false,Michel Egidio,2,1,6,2026-06-22T02:34:17.215965Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,Michel Egidio,1,2,8,2026-06-23T01:16:06.892128Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,Civilizado,1,1,0,2026-06-09T00:07:53.908647Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,Henrique Saraiva,1,2,8,2026-06-22T00:09:35.45358Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,Hermes Junior,2,1,0,2026-06-21T14:34:23.038518Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,JoãoFilho,1,2,8,2026-06-22T20:10:13.272523Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,David Macedo,0,2,6,2026-06-18T21:13:06.944952Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,Roberto Sales,0,2,6,2026-06-22T21:28:50.48645Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,Raimundo Nonato,1,1,0,2026-06-10T15:13:51.844287Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,Hamon Vitorino,1,2,8,2026-06-22T09:06:30.546056Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,Thiago Brito,0,1,5,2026-06-22T13:55:32.916825Z
+44,2026-06-23T03:00:00Z,round2,Group J,Jordan,Algeria,1,2,false,Fábio Oliveira,0,2,6,2026-06-11T00:25:39.663936Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,Josué,2,0,3,2026-06-23T03:43:38.429598Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,Hamon Vitorino,2,0,3,2026-06-23T11:14:56.521071Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,Thiago Brito,5,0,8,2026-06-23T13:20:40.935867Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,Hermes Junior,2,0,3,2026-06-23T09:34:22.091083Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,Michel Egidio,2,0,3,2026-06-23T15:40:37.50099Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,Civilizado,2,0,3,2026-06-09T00:07:59.116917Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,Fábio Oliveira,1,1,0,2026-06-11T00:25:56.506619Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,David Macedo,3,0,3,2026-06-18T21:13:15.742081Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,Roberto Sales,2,0,3,2026-06-23T14:37:29.518115Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,Raimundo Nonato,2,0,3,2026-06-10T15:14:18.856575Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,Henrique Saraiva,3,1,2,2026-06-22T00:09:44.44859Z
+45,2026-06-23T17:00:00Z,round2,Group K,Portugal,Uzbekistan,5,0,true,JoãoFilho,3,0,3,2026-06-22T20:11:08.664396Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,Civilizado,2,1,0,2026-06-09T00:08:05.279297Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,Raimundo Nonato,3,0,0,2026-06-10T15:14:32.132462Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,Henrique Saraiva,2,1,0,2026-06-22T00:09:54.334189Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,Michel Egidio,2,0,0,2026-06-23T17:48:56.915167Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,Josué,2,0,0,2026-06-23T03:43:43.693355Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,JoãoFilho,3,1,0,2026-06-23T01:22:20.059547Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,David Macedo,3,1,0,2026-06-20T10:19:34.058408Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,Fábio Oliveira,3,1,0,2026-06-11T00:26:09.282386Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,Hermes Junior,2,0,0,2026-06-23T09:34:36.214446Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,Thiago Brito,3,1,0,2026-06-23T13:20:48.546597Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,Roberto Sales,3,0,0,2026-06-23T14:37:36.146991Z
+46,2026-06-23T20:00:00Z,round2,Group L,England,Ghana,0,0,false,Hamon Vitorino,3,1,0,2026-06-23T11:20:48.961264Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,Civilizado,1,2,5,2026-06-09T00:08:10.586591Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,Raimundo Nonato,0,4,4,2026-06-10T15:14:50.422507Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,JoãoFilho,0,2,4,2026-06-23T01:23:15.103449Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,Fábio Oliveira,0,2,4,2026-06-11T00:26:20.087044Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,Henrique Saraiva,1,2,5,2026-06-22T00:10:20.383279Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,Hermes Junior,0,2,4,2026-06-23T09:34:50.42294Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,Michel Egidio,0,2,4,2026-06-23T20:05:44.535083Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,David Macedo,0,2,4,2026-06-20T10:19:57.119554Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,Josué,1,2,5,2026-06-23T03:43:50.620093Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,Thiago Brito,0,2,4,2026-06-23T13:20:55.995383Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,Roberto Sales,0,3,4,2026-06-23T14:37:40.992816Z
+47,2026-06-23T23:00:00Z,round2,Group L,Panama,Croatia,0,1,false,Hamon Vitorino,1,2,5,2026-06-23T11:25:14.980528Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,JoãoFilho,2,0,4,2026-06-23T01:23:35.565907Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,Henrique Saraiva,2,1,5,2026-06-22T00:10:29.640126Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,Civilizado,3,0,4,2026-06-09T00:08:15.79459Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,Raimundo Nonato,2,1,5,2026-06-10T15:15:08.289486Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,David Macedo,3,1,3,2026-06-20T10:20:04.962365Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,Fábio Oliveira,2,0,4,2026-06-11T00:26:38.089985Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,Josué,2,0,4,2026-06-23T03:43:58.920741Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,Hermes Junior,1,0,8,2026-06-23T09:35:02.481229Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,Hamon Vitorino,2,0,4,2026-06-23T11:45:01.804404Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,Thiago Brito,2,1,5,2026-06-23T13:21:06.628673Z
+48,2026-06-24T02:00:00Z,round2,Group K,Colombia,DR Congo,1,0,false,Roberto Sales,2,0,4,2026-06-23T14:38:15.512687Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,Raimundo Nonato,2,1,9,2026-06-10T15:15:42.790227Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,Hermes Junior,1,2,0,2026-06-24T17:02:37.315201Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,JoãoFilho,1,1,0,2026-06-24T15:32:44.987308Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,Thiago Brito,1,1,0,2026-06-24T13:26:01.606184Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,Roberto Sales,1,1,0,2026-06-24T16:26:54.242259Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,Henrique Saraiva,1,1,0,2026-06-22T00:10:38.636004Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,Fábio Oliveira,1,1,0,2026-06-11T00:26:51.940512Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,Michel Egidio,1,1,0,2026-06-24T17:32:52.109752Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,David Macedo,2,2,0,2026-06-20T10:20:18.730849Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,Civilizado,2,1,9,2026-06-09T00:08:23.071936Z
+49,2026-06-24T19:00:00Z,round3,Group B,Switzerland,Canada,2,1,false,Josué,1,1,0,2026-06-23T13:57:15.5619Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,Raimundo Nonato,2,1,4,2026-06-10T15:15:23.965689Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,Fábio Oliveira,1,1,0,2026-06-11T00:27:17.751289Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,Civilizado,1,1,0,2026-06-09T00:08:35.380608Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,Thiago Brito,2,1,4,2026-06-24T13:24:51.743969Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,Josué,1,0,3,2026-06-23T13:56:35.332855Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,David Macedo,1,1,0,2026-06-20T10:20:43.148361Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,Henrique Saraiva,1,0,3,2026-06-22T08:07:39.789099Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,JoãoFilho,2,0,5,2026-06-24T15:32:19.329079Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,Roberto Sales,2,0,5,2026-06-24T16:26:50.043916Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,Hermes Junior,2,0,5,2026-06-24T16:37:08.135012Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,Michel Egidio,2,0,5,2026-06-24T16:50:50.21329Z
+50,2026-06-24T19:00:00Z,round3,Group B,Bosnia and Herzegovina,Qatar,3,1,false,Hamon Vitorino,2,1,4,2026-06-24T17:57:45.49132Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,Fábio Oliveira,0,2,4,2026-06-11T00:27:27.635471Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,Henrique Saraiva,0,2,4,2026-06-24T03:22:33.876622Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,David Macedo,1,2,3,2026-06-20T10:21:03.0231Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,Civilizado,1,2,3,2026-06-09T00:08:50.707899Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,Roberto Sales,1,3,6,2026-06-24T16:27:03.644415Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,Hermes Junior,0,2,4,2026-06-24T17:06:41.284232Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,Hamon Vitorino,0,2,4,2026-06-24T17:57:49.616765Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,Michel Egidio,0,2,4,2026-06-24T17:39:05.900551Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,Raimundo Nonato,1,3,6,2026-06-10T15:16:01.449125Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,Josué,0,2,4,2026-06-23T13:57:53.454826Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,Thiago Brito,0,2,4,2026-06-24T13:26:07.046512Z
+51,2026-06-24T22:00:00Z,round3,Group C,Scotland,Brazil,0,3,false,JoãoFilho,1,2,3,2026-06-24T15:33:25.596892Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,Josué,3,1,4,2026-06-23T13:57:33.534019Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,Henrique Saraiva,2,0,4,2026-06-24T03:22:52.184806Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,Hamon Vitorino,3,0,2,2026-06-24T17:57:57.151082Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,Fábio Oliveira,3,0,2,2026-06-11T00:27:38.946615Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,David Macedo,2,1,2,2026-06-20T10:20:51.007595Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,Raimundo Nonato,3,0,2,2026-06-10T15:16:30.652224Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,Civilizado,2,0,4,2026-06-09T00:08:40.455013Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,Thiago Brito,3,0,2,2026-06-24T13:26:14.441051Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,JoãoFilho,2,0,4,2026-06-24T15:33:10.182897Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,Roberto Sales,3,0,2,2026-06-24T16:26:58.672017Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,Hermes Junior,3,1,4,2026-06-24T17:07:01.138793Z
+52,2026-06-24T22:00:00Z,round3,Group C,Morocco,Haiti,4,2,true,Michel Egidio,3,0,2,2026-06-24T17:34:30.349461Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,Raimundo Nonato,0,1,0,2026-06-10T15:17:05.856572Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,Fábio Oliveira,0,2,0,2026-06-11T00:28:13.29563Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,Civilizado,0,2,0,2026-06-09T00:09:07.854565Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,David Macedo,1,1,0,2026-06-20T10:21:38.156499Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,Henrique Saraiva,0,2,0,2026-06-24T03:25:30.361729Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,Roberto Sales,0,2,0,2026-06-24T16:27:09.644018Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,Hamon Vitorino,0,1,0,2026-06-24T17:58:03.746219Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,Hermes Junior,0,1,0,2026-06-24T17:07:39.097321Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,JoãoFilho,1,2,0,2026-06-24T20:22:00.660673Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,Michel Egidio,1,2,0,2026-06-24T21:01:43.333502Z
+54,2026-06-25T01:00:00Z,round3,Group A,South Africa,South Korea,1,0,false,Thiago Brito,0,2,0,2026-06-24T13:26:23.182688Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,Fábio Oliveira,1,1,0,2026-06-11T00:27:49.925848Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,Henrique Saraiva,1,2,3,2026-06-24T03:25:10.878201Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,Raimundo Nonato,1,1,0,2026-06-14T17:20:14.600746Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,Josué,2,2,0,2026-06-23T13:58:22.649582Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,David Macedo,1,2,3,2026-06-20T10:21:15.385327Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,Hermes Junior,1,1,0,2026-06-24T17:08:14.269715Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,Civilizado,1,2,3,2026-06-09T00:08:56.395656Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,JoãoFilho,1,2,3,2026-06-24T20:21:52.264827Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,Thiago Brito,1,2,3,2026-06-24T13:26:39.837942Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,Michel Egidio,1,2,3,2026-06-24T20:25:59.830166Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,Roberto Sales,0,1,4,2026-06-24T16:27:13.891255Z
+53,2026-06-25T01:00:00Z,round3,Group A,Czechia,Mexico,0,3,false,Hamon Vitorino,1,2,3,2026-06-24T17:58:10.061758Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,Josué,1,2,0,2026-06-25T04:02:51.768658Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,Hamon Vitorino,0,2,0,2026-06-25T07:59:42.755695Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,Civilizado,1,3,0,2026-06-09T00:09:14.460813Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,Fábio Oliveira,1,2,0,2026-06-11T00:28:28.008543Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,Thiago Brito,1,3,0,2026-06-25T13:23:21.811616Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,Michel Egidio,0,2,0,2026-06-25T17:08:00.65078Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,Roberto Sales,0,3,0,2026-06-25T18:00:40.423116Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,Hermes Junior,0,2,0,2026-06-25T17:40:29.674535Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,Raimundo Nonato,1,2,0,2026-06-14T17:20:47.0528Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,David Macedo,0,3,0,2026-06-20T10:21:49.390181Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,Henrique Saraiva,1,2,0,2026-06-24T03:25:51.373946Z
+56,2026-06-25T20:00:00Z,round3,Group E,Ecuador,Germany,2,1,false,JoãoFilho,0,2,0,2026-06-25T03:36:02.410757Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,JoãoFilho,0,2,7,2026-06-25T03:35:55.85973Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,Fábio Oliveira,0,3,3,2026-06-11T00:28:41.40407Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,David Macedo,0,2,7,2026-06-20T10:21:59.253072Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,Hamon Vitorino,0,3,3,2026-06-25T07:59:34.575967Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,Hermes Junior,1,3,4,2026-06-25T17:41:13.780301Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,Roberto Sales,0,2,7,2026-06-25T18:00:49.332955Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,Civilizado,0,2,7,2026-06-09T00:09:19.367242Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,Thiago Brito,0,3,3,2026-06-25T13:23:11.446487Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,Raimundo Nonato,0,2,7,2026-06-14T17:21:10.962345Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,Michel Egidio,0,2,7,2026-06-25T11:31:29.922501Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,Josué,0,2,7,2026-06-25T04:02:39.787171Z
+55,2026-06-25T20:00:00Z,round3,Group E,Curacao,Ivory Coast,0,2,false,Henrique Saraiva,0,2,7,2026-06-24T07:10:45.960143Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,Hamon Vitorino,2,1,0,2026-06-25T07:53:14.35839Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,Michel Egidio,2,1,0,2026-06-25T22:46:20.569944Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,Thiago Brito,2,1,0,2026-06-25T13:23:35.83668Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,Raimundo Nonato,2,2,8,2026-06-14T17:21:34.249949Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,Civilizado,1,2,0,2026-06-09T00:09:28.654Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,David Macedo,2,1,0,2026-06-20T10:22:15.291639Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,Hermes Junior,1,1,11,2026-06-25T17:41:46.035554Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,Roberto Sales,2,1,0,2026-06-25T18:01:31.397599Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,Henrique Saraiva,2,1,0,2026-06-24T07:16:37.646405Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,Josué,2,2,8,2026-06-25T04:03:11.286076Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,JoãoFilho,2,1,0,2026-06-25T03:36:21.500729Z
+57,2026-06-25T23:00:00Z,round3,Group F,Japan,Sweden,1,1,false,Fábio Oliveira,1,1,11,2026-06-11T00:29:12.407167Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,Civilizado,0,2,4,2026-06-09T00:09:33.069715Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,JoãoFilho,1,3,7,2026-06-25T03:36:10.833346Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,Raimundo Nonato,0,3,5,2026-06-17T11:27:14.341777Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,Henrique Saraiva,0,3,5,2026-06-24T07:16:11.985513Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,Roberto Sales,0,3,5,2026-06-25T18:01:17.395055Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,Thiago Brito,0,2,4,2026-06-25T13:23:47.331388Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,David Macedo,0,3,5,2026-06-20T10:22:32.179766Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,Hermes Junior,0,3,5,2026-06-25T17:41:26.982536Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,Josué,0,2,4,2026-06-25T04:02:59.206164Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,Michel Egidio,0,4,2,2026-06-25T22:48:51.258275Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,Fábio Oliveira,0,2,4,2026-06-11T00:28:54.8734Z
+58,2026-06-25T23:00:00Z,round3,Group F,Tunisia,Netherlands,1,3,false,Hamon Vitorino,0,4,2,2026-06-25T07:52:59.584591Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,JoãoFilho,0,2,0,2026-06-25T03:37:01.968539Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,Civilizado,1,2,0,2026-06-09T00:09:38.827429Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,Raimundo Nonato,0,1,0,2026-06-17T11:28:14.496786Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,Fábio Oliveira,1,1,0,2026-06-11T00:29:39.149578Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,Josué,1,3,0,2026-06-25T04:03:32.3925Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,Thiago Brito,0,2,0,2026-06-25T13:24:01.680642Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,Michel Egidio,0,2,0,2026-06-25T22:52:30.626981Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,David Macedo,0,2,0,2026-06-22T15:40:57.387786Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,Hermes Junior,0,2,0,2026-06-25T17:42:10.896344Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,Roberto Sales,1,2,0,2026-06-25T18:01:40.659375Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,Henrique Saraiva,1,2,0,2026-06-24T07:16:54.241481Z
+59,2026-06-26T02:00:00Z,round3,Group D,Turkey,USA,3,2,false,Hamon Vitorino,1,2,0,2026-06-25T07:58:14.076833Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,Josué,0,1,0,2026-06-25T04:03:25.655848Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,Hamon Vitorino,2,1,0,2026-06-25T07:56:12.221533Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,Civilizado,1,1,6,2026-06-09T00:09:45.889237Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,Michel Egidio,2,1,0,2026-06-25T22:53:31.895275Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,Fábio Oliveira,2,1,0,2026-06-11T00:29:26.987513Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,Raimundo Nonato,1,0,0,2026-06-17T11:28:59.536344Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,Thiago Brito,2,1,0,2026-06-25T13:24:11.762698Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,JoãoFilho,1,1,6,2026-06-25T03:36:34.471857Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,Roberto Sales,1,0,0,2026-06-25T18:01:46.617621Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,Hermes Junior,2,1,0,2026-06-25T17:49:30.161524Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,Henrique Saraiva,1,1,6,2026-06-24T07:17:12.735628Z
+60,2026-06-26T02:00:00Z,round3,Group D,Paraguay,Australia,0,0,false,David Macedo,1,1,6,2026-06-23T23:56:18.310844Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,JoãoFilho,1,2,4,2026-06-25T03:37:10.090601Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,Civilizado,1,2,4,2026-06-09T00:09:53.718255Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,Fábio Oliveira,1,2,4,2026-06-11T00:30:29.58757Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,Hermes Junior,1,3,4,2026-06-26T18:19:37.593195Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,Thiago Brito,1,2,4,2026-06-26T14:30:50.091718Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,Raimundo Nonato,1,1,0,2026-06-17T12:25:27.797751Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,Michel Egidio,1,2,4,2026-06-26T15:54:59.734254Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,Henrique Saraiva,1,2,4,2026-06-24T07:18:15.93152Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,David Macedo,2,3,3,2026-06-23T23:56:29.646157Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,Hamon Vitorino,1,2,4,2026-06-26T11:01:13.947597Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,Josué,1,2,4,2026-06-26T00:27:48.002176Z
+61,2026-06-26T19:00:00Z,round3,Group I,Norway,France,1,4,true,Roberto Sales,1,3,4,2026-06-26T11:47:37.529125Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,Fábio Oliveira,2,0,3,2026-06-11T00:30:17.429088Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,Roberto Sales,2,1,2,2026-06-26T11:47:33.036118Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,Civilizado,2,0,3,2026-06-09T00:10:01.52702Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,Raimundo Nonato,1,0,3,2026-06-17T11:29:29.177951Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,Michel Egidio,2,0,3,2026-06-26T12:32:19.891074Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,Josué,2,0,3,2026-06-26T00:28:13.394117Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,Hermes Junior,2,0,3,2026-06-26T18:19:14.321679Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,Henrique Saraiva,2,0,3,2026-06-24T07:19:02.745774Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,David Macedo,2,0,3,2026-06-23T23:57:22.787838Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,Hamon Vitorino,3,0,3,2026-06-26T11:01:08.619914Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,Thiago Brito,1,0,3,2026-06-26T14:30:40.574026Z
+62,2026-06-26T19:00:00Z,round3,Group I,Senegal,Iraq,5,0,true,JoãoFilho,2,1,2,2026-06-26T02:09:11.520225Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,Civilizado,1,1,8,2026-06-09T00:10:24.1903Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,Fábio Oliveira,1,1,8,2026-06-11T00:30:54.531392Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,Michel Egidio,2,1,0,2026-06-26T23:39:08.82879Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,David Macedo,1,1,8,2026-06-23T23:57:59.356669Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,Josué,1,0,0,2026-06-26T00:28:40.400134Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,Thiago Brito,1,0,0,2026-06-26T14:31:34.041359Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,Hermes Junior,2,1,0,2026-06-26T18:20:45.035921Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,Raimundo Nonato,1,1,8,2026-06-17T12:27:28.424645Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,Henrique Saraiva,1,0,0,2026-06-24T07:20:06.623828Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,Roberto Sales,1,0,0,2026-06-26T11:47:41.39693Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,Hamon Vitorino,1,2,0,2026-06-26T11:01:19.61282Z
+63,2026-06-27T00:00:00Z,round3,Group H,Cape Verde,Saudi Arabia,0,0,false,JoãoFilho,2,1,0,2026-06-26T16:22:00.367494Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,Fábio Oliveira,1,2,5,2026-06-11T00:30:44.310468Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,Raimundo Nonato,2,2,0,2026-06-17T12:25:59.245897Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,Michel Egidio,1,2,5,2026-06-26T22:15:06.950184Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,David Macedo,1,3,3,2026-06-23T23:57:42.182098Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,Josué,1,2,5,2026-06-26T00:28:22.932777Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,Thiago Brito,1,2,5,2026-06-26T14:31:27.387405Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,Civilizado,1,1,0,2026-06-09T00:10:13.225848Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,Roberto Sales,1,2,5,2026-06-26T11:47:49.263456Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,Henrique Saraiva,1,2,5,2026-06-24T07:19:44.545212Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,Hamon Vitorino,1,2,5,2026-06-26T11:01:24.431489Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,JoãoFilho,1,2,5,2026-06-26T02:09:27.987034Z
+64,2026-06-27T00:00:00Z,round3,Group H,Uruguay,Spain,0,1,false,Hermes Junior,1,2,5,2026-06-26T18:20:12.655673Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,Roberto Sales,2,0,0,2026-06-27T02:06:47.490914Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,Thiago Brito,2,0,0,2026-06-27T02:13:31.995101Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,Fábio Oliveira,1,1,10,2026-06-11T00:31:06.461823Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,Raimundo Nonato,1,0,0,2026-06-17T12:28:55.602303Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,Josué,2,1,0,2026-06-27T02:05:45.010254Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,David Macedo,2,1,0,2026-06-23T23:58:23.753658Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,Hamon Vitorino,2,1,0,2026-06-26T11:01:35.45291Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,Civilizado,1,1,10,2026-06-09T00:10:38.110352Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,Henrique Saraiva,2,1,0,2026-06-24T07:22:08.030032Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,JoãoFilho,2,1,0,2026-06-26T23:56:12.726693Z
+65,2026-06-27T03:00:00Z,round3,Group G,Egypt,Iran,1,1,false,Michel Egidio,1,0,0,2026-06-27T00:20:16.636171Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,Civilizado,0,2,2,2026-06-09T00:10:31.355095Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,Fábio Oliveira,0,2,2,2026-06-11T00:31:19.15206Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,Raimundo Nonato,0,2,2,2026-06-17T12:27:59.587631Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,David Macedo,1,2,3,2026-06-23T23:58:06.747413Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,Henrique Saraiva,0,2,2,2026-06-24T07:22:39.609038Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,JoãoFilho,0,3,2,2026-06-26T23:55:15.999386Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,Hamon Vitorino,1,3,3,2026-06-26T11:01:30.286431Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,Michel Egidio,0,2,2,2026-06-27T00:07:11.424833Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,Josué,0,2,2,2026-06-27T02:05:50.694415Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,Roberto Sales,0,2,2,2026-06-27T02:06:39.118715Z
+66,2026-06-27T03:00:00Z,round3,Group G,New Zealand,Belgium,1,5,true,Thiago Brito,0,3,2,2026-06-27T02:13:41.251219Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,Hamon Vitorino,2,1,8,2026-06-27T09:15:03.627883Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,Civilizado,1,1,0,2026-06-09T00:10:44.610225Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,Fábio Oliveira,1,2,0,2026-06-11T00:32:06.82124Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,Roberto Sales,3,1,4,2026-06-27T18:50:55.581807Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,Josué,2,1,8,2026-06-27T02:06:01.071143Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,Raimundo Nonato,3,1,4,2026-06-17T12:32:33.666261Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,Hermes Junior,1,0,5,2026-06-27T17:26:57.574528Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,Henrique Saraiva,1,1,0,2026-06-24T07:23:49.031609Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,David Macedo,2,1,8,2026-06-23T23:58:48.110632Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,Thiago Brito,2,1,8,2026-06-27T13:45:32.81195Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,JoãoFilho,1,2,0,2026-06-27T02:14:25.997053Z
+68,2026-06-27T21:00:00Z,round3,Group L,Croatia,Ghana,2,1,false,Michel Egidio,1,0,5,2026-06-27T18:34:50.759429Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,Josué,0,3,3,2026-06-27T02:05:55.942846Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,Hamon Vitorino,0,2,7,2026-06-27T09:14:56.598712Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,Henrique Saraiva,0,2,7,2026-06-24T07:22:55.275494Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,Civilizado,0,2,7,2026-06-09T00:10:51.887515Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,Roberto Sales,0,4,3,2026-06-27T18:50:59.069599Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,Michel Egidio,0,2,7,2026-06-27T19:10:10.461844Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,JoãoFilho,0,3,3,2026-06-27T02:14:34.879152Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,Fábio Oliveira,0,2,7,2026-06-11T00:31:50.342232Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,Raimundo Nonato,0,5,3,2026-06-17T12:29:58.140536Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,David Macedo,0,3,3,2026-06-23T23:59:00.743424Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,Thiago Brito,0,4,3,2026-06-27T13:44:27.734613Z
+67,2026-06-27T21:00:00Z,round3,Group L,Panama,England,0,2,false,Hermes Junior,0,4,3,2026-06-27T17:27:31.980366Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,Josué,1,0,3,2026-06-27T02:06:08.483461Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,Michel Egidio,2,1,4,2026-06-27T22:36:58.752902Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,Thiago Brito,2,0,5,2026-06-27T13:47:45.733442Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,Civilizado,1,1,0,2026-06-09T00:11:05.957578Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,Fábio Oliveira,2,1,4,2026-06-11T00:32:35.216706Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,Henrique Saraiva,1,1,0,2026-06-24T07:25:16.534389Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,Raimundo Nonato,2,1,4,2026-06-17T12:33:12.96906Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,David Macedo,2,1,4,2026-06-23T23:59:12.141338Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,Hamon Vitorino,2,0,5,2026-06-27T09:15:16.275902Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,JoãoFilho,2,1,4,2026-06-27T05:33:18.071621Z
+70,2026-06-27T23:30:00Z,round3,Group K,DR Congo,Uzbekistan,3,1,false,Hermes Junior,2,1,4,2026-06-27T17:27:50.032798Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,Civilizado,1,1,8,2026-06-09T00:10:58.425765Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,David Macedo,1,3,0,2026-06-23T23:59:22.128001Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,Henrique Saraiva,1,2,0,2026-06-24T07:24:24.153306Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,Michel Egidio,1,1,8,2026-06-27T22:10:12.494542Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,Fábio Oliveira,1,1,8,2026-06-11T00:32:18.61955Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,Raimundo Nonato,2,2,8,2026-06-17T12:33:41.654804Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,JoãoFilho,2,2,8,2026-06-27T05:33:48.484749Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,Hamon Vitorino,1,1,8,2026-06-27T09:15:10.41361Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,Thiago Brito,2,1,0,2026-06-27T13:47:29.409405Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,Josué,2,2,8,2026-06-27T02:06:20.228557Z
+69,2026-06-27T23:30:00Z,round3,Group K,Colombia,Portugal,0,0,false,Hermes Junior,1,2,0,2026-06-27T17:28:52.590998Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,David Macedo,0,1,0,2026-06-24T00:00:00.114787Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,Raimundo Nonato,1,1,6,2026-06-17T12:35:03.193899Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,Hamon Vitorino,1,1,6,2026-06-27T09:15:28.798353Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,Fábio Oliveira,1,1,6,2026-06-11T00:32:50.067143Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,Hermes Junior,0,1,0,2026-06-27T17:29:47.242682Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,Michel Egidio,1,1,6,2026-06-28T00:20:59.334099Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,Henrique Saraiva,0,1,0,2026-06-24T07:26:17.993887Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,JoãoFilho,1,1,6,2026-06-27T05:36:25.693844Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,Thiago Brito,0,1,0,2026-06-27T13:48:41.242517Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,Josué,1,2,0,2026-06-27T14:59:48.780199Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,Civilizado,1,1,6,2026-06-09T00:11:23.689439Z
+71,2026-06-28T02:00:00Z,round3,Group J,Algeria,Austria,3,3,false,Roberto Sales,1,2,0,2026-06-28T01:14:27.095668Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,Civilizado,0,3,5,2026-06-09T00:11:29.199012Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,David Macedo,0,4,2,2026-06-24T00:00:25.015803Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,Roberto Sales,0,2,4,2026-06-28T01:14:15.630306Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,Raimundo Nonato,0,2,4,2026-06-17T12:34:12.438938Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,Fábio Oliveira,0,3,5,2026-06-11T00:33:02.136758Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,Michel Egidio,0,2,4,2026-06-28T00:03:21.530353Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,Henrique Saraiva,0,3,5,2026-06-24T07:25:39.231821Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,Josué,0,3,5,2026-06-27T14:59:43.940815Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,Hamon Vitorino,0,3,5,2026-06-27T09:15:23.523048Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,JoãoFilho,0,3,5,2026-06-27T05:36:32.172389Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,Thiago Brito,0,3,5,2026-06-27T13:48:01.449319Z
+72,2026-06-28T02:00:00Z,round3,Group J,Jordan,Argentina,1,3,false,Hermes Junior,0,3,5,2026-06-27T17:29:19.156461Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,Raimundo Nonato,1,1,0,2026-06-26T13:24:25.554955Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,Henrique Saraiva,1,1,0,2026-06-27T13:26:35.228764Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,Civilizado,1,2,10,2026-06-27T13:45:26.683375Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,JoãoFilho,0,1,16,2026-06-28T14:34:14.464615Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,Thiago Brito,2,1,0,2026-06-28T15:59:43.883611Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,David Macedo,1,2,10,2026-06-27T23:04:39.845614Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,Josué,0,1,16,2026-06-28T01:00:13.540368Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,Roberto Sales,1,2,10,2026-06-28T15:23:13.053825Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,Michel Egidio,0,1,16,2026-06-28T17:02:51.133756Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,Fábio Oliveira,1,2,10,2026-06-28T15:50:47.780548Z
+73,2026-06-28T19:00:00Z,round_of_32,Round of 32,South Africa,Canada,0,1,false,Hermes Junior,0,1,16,2026-06-28T17:25:05.829415Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,Hamon Vitorino,3,1,8,2026-06-28T19:30:35.565181Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,Roberto Sales,2,1,16,2026-06-29T11:13:24.025945Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,Michel Egidio,1,0,10,2026-06-29T13:04:23.997899Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,Hermes Junior,2,1,16,2026-06-29T13:05:00.85954Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,Thiago Brito,3,1,8,2026-06-29T16:14:15.802097Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,Civilizado,2,1,16,2026-06-26T22:54:05.387323Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,David Macedo,2,0,12,2026-06-26T14:59:00.886037Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,Henrique Saraiva,3,1,8,2026-06-27T13:28:05.615988Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,Josué,2,1,16,2026-06-28T01:00:29.389151Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,Raimundo Nonato,2,1,16,2026-06-28T01:19:53.201801Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,Fábio Oliveira,2,0,12,2026-06-28T15:50:55.936971Z
+76,2026-06-29T17:00:00Z,round_of_32,Round of 32,Brazil,Japan,2,1,false,JoãoFilho,2,0,12,2026-06-28T21:01:53.719035Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,Fábio Oliveira,2,1,6,2026-06-29T18:40:09.36071Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,David Macedo,2,1,0,2026-06-27T18:52:38.059291Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,Hamon Vitorino,3,0,0,2026-06-28T19:30:48.184529Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,Civilizado,2,0,0,2026-06-27T23:07:43.969004Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,Henrique Saraiva,3,1,0,2026-06-28T18:28:36.896386Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,Michel Egidio,2,1,0,2026-06-29T17:01:30.250344Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,Raimundo Nonato,2,1,6,2026-06-28T01:21:40.549483Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,JoãoFilho,2,1,6,2026-06-28T21:02:41.022953Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,Josué,2,0,6,2026-06-29T02:51:44.687587Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,Roberto Sales,3,0,0,2026-06-29T11:13:42.885622Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,Hermes Junior,2,0,0,2026-06-29T13:06:00.651561Z
+74,2026-06-29T20:30:00Z,round_of_32,Round of 32,Germany,Paraguay,1,1,false,Thiago Brito,2,0,0,2026-06-29T16:14:30.834506Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,Fábio Oliveira,1,1,28,2026-06-29T18:40:16.762384Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,David Macedo,2,2,22,2026-06-27T18:53:03.939496Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,Raimundo Nonato,1,0,0,2026-06-28T01:25:51.175103Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,Henrique Saraiva,2,1,0,2026-06-28T18:28:53.635779Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,Hamon Vitorino,2,1,0,2026-06-28T19:30:58.269733Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,JoãoFilho,2,1,6,2026-06-28T21:02:51.875508Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,Josué,1,1,28,2026-06-29T02:52:12.192957Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,Roberto Sales,1,0,0,2026-06-29T11:14:02.284396Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,Hermes Junior,1,0,6,2026-06-29T13:13:31.706236Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,Michel Egidio,2,1,6,2026-06-29T19:54:52.134907Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,Civilizado,1,1,22,2026-06-26T22:54:32.176473Z
+75,2026-06-30T01:00:00Z,round_of_32,Round of 32,Netherlands,Morocco,1,1,false,Thiago Brito,2,1,6,2026-06-29T16:14:42.423463Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,Thiago Brito,2,1,0,2026-06-30T14:02:31.269781Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,Hamon Vitorino,1,2,16,2026-06-30T13:55:51.478558Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,Fábio Oliveira,1,2,16,2026-06-30T10:14:58.779242Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,JoãoFilho,1,2,16,2026-06-30T10:30:13.832116Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,Roberto Sales,1,2,16,2026-06-30T02:12:40.740064Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,Civilizado,1,2,16,2026-06-27T13:46:12.245854Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,David Macedo,1,2,16,2026-06-28T11:59:47.622926Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,Raimundo Nonato,1,2,16,2026-06-28T01:27:30.740739Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,Henrique Saraiva,2,2,0,2026-06-28T18:29:09.230593Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,Josué,1,2,16,2026-06-30T00:44:00.583726Z
+78,2026-06-30T17:00:00Z,round_of_32,Round of 32,Ivory Coast,Norway,1,2,false,Hermes Junior,0,1,10,2026-06-30T15:34:34.284946Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,Josué,2,1,4,2026-06-30T16:47:54.129032Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,Civilizado,3,1,10,2026-06-27T23:08:21.893477Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,JoãoFilho,2,0,6,2026-06-30T10:30:35.967507Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,David Macedo,3,1,10,2026-06-28T12:00:25.29231Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,Raimundo Nonato,3,0,14,2026-06-28T01:28:00.49114Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,Roberto Sales,2,0,6,2026-06-30T02:12:50.295657Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,Fábio Oliveira,3,1,10,2026-06-30T10:15:14.933902Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,Hamon Vitorino,3,1,10,2026-06-30T13:55:59.990466Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,Thiago Brito,3,1,10,2026-06-30T14:02:51.561133Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,Hermes Junior,3,0,14,2026-06-30T15:35:04.143096Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,Henrique Saraiva,2,1,4,2026-06-30T16:43:19.746912Z
+77,2026-06-30T21:00:00Z,round_of_32,Round of 32,France,Sweden,3,0,false,Michel Egidio,2,0,6,2026-06-30T17:35:00.710905Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,Civilizado,1,1,0,2026-06-28T04:52:57.39773Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,David Macedo,1,1,0,2026-06-28T12:01:02.601009Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,Michel Egidio,1,1,0,2026-06-30T20:38:23.051187Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,Henrique Saraiva,1,1,0,2026-06-30T16:43:40.163076Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,Raimundo Nonato,1,1,0,2026-06-28T23:55:55.998874Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,Josué,1,1,0,2026-06-30T20:53:12.785492Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,Roberto Sales,1,0,10,2026-06-30T02:12:58.629758Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,JoãoFilho,2,1,14,2026-06-30T10:30:48.150231Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,Fábio Oliveira,1,1,0,2026-06-30T10:15:21.424303Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,Hamon Vitorino,2,1,14,2026-06-30T13:56:07.270811Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,Thiago Brito,2,0,18,2026-06-30T14:03:15.409744Z
+79,2026-07-01T02:00:00Z,round_of_32,Round of 32,Mexico,Ecuador,2,0,false,Hermes Junior,0,0,0,2026-06-30T15:37:59.332906Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,Civilizado,3,0,4,2026-06-28T05:01:18.650015Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,David Macedo,2,0,10,2026-06-28T12:01:27.617854Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,JoãoFilho,2,0,10,2026-07-01T01:10:40.721447Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,Henrique Saraiva,2,0,10,2026-06-30T16:44:12.669298Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,Raimundo Nonato,3,1,6,2026-06-28T23:56:43.096328Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,Hamon Vitorino,4,0,4,2026-07-01T08:23:37.108639Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,Hermes Junior,2,0,10,2026-07-01T14:31:31.510699Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,Josué,2,0,10,2026-07-01T10:41:38.115406Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,Michel Egidio,2,0,10,2026-07-01T15:54:15.71343Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,Roberto Sales,3,0,4,2026-07-01T11:27:58.88646Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,Fábio Oliveira,2,0,10,2026-07-01T15:34:50.70412Z
+80,2026-07-01T16:00:00Z,round_of_32,Round of 32,England,DR Congo,2,1,false,Thiago Brito,2,0,10,2026-07-01T14:05:11.074462Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,Michel Egidio,2,1,6,2026-07-01T19:34:45.019243Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,Josué,2,1,6,2026-07-01T13:19:52.649958Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,Civilizado,2,1,6,2026-06-28T05:01:59.72682Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,Hamon Vitorino,2,1,6,2026-07-01T08:24:08.075344Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,JoãoFilho,1,1,14,2026-07-01T01:11:04.982237Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,Raimundo Nonato,0,1,0,2026-06-28T23:57:34.322533Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,Roberto Sales,2,1,6,2026-07-01T11:28:05.791281Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,David Macedo,1,1,14,2026-06-29T19:54:29.295507Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,Thiago Brito,1,2,0,2026-07-01T14:05:53.578677Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,Hermes Junior,1,0,0,2026-07-01T14:32:04.469198Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,Henrique Saraiva,1,1,14,2026-06-30T16:44:27.112559Z
+82,2026-07-01T20:00:00Z,round_of_32,Round of 32,Belgium,Senegal,2,2,false,Fábio Oliveira,2,1,0,2026-07-01T15:34:58.864801Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,Josué,2,0,16,2026-07-01T19:35:53.717732Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,Civilizado,2,1,12,2026-06-26T22:54:55.776779Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,JoãoFilho,2,1,12,2026-07-01T01:11:27.729742Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,Raimundo Nonato,2,0,16,2026-06-28T23:58:22.176772Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,Roberto Sales,2,0,16,2026-07-01T11:28:15.248729Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,Hamon Vitorino,3,1,10,2026-07-01T08:24:21.962712Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,David Macedo,2,1,12,2026-06-30T08:46:00.189844Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,Thiago Brito,2,1,12,2026-07-01T14:06:12.223004Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,Henrique Saraiva,2,1,12,2026-06-30T16:44:43.839442Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,Michel Egidio,2,1,12,2026-07-01T21:44:13.205411Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,Hermes Junior,2,1,12,2026-07-01T14:32:20.304761Z
+81,2026-07-02T00:00:00Z,round_of_32,Round of 32,USA,Bosnia and Herzegovina,2,0,false,Fábio Oliveira,2,0,16,2026-07-01T15:35:05.703694Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,Civilizado,2,0,6,2026-06-28T05:03:12.101749Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,JoãoFilho,3,1,10,2026-07-01T01:11:40.617763Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,Raimundo Nonato,3,0,14,2026-06-28T23:58:48.986331Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,David Macedo,3,0,14,2026-06-30T08:46:15.17962Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,Josué,2,0,6,2026-07-02T01:23:11.121673Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,Henrique Saraiva,2,0,6,2026-06-30T16:44:56.69231Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,Hermes Junior,2,0,6,2026-07-02T18:03:46.496564Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,Thiago Brito,3,0,14,2026-07-02T13:11:59.222429Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,Hamon Vitorino,2,0,6,2026-07-02T04:02:24.30754Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,Roberto Sales,2,0,6,2026-07-02T11:26:52.256491Z
+84,2026-07-02T19:00:00Z,round_of_32,Round of 32,Spain,Austria,3,0,false,Michel Egidio,2,0,6,2026-07-02T18:04:31.017461Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,Henrique Saraiva,1,1,0,2026-06-30T18:25:27.101387Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,Michel Egidio,2,1,16,2026-07-02T21:48:42.03511Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,Roberto Sales,2,1,16,2026-07-02T11:26:59.369546Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,Thiago Brito,1,2,0,2026-07-02T13:12:24.384372Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,Josué,2,1,16,2026-07-02T20:31:29.790327Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,Hermes Junior,1,0,10,2026-07-02T21:53:00.868484Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,Hamon Vitorino,2,1,16,2026-07-02T04:02:31.090915Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,Civilizado,1,1,0,2026-06-28T05:04:53.840851Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,Raimundo Nonato,2,1,16,2026-06-28T23:59:52.716873Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,David Macedo,2,1,16,2026-06-30T08:46:28.371911Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,JoãoFilho,2,1,16,2026-07-02T15:07:13.18698Z
+83,2026-07-02T23:00:00Z,round_of_32,Round of 32,Portugal,Croatia,2,1,false,Fábio Oliveira,2,1,16,2026-07-02T18:57:11.5394Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,Hermes Junior,2,0,16,2026-07-02T22:41:48.679838Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,Raimundo Nonato,1,1,0,2026-06-29T00:03:15.268248Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,Civilizado,2,1,12,2026-06-28T05:04:00.613651Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,Michel Egidio,2,1,12,2026-07-03T00:31:58.18028Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,Henrique Saraiva,2,1,12,2026-07-01T00:13:34.886691Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,David Macedo,2,0,16,2026-06-30T08:46:36.91152Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,Hamon Vitorino,2,1,12,2026-07-02T04:02:40.00186Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,Thiago Brito,2,1,12,2026-07-02T13:12:41.829025Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,Roberto Sales,2,1,12,2026-07-02T11:27:06.027393Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,JoãoFilho,1,0,8,2026-07-02T15:07:48.258764Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,Fábio Oliveira,2,1,12,2026-07-02T18:57:19.980581Z
+85,2026-07-03T03:00:00Z,round_of_32,Round of 32,Switzerland,Algeria,2,0,false,Josué,1,1,0,2026-07-02T20:31:44.597886Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,Fábio Oliveira,0,1,12,2026-07-03T10:12:51.912282Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,Henrique Saraiva,1,1,32,2026-07-01T10:26:09.878952Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,JoãoFilho,1,1,32,2026-07-03T12:55:03.798169Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,Roberto Sales,0,2,6,2026-07-03T14:16:59.654915Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,Hamon Vitorino,1,2,6,2026-07-03T13:28:24.394843Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,Hermes Junior,0,1,0,2026-07-03T16:19:26.828674Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,Raimundo Nonato,0,1,12,2026-06-29T09:07:00.898637Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,Civilizado,1,1,32,2026-06-28T05:05:30.401179Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,Josué,1,2,12,2026-07-03T10:25:29.695736Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,Thiago Brito,1,2,12,2026-07-03T14:42:32.475784Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,David Macedo,1,1,32,2026-06-30T08:46:50.014823Z
+88,2026-07-03T18:00:00Z,round_of_32,Round of 32,Australia,Egypt,1,1,false,Michel Egidio,1,2,12,2026-07-03T16:54:41.267427Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,Fábio Oliveira,3,0,6,2026-07-03T10:13:03.488335Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,Civilizado,3,0,6,2026-06-27T13:47:17.063074Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,JoãoFilho,3,0,6,2026-07-03T12:55:30.314737Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,Raimundo Nonato,2,0,6,2026-06-29T09:08:01.992628Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,Josué,3,0,6,2026-07-03T10:25:46.990664Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,Henrique Saraiva,3,0,6,2026-07-01T10:26:26.201854Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,David Macedo,3,0,6,2026-06-30T08:47:06.627899Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,Hamon Vitorino,3,0,6,2026-07-03T13:28:36.226194Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,Roberto Sales,3,0,6,2026-07-03T14:17:05.348248Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,Thiago Brito,3,0,6,2026-07-03T14:42:44.75981Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,Hermes Junior,2,0,6,2026-07-03T16:19:48.533662Z
+86,2026-07-03T22:00:00Z,round_of_32,Round of 32,Argentina,Cape Verde,1,1,false,Michel Egidio,3,0,6,2026-07-03T16:55:51.705628Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,Raimundo Nonato,1,1,0,2026-06-29T09:08:53.657915Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,Civilizado,2,1,10,2026-06-28T05:06:16.558245Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,Fábio Oliveira,2,1,10,2026-07-03T10:13:14.540218Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,JoãoFilho,2,1,10,2026-07-03T12:55:44.616779Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,David Macedo,2,1,10,2026-06-30T08:47:23.320869Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,Hamon Vitorino,2,1,10,2026-07-03T13:28:43.338242Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,Roberto Sales,2,1,10,2026-07-03T14:17:13.244825Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,Thiago Brito,3,1,6,2026-07-03T14:43:04.212989Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,Michel Egidio,2,0,8,2026-07-03T17:00:46.550869Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,Hermes Junior,2,1,10,2026-07-03T16:23:12.119045Z
+87,2026-07-04T01:30:00Z,round_of_32,Round of 32,Colombia,Ghana,1,0,false,Henrique Saraiva,1,1,0,2026-07-03T17:52:05.34887Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,Raimundo Nonato,1,2,6,2026-07-01T14:43:05.973896Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,Hermes Junior,0,1,8,2026-07-04T15:13:51.925484Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,Roberto Sales,0,1,8,2026-07-04T15:45:06.538558Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,Michel Egidio,0,1,8,2026-07-04T15:20:36.845512Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,Josué,0,2,8,2026-07-04T01:41:32.760137Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,Hamon Vitorino,0,2,8,2026-07-04T04:29:31.631323Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,Thiago Brito,0,2,8,2026-07-03T14:43:19.689269Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,JoãoFilho,1,2,6,2026-07-04T03:56:04.882996Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,David Macedo,1,2,6,2026-07-02T19:07:42.011983Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,Civilizado,1,2,6,2026-07-01T07:31:13.558259Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,Fábio Oliveira,1,2,6,2026-07-04T10:58:23.75044Z
+90,2026-07-04T17:00:00Z,round_of_16,Round of 16,Canada,Morocco,0,3,false,Henrique Saraiva,1,2,6,2026-07-03T17:52:21.708272Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,Raimundo Nonato,0,2,6,2026-07-01T14:43:48.102582Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,Henrique Saraiva,0,3,6,2026-07-03T17:52:36.971351Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,David Macedo,0,3,6,2026-07-02T19:07:54.159483Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,Fábio Oliveira,0,2,6,2026-07-04T10:58:38.677344Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,JoãoFilho,0,2,6,2026-07-04T14:27:46.391726Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,Hermes Junior,0,2,6,2026-07-04T15:14:05.660118Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,Thiago Brito,0,1,14,2026-07-04T15:18:36.957171Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,Roberto Sales,1,3,4,2026-07-04T15:45:14.299003Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,Michel Egidio,0,2,6,2026-07-04T17:08:19.353721Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,Josué,1,3,4,2026-07-04T01:41:40.722232Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,Civilizado,0,2,6,2026-07-01T07:31:24.008583Z
+89,2026-07-04T21:00:00Z,round_of_16,Round of 16,Paraguay,France,0,1,false,Hamon Vitorino,0,3,6,2026-07-04T04:29:11.451595Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,Civilizado,2,1,0,2026-07-01T07:31:38.628866Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,Raimundo Nonato,2,1,0,2026-07-01T14:44:10.328424Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,David Macedo,2,1,0,2026-07-02T19:08:07.042878Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,Hamon Vitorino,2,1,0,2026-07-04T04:27:24.515459Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,JoãoFilho,2,1,0,2026-07-04T14:26:55.843631Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,Thiago Brito,2,1,0,2026-07-04T15:18:46.01988Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,Michel Egidio,2,1,0,2026-07-04T20:54:11.246074Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,Josué,2,1,0,2026-07-04T01:41:48.941487Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,Fábio Oliveira,2,1,0,2026-07-04T22:01:48.159808Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,Henrique Saraiva,2,1,0,2026-07-05T14:00:32.475327Z
+91,2026-07-05T20:00:00Z,round_of_16,Round of 16,Brazil,Norway,1,2,false,Hermes Junior,1,0,0,2026-07-05T17:21:18.794034Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,Josué,1,1,0,2026-07-04T01:42:06.610505Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,David Macedo,1,1,0,2026-07-03T09:35:42.686302Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,Raimundo Nonato,2,1,0,2026-07-03T11:17:03.405506Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,Civilizado,1,2,12,2026-07-04T04:21:04.241266Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,Hamon Vitorino,1,0,0,2026-07-04T04:27:31.84379Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,Fábio Oliveira,1,1,0,2026-07-04T22:01:57.644139Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,Thiago Brito,1,2,12,2026-07-05T14:28:49.674219Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,Hermes Junior,1,1,0,2026-07-05T17:21:46.509169Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,Roberto Sales,1,1,0,2026-07-05T19:57:55.651646Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,Henrique Saraiva,2,2,0,2026-07-05T20:25:38.51468Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,JoãoFilho,1,1,0,2026-07-04T14:45:22.103827Z
+92,2026-07-06T01:00:00Z,round_of_16,Round of 16,Mexico,England,2,3,false,Michel Egidio,1,1,0,2026-07-05T21:03:30.741667Z
+93,2026-07-06T19:00:00Z,round_of_16,Round of 16,Portugal,Spain,0,1,false,Michel Egidio,1,2,10,2026-07-06T14:28:03.076205Z
+93,2026-07-06T19:00:00Z,round_of_16,Round of 16,Portugal,Spain,0,1,false,Josué,1,2,10,2026-07-04T01:42:18.015097Z
+93,2026-07-06T19:00:00Z,round_of_16,Round of 16,Portugal,Spain,0,1,false,Roberto Sales,1,2,10,2026-07-06T17:36:39.355591Z
+93,2026-07-06T19:00:00Z,round_of_16,Round of 16,Portugal,Spain,0,1,false,Civilizado,1,2,10,2026-07-04T04:21:25.019274Z
+93,2026-07-06T19:00:00Z,round_of_16,Round of 16,Portugal,Spain,0,1,false,Hamon Vitorino,0,1,16,2026-07-04T04:27:41.200393Z
+93,2026-07-06T19:00:00Z,round_of_16,Round of 16,Portugal,Spain,0,1,false,Raimundo Nonato,1,2,10,2026-07-03T19:16:34.503788Z
+93,2026-07-06T19:00:00Z,round_of_16,Round of 16,Portugal,Spain,0,1,false,David Macedo,1,3,6,2026-07-03T21:41:52.782202Z
+93,2026-07-06T19:00:00Z,round_of_16,Round of 16,Portugal,Spain,0,1,false,JoãoFilho,1,2,10,2026-07-04T14:45:58.903489Z
+93,2026-07-06T19:00:00Z,round_of_16,Round of 16,Portugal,Spain,0,1,false,Thiago Brito,1,0,0,2026-07-05T14:29:01.163036Z
+93,2026-07-06T19:00:00Z,round_of_16,Round of 16,Portugal,Spain,0,1,false,Henrique Saraiva,1,2,10,2026-07-05T20:25:54.790841Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,Michel Egidio,1,2,10,2026-07-06T14:34:21.141458Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,JoãoFilho,1,1,0,2026-07-06T17:24:03.175748Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,Roberto Sales,1,2,10,2026-07-06T17:36:46.202003Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,Raimundo Nonato,1,2,10,2026-07-03T19:17:35.315172Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,Josué,2,1,0,2026-07-04T01:42:26.371761Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,Thiago Brito,2,1,0,2026-07-06T14:56:55.915294Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,Hamon Vitorino,1,1,0,2026-07-04T04:27:51.786604Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,Hermes Junior,1,1,0,2026-07-06T21:17:02.22058Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,David Macedo,1,1,0,2026-07-04T16:01:27.489184Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,Civilizado,1,2,10,2026-07-04T04:21:52.878717Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,Fábio Oliveira,1,2,10,2026-07-06T19:05:45.189562Z
+94,2026-07-07T00:00:00Z,round_of_16,Round of 16,USA,Belgium,1,4,true,Henrique Saraiva,1,2,10,2026-07-05T20:26:10.396363Z
