@@ -326,6 +326,19 @@ const TUTEMPENA_REPLIES = [
   'Como ter pena da extinta raça dos kanalaenses!?',
 ]
 
+const VIADINHO_REPLIES = [
+  'Fale assim de Didier do Cohabece não',
+  'Chamou Xexas?',
+  'Vai deixar, Xexas?',
+  'Oxe, se identificou foi, macho?',
+  'Respeita Didier do Cohabece, criatura.',
+  'Eita, bateu saudade de Xexas foi?',
+  'Quem chama é porque conhece, né?',
+  'Xexas leu isso e já tá digitando…',
+  'Cuidado que Didier do Cohabece tá online.',
+  'Falou o quê?? Repete perto de Xexas pra tu ver.',
+]
+
 const FALLBACK_REPLIES = [
   'Que diabo de comando é esse, mah?',
   'Isso aí não existe não. Manda !ajuda que tu aprende.',
@@ -367,6 +380,7 @@ function cmdAjuda(): string {
     '*!reseta* — comando secreto',
     '*!chupa* — grito de guerra',
     '*!tutempena* — resposta pra quem tá chorando',
+    '*!viadinho* — chamou Xexas?',
     '*!ajuda* — esta mensagem',
   ].join('\n')
 }
@@ -401,6 +415,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     else if (text === '!reseta') reply = pick(RESETA_REPLIES)
     else if (text === '!chupa') reply = pick(CHUPA_REPLIES)
     else if (text === '!tutempena') reply = pick(TUTEMPENA_REPLIES)
+    else if (text === '!viadinho') reply = pick(VIADINHO_REPLIES)
     else if (text === '!ajuda') reply = cmdAjuda()
     else reply = pick(FALLBACK_REPLIES)
 
