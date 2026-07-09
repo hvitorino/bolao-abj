@@ -56,6 +56,39 @@ function getOrCreateGroupCache(groupId: string): GroupCache {
   return cache
 }
 
+/**
+ * Busca os palpites de uma data e retorna o flatMap (chave `gameId:userId`),
+ * sem tocar no cache. Usado por ensurePredictions e por invalidatePredictionCache
+ * (revalidação sem swap-para-vazio).
+ */
+async function loadPredictionDate(
+  groupId: string,
+  date: string
+): Promise<Map<string, CachedPrediction>> {
+  const supabase = createClient()
+  const { data: gamesData } = await supabase
+    .from('games')
+    .select('id')
+    .eq('match_day', date)
+
+  const gameIds = (gamesData ?? []).map((g: { id: string }) => g.id)
+  const flatMap = new Map<string, CachedPrediction>()
+  if (gameIds.length === 0) return flatMap
+
+  const { data: predictionsData, error } = await supabase
+    .from('predictions')
+    .select('user_id, game_id, home_score, away_score')
+    .eq('group_id', groupId)
+    .in('game_id', gameIds)
+
+  if (error) throw new Error(`Erro ao buscar palpites: ${error.message}`)
+
+  for (const row of (predictionsData ?? []) as CachedPrediction[]) {
+    flatMap.set(`${row.game_id}:${row.user_id}`, row)
+  }
+  return flatMap
+}
+
 // ---------------------------------------------------------------------------
 // API do cache
 // ---------------------------------------------------------------------------
@@ -230,17 +263,17 @@ function startPredictionPolling(groupId: string): void {
   if (cache.pollingInterval) return
 
   cache.pollingInterval = setInterval(() => {
-    invalidatePredictionCache(groupId)
+    void invalidatePredictionCache(groupId)
   }, POLL_INTERVAL_MS)
 
   // visibilitychange: ao voltar do sleep, refetch e reseta polling
   const onVisibility = () => {
     if (document.visibilityState === 'visible') {
-      invalidatePredictionCache(groupId)
+      void invalidatePredictionCache(groupId)
       // Resetar intervalo
       if (cache.pollingInterval) clearInterval(cache.pollingInterval)
       cache.pollingInterval = setInterval(() => {
-        invalidatePredictionCache(groupId)
+        void invalidatePredictionCache(groupId)
       }, POLL_INTERVAL_MS)
     }
   }
@@ -262,20 +295,45 @@ function stopPredictionPolling(groupId: string): void {
   }
 }
 
-function invalidatePredictionCache(groupId: string): void {
+async function invalidatePredictionCache(groupId: string): Promise<void> {
   const cache = cachesByGroup.get(groupId)
   if (!cache) return
 
   const names = Array.from(cache.listeners.keys())
   const ts = new Date().toLocaleTimeString('pt-BR')
   if (names.length > 0) {
-    console.log(`%c[PredictionCache] %c► INVALIDANDO %c| ${names.join(', ')} %c| ${ts}`,
+    console.log(`%c[PredictionCache] %c► REVALIDANDO %c| ${names.join(', ')} %c| ${ts}`,
       'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')
   }
 
-  cache.predictions.clear()
-  cache.loadedDates.clear()
+  // Revalidação SEM esvaziar: refetch das datas carregadas, monta um mapa novo e
+  // troca atomicamente. O mapa antigo permanece referenciado até o swap — logo
+  // getCachedPredictions() nunca retorna vazio no meio do poll (o que fazia os
+  // consumidores derivados recomputarem sem palpites durante jogos ao vivo).
+  const dates = Array.from(cache.loadedDates)
+  try {
+    const fresh = new Map<string, Map<string, CachedPrediction>>()
+    await Promise.all(
+      dates.map(async (date) => {
+        fresh.set(date, await loadPredictionDate(groupId, date))
+      })
+    )
+    cache.predictions = fresh
+    cache.loadedDates = new Set(dates)
+  } catch (err) {
+    console.error('[PredictionCache] erro ao revalidar, mantendo dados anteriores:', err)
+  }
 
+  // Notifica consumidores granulares (recomputam de getCachedPredictions) com as
+  // linhas reais — nenhum consumidor ramifica em eventType.
+  for (const dateMap of cache.predictions.values()) {
+    for (const pred of dateMap.values()) {
+      for (const listener of cache.detailListeners.values()) {
+        listener(pred, 'REFRESH')
+      }
+    }
+  }
+  // Notifica consumidores de agregados de servidor (ex: /api/ranking)
   for (const listener of cache.listeners.values()) {
     listener()
   }
