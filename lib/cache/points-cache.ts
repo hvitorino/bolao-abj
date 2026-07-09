@@ -61,6 +61,35 @@ function getOrCreateGroupCache(groupId: string): GroupCache {
   return cache
 }
 
+/**
+ * Busca as pontuações (jogos 'finished') de uma data e retorna as linhas,
+ * sem tocar no cache. Usado por invalidatePointsCache para revalidar sem
+ * esvaziar o mapa.
+ */
+async function loadPointsForDate(
+  groupId: string,
+  date: string
+): Promise<CachedPoints[]> {
+  const supabase = createClient()
+  const { data: gamesData } = await supabase
+    .from('games')
+    .select('id')
+    .eq('match_day', date)
+    .eq('status', 'finished')
+
+  const gameIds = (gamesData ?? []).map((g: { id: string }) => g.id)
+  if (gameIds.length === 0) return []
+
+  const { data: scoresData, error } = await supabase
+    .from('scores')
+    .select('user_id, game_id, group_id, points, breakdown')
+    .eq('group_id', groupId)
+    .in('game_id', gameIds)
+
+  if (error) throw new Error(`Erro ao buscar pontuações: ${error.message}`)
+  return (scoresData ?? []) as CachedPoints[]
+}
+
 // ---------------------------------------------------------------------------
 // API pública — funções exportadas
 // ---------------------------------------------------------------------------
@@ -379,17 +408,17 @@ function startPointsPolling(groupId: string): void {
   if (cache.pollingInterval) return
 
   cache.pollingInterval = setInterval(() => {
-    invalidatePointsCache(groupId)
+    void invalidatePointsCache(groupId)
   }, POLL_INTERVAL_MS)
 
   // visibilitychange: ao voltar do sleep, refetch imediato e reseta polling
   const onVisibility = () => {
     if (document.visibilityState === 'visible') {
-      invalidatePointsCache(groupId)
+      void invalidatePointsCache(groupId)
       // Resetar intervalo
       if (cache.pollingInterval) clearInterval(cache.pollingInterval)
       cache.pollingInterval = setInterval(() => {
-        invalidatePointsCache(groupId)
+        void invalidatePointsCache(groupId)
       }, POLL_INTERVAL_MS)
     }
   }
@@ -413,7 +442,7 @@ function stopPointsPolling(groupId: string): void {
   }
 }
 
-function invalidatePointsCache(groupId: string): void {
+async function invalidatePointsCache(groupId: string): Promise<void> {
   const cache = cachesByGroup.get(groupId)
   if (!cache) return
 
@@ -421,7 +450,7 @@ function invalidatePointsCache(groupId: string): void {
   const ts = new Date().toLocaleTimeString('pt-BR')
   if (names.length > 0) {
     console.log(
-      `%c[PointsCache] %c► INVALIDANDO %c| ${names.join(', ')} %c| ${ts}`,
+      `%c[PointsCache] %c► REVALIDANDO %c| ${names.join(', ')} %c| ${ts}`,
       'color:#FFDF00;font-weight:bold',
       'color:#009c3b',
       'color:#f0f4f8',
@@ -429,9 +458,35 @@ function invalidatePointsCache(groupId: string): void {
     )
   }
 
-  cache.points.clear()
-  cache.loadedDates.clear()
+  // Revalidação SEM esvaziar: refetch das datas carregadas, monta o mapa nested
+  // novo e troca atomicamente. O mapa antigo permanece referenciado até o swap —
+  // getCachedPoints() nunca retorna vazio no meio do poll.
+  const dates = Array.from(cache.loadedDates)
+  try {
+    const fresh = new Map<string, Map<string, CachedPoints>>()
+    const rowsPerDate = await Promise.all(dates.map((d) => loadPointsForDate(groupId, d)))
+    for (const rows of rowsPerDate) {
+      for (const row of rows) {
+        if (!fresh.has(row.game_id)) fresh.set(row.game_id, new Map())
+        fresh.get(row.game_id)!.set(row.user_id, row)
+      }
+    }
+    cache.points = fresh
+    cache.loadedDates = new Set(dates)
+  } catch (err) {
+    console.error('[PointsCache] erro ao revalidar, mantendo dados anteriores:', err)
+  }
 
+  // Notifica consumidores granulares com as linhas reais — o PublicParticipantsList
+  // atualiza o participante pelo payload; os demais recomputam de getCachedPoints.
+  for (const gameMap of cache.points.values()) {
+    for (const row of gameMap.values()) {
+      for (const listener of cache.detailListeners.values()) {
+        listener(row, 'REFRESH')
+      }
+    }
+  }
+  // Notifica consumidores de agregados de servidor (ex: /api/ranking)
   for (const listener of cache.listeners.values()) {
     listener()
   }
