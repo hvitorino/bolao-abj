@@ -11,7 +11,7 @@ services:
       AUTHENTICATION_TYPE: apikey
       AUTHENTICATION_API_KEY: "bolao-whatsapp-key"
       LANGUAGE: "pt-BR"
-      QRCODE_LIMIT: 30
+      QRCODE_LIMIT: 120
       DEL_INSTANCE: "false"
       DATABASE_ENABLED: "true"
       DATABASE_PROVIDER: "postgresql"
