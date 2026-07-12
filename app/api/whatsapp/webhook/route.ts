@@ -339,6 +339,22 @@ const VIADINHO_REPLIES = [
   'Falou o quê?? Repete perto de Xexas pra tu ver.',
 ]
 
+const VASCO_REPLIES = [
+  'Se chorei ou se sorri o importante é que vascaino eu não nasci',
+  'O Vasco tá jogando demais!',
+  'Rir do Vasco é fácil, difícil é parar de rir!',
+  'Tá tranquilo!',
+  'Se levante! Se sente!',
+  'Carai de Vasco, omi!',
+  'Você quis dizer "vice"?',
+  'Vasco é pra quem acredita... kkkkkkkkk',
+  'Pêa de novo?',
+  'Eu tenho estádio!!!',
+  'Brandt vem aí!!!',
+  'Nike vem aí!!!',
+  'Leila vem aí!!!',
+]
+
 const FALLBACK_REPLIES = [
   'Que diabo de comando é esse, mah?',
   'Isso aí não existe não. Manda !ajuda que tu aprende.',
@@ -381,6 +397,7 @@ function cmdAjuda(): string {
     '*!chupa* — grito de guerra',
     '*!tutempena* — resposta pra quem tá chorando',
     '*!viadinho* — chamou Xexas?',
+    '*!vasco* — zoa o Vasco',
     '*!ajuda* — esta mensagem',
   ].join('\n')
 }
@@ -416,6 +433,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     else if (text === '!chupa') reply = pick(CHUPA_REPLIES)
     else if (text === '!tutempena') reply = pick(TUTEMPENA_REPLIES)
     else if (text === '!viadinho') reply = pick(VIADINHO_REPLIES)
+    else if (text === '!vasco' || text === '!va6co') reply = pick(VASCO_REPLIES)
     else if (text === '!ajuda') reply = cmdAjuda()
     else reply = pick(FALLBACK_REPLIES)
 
