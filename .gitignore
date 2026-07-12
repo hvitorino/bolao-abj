@@ -40,3 +40,6 @@ supabase/.temp/
 
 # Temporary scripts
 /tmp
+
+# QR de reconexão do WhatsApp (transiente e sensível — permite sequestrar a sessão)
+qrcode.png
