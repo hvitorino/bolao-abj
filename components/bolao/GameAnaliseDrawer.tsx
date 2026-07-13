@@ -12,6 +12,7 @@ import type { ParticipantEntry } from '@/lib/types/participant'
 import type { Game } from '@/lib/types/game'
 import type { Prediction } from '@/lib/types/prediction'
 import type { Score } from '@/lib/types/score'
+import { upsertPredictions } from '@/lib/cache/prediction-cache'
 
 interface GameAnaliseDrawerProps {
   gameId: string | null // null = drawer fechado
@@ -124,6 +125,21 @@ export default function GameAnaliseDrawer({
           return res.json() as Promise<AnaliseData>
         })
         .then((json) => {
+          // Write-through: os palpites vindos do banco (analise-data) alimentam o
+          // cache — o drawer deixa de ser uma fonte paralela de verdade e mantém
+          // os demais componentes em sincronia.
+          upsertPredictions(
+            groupId,
+            json.participants
+              .filter((p) => p.prediction)
+              .map((p) => ({
+                user_id: p.userId,
+                game_id: json.game.id,
+                home_score: p.prediction!.home_score,
+                away_score: p.prediction!.away_score,
+              })),
+            json.game.match_day ?? undefined
+          )
           setData(json)
           setLoading(false)
         })

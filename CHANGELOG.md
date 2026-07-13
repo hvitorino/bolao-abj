@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [cache-write-through-palpites] — Write-through de palpites no cache (fonte única) — 2026-07-13
+
+- **Objetivo:** garantir as duas invariantes — (1) componente visível lê o palpite do cache; (2) todo palpite vindo do banco atualiza o cache — eliminando fontes paralelas de verdade.
+- **`lib/cache/prediction-cache.ts`:** expõe `upsertPrediction`/`upsertPredictions` (write-through público que grava no cache e notifica os assinantes na hora, sem esperar o eco Realtime). `upsertPredictionInCache` aceita `date` explícito (match_day) e cria o bucket se necessário — sem marcar `loadedDates`. `ensurePredictions` passou a guardar em `loadedDates` (não em `predictions.get(date)`), então um bucket criado por write-through ainda recebe o load completo quando montado.
+- **`components/bolao/PredictionForm.tsx`:** ao salvar (POST/PATCH), grava o palpite da resposta no cache via `upsertPrediction` — propagação imediata em vez de depender da latência do eco Realtime.
+- **`components/bolao/GameAnaliseDrawer.tsx`:** ao receber `/api/analise-data`, faz write-through dos palpites dos participantes (`upsertPredictions`) — o drawer deixa de ser fonte paralela.
+- **`components/bolao/BracketTree.tsx`:** removido o re-query direto ao banco (`handlePredictionSubmitted`); o bracket agora é 100% orientado a evento (subscription + write-through do form/drawer disparam seu listener).
+- **Nuances remanescentes (inerentes ao cache bucketizado por data, sem staleness):** a carga inicial do bracket ainda vem de fetch próprio (cruza datas não carregadas; dados só do usuário, não consumidos por outros componentes), e o drawer lê o palpite próprio do snapshot do fetch (necessário para stats) — mas ambos alimentam/escutam o cache para updates.
+- Sem alterações de banco, migrations ou endpoints. `tsc --noEmit` e `eslint` sem erros novos.
+
 ## [fix-bracket-cache-reactive] — Chaveamento reativo aos eventos de palpite — 2026-07-13
 
 - **Sintoma:** palpite editado/criado não atualizava no chaveamento (bracket) inline nem no `/chaveamento`; o bracket ficava congelado com os dados do fetch inicial.

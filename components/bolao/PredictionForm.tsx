@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { upsertPrediction } from '@/lib/cache/prediction-cache'
 import { Prediction } from '@/lib/types/prediction'
 import PredictionDisplay from './PredictionDisplay'
 import PropagatePrompt from './PropagatePrompt'
@@ -216,6 +217,14 @@ export default function PredictionForm({
         const action = initialPrediction ? 'EDITADO' : 'ENVIADO'
         console.log(`%c[PredictionForm] %c► ${action} %c${homeTeamCode} ${home}×${away} ${awayTeamCode} %c| group=${groupId.slice(0,8)} %c| ${ts}`,
           'color:#FFDF00;font-weight:bold', 'color:#00d26a', 'color:#f0f4f8', 'color:#5a7a6a', 'color:#5a7a6a')
+        // Write-through: grava o palpite recebido do banco no cache imediatamente,
+        // sem esperar o eco Realtime. Mantém o cache como fonte única de verdade.
+        upsertPrediction(groupId, {
+          user_id: updatedPrediction.user_id,
+          game_id: gameId,
+          home_score: home,
+          away_score: away,
+        })
         setSubmittedPrediction(updatedPrediction)
         // Sempre vai para 'propagating' — criação e edição
         setStatus('propagating')

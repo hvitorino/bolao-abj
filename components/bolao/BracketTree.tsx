@@ -1,11 +1,10 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import type { BracketSlotWithGame } from '@/lib/types/game'
 import type { Prediction } from '@/lib/types/prediction'
 import { getTeamFlag } from '@/lib/flags'
 import GameAnaliseDrawer from '@/components/bolao/GameAnaliseDrawer'
-import { createClient } from '@/lib/supabase/client'
 import {
   acquirePredictionCache,
   releasePredictionCache,
@@ -587,21 +586,6 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
     }
   }, [groupId, currentUserId])
 
-  // Re-fetch predictions from Supabase after submitting a prediction
-  const handlePredictionSubmitted = useCallback(async () => {
-    if (!currentUserId) return
-    const supabase = createClient()
-    const { data } = await supabase
-      .from('predictions')
-      .select('*')
-      .eq('user_id', currentUserId)
-    if (data) {
-      const map: Record<string, Prediction> = {}
-      for (const p of data as Prediction[]) map[p.game_id] = p
-      setPredictionState(map)
-    }
-  }, [currentUserId])
-
   if (roots.length === 0) {
     return (
       <div
@@ -684,7 +668,6 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
           groupId={groupId}
           currentUserId={currentUserId}
           onClose={() => setInternalGameId(null)}
-          onPredictionSubmitted={handlePredictionSubmitted}
         />
       )}
     </>

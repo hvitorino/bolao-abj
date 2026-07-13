@@ -103,8 +103,10 @@ export async function ensurePredictions(
 ): Promise<Map<string, Map<string, CachedPrediction>>> {
   const cache = getOrCreateGroupCache(groupId)
 
-  const cached = cache.predictions.get(date)
-  if (cached) return cache.predictions // retorna todas as dates carregadas
+  // Guard em loadedDates (não em predictions.get): um bucket pode existir por
+  // write-through sem ter sido totalmente carregado do banco; nesse caso ainda
+  // fazemos o fetch completo daquela data.
+  if (cache.loadedDates.has(date)) return cache.predictions // retorna todas as dates carregadas
 
   // Buscar jogos da data para filtrar palpites
   const supabase = createClient()
@@ -342,7 +344,7 @@ async function invalidatePredictionCache(groupId: string): Promise<void> {
 /**
  * Atualiza diretamente um palpite no cache, sem invalidar tudo.
  */
-function upsertPredictionInCache(groupId: string, pred: CachedPrediction): void {
+function upsertPredictionInCache(groupId: string, pred: CachedPrediction, date?: string): void {
   const cache = cachesByGroup.get(groupId)
   if (!cache) return
 
@@ -356,14 +358,46 @@ function upsertPredictionInCache(groupId: string, pred: CachedPrediction): void 
     }
   }
 
-  // Palpite novo (INSERT): a chave ainda não existe em nenhum bucket. Descobre a
-  // data do jogo via ScoreCache e insere no bucket correspondente, se essa data
-  // estiver carregada neste cache. Sem isto, um palpite recém-criado só apareceria
-  // no próximo poll de 60s (invalidatePredictionCache), não instantaneamente.
-  const date = getGameDate(pred.game_id)
-  if (date) {
-    const dateMap = cache.predictions.get(date)
-    if (dateMap) dateMap.set(key, pred)
+  // Palpite novo (INSERT/write-through): descobre o bucket de data. Preferimos a
+  // data explícita (write-through, que já sabe o match_day); senão via ScoreCache
+  // (eco Realtime). Cria o bucket se necessário — SEM marcar loadedDates, para que
+  // ensurePredictions ainda faça o load completo daquela data quando for montada.
+  const bucketDate = date ?? getGameDate(pred.game_id)
+  if (!bucketDate) return
+  let dateMap = cache.predictions.get(bucketDate)
+  if (!dateMap) {
+    dateMap = new Map()
+    cache.predictions.set(bucketDate, dateMap)
+  }
+  dateMap.set(key, pred)
+}
+
+/**
+ * Write-through público: grava um palpite recebido do banco no cache e notifica
+ * os assinantes. Usado por todo caminho cliente que obtém um palpite fora do
+ * fluxo do próprio cache (resposta de POST/PATCH, fetch de analise-data, fetch
+ * do bracket) — mantém o cache como fonte única de verdade e propaga na hora,
+ * sem esperar o eco Realtime. No-op se nenhum consumidor adquiriu o cache do grupo.
+ */
+export function upsertPrediction(groupId: string, pred: CachedPrediction, date?: string): void {
+  const cache = cachesByGroup.get(groupId)
+  if (!cache) return
+  upsertPredictionInCache(groupId, pred, date)
+  for (const listener of cache.detailListeners.values()) {
+    listener(pred, 'WRITE_THROUGH')
+  }
+}
+
+/**
+ * Write-through em lote (ex: todos os palpites de um jogo vindos de analise-data).
+ * `date` é o match_day compartilhado quando os palpites são do mesmo jogo.
+ */
+export function upsertPredictions(groupId: string, preds: CachedPrediction[], date?: string): void {
+  const cache = cachesByGroup.get(groupId)
+  if (!cache || preds.length === 0) return
+  for (const pred of preds) upsertPredictionInCache(groupId, pred, date)
+  for (const listener of cache.detailListeners.values()) {
+    for (const pred of preds) listener(pred, 'WRITE_THROUGH')
   }
 }
 
