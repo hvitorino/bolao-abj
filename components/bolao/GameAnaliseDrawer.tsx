@@ -137,8 +137,7 @@ export default function GameAnaliseDrawer({
                 game_id: json.game.id,
                 home_score: p.prediction!.home_score,
                 away_score: p.prediction!.away_score,
-              })),
-            json.game.match_day ?? undefined
+              }))
           )
           setData(json)
           setLoading(false)

@@ -62,6 +62,7 @@ interface AcompanharCarrosselProps {
   loading: boolean
   onGameClick?: (gameId: string) => void
   currentUserId: string
+  groupId: string
   onBracketExpandChange?: (expanded: boolean) => void
 }
 
@@ -215,6 +216,7 @@ export function AcompanharCarrossel({
   loading,
   onGameClick,
   currentUserId,
+  groupId,
   onBracketExpandChange,
 }: AcompanharCarrosselProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -222,7 +224,7 @@ export function AcompanharCarrossel({
   const [showLeftFade, setShowLeftFade] = useState(false)
 
   // ── Bracket expansion (shared hook) ─────────────────────────────
-  const bracket = useBracketExpansion(currentUserId)
+  const bracket = useBracketExpansion(currentUserId, groupId)
   const isKnockoutDay = todayGames.length > 0 && KNOCKOUT_PHASES.includes(todayGames[0].phase)
 
   // Notify parent of expansion state for swipe lock
@@ -401,6 +403,8 @@ export function AcompanharCarrossel({
               <BracketTree
                 roots={bracket.roots}
                 predictions={bracket.predictions}
+                groupId={groupId}
+                currentUserId={currentUserId}
                 onGameClick={onGameClick}
               />
             ) : null}

@@ -3,10 +3,11 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { buildBracketTree } from '@/lib/bracket'
 import { createClient } from '@/lib/supabase/client'
+import { upsertPredictions } from '@/lib/cache/prediction-cache'
 import type { BracketSlot, BracketSlotWithGame, Game } from '@/lib/types/game'
 import type { Prediction } from '@/lib/types/prediction'
 
-export function useBracketExpansion(currentUserId: string) {
+export function useBracketExpansion(currentUserId: string, groupId: string) {
   const [expanded, setExpanded] = useState(false)
   const [roots, setRoots] = useState<BracketSlotWithGame[] | null>(null)
   const [predictions, setPredictions] = useState<Record<string, Prediction>>({})
@@ -28,7 +29,7 @@ export function useBracketExpansion(currentUserId: string) {
       ] = await Promise.all([
         supabase.from('bracket_slots').select('*').order('phase').order('position'),
         supabase.from('games').select('*').not('bracket_slot_id', 'is', null),
-        supabase.from('predictions').select('*').eq('user_id', currentUserId),
+        supabase.from('predictions').select('*').eq('user_id', currentUserId).eq('group_id', groupId),
       ])
 
       const typedSlots = (slots ?? []) as BracketSlot[]
@@ -54,6 +55,17 @@ export function useBracketExpansion(currentUserId: string) {
         predMap[p.game_id] = p
       }
 
+      // Write-through: os palpites vindos do banco alimentam o cache (fonte única).
+      upsertPredictions(
+        groupId,
+        typedPreds.map((p) => ({
+          user_id: p.user_id,
+          game_id: p.game_id,
+          home_score: p.home_score,
+          away_score: p.away_score,
+        }))
+      )
+
       setRoots(tree)
       setPredictions(predMap)
     } catch (err) {
@@ -61,7 +73,7 @@ export function useBracketExpansion(currentUserId: string) {
     } finally {
       setLoading(false)
     }
-  }, [roots, currentUserId])
+  }, [roots, currentUserId, groupId])
 
   // ── Toggle with transition ──────────────────────────────────────
   const toggle = useCallback(() => {

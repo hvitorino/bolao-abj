@@ -1,7 +1,7 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { getTeamCodes, getGameDate } from '@/lib/cache/score-cache'
+import { getTeamCodes } from '@/lib/cache/score-cache'
 
 // ---------------------------------------------------------------------------
 // Tipos
@@ -19,12 +19,16 @@ export interface CachedPrediction {
 // ---------------------------------------------------------------------------
 
 interface GroupCache {
+  /** Estrutura nested: gameId → userId → CachedPrediction. SEM flat-key nem bucket por data. */
   predictions: Map<string, Map<string, CachedPrediction>>
   channel: ReturnType<ReturnType<typeof createClient>['channel']> | null
   pollingInterval: ReturnType<typeof setInterval> | null
   connectionStatus: 'connecting' | 'connected' | 'error'
+  /** Listeners de invalidação coarse (qualquer mudança no grupo). */
   listeners: Map<string, () => void>
+  /** Listeners granulares: recebem o CachedPrediction alterado + eventType. */
   detailListeners: Map<string, (pred: CachedPrediction, eventType: string) => void>
+  /** Datas já totalmente carregadas do banco — evita refetch e guarda o ensure. */
   loadedDates: Set<string>
   refCount: number
 }
@@ -56,15 +60,23 @@ function getOrCreateGroupCache(groupId: string): GroupCache {
   return cache
 }
 
+/** Upsert incondicional no map nested (gameId → userId → pred). */
+function setPrediction(cache: GroupCache, pred: CachedPrediction): void {
+  if (!cache.predictions.has(pred.game_id)) {
+    cache.predictions.set(pred.game_id, new Map())
+  }
+  cache.predictions.get(pred.game_id)!.set(pred.user_id, pred)
+}
+
 /**
- * Busca os palpites de uma data e retorna o flatMap (chave `gameId:userId`),
- * sem tocar no cache. Usado por ensurePredictions e por invalidatePredictionCache
- * (revalidação sem swap-para-vazio).
+ * Busca os palpites de uma data e retorna as linhas, sem tocar no cache.
+ * Usado por ensurePredictions e por invalidatePredictionCache (revalidação
+ * sem swap-para-vazio).
  */
-async function loadPredictionDate(
+async function loadPredictionsForDate(
   groupId: string,
   date: string
-): Promise<Map<string, CachedPrediction>> {
+): Promise<CachedPrediction[]> {
   const supabase = createClient()
   const { data: gamesData } = await supabase
     .from('games')
@@ -72,8 +84,7 @@ async function loadPredictionDate(
     .eq('match_day', date)
 
   const gameIds = (gamesData ?? []).map((g: { id: string }) => g.id)
-  const flatMap = new Map<string, CachedPrediction>()
-  if (gameIds.length === 0) return flatMap
+  if (gameIds.length === 0) return []
 
   const { data: predictionsData, error } = await supabase
     .from('predictions')
@@ -82,11 +93,7 @@ async function loadPredictionDate(
     .in('game_id', gameIds)
 
   if (error) throw new Error(`Erro ao buscar palpites: ${error.message}`)
-
-  for (const row of (predictionsData ?? []) as CachedPrediction[]) {
-    flatMap.set(`${row.game_id}:${row.user_id}`, row)
-  }
-  return flatMap
+  return (predictionsData ?? []) as CachedPrediction[]
 }
 
 // ---------------------------------------------------------------------------
@@ -95,7 +102,8 @@ async function loadPredictionDate(
 
 /**
  * Carrega os palpites de uma data para um grupo no cache.
- * Datas já carregadas retornam imediatamente.
+ * Datas já carregadas retornam imediatamente (early-return por loadedDates —
+ * um bucket pode existir por write-through sem ter sido totalmente carregado).
  */
 export async function ensurePredictions(
   groupId: string,
@@ -103,77 +111,30 @@ export async function ensurePredictions(
 ): Promise<Map<string, Map<string, CachedPrediction>>> {
   const cache = getOrCreateGroupCache(groupId)
 
-  // Guard em loadedDates (não em predictions.get): um bucket pode existir por
-  // write-through sem ter sido totalmente carregado do banco; nesse caso ainda
-  // fazemos o fetch completo daquela data.
-  if (cache.loadedDates.has(date)) return cache.predictions // retorna todas as dates carregadas
+  if (cache.loadedDates.has(date)) return cache.predictions
 
-  // Buscar jogos da data para filtrar palpites
-  const supabase = createClient()
-  const { data: gamesData } = await supabase
-    .from('games')
-    .select('id')
-    .eq('match_day', date)
-
-  const gameIds = (gamesData ?? []).map((g: { id: string }) => g.id)
-
-  if (gameIds.length === 0) {
-    // Sem jogos na data — cache vazio
-    cache.predictions.set(date, new Map())
-    cache.loadedDates.add(date)
-    return cache.predictions
-  }
-
-  const { data: predictionsData, error } = await supabase
-    .from('predictions')
-    .select('user_id, game_id, home_score, away_score')
-    .eq('group_id', groupId)
-    .in('game_id', gameIds)
-
-  if (error) throw new Error(`Erro ao buscar palpites: ${error.message}`)
-
-  const flatMap = new Map<string, CachedPrediction>()
-  for (const row of (predictionsData ?? []) as CachedPrediction[]) {
-    flatMap.set(`${row.game_id}:${row.user_id}`, row)
-  }
-
-  cache.predictions.set(date, flatMap)
+  const rows = await loadPredictionsForDate(groupId, date)
+  for (const row of rows) setPrediction(cache, row)
   cache.loadedDates.add(date)
 
-  // Iniciar Realtime se ainda não iniciado
+  // Iniciar Realtime e polling se ainda não iniciados
   ensurePredictionRealtime(groupId)
-
-  // Iniciar polling se ainda não iniciado e há jogos pending na data
   startPredictionPolling(groupId)
 
   return cache.predictions
 }
 
 /**
- * Retorna palpites cacheados (ou vazio se ainda não carregados).
+ * Retorna o map nested de palpites cacheados (leitura síncrona, sem fetch).
  */
 export function getCachedPredictions(
   groupId: string
 ): Map<string, Map<string, CachedPrediction>> {
-  const cache = cachesByGroup.get(groupId)
-  if (!cache) return new Map()
-
-  // Merge de todas as datas carregadas, convertendo flat → nested
-  const nested = new Map<string, Map<string, CachedPrediction>>()
-  for (const dateMap of cache.predictions.values()) {
-    for (const [key, pred] of dateMap) {
-      const [gameId, userId] = key.split(':')
-      if (!nested.has(gameId)) {
-        nested.set(gameId, new Map())
-      }
-      nested.get(gameId)!.set(userId, pred)
-    }
-  }
-  return nested
+  return cachesByGroup.get(groupId)?.predictions ?? new Map()
 }
 
 /**
- * Retorna os palpites apenas do usuário atual.
+ * Retorna os palpites apenas do usuário atual (gameId → CachedPrediction).
  */
 export function getMyPredictions(
   groupId: string,
@@ -186,6 +147,37 @@ export function getMyPredictions(
     if (pred) mine.set(gameId, pred)
   }
   return mine
+}
+
+// ---------------------------------------------------------------------------
+// Write-through público — mantém o cache como fonte única de verdade
+// ---------------------------------------------------------------------------
+
+/**
+ * Grava um palpite recebido do banco no cache e notifica os assinantes na hora,
+ * sem esperar o eco Realtime. Usado por todo caminho cliente que obtém um palpite
+ * fora do fluxo do próprio cache (resposta de POST/PATCH, fetch de analise-data,
+ * fetch do bracket). No-op se nenhum consumidor adquiriu o cache do grupo.
+ */
+export function upsertPrediction(groupId: string, pred: CachedPrediction): void {
+  const cache = cachesByGroup.get(groupId)
+  if (!cache) return
+  setPrediction(cache, pred)
+  for (const listener of cache.detailListeners.values()) {
+    listener(pred, 'WRITE_THROUGH')
+  }
+}
+
+/**
+ * Write-through em lote (ex: todos os palpites de um jogo vindos de analise-data).
+ */
+export function upsertPredictions(groupId: string, preds: CachedPrediction[]): void {
+  const cache = cachesByGroup.get(groupId)
+  if (!cache || preds.length === 0) return
+  for (const pred of preds) setPrediction(cache, pred)
+  for (const listener of cache.detailListeners.values()) {
+    for (const pred of preds) listener(pred, 'WRITE_THROUGH')
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -224,9 +216,12 @@ function ensurePredictionRealtime(groupId: string): void {
 
         if (eventType === 'DELETE') {
           const deleted = payload.old as CachedPrediction | null
-          if (deleted) removePredictionFromCache(groupId, deleted.game_id, deleted.user_id)
+          if (deleted && deleted.game_id && deleted.user_id) {
+            cache.predictions.get(deleted.game_id)?.delete(deleted.user_id)
+          }
         } else if (row && row.game_id && row.user_id) {
-          upsertPredictionInCache(groupId, row)
+          // Upsert incondicional — sem verificação de bucket/data
+          setPrediction(cache, row)
         }
 
         // Notifica listeners com detalhes do palpite alterado
@@ -235,7 +230,7 @@ function ensurePredictionRealtime(groupId: string): void {
             listener(row, eventType)
           }
         }
-        // Fallback: listeners antigos que precisam de refetch completo
+        // Fallback: listeners coarse que precisam de refetch completo
         for (const listener of cache.listeners.values()) {
           listener()
         }
@@ -308,18 +303,19 @@ async function invalidatePredictionCache(groupId: string): Promise<void> {
       'color:#FFDF00;font-weight:bold', 'color:#009c3b', 'color:#f0f4f8', 'color:#5a7a6a')
   }
 
-  // Revalidação SEM esvaziar: refetch das datas carregadas, monta um mapa novo e
-  // troca atomicamente. O mapa antigo permanece referenciado até o swap — logo
-  // getCachedPredictions() nunca retorna vazio no meio do poll (o que fazia os
-  // consumidores derivados recomputarem sem palpites durante jogos ao vivo).
+  // Revalidação SEM esvaziar: refetch das datas carregadas, monta um mapa nested
+  // novo e troca atomicamente. O mapa antigo permanece referenciado até o swap —
+  // logo getCachedPredictions() nunca retorna vazio no meio do poll.
   const dates = Array.from(cache.loadedDates)
   try {
     const fresh = new Map<string, Map<string, CachedPrediction>>()
-    await Promise.all(
-      dates.map(async (date) => {
-        fresh.set(date, await loadPredictionDate(groupId, date))
-      })
-    )
+    const rowsPerDate = await Promise.all(dates.map((d) => loadPredictionsForDate(groupId, d)))
+    for (const rows of rowsPerDate) {
+      for (const row of rows) {
+        if (!fresh.has(row.game_id)) fresh.set(row.game_id, new Map())
+        fresh.get(row.game_id)!.set(row.user_id, row)
+      }
+    }
     cache.predictions = fresh
     cache.loadedDates = new Set(dates)
   } catch (err) {
@@ -328,8 +324,8 @@ async function invalidatePredictionCache(groupId: string): Promise<void> {
 
   // Notifica consumidores granulares (recomputam de getCachedPredictions) com as
   // linhas reais — nenhum consumidor ramifica em eventType.
-  for (const dateMap of cache.predictions.values()) {
-    for (const pred of dateMap.values()) {
+  for (const gameMap of cache.predictions.values()) {
+    for (const pred of gameMap.values()) {
       for (const listener of cache.detailListeners.values()) {
         listener(pred, 'REFRESH')
       }
@@ -338,76 +334,6 @@ async function invalidatePredictionCache(groupId: string): Promise<void> {
   // Notifica consumidores de agregados de servidor (ex: /api/ranking)
   for (const listener of cache.listeners.values()) {
     listener()
-  }
-}
-
-/**
- * Atualiza diretamente um palpite no cache, sem invalidar tudo.
- */
-function upsertPredictionInCache(groupId: string, pred: CachedPrediction, date?: string): void {
-  const cache = cachesByGroup.get(groupId)
-  if (!cache) return
-
-  const key = `${pred.game_id}:${pred.user_id}`
-
-  // Chave já existente (edição/UPDATE): atualiza in-place.
-  for (const [, dateMap] of cache.predictions) {
-    if (dateMap.has(key)) {
-      dateMap.set(key, pred)
-      return
-    }
-  }
-
-  // Palpite novo (INSERT/write-through): descobre o bucket de data. Preferimos a
-  // data explícita (write-through, que já sabe o match_day); senão via ScoreCache
-  // (eco Realtime). Cria o bucket se necessário — SEM marcar loadedDates, para que
-  // ensurePredictions ainda faça o load completo daquela data quando for montada.
-  const bucketDate = date ?? getGameDate(pred.game_id)
-  if (!bucketDate) return
-  let dateMap = cache.predictions.get(bucketDate)
-  if (!dateMap) {
-    dateMap = new Map()
-    cache.predictions.set(bucketDate, dateMap)
-  }
-  dateMap.set(key, pred)
-}
-
-/**
- * Write-through público: grava um palpite recebido do banco no cache e notifica
- * os assinantes. Usado por todo caminho cliente que obtém um palpite fora do
- * fluxo do próprio cache (resposta de POST/PATCH, fetch de analise-data, fetch
- * do bracket) — mantém o cache como fonte única de verdade e propaga na hora,
- * sem esperar o eco Realtime. No-op se nenhum consumidor adquiriu o cache do grupo.
- */
-export function upsertPrediction(groupId: string, pred: CachedPrediction, date?: string): void {
-  const cache = cachesByGroup.get(groupId)
-  if (!cache) return
-  upsertPredictionInCache(groupId, pred, date)
-  for (const listener of cache.detailListeners.values()) {
-    listener(pred, 'WRITE_THROUGH')
-  }
-}
-
-/**
- * Write-through em lote (ex: todos os palpites de um jogo vindos de analise-data).
- * `date` é o match_day compartilhado quando os palpites são do mesmo jogo.
- */
-export function upsertPredictions(groupId: string, preds: CachedPrediction[], date?: string): void {
-  const cache = cachesByGroup.get(groupId)
-  if (!cache || preds.length === 0) return
-  for (const pred of preds) upsertPredictionInCache(groupId, pred, date)
-  for (const listener of cache.detailListeners.values()) {
-    for (const pred of preds) listener(pred, 'WRITE_THROUGH')
-  }
-}
-
-function removePredictionFromCache(groupId: string, gameId: string, userId: string): void {
-  const cache = cachesByGroup.get(groupId)
-  if (!cache) return
-
-  const key = `${gameId}:${userId}`
-  for (const [, dateMap] of cache.predictions) {
-    dateMap.delete(key)
   }
 }
 

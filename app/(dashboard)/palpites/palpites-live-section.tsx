@@ -147,6 +147,7 @@ export function PalpitesLiveSection({
               loading={loading}
               onGameClick={setSelectedGameId}
               currentUserId={currentUserId}
+              groupId={groupId}
               onBracketExpandChange={setBracketExpanded}
             />
           )}

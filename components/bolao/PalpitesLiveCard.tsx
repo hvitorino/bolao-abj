@@ -30,7 +30,7 @@ interface PalpitesLiveCardProps {
 
 export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, currentUserId, onBracketExpandChange }: PalpitesLiveCardProps) {
   // ── Bracket expansion (shared hook) ─────────────────────────────
-  const bracket = useBracketExpansion(currentUserId)
+  const bracket = useBracketExpansion(currentUserId, groupId)
   const isKnockoutDay = todayGames.length > 0 && KNOCKOUT_PHASES.includes(todayGames[0].phase)
 
   // Notify parent of expansion state for swipe lock

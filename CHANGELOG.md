@@ -6,6 +6,16 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [prediction-cache-nested] — PredictionCache sem bucket por data (Map aninhado) — 2026-07-13
+
+- **Objetivo:** eliminar as fontes paralelas de verdade que restavam. O `PredictionCache` era bucketizado por data (`Map<date, Map<"gameId:userId", pred>>`), então write-through só funcionava para datas já carregadas — bracket e drawer (que cruzam datas não carregadas) ficavam de fora.
+- **`lib/cache/prediction-cache.ts` (reescrito):** estrutura passa a ser `Map<gameId, Map<userId, CachedPrediction>>` aninhada, sem flat-key nem bucket por data — mesmo padrão do `PointsCache`. `loadedDates` mantido só para o guard do `ensurePredictions` e para a revalidação do polling. Consequência: `upsertPrediction`/`upsertPredictions` (write-through) e o eco Realtime **sempre** persistem, independente de qual data foi carregada. `getCachedPredictions`/`getMyPredictions` mantêm o mesmo shape público — nenhum consumidor mudou.
+- **`lib/cache/score-cache.ts`:** removido `getGameDate` (era usado só para descobrir o bucket de data; desnecessário agora).
+- **`lib/hooks/useBracketExpansion.ts`:** recebe `groupId`, escopa a query de palpites por `group_id` (corrige bug latente multi-grupo) e faz write-through do fetch para o cache. `PalpitesLiveCard`, `AcompanharCarrossel` e `palpites-live-section` threadam `groupId`; o bracket do carrossel também recebe `groupId`/`currentUserId`.
+- **`components/bolao/GameAnaliseDrawer.tsx`:** write-through sem `match_day` explícito (não é mais necessário).
+- Resultado: as duas invariantes valem de ponta a ponta — componente visível lê do cache; todo palpite vindo do banco (POST/PATCH, analise-data, fetch do bracket, Realtime, polling) atualiza o cache.
+- Sem alterações de banco, migrations ou endpoints. `tsc --noEmit` sem erros; `eslint` sem erros novos (o `set-state-in-effect` em `useBracketExpansion` é pré-existente).
+
 ## [cache-write-through-palpites] — Write-through de palpites no cache (fonte única) — 2026-07-13
 
 - **Objetivo:** garantir as duas invariantes — (1) componente visível lê o palpite do cache; (2) todo palpite vindo do banco atualiza o cache — eliminando fontes paralelas de verdade.
