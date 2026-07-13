@@ -3,8 +3,8 @@
 Criado em: 2026-06-13
 
 ## Status Geral
-- Total: 81 features
-- Concluídas: 80
+- Total: 82 features
+- Concluídas: 81
 - Em progresso: 1
 - Pendentes: 0
 
@@ -1069,6 +1069,21 @@ Envio por e-mail real fica registrado como sugestão futura (ver `product-final-
 - Stage 6 — `PublicParticipantsList` no PointsCache: concluído
 - Stage 7 — `useDailyRecap` lê dos caches: concluído
 - Stage 8 — Convergir páginas públicas de agregado: concluído
+
+---
+
+### 82. perfil-participante — Perfil Público do Participante — concluída
+**Objetivo:** Exibir, de forma acessível a todos os membros de um grupo, um retrato do "jeito de apostar" de cada participante — um arquétipo interpretativo denso sustentado por 4 eixos de comportamento e stats objetivas, derivados dos palpites, dos placares reais e do estilo (inferido) dos times, acessível a partir do nome do participante no ranking.
+**Critérios de sucesso:**
+- Clicar no nome de um participante no ranking abre `/perfil/[userId]` no recorte do grupo ativo
+- Página exibe arquétipo denso (nome composto + parágrafo interpretativo determinístico) e os 4 eixos como espectros em barras ASCII (`█`/`░`)
+- Stats objetivas que sustentam cada eixo ficam visíveis
+- Análise 100% determinística (motor de regras/templates, zero IA), calculada em tempo real via Supabase, sem tabela pré-computada
+- Acesso restrito a membros do grupo ativo (tanto espectador quanto alvo); estado de erro claro se o alvo não pertence ao grupo
+- `GET /api/profile/style` nunca expõe palpites de terceiros em jogos `pending`
+- Visual segue DESIGN.md rigorosamente
+**Dependências:** auth, game-navigation, predictions, scoring, ranking, grupos, grupo-ativo-persistente
+**Observação de conclusão:** feature pontual solicitada diretamente pelo usuário fora do ciclo de priorização do roadmap (spec, plano e changelog em `.pipeline/perfil-participante-spec.md`, `.pipeline/perfil-participante-plan.md` e `.pipeline/perfil-participante-changelog.md`). Aprovada pelo Revisor e mergeada via `feature/perfil-participante` na main (commits `889368d`…`b289a9d`, merge `222cd25`). Registrada aqui retroativamente para manter o roadmap fiel ao estado real do sistema. Conforme guardrail de escopo do PM, esta conclusão não dispara avanço automático de outras features pendentes do roadmap.
 
 ---
 
