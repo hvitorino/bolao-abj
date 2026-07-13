@@ -23,7 +23,6 @@ interface PalpitesPageProps {
 export default async function PalpitesPage({ searchParams }: PalpitesPageProps) {
   const params = await searchParams
   const dateParam = params.date
-  const currentDate = dateParam && isValidDateString(dateParam) ? dateParam : todayInBrasilia()
 
   const supabase = await createClient()
   const {
@@ -56,6 +55,22 @@ export default async function PalpitesPage({ searchParams }: PalpitesPageProps) 
   const availableDates: string[] = allMatchDates
     ? Array.from(new Set(allMatchDates.map((row) => row.match_day as string))).sort()
     : []
+
+  // Data selecionada: respeita o param explícito; caso contrário parte de hoje.
+  // Se hoje não tiver jogo, seleciona a próxima data com jogo (se houver adiante),
+  // ou a última data em que houve jogo.
+  let currentDate: string
+  if (dateParam && isValidDateString(dateParam)) {
+    currentDate = dateParam
+  } else {
+    const today = todayInBrasilia()
+    if (availableDates.includes(today)) {
+      currentDate = today
+    } else {
+      const nextDate = availableDates.find((d) => d > today)
+      currentDate = nextDate ?? availableDates[availableDates.length - 1] ?? today
+    }
+  }
 
   const activeGroup = groups.find((g) => g.id === cookieGroupId) ?? groups[0]
   if (!activeGroup?.id) redirect('/grupos')
