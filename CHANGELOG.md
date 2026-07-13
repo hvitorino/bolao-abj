@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-palpite-cache-propagation] — Propagação instantânea de palpite editado/criado — 2026-07-13
+
+- **Sintoma:** palpite editado (ou criado) no bottom sheet de detalhes do jogo (`GameAnaliseDrawer`) não replicava para a navegação de palpites (`/palpites`) nem para outros dispositivos, mesmo com o Realtime de `predictions` ativo remotamente.
+- **Causa raiz 1 (edição):** `lib/hooks/usePalpitesAoVivo.ts` — o guard FLIP de `computeAndSetState` só detectava mudança em placar/status de jogo (`scoresKey`). Os listeners de palpite e pontos chamavam `computeAndSetState()` sem `forceUpdate`, então o eco Realtime atualizava o cache mas o `setState` era descartado quando o placar do jogo não mudava. Como todos os devices passam pelo mesmo guard, o sintoma aparecia igual local e remotamente. Fix: listeners de palpite e pontos agora chamam `computeAndSetState(true)`; o guard permanece só no listener de jogos (filtra ruído do polling de placares ao vivo).
+- **Causa raiz 2 (criação):** `lib/cache/prediction-cache.ts` — `upsertPredictionInCache` só atualizava chaves já existentes, descartando silenciosamente palpites novos (INSERT) recebidos via Realtime; só apareciam no poll de 60s. Fix: quando a chave não existe, descobre a data do jogo via novo helper `getGameDate` (`lib/cache/score-cache.ts`) e insere no bucket de data correspondente.
+- **Arquivos:** `lib/hooks/usePalpitesAoVivo.ts`, `lib/cache/prediction-cache.ts`, `lib/cache/score-cache.ts`
+- Sem alterações de banco, migrations ou endpoints. `tsc --noEmit` e `eslint` sem erros novos.
+
 ## [centralizar-cache-v2-stage4] — usePalpitesAoVivo lê dos caches — 2026-07-02
 
 - **Hook modificado:** `lib/hooks/usePalpitesAoVivo.ts` — reescrita completa do sistema de dados

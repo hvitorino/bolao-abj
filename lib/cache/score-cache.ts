@@ -220,6 +220,18 @@ export function getCachedGames(date: string): Game[] {
 }
 
 /**
+ * Retorna a data (chave do bucket `gamesByDate`) que contém o jogo, ou null se
+ * o jogo não está em nenhuma data carregada. Usado pelo PredictionCache para
+ * saber em qual bucket inserir um palpite recém-criado (INSERT via Realtime).
+ */
+export function getGameDate(gameId: string): string | null {
+  for (const [date, games] of gamesByDate) {
+    if (games.some((g) => g.id === gameId)) return date
+  }
+  return null
+}
+
+/**
  * Retorna true se o jogo está live no cache.
  */
 export function isLive(gameId: string): boolean {

@@ -1,7 +1,7 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { getTeamCodes } from '@/lib/cache/score-cache'
+import { getTeamCodes, getGameDate } from '@/lib/cache/score-cache'
 
 // ---------------------------------------------------------------------------
 // Tipos
@@ -347,11 +347,23 @@ function upsertPredictionInCache(groupId: string, pred: CachedPrediction): void 
   if (!cache) return
 
   const key = `${pred.game_id}:${pred.user_id}`
+
+  // Chave já existente (edição/UPDATE): atualiza in-place.
   for (const [, dateMap] of cache.predictions) {
     if (dateMap.has(key)) {
       dateMap.set(key, pred)
       return
     }
+  }
+
+  // Palpite novo (INSERT): a chave ainda não existe em nenhum bucket. Descobre a
+  // data do jogo via ScoreCache e insere no bucket correspondente, se essa data
+  // estiver carregada neste cache. Sem isto, um palpite recém-criado só apareceria
+  // no próximo poll de 60s (invalidatePredictionCache), não instantaneamente.
+  const date = getGameDate(pred.game_id)
+  if (date) {
+    const dateMap = cache.predictions.get(date)
+    if (dateMap) dateMap.set(key, pred)
   }
 }
 

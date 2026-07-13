@@ -318,16 +318,21 @@ export function usePalpitesAoVivo(
       debounceGame = window.setTimeout(() => { computeAndSetState() }, 1000)
     })
 
+    // Palpite/pontos são eventos de dados reais (não o ruído de polling de placar
+    // que o guard FLIP filtra). Forçamos o commit: o fingerprint de scoresKey só
+    // observa placar/status de jogo, então uma edição de palpite (sem mudança no
+    // placar) seria recomputada mas descartada pelo guard. forceUpdate garante que
+    // a alteração chega ao estado — tanto no device que editou quanto via eco Realtime.
     let debouncePred: number | undefined
     const unsubPred = subscribeToPredictionUpdates(groupId, 'usePalpitesAoVivo', () => {
       window.clearTimeout(debouncePred)
-      debouncePred = window.setTimeout(() => { computeAndSetState() }, 500)
+      debouncePred = window.setTimeout(() => { computeAndSetState(true) }, 500)
     })
 
     let debouncePoints: number | undefined
     const unsubPoints = subscribeToPointsUpdates(groupId, 'usePalpitesAoVivo', () => {
       window.clearTimeout(debouncePoints)
-      debouncePoints = window.setTimeout(() => { computeAndSetState() }, 500)
+      debouncePoints = window.setTimeout(() => { computeAndSetState(true) }, 500)
     })
 
     // 4. visibilitychange → reinicialização completa (ensure* + fetchParticipants + compute)
