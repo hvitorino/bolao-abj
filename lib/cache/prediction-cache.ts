@@ -35,8 +35,32 @@ interface GroupCache {
 
 const cachesByGroup = new Map<string, GroupCache>()
 let listenerCounter = 0
+let authRecoverySet = false
 
 const POLL_INTERVAL_MS = 60_000
+
+/**
+ * Rede de segurança contra o cold load pós-login: quando a sessão de auth fica
+ * disponível (INITIAL_SESSION/SIGNED_IN/TOKEN_REFRESHED), revalida todos os caches
+ * ativos. Se o primeiro fetch saiu anon (RLS devolveu vazio para jogos pending) e
+ * o guard de loadedDates travou o resultado, isto refaz o fetch já autenticado —
+ * invalidatePredictionCache ignora o guard. Registrado uma única vez por app.
+ */
+function ensureAuthRecovery(): void {
+  if (authRecoverySet) return
+  authRecoverySet = true
+  const supabase = createClient()
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (
+      session &&
+      (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')
+    ) {
+      for (const groupId of cachesByGroup.keys()) {
+        void invalidatePredictionCache(groupId)
+      }
+    }
+  })
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -78,6 +102,14 @@ async function loadPredictionsForDate(
   date: string
 ): Promise<CachedPrediction[]> {
   const supabase = createClient()
+
+  // Aguarda a sessão hidratar antes de consultar palpites. A RLS de predictions
+  // é owner-scoped em jogos pending (só o próprio palpite, exige auth.uid()); no
+  // cold load pós-login a query pode sair antes do token anexar → volta vazia e
+  // o guard de loadedDates travaria o resultado. games/scores são legíveis por
+  // anon e mascaram esse problema — por isso só os palpites somem.
+  await supabase.auth.getSession()
+
   const { data: gamesData } = await supabase
     .from('games')
     .select('id')
@@ -185,6 +217,7 @@ export function upsertPredictions(groupId: string, preds: CachedPrediction[]): v
 // ---------------------------------------------------------------------------
 
 function ensurePredictionRealtime(groupId: string): void {
+  ensureAuthRecovery()
   const cache = getOrCreateGroupCache(groupId)
   if (cache.channel) return
 

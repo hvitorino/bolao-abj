@@ -6,6 +6,13 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-palpites-cold-load-auth] — Palpites somem no cold load pós-login — 2026-07-13
+
+- **Sintoma:** logo após o login, a aba Palpites não trazia os palpites até o usuário abrir o chaveamento.
+- **Causa raiz:** a data selecionada quando hoje não tem jogo cai na próxima partida (`pending`). A RLS de `predictions` é owner-scoped em jogo pending (só o próprio palpite, exige `auth.uid()`). No cold load a query de palpites corria a hidratação da sessão e saía **anon** → RLS devolvia 0. `games`/`scores` são legíveis por anon e por isso apareciam, mascarando o problema. Pior: `ensurePredictions` marcava `loadedDates` mesmo vazio, e o guard travava o resultado até o poll de 60s (ou até o bracket, com query já autenticada, fazer write-through). Confirmado empiricamente: como anon, os jogos de 07-14 aparecem (1) mas os palpites do jogo pending voltam 0.
+- **Fix (`lib/cache/prediction-cache.ts`):** (1) `loadPredictionsForDate` aguarda `supabase.auth.getSession()` antes de consultar — garante o token anexado; (2) rede de segurança `ensureAuthRecovery`: ao a sessão ficar disponível (`INITIAL_SESSION`/`SIGNED_IN`/`TOKEN_REFRESHED`), revalida todos os caches ativos via `invalidatePredictionCache` (que ignora o guard `loadedDates`) — recupera qualquer resultado travado por um primeiro fetch anon, independente do mecanismo interno do supabase-js.
+- Sem alterações de banco, migrations ou endpoints. `tsc --noEmit` e `eslint` sem erros novos.
+
 ## [prediction-cache-nested] — PredictionCache sem bucket por data (Map aninhado) — 2026-07-13
 
 - **Objetivo:** eliminar as fontes paralelas de verdade que restavam. O `PredictionCache` era bucketizado por data (`Map<date, Map<"gameId:userId", pred>>`), então write-through só funcionava para datas já carregadas — bracket e drawer (que cruzam datas não carregadas) ficavam de fora.
