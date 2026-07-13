@@ -162,6 +162,8 @@ export function PalpitesLiveCard({ todayGames, loading, onGameClick, groupId, cu
               <BracketTree
                 roots={bracket.roots}
                 predictions={bracket.predictions}
+                groupId={groupId}
+                currentUserId={currentUserId}
                 onGameClick={onGameClick}
               />
             ) : bracket.roots && bracket.roots.length === 0 ? (

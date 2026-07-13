@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [fix-bracket-cache-reactive] — Chaveamento reativo aos eventos de palpite — 2026-07-13
+
+- **Sintoma:** palpite editado/criado não atualizava no chaveamento (bracket) inline nem no `/chaveamento`; o bracket ficava congelado com os dados do fetch inicial.
+- **Causa raiz:** o `BracketTree` guardava os palpites em estado local semeado uma única vez (via `useBracketExpansion` no inline, ou SSR no standalone) e não escutava nenhum evento do cache. No inline, o drawer interno fica desligado (`onGameClick` externo), então nem o re-fetch manual (`handlePredictionSubmitted`) rodava. O bracket estava fora da camada reativa de cache usada pelo resto do app.
+- **Fix:** `BracketTree` agora assina `subscribeToPredictionUpdates(groupId, …)` e substitui o palpite no estado local ao receber qualquer evento do usuário atual (edição/criação, deste device ou de outro via Realtime), adquirindo/liberando o `PredictionCache` no ciclo de vida. `PalpitesLiveCard` passa `groupId`/`currentUserId` ao bracket inline.
+- **Arquivos:** `components/bolao/BracketTree.tsx`, `components/bolao/PalpitesLiveCard.tsx`
+- Sem alterações de banco, migrations ou endpoints. `tsc --noEmit` e `eslint` sem erros novos.
+
 ## [fix-palpite-cache-propagation] — Propagação instantânea de palpite editado/criado — 2026-07-13
 
 - **Sintoma:** palpite editado (ou criado) no bottom sheet de detalhes do jogo (`GameAnaliseDrawer`) não replicava para a navegação de palpites (`/palpites`) nem para outros dispositivos, mesmo com o Realtime de `predictions` ativo remotamente.

@@ -1,11 +1,16 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import type { BracketSlotWithGame } from '@/lib/types/game'
 import type { Prediction } from '@/lib/types/prediction'
 import { getTeamFlag } from '@/lib/flags'
 import GameAnaliseDrawer from '@/components/bolao/GameAnaliseDrawer'
 import { createClient } from '@/lib/supabase/client'
+import {
+  acquirePredictionCache,
+  releasePredictionCache,
+  subscribeToPredictionUpdates,
+} from '@/lib/cache/prediction-cache'
 
 const FONT = "'JetBrains Mono', 'Courier New', monospace"
 
@@ -555,6 +560,32 @@ export function BracketTree({ roots, predictions, groupId, currentUserId, onGame
   // Use internal state when no external handler, otherwise delegate to parent
   const selectedGameId = onGameClick ? null : internalGameId
   const handleGameClick = onGameClick ?? setInternalGameId
+
+  // Reativo ao cache: qualquer alteração de palpite do usuário (edição/criação,
+  // deste device ou de outro via Realtime) substitui o palpite no estado local.
+  // Mesmo padrão do resto do app — lê do cache e re-renderiza ao receber evento.
+  useEffect(() => {
+    if (!groupId || !currentUserId) return
+    acquirePredictionCache(groupId)
+    const unsub = subscribeToPredictionUpdates(groupId, 'BracketTree', (pred) => {
+      if (pred.user_id !== currentUserId) return
+      setPredictionState((prev) => ({
+        ...prev,
+        [pred.game_id]: {
+          id: prev[pred.game_id]?.id ?? '',
+          user_id: pred.user_id,
+          game_id: pred.game_id,
+          home_score: pred.home_score,
+          away_score: pred.away_score,
+          submitted_at: prev[pred.game_id]?.submitted_at ?? '',
+        },
+      }))
+    })
+    return () => {
+      unsub()
+      releasePredictionCache(groupId)
+    }
+  }, [groupId, currentUserId])
 
   // Re-fetch predictions from Supabase after submitting a prediction
   const handlePredictionSubmitted = useCallback(async () => {
