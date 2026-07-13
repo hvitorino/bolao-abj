@@ -88,6 +88,35 @@ export default function DateChipsNav({
     }
   }, [currentDate, availableDates, router, swipeDisabled])
 
+  // Navegação por setas do teclado (←/→)
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (swipeDisabled) return
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+      if (e.metaKey || e.ctrlKey || e.altKey) return
+
+      // Não sequestra as setas quando o usuário está digitando/focado num campo
+      const target = e.target as HTMLElement | null
+      if (
+        target?.closest('input, textarea, select, [contenteditable="true"]')
+      ) {
+        return
+      }
+
+      const idx = availableDates.indexOf(currentDate)
+      if (e.key === 'ArrowRight' && idx < availableDates.length - 1) {
+        e.preventDefault()
+        navigate(availableDates[idx + 1], 'next')
+      } else if (e.key === 'ArrowLeft' && idx > 0) {
+        e.preventDefault()
+        navigate(availableDates[idx - 1], 'prev')
+      }
+    }
+
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [currentDate, availableDates, router, swipeDisabled])
+
   return (
     <div
       style={{
