@@ -6,6 +6,14 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [perfil-participante] — Perfil Público do Participante — 2026-07-13
+
+- Nova página `/perfil/[userId]`: ao clicar no nome de um participante no ranking, abre um retrato interpretativo do seu jeito de apostar no grupo ativo — cabeçalho com arquétipo composto (ex: "Zebreiro Otimista") + parágrafo determinístico, e 4 eixos de comportamento como espectros ASCII (`Cascão↔Otimista`, `Favorito↔Zebreiro`, `Impreciso↔Craveiro`, `Ignora estilo↔Leitor de estilo`), cada um com stats de apoio e selo "AMOSTRA PEQUENA" quando a amostra é insuficiente.
+- Motor de cálculo 100% determinístico (zero IA) em `lib/participant-profile.ts`, funções puras cobertas por 19 testes unitários (`lib/participant-profile.test.ts`); reusa `lib/scoring.ts` no eixo de calibragem para coerência com a pontuação oficial. Estilo dos times inferido apenas de placares reais (`inferTeamStyle`), sem dado manual/externo.
+- Endpoint criado: `GET /api/profile/style?group_id=&user_id=` (Next.js API Route, autenticação Bearer JWT) — valida membership do requisitante e do alvo no grupo, calcula apenas sobre jogos `live`/`finished` (nunca expõe palpites `pending` de terceiros; RLS + filtro explícito em código como defesa em profundidade).
+- Componentes criados: `components/bolao/perfil-participante/ParticipantProfile.tsx`, `ArchetypeHeader.tsx`, `AxisSpectrum.tsx`. `RankingRow.tsx` passou a linkar o nome do participante para `/perfil/[userId]` com affordance visível permanente (sublinhado + leve tint de fundo, sem box-shadow).
+- Sem mudanças de banco/migrations. Adicionado `vitest` como test runner do projeto (não havia nenhum antes).
+
 ## [fix-palpites-cold-load-auth] — Palpites somem no cold load pós-login — 2026-07-13
 
 - **Sintoma:** logo após o login, a aba Palpites não trazia os palpites até o usuário abrir o chaveamento.

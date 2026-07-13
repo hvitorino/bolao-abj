@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import type { RankingEntry, ScoutCounts } from '@/lib/types/ranking'
 import { ScoutBadges } from '@/components/bolao/ScoutBadges'
 
@@ -72,9 +73,26 @@ export function RankingRow({ entry, isCurrentUser, isLeader, hideScouts = false,
           letterSpacing: '0.05em',
           whiteSpace: 'nowrap',
         }}>
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', flexShrink: 1, minWidth: 0 }}>
-            {isLeader ? '► ' : ''}{entry.participant_name.split(' ')[0]}
-          </span>
+          {isLeader && <span style={{ flexShrink: 0 }}>► </span>}
+          <Link
+            href={`/perfil/${entry.user_id}`}
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              flexShrink: 1,
+              minWidth: 0,
+              color: 'inherit',
+              textDecoration: 'underline',
+              textDecorationColor: 'var(--color-muted)',
+              textUnderlineOffset: '2px',
+              backgroundColor: 'rgba(240, 244, 248, 0.06)',
+              padding: '0.1rem 0.3rem',
+              margin: '-0.1rem -0.3rem',
+              borderRadius: '2px',
+            }}
+          >
+            {entry.participant_name.split(' ')[0]}
+          </Link>
           {entry.streak > 0 && (
             <span
               title={`${entry.streak} acerto${entry.streak !== 1 ? 's' : ''} consecutivo${entry.streak !== 1 ? 's' : ''}`}
