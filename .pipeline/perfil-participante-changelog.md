@@ -3,7 +3,7 @@
 **Slug:** perfil-participante
 **Branch:** feature/perfil-participante
 **Data:** 2026-07-13
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
