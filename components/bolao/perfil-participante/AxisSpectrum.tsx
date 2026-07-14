@@ -8,14 +8,6 @@ const MONO: React.CSSProperties = {
   fontFamily: "'JetBrains Mono', 'Courier New', monospace",
 }
 
-const LABEL: React.CSSProperties = {
-  ...MONO,
-  fontSize: '11px',
-  textTransform: 'uppercase',
-  color: 'var(--color-muted)',
-  letterSpacing: '0.06em',
-}
-
 function poleLabelStyle(active: boolean): React.CSSProperties {
   return {
     ...MONO,
@@ -28,10 +20,11 @@ function poleLabelStyle(active: boolean): React.CSSProperties {
 }
 
 /**
- * Renderiza um eixo de comportamento como espectro ASCII, no mesmo padrão de
- * linha (label → valor% + barra) usado em PerformancePanel: `leftLabel ◄
- * [barra █/░] ► rightLabel`, com o percentual explícito, as stats de apoio em
- * grid, e um selo "amostra pequena" quando `axis.confident === false`.
+ * Renderiza um eixo de comportamento como medidor de largura total: os polos
+ * (`leftLabel`/`rightLabel`) na linha de cima, ponta a ponta, e uma barra
+ * cheia (não texto ASCII) preenchida até `position` logo abaixo. As stats de
+ * apoio aparecem como cards de "scout" em grid, e um selo "amostra pequena"
+ * quando `axis.confident === false`.
  */
 export function AxisSpectrum({ axis }: AxisSpectrumProps) {
   const pct = Math.round(axis.position * 100)
@@ -39,7 +32,7 @@ export function AxisSpectrum({ axis }: AxisSpectrumProps) {
   return (
     <div
       style={{
-        padding: '0.75rem 1rem',
+        padding: '0.75rem 1rem 1rem',
         borderBottom: '1px solid var(--color-border)',
       }}
     >
@@ -48,11 +41,54 @@ export function AxisSpectrum({ axis }: AxisSpectrumProps) {
           display: 'flex',
           alignItems: 'baseline',
           justifyContent: 'space-between',
-          marginBottom: '0.5rem',
           gap: '0.5rem',
         }}
       >
         <span style={poleLabelStyle(axis.position < 0.5)}>{axis.leftLabel}</span>
+        <span style={poleLabelStyle(axis.position >= 0.5)}>{axis.rightLabel}</span>
+      </div>
+
+      <div
+        style={{
+          position: 'relative',
+          height: '10px',
+          width: '100%',
+          backgroundColor: 'var(--color-bg)',
+          border: '1px solid var(--color-border)',
+          margin: '0.4rem 0 0.3rem',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: `${pct}%`,
+            backgroundColor: 'var(--color-primary)',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: '50%',
+            width: '1px',
+            backgroundColor: 'var(--color-border)',
+          }}
+        />
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: !axis.confident ? 'space-between' : 'flex-end',
+          gap: '0.5rem',
+          marginBottom: '0.75rem',
+        }}
+      >
         {!axis.confident && (
           <span
             style={{
@@ -69,38 +105,40 @@ export function AxisSpectrum({ axis }: AxisSpectrumProps) {
             AMOSTRA PEQUENA
           </span>
         )}
-        <span style={poleLabelStyle(axis.position >= 0.5)}>{axis.rightLabel}</span>
-      </div>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
-        <span
-          style={{
-            ...MONO,
-            fontSize: '14px',
-            letterSpacing: '0.05em',
-            color: 'var(--color-primary)',
-            flex: 1,
-            wordBreak: 'break-all',
-          }}
-        >
-          {axis.bar}
-        </span>
-        <span style={{ ...MONO, fontSize: '12px', color: 'var(--color-text)', minWidth: '2.5rem', textAlign: 'right' }}>
-          {pct}%
-        </span>
+        <span style={{ ...MONO, fontSize: '11px', color: 'var(--color-muted)' }}>{pct}%</span>
       </div>
 
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-          gap: '0.4rem 1rem',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+          gap: '0.5rem',
         }}
       >
         {axis.stats.map((stat) => (
-          <div key={stat.label}>
-            <div style={LABEL}>{stat.label}</div>
-            <div style={{ ...MONO, fontSize: '12px', color: 'var(--color-text)' }}>{stat.value}</div>
+          <div
+            key={stat.label}
+            style={{
+              border: '1px solid var(--color-border)',
+              backgroundColor: 'var(--color-bg)',
+              padding: '0.4rem 0.5rem',
+            }}
+          >
+            <div
+              style={{
+                ...MONO,
+                fontSize: '10px',
+                textTransform: 'uppercase',
+                color: 'var(--color-muted)',
+                letterSpacing: '0.05em',
+                marginBottom: '0.15rem',
+              }}
+            >
+              {stat.label}
+            </div>
+            <div style={{ ...MONO, fontSize: '14px', fontWeight: 'bold', color: 'var(--color-accent)' }}>
+              {stat.value}
+            </div>
           </div>
         ))}
       </div>

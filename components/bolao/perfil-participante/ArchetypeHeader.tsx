@@ -32,23 +32,24 @@ export function ArchetypeHeader({ targetName, archetype }: ArchetypeHeaderProps)
           fontWeight: 'bold',
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
-          color: 'var(--color-text)',
-          backgroundColor: 'var(--color-secondary)',
+          color: 'var(--color-bg)',
+          backgroundColor: 'var(--color-primary)',
           padding: '0.35rem 1rem',
         }}
       >
-        PERFIL PÚBLICO · GRUPO
+        PERFIL PÚBLICO
       </div>
 
       <div style={{ padding: '1.25rem 1rem 1.5rem' }}>
         <div
           style={{
             ...MONO,
-            fontSize: '11px',
+            fontSize: '24px',
+            fontWeight: 'bold',
             textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            color: 'var(--color-muted)',
-            marginBottom: '0.3rem',
+            letterSpacing: '0.03em',
+            color: 'var(--color-text)',
+            marginBottom: '0.4rem',
           }}
         >
           {targetName}
@@ -57,15 +58,15 @@ export function ArchetypeHeader({ targetName, archetype }: ArchetypeHeaderProps)
         <div
           style={{
             ...MONO,
-            fontSize: '22px',
+            fontSize: '13px',
             fontWeight: 'bold',
             textTransform: 'uppercase',
-            letterSpacing: '0.06em',
+            letterSpacing: '0.08em',
             color: 'var(--color-accent)',
-            marginBottom: '0.6rem',
+            marginBottom: '0.75rem',
           }}
         >
-          {archetype.name}
+          » {archetype.name}
         </div>
 
         <p
