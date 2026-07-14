@@ -574,8 +574,13 @@ const NEUTRAL_ARCHETYPE: Archetype = {
     'Ainda não há jogos suficientes (ao vivo ou encerrados) com palpites para traçar um perfil. Volte depois que mais jogos rolarem.',
 }
 
+// Eixo `underdog` fica de fora da seleção de arquétipo: sozinho não define bem
+// um "jeito de apostar" (ver discussão de produto) — continua exibido como
+// espectro na página, só não entra na disputa pelos 2 eixos dominantes.
+const ARCHETYPE_ELIGIBLE_AXES: AxisKey[] = ['volume', 'calibration', 'style_reader']
+
 function selectArchetype(axes: Axis[]): Archetype {
-  const confidentAxes = axes.filter((a) => a.confident)
+  const confidentAxes = axes.filter((a) => a.confident && ARCHETYPE_ELIGIBLE_AXES.includes(a.key))
   if (confidentAxes.length === 0) return NEUTRAL_ARCHETYPE
 
   const dominant = [...confidentAxes]

@@ -387,14 +387,16 @@ describe('style_reader — Torcedor vs Analista', () => {
 })
 
 describe('seleção de arquétipo', () => {
-  it('escolhe os 2 eixos mais extremos (confident) e compõe o nome com os polos corretos', () => {
-    // Monta um cenário com volume MUITO otimista, underdog MUITO zebreiro,
+  it('underdog nunca entra no arquétipo, mesmo sendo o eixo mais extremo e confident', () => {
+    // Monta um cenário com volume MUITO otimista, underdog MUITO destemido,
     // e os outros dois eixos deliberadamente sem confiança (poucos finished).
+    // underdog é o eixo mais extremo (distância de 0.5 máxima), mas não pode
+    // aparecer no nome do arquétipo — só volume (único elegível confident) deve entrar.
     const games: GameLite[] = Array.from({ length: 6 }, (_, i) =>
       game(`g${i}`, 'BRA', 'ARG', 1, 2, 'live')
     )
     const consensusPreds = games.flatMap((g) => [pred(OTHER1, g.id, 2, 0), pred(OTHER2, g.id, 3, 1)])
-    // Alvo: muitos gols (otimista) e sempre contra o consenso (zebreiro)
+    // Alvo: muitos gols (otimista) e sempre contra o consenso (destemido)
     const targetPredictions = games.map((g) => pred(USER, g.id, 1, 4))
 
     const profile = computeParticipantProfile({
@@ -414,8 +416,11 @@ describe('seleção de arquétipo', () => {
     expect(calibration.confident).toBe(false) // só jogos live, nenhum finished
     expect(styleReader.confident).toBe(false)
 
-    expect(profile.archetype.name).toContain('Destemido')
-    expect(profile.archetype.name).toContain('Artilheiro')
+    // underdog segue calculado e exibível na lista de eixos, só não define o arquétipo.
+    expect(underdog.position).toBeGreaterThan(0.5)
+
+    expect(profile.archetype.name).toBe('Artilheiro')
+    expect(profile.archetype.name).not.toContain('Destemido')
     expect(profile.archetype.paragraph.length).toBeGreaterThan(0)
   })
 
