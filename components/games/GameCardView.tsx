@@ -131,7 +131,31 @@ export default function GameCardView({
               <PredictionForm gameId={game.id} groupId={groupId} homeTeamCode={game.home_team_code} awayTeamCode={game.away_team_code} matchDate={game.match_date} initialPrediction={currentPrediction} onCancelEdit={() => setIsEditing(false)} onSuccess={handleEditSuccess} />
             )}
             {currentPrediction && !isEditing && (
-              <PredictionDisplay homeScore={currentPrediction.home_score} awayScore={currentPrediction.away_score} homeTeamCode={game.home_team_code} awayTeamCode={game.away_team_code} submittedAt={currentPrediction.submitted_at} onEditRequest={canEdit ? () => setIsEditing(true) : undefined} />
+              <>
+                <PredictionDisplay homeScore={currentPrediction.home_score} awayScore={currentPrediction.away_score} submittedAt={currentPrediction.submitted_at} />
+                {canEdit && (
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(true)}
+                    style={{
+                      width: '100%',
+                      marginTop: '0.5rem',
+                      padding: '0.35rem 0.75rem',
+                      backgroundColor: 'var(--color-primary)',
+                      color: 'var(--color-bg)',
+                      fontFamily: "'JetBrains Mono', 'Courier New', monospace",
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                      border: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ✎ EDITAR PALPITE
+                  </button>
+                )}
+              </>
             )}
             {!currentPrediction && !isEditing && (
               <PredictionForm gameId={game.id} groupId={groupId} homeTeamCode={game.home_team_code} awayTeamCode={game.away_team_code} matchDate={game.match_date} initialPrediction={null} onSuccess={(created) => { setCurrentPrediction(created); onPredictionChange?.() }} />
@@ -143,7 +167,7 @@ export default function GameCardView({
           <>
             {currentPrediction ? (
               <>
-                <PredictionDisplay homeScore={currentPrediction.home_score} awayScore={currentPrediction.away_score} homeTeamCode={game.home_team_code} awayTeamCode={game.away_team_code} submittedAt={currentPrediction.submitted_at} isExpandable={!!(displayScore && liveHomeScore !== null && liveAwayScore !== null)} isExpanded={isScoreExpanded} onToggle={() => setIsScoreExpanded((prev) => !prev)} points={displayScore?.points ?? null} />
+                <PredictionDisplay homeScore={currentPrediction.home_score} awayScore={currentPrediction.away_score} submittedAt={currentPrediction.submitted_at} isExpandable={!!(displayScore && liveHomeScore !== null && liveAwayScore !== null)} isExpanded={isScoreExpanded} onToggle={() => setIsScoreExpanded((prev) => !prev)} points={displayScore?.points ?? null} />
                 {displayScore && liveHomeScore !== null && liveAwayScore !== null && (
                   <div style={{ display: 'grid', gridTemplateRows: isScoreExpanded ? '1fr' : '0fr', transition: 'grid-template-rows 300ms ease' }}>
                     <div style={{ overflow: 'hidden' }}>
@@ -153,17 +177,8 @@ export default function GameCardView({
                 )}
               </>
             ) : (
-              <div style={{ position: 'relative', border: '1px solid var(--color-border)', padding: '0.75rem', fontFamily: "'JetBrains Mono', 'Courier New', monospace" }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                  <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--color-muted)', fontWeight: 'bold' }}>✗ SEM PALPITE</div>
-                  <div style={{ fontSize: '11px', fontWeight: 'bold', letterSpacing: '0.05em', padding: '0.2rem 0.5rem', fontFamily: "'JetBrains Mono', 'Courier New', monospace", lineHeight: 1.4, backgroundColor: 'var(--color-border)', color: 'var(--color-muted)' }}>+0 PTS</div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '18px', lineHeight: 1, opacity: 0.4 }}>{getTeamFlag(game.home_team_code)}</span>
-                  <span style={{ fontSize: '22px', fontWeight: 'bold', color: 'var(--color-muted)', letterSpacing: '0.05em' }}>- × -</span>
-                  <span style={{ fontSize: '18px', lineHeight: 1, opacity: 0.4 }}>{getTeamFlag(game.away_team_code)}</span>
-                </div>
-                <div style={{ fontSize: '10px', color: 'var(--color-muted)', textAlign: 'center', marginTop: '0.35rem', opacity: 0.6 }}>não enviado</div>
+              <div style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", padding: '0.35rem 0', fontSize: '12px', color: 'var(--color-muted)' }}>
+                SEM PALPITE · +0 PTS
               </div>
             )}
           </>
