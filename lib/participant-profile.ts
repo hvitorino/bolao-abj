@@ -239,7 +239,7 @@ function computeVolumeAxis(input: ProfileInput): Axis {
 }
 
 // ---------------------------------------------------------------------------
-// §5.2 — underdog: Seguro ◄──► Zebreiro
+// §5.2 — underdog: Modinha ◄──► Zebreiro
 // ---------------------------------------------------------------------------
 
 type Winner = 'home' | 'away' | 'draw'
@@ -305,7 +305,7 @@ function computeUnderdogAxis(input: ProfileInput): Axis {
 
   return {
     key: 'underdog',
-    leftLabel: 'Seguro',
+    leftLabel: 'Modinha',
     rightLabel: 'Zebreiro',
     position,
     bar: positionToBar(position),
@@ -534,7 +534,7 @@ const POLE_TABLE: Record<AxisKey, { left: PoleDescriptor; right: PoleDescriptor 
   },
   underdog: {
     left: {
-      adjective: 'Seguro',
+      adjective: 'Modinha',
       sentence: () => `Confia no favoritismo e raramente contraria o consenso do grupo.`,
     },
     right: {

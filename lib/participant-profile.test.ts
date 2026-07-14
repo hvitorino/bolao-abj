@@ -182,8 +182,8 @@ describe('volume — Retranqueiro vs Artilheiro', () => {
   })
 })
 
-describe('underdog — Seguro vs Zebreiro', () => {
-  it('participante que sempre segue o consenso fica no polo Seguro (position baixa)', () => {
+describe('underdog — Modinha vs Zebreiro', () => {
+  it('participante que sempre segue o consenso fica no polo Modinha (position baixa)', () => {
     const games: GameLite[] = Array.from({ length: 5 }, (_, i) =>
       game(`g${i}`, 'BRA', 'ARG', 2, 1, 'finished')
     )
