@@ -118,8 +118,6 @@ export default function PredictionForm({
       <PredictionDisplay
         homeScore={submittedPrediction.home_score}
         awayScore={submittedPrediction.away_score}
-        homeTeamCode={homeTeamCode}
-        awayTeamCode={awayTeamCode}
         submittedAt={submittedPrediction.submitted_at}
       />
     )

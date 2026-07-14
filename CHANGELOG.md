@@ -6,6 +6,13 @@ Histórico de implementações aprovadas pelo Revisor.
 
 <!-- Entradas adicionadas pelo Revisor após cada feature aprovada -->
 
+## [unify-score-prediction-card] — Unificação do placar real e palpite no card de jogo — 2026-07-14
+
+- `components/bolao/PredictionDisplay.tsx` simplificado para uma linha compacta (sem bandeiras, sem caixa/borda própria): placar do palpite em destaque + badge "+N PTS" opcional + indicador ▾/▲ de expansão. Removidas as props `homeTeamCode`, `awayTeamCode` e `onEditRequest`.
+- `components/games/GameCardView.tsx` — seção "Área de palpite" reestruturada nos 6 estados da máquina de estados: faixa fina "✎ EDITAR PALPITE" (dentro do prazo) substitui o botão embutido antigo; estado sem palpite ao vivo/encerrado agora é uma linha muted simples "SEM PALPITE · +0 PTS" (sem borda nem bandeiras apagadas). Seção "Placar" (bandeiras + nomes + placar real) permanece inalterada.
+- `components/bolao/PredictionForm.tsx` — call site de `PredictionDisplay` atualizado para a nova assinatura.
+- Feature puramente visual: sem mudanças de endpoints, modelo de dados ou regras de pontuação.
+
 ## [perfil-participante] — Perfil Público do Participante — 2026-07-13
 
 - Nova página `/perfil/[userId]`: ao clicar no nome de um participante no ranking, abre um retrato interpretativo do seu jeito de apostar no grupo ativo — cabeçalho com arquétipo composto (ex: "Zebreiro Otimista") + parágrafo determinístico, e 4 eixos de comportamento como espectros ASCII (`Cascão↔Otimista`, `Favorito↔Zebreiro`, `Impreciso↔Craveiro`, `Ignora estilo↔Leitor de estilo`), cada um com stats de apoio e selo "AMOSTRA PEQUENA" quando a amostra é insuficiente.
