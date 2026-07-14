@@ -42,7 +42,7 @@ const VOLUME_NORMALIZATION_HALF_RANGE = 1.5
 /** Total de gols palpitados considerado "aposta de goleada" para a stat de volume. */
 const VOLUME_HIGH_GOALS_THRESHOLD = 3
 
-/** Erro médio de gols (em `calibration`) que mapeia para o extremo "Certeiro" (position = 1). */
+/** Erro médio de gols (em `calibration`) que mapeia para o extremo "Calculista" (position = 1). */
 const CALIBRATION_ERROR_CEILING = 4
 
 /** Diferença real de gols (em módulo) até a qual um jogo é considerado "apertado". */
@@ -239,7 +239,7 @@ function computeVolumeAxis(input: ProfileInput): Axis {
 }
 
 // ---------------------------------------------------------------------------
-// §5.2 — underdog: Modinha ◄──► Zebreiro
+// §5.2 — underdog: Cauteloso ◄──► Destemido
 // ---------------------------------------------------------------------------
 
 type Winner = 'home' | 'away' | 'draw'
@@ -305,8 +305,8 @@ function computeUnderdogAxis(input: ProfileInput): Axis {
 
   return {
     key: 'underdog',
-    leftLabel: 'Modinha',
-    rightLabel: 'Zebreiro',
+    leftLabel: 'Cauteloso',
+    rightLabel: 'Destemido',
     position,
     bar: positionToBar(position),
     confident: sampleSize >= MIN_SAMPLE_PRED,
@@ -318,7 +318,7 @@ function computeUnderdogAxis(input: ProfileInput): Axis {
 }
 
 // ---------------------------------------------------------------------------
-// §5.3 — calibration: Chutador ◄──► Certeiro
+// §5.3 — calibration: Distraído ◄──► Calculista
 // ---------------------------------------------------------------------------
 
 function computeCalibrationAxis(input: ProfileInput): Axis {
@@ -369,7 +369,7 @@ function computeCalibrationAxis(input: ProfileInput): Axis {
   }
 
   const avgError = safeAvg(errors)
-  // Erro menor => mais "Certeiro" (position mais próxima de 1).
+  // Erro menor => mais "Calculista" (position mais próxima de 1).
   const position = clamp01(1 - avgError / CALIBRATION_ERROR_CEILING)
 
   const exactRate = sampleSize > 0 ? exactCount / sampleSize : 0
@@ -391,8 +391,8 @@ function computeCalibrationAxis(input: ProfileInput): Axis {
 
   return {
     key: 'calibration',
-    leftLabel: 'Chutador',
-    rightLabel: 'Certeiro',
+    leftLabel: 'Distraído',
+    rightLabel: 'Calculista',
     position,
     bar: positionToBar(position),
     confident: sampleSize >= MIN_SAMPLE_FINISHED,
@@ -534,23 +534,23 @@ const POLE_TABLE: Record<AxisKey, { left: PoleDescriptor; right: PoleDescriptor 
   },
   underdog: {
     left: {
-      adjective: 'Modinha',
+      adjective: 'Cauteloso',
       sentence: () => `Confia no favoritismo e raramente contraria o consenso do grupo.`,
     },
     right: {
-      adjective: 'Zebreiro',
+      adjective: 'Destemido',
       sentence: (axis) =>
         `Gosta de contrariar o grupo — foi contra o consenso em ${axis.stats[0]?.value ?? '0%'} dos palpites.`,
     },
   },
   calibration: {
     left: {
-      adjective: 'Chutador',
+      adjective: 'Distraído',
       sentence: (axis) =>
         `Erra o placar com frequência — erro médio de ${axis.stats[0]?.value ?? '0'} gols por jogo.`,
     },
     right: {
-      adjective: 'Certeiro',
+      adjective: 'Calculista',
       sentence: (axis) =>
         `Tem faro para o placar certo — cravou ${axis.stats[1]?.value ?? '0%'} dos jogos finalizados.`,
     },
@@ -588,9 +588,9 @@ function selectArchetype(axes: Axis[]): Archetype {
   })
 
   // Nome: "<adjetivo do 1º eixo dominante> <adjetivo do 2º eixo dominante>",
-  // no padrão dos exemplos da spec (ex: "Zebreiro Artilheiro").
+  // no padrão dos exemplos da spec (ex: "Destemido Artilheiro").
   // Convenção: o adjetivo mais "extremo" (maior distância de 0.5) vem por último
-  // para casar com os exemplos ("volume→Artilheiro + underdog→Zebreiro ⇒ Zebreiro Artilheiro").
+  // para casar com os exemplos ("volume→Artilheiro + underdog→Destemido ⇒ Destemido Artilheiro").
   const [primary, secondary] = descriptors
   const name = secondary
     ? `${secondary.pole.adjective} ${primary.pole.adjective}`

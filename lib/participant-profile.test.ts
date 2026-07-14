@@ -182,8 +182,8 @@ describe('volume — Retranqueiro vs Artilheiro', () => {
   })
 })
 
-describe('underdog — Modinha vs Zebreiro', () => {
-  it('participante que sempre segue o consenso fica no polo Modinha (position baixa)', () => {
+describe('underdog — Cauteloso vs Destemido', () => {
+  it('participante que sempre segue o consenso fica no polo Cauteloso (position baixa)', () => {
     const games: GameLite[] = Array.from({ length: 5 }, (_, i) =>
       game(`g${i}`, 'BRA', 'ARG', 2, 1, 'finished')
     )
@@ -203,7 +203,7 @@ describe('underdog — Modinha vs Zebreiro', () => {
     expect(underdog.position).toBe(0)
   })
 
-  it('participante que sempre contraria o consenso fica no polo Zebreiro (position alta)', () => {
+  it('participante que sempre contraria o consenso fica no polo Destemido (position alta)', () => {
     const games: GameLite[] = Array.from({ length: 5 }, (_, i) =>
       game(`g${i}`, 'BRA', 'ARG', 0, 2, 'finished')
     )
@@ -227,7 +227,7 @@ describe('underdog — Modinha vs Zebreiro', () => {
   })
 })
 
-describe('calibration — Chutador vs Certeiro (coerência com lib/scoring.ts)', () => {
+describe('calibration — Distraído vs Calculista (coerência com lib/scoring.ts)', () => {
   it('placar exato em todos os jogos → erro médio 0, taxa de exato 100%, position próxima de 1', () => {
     const games: GameLite[] = Array.from({ length: 4 }, (_, i) =>
       game(`g${i}`, 'BRA', 'ARG', 3, 1, 'finished')
@@ -414,7 +414,7 @@ describe('seleção de arquétipo', () => {
     expect(calibration.confident).toBe(false) // só jogos live, nenhum finished
     expect(styleReader.confident).toBe(false)
 
-    expect(profile.archetype.name).toContain('Zebreiro')
+    expect(profile.archetype.name).toContain('Destemido')
     expect(profile.archetype.name).toContain('Artilheiro')
     expect(profile.archetype.paragraph.length).toBeGreaterThan(0)
   })
