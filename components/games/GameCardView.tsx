@@ -106,9 +106,30 @@ export default function GameCardView({
         {isPending && <span style={{ color: 'var(--color-muted)', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', border: '1px solid var(--color-border)', padding: '0.1rem 0.4rem', flexShrink: 0 }}>◷ EM BREVE</span>}
         {isFinished && <span style={{ color: 'var(--color-accent)', fontSize: '11px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.08em', border: '1px solid var(--color-accent)', padding: '0.1rem 0.4rem', flexShrink: 0 }}>✓ ENCERRADO</span>}
         <span style={{ color: 'var(--color-muted)', fontSize: '11px', marginLeft: 'auto', flexShrink: 0 }}>{matchTime} BRT</span>
+        {isPending && currentPrediction && !isEditing && canEdit && (
+          <button
+            type="button"
+            onClick={() => setIsEditing(true)}
+            title="Editar palpite"
+            style={{ flexShrink: 0, border: 'none', backgroundColor: 'var(--color-primary)', color: 'var(--color-bg)', fontFamily: "'JetBrains Mono', 'Courier New', monospace", fontSize: '11px', padding: '0.15rem 0.4rem', cursor: 'pointer' }}
+          >
+            ✎
+          </button>
+        )}
+        {(isLive || isFinished) && currentPrediction && displayScore && (
+          <button
+            type="button"
+            onClick={() => setIsScoreExpanded((prev) => !prev)}
+            title="Ver detalhamento da pontuação"
+            style={{ flexShrink: 0, border: 'none', backgroundColor: 'var(--color-primary)', color: 'var(--color-accent)', fontFamily: "'JetBrains Mono', 'Courier New', monospace", fontSize: '11px', fontWeight: 'bold', padding: '0.15rem 0.4rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.2rem' }}
+          >
+            +{displayScore.points}
+            <span style={{ display: 'inline-block', transform: isScoreExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 250ms ease' }}>▾</span>
+          </button>
+        )}
       </div>
 
-      {/* Placar */}
+      {/* Placar + palpite */}
       <div style={{ padding: '1rem 0.75rem', display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', gap: '0.5rem' }}>
         <div style={{ textAlign: 'center', minWidth: 0 }}>
           <div style={{ fontSize: '28px', lineHeight: 1 }}>{getTeamFlag(game.home_team_code)}</div>
@@ -121,53 +142,18 @@ export default function GameCardView({
           <div style={{ fontSize: '28px', lineHeight: 1 }}>{getTeamFlag(game.away_team_code)}</div>
           <div style={{ fontSize: '11px', color: 'var(--color-muted)', textTransform: 'uppercase', marginTop: '0.25rem', letterSpacing: '0.05em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{game.away_team}</div>
         </div>
-      </div>
 
-      {/* Área de palpite */}
-      <div style={{ borderTop: '1px dashed var(--color-border)', padding: '0.75rem' }}>
-        {isPending && (
-          <>
-            {isEditing && currentPrediction && (
-              <PredictionForm gameId={game.id} groupId={groupId} homeTeamCode={game.home_team_code} awayTeamCode={game.away_team_code} matchDate={game.match_date} initialPrediction={currentPrediction} onCancelEdit={() => setIsEditing(false)} onSuccess={handleEditSuccess} />
-            )}
-            {currentPrediction && !isEditing && (
-              <>
-                <PredictionDisplay homeScore={currentPrediction.home_score} awayScore={currentPrediction.away_score} submittedAt={currentPrediction.submitted_at} />
-                {canEdit && (
-                  <button
-                    type="button"
-                    onClick={() => setIsEditing(true)}
-                    style={{
-                      width: '100%',
-                      marginTop: '0.5rem',
-                      padding: '0.35rem 0.75rem',
-                      backgroundColor: 'var(--color-primary)',
-                      color: 'var(--color-bg)',
-                      fontFamily: "'JetBrains Mono', 'Courier New', monospace",
-                      fontSize: '11px',
-                      fontWeight: 'bold',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.08em',
-                      border: 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    ✎ EDITAR PALPITE
-                  </button>
-                )}
-              </>
-            )}
-            {!currentPrediction && !isEditing && (
-              <PredictionForm gameId={game.id} groupId={groupId} homeTeamCode={game.home_team_code} awayTeamCode={game.away_team_code} matchDate={game.match_date} initialPrediction={null} onSuccess={(created) => { setCurrentPrediction(created); onPredictionChange?.() }} />
-            )}
-          </>
+        {isPending && currentPrediction && !isEditing && (
+          <div style={{ gridColumn: '1 / -1', marginTop: '0.5rem' }}>
+            <PredictionDisplay homeScore={currentPrediction.home_score} awayScore={currentPrediction.away_score} submittedAt={currentPrediction.submitted_at} />
+          </div>
         )}
 
         {(isLive || isFinished) && (
-          <>
+          <div style={{ gridColumn: '1 / -1', marginTop: '0.5rem' }}>
             {currentPrediction ? (
               <>
-                <PredictionDisplay homeScore={currentPrediction.home_score} awayScore={currentPrediction.away_score} submittedAt={currentPrediction.submitted_at} isExpandable={!!(displayScore && liveHomeScore !== null && liveAwayScore !== null)} isExpanded={isScoreExpanded} onToggle={() => setIsScoreExpanded((prev) => !prev)} points={displayScore?.points ?? null} />
+                <PredictionDisplay homeScore={currentPrediction.home_score} awayScore={currentPrediction.away_score} submittedAt={currentPrediction.submitted_at} />
                 {displayScore && liveHomeScore !== null && liveAwayScore !== null && (
                   <div style={{ display: 'grid', gridTemplateRows: isScoreExpanded ? '1fr' : '0fr', transition: 'grid-template-rows 300ms ease' }}>
                     <div style={{ overflow: 'hidden' }}>
@@ -177,13 +163,25 @@ export default function GameCardView({
                 )}
               </>
             ) : (
-              <div style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", padding: '0.35rem 0', fontSize: '12px', color: 'var(--color-muted)' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', 'Courier New', monospace", textAlign: 'center', fontSize: '12px', color: 'var(--color-muted)' }}>
                 SEM PALPITE · +0 PTS
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
+
+      {/* Formulário de palpite */}
+      {isPending && (isEditing || !currentPrediction) && (
+        <div style={{ borderTop: '1px dashed var(--color-border)', padding: '0.75rem' }}>
+          {isEditing && currentPrediction && (
+            <PredictionForm gameId={game.id} groupId={groupId} homeTeamCode={game.home_team_code} awayTeamCode={game.away_team_code} matchDate={game.match_date} initialPrediction={currentPrediction} onCancelEdit={() => setIsEditing(false)} onSuccess={handleEditSuccess} />
+          )}
+          {!currentPrediction && !isEditing && (
+            <PredictionForm gameId={game.id} groupId={groupId} homeTeamCode={game.home_team_code} awayTeamCode={game.away_team_code} matchDate={game.match_date} initialPrediction={null} onSuccess={(created) => { setCurrentPrediction(created); onPredictionChange?.() }} />
+          )}
+        </div>
+      )}
 
       {/* Barra de ações */}
       {(!hideAnalysisLink || participants.length > 0) && (
