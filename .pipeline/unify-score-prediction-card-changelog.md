@@ -3,7 +3,7 @@
 **Slug:** unify-score-prediction-card
 **Branch:** feature/unify-score-prediction-card
 **Data:** 2026-07-14
-**Status:** aguardando revisão
+**Status:** aprovado
 
 ---
 
