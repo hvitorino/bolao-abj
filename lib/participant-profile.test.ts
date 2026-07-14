@@ -115,8 +115,8 @@ describe('computeParticipantProfile — bordas', () => {
   })
 })
 
-describe('volume — Cascão vs Otimista', () => {
-  it('participante com média de gols muito acima do grupo tende ao polo Otimista', () => {
+describe('volume — Retranqueiro vs Artilheiro', () => {
+  it('participante com média de gols muito acima do grupo tende ao polo Artilheiro', () => {
     const games: GameLite[] = Array.from({ length: 6 }, (_, i) =>
       game(`g${i}`, 'BRA', 'ARG', 2, 1, 'finished')
     )
@@ -141,7 +141,7 @@ describe('volume — Cascão vs Otimista', () => {
     expect(volume.position).toBeGreaterThan(0.5)
   })
 
-  it('participante com média de gols muito abaixo do grupo tende ao polo Cascão', () => {
+  it('participante com média de gols muito abaixo do grupo tende ao polo Retranqueiro', () => {
     const games: GameLite[] = Array.from({ length: 6 }, (_, i) =>
       game(`g${i}`, 'BRA', 'ARG', 2, 1, 'finished')
     )
@@ -182,8 +182,8 @@ describe('volume — Cascão vs Otimista', () => {
   })
 })
 
-describe('underdog — Favorito vs Zebreiro', () => {
-  it('participante que sempre segue o consenso fica no polo Favorito (position baixa)', () => {
+describe('underdog — Seguro vs Zebreiro', () => {
+  it('participante que sempre segue o consenso fica no polo Seguro (position baixa)', () => {
     const games: GameLite[] = Array.from({ length: 5 }, (_, i) =>
       game(`g${i}`, 'BRA', 'ARG', 2, 1, 'finished')
     )
@@ -227,7 +227,7 @@ describe('underdog — Favorito vs Zebreiro', () => {
   })
 })
 
-describe('calibration — Impreciso vs Craveiro (coerência com lib/scoring.ts)', () => {
+describe('calibration — Chutador vs Certeiro (coerência com lib/scoring.ts)', () => {
   it('placar exato em todos os jogos → erro médio 0, taxa de exato 100%, position próxima de 1', () => {
     const games: GameLite[] = Array.from({ length: 4 }, (_, i) =>
       game(`g${i}`, 'BRA', 'ARG', 3, 1, 'finished')
@@ -312,7 +312,7 @@ describe('inferTeamStyle', () => {
   })
 })
 
-describe('style_reader — Ignora estilo vs Leitor de estilo', () => {
+describe('style_reader — Torcedor vs Analista', () => {
   it('participante que dá mais gols ao time mais ofensivo tem correlação alta (position alta)', () => {
     // BRA ofensivo (marca muito), URU defensivo (marca pouco) — dados suficientes (2+ jogos cada)
     const games: GameLite[] = [
@@ -415,7 +415,7 @@ describe('seleção de arquétipo', () => {
     expect(styleReader.confident).toBe(false)
 
     expect(profile.archetype.name).toContain('Zebreiro')
-    expect(profile.archetype.name).toContain('Otimista')
+    expect(profile.archetype.name).toContain('Artilheiro')
     expect(profile.archetype.paragraph.length).toBeGreaterThan(0)
   })
 

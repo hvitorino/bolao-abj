@@ -42,7 +42,7 @@ const VOLUME_NORMALIZATION_HALF_RANGE = 1.5
 /** Total de gols palpitados considerado "aposta de goleada" para a stat de volume. */
 const VOLUME_HIGH_GOALS_THRESHOLD = 3
 
-/** Erro médio de gols (em `calibration`) que mapeia para o extremo "Craveiro" (position = 1). */
+/** Erro médio de gols (em `calibration`) que mapeia para o extremo "Certeiro" (position = 1). */
 const CALIBRATION_ERROR_CEILING = 4
 
 /** Diferença real de gols (em módulo) até a qual um jogo é considerado "apertado". */
@@ -197,7 +197,7 @@ export function inferTeamStyle(games: GameLite[]): TeamStyleTable {
 }
 
 // ---------------------------------------------------------------------------
-// §5.1 — volume: Cascão ◄──► Otimista
+// §5.1 — volume: Retranqueiro ◄──► Artilheiro
 // ---------------------------------------------------------------------------
 
 function computeVolumeAxis(input: ProfileInput): Axis {
@@ -224,8 +224,8 @@ function computeVolumeAxis(input: ProfileInput): Axis {
 
   return {
     key: 'volume',
-    leftLabel: 'Cascão',
-    rightLabel: 'Otimista',
+    leftLabel: 'Retranqueiro',
+    rightLabel: 'Artilheiro',
     position,
     bar: positionToBar(position),
     confident: sampleSize >= MIN_SAMPLE_PRED,
@@ -239,7 +239,7 @@ function computeVolumeAxis(input: ProfileInput): Axis {
 }
 
 // ---------------------------------------------------------------------------
-// §5.2 — underdog: Favorito ◄──► Zebreiro
+// §5.2 — underdog: Seguro ◄──► Zebreiro
 // ---------------------------------------------------------------------------
 
 type Winner = 'home' | 'away' | 'draw'
@@ -305,7 +305,7 @@ function computeUnderdogAxis(input: ProfileInput): Axis {
 
   return {
     key: 'underdog',
-    leftLabel: 'Favorito',
+    leftLabel: 'Seguro',
     rightLabel: 'Zebreiro',
     position,
     bar: positionToBar(position),
@@ -318,7 +318,7 @@ function computeUnderdogAxis(input: ProfileInput): Axis {
 }
 
 // ---------------------------------------------------------------------------
-// §5.3 — calibration: Impreciso ◄──► Craveiro
+// §5.3 — calibration: Chutador ◄──► Certeiro
 // ---------------------------------------------------------------------------
 
 function computeCalibrationAxis(input: ProfileInput): Axis {
@@ -369,7 +369,7 @@ function computeCalibrationAxis(input: ProfileInput): Axis {
   }
 
   const avgError = safeAvg(errors)
-  // Erro menor => mais "Craveiro" (position mais próxima de 1).
+  // Erro menor => mais "Certeiro" (position mais próxima de 1).
   const position = clamp01(1 - avgError / CALIBRATION_ERROR_CEILING)
 
   const exactRate = sampleSize > 0 ? exactCount / sampleSize : 0
@@ -391,8 +391,8 @@ function computeCalibrationAxis(input: ProfileInput): Axis {
 
   return {
     key: 'calibration',
-    leftLabel: 'Impreciso',
-    rightLabel: 'Craveiro',
+    leftLabel: 'Chutador',
+    rightLabel: 'Certeiro',
     position,
     bar: positionToBar(position),
     confident: sampleSize >= MIN_SAMPLE_FINISHED,
@@ -401,7 +401,7 @@ function computeCalibrationAxis(input: ProfileInput): Axis {
 }
 
 // ---------------------------------------------------------------------------
-// §5.4 — style_reader: Ignora estilo ◄──► Leitor de estilo
+// §5.4 — style_reader: Torcedor ◄──► Analista
 // ---------------------------------------------------------------------------
 
 /** Correlação de Pearson entre dois vetores numéricos de mesmo tamanho. Retorna 0 em casos degenerados (variância zero, amostra < 2). */
@@ -498,8 +498,8 @@ function computeStyleReaderAxis(input: ProfileInput, teamStyle: TeamStyleTable):
 
   return {
     key: 'style_reader',
-    leftLabel: 'Ignora estilo',
-    rightLabel: 'Leitor de estilo',
+    leftLabel: 'Torcedor',
+    rightLabel: 'Analista',
     position,
     bar: positionToBar(position),
     confident,
@@ -522,19 +522,19 @@ interface PoleDescriptor {
 const POLE_TABLE: Record<AxisKey, { left: PoleDescriptor; right: PoleDescriptor }> = {
   volume: {
     left: {
-      adjective: 'Cascão',
+      adjective: 'Retranqueiro',
       sentence: (axis) =>
         `Aposta no jogo truncado — média de ${axis.stats[0]?.value ?? '0'} gols por palpite, bem abaixo do grupo.`,
     },
     right: {
-      adjective: 'Otimista',
+      adjective: 'Artilheiro',
       sentence: (axis) =>
         `Não tem medo de goleada — média de ${axis.stats[0]?.value ?? '0'} gols por palpite.`,
     },
   },
   underdog: {
     left: {
-      adjective: 'Favorito',
+      adjective: 'Seguro',
       sentence: () => `Confia no favoritismo e raramente contraria o consenso do grupo.`,
     },
     right: {
@@ -545,23 +545,23 @@ const POLE_TABLE: Record<AxisKey, { left: PoleDescriptor; right: PoleDescriptor 
   },
   calibration: {
     left: {
-      adjective: 'Impreciso',
+      adjective: 'Chutador',
       sentence: (axis) =>
         `Erra o placar com frequência — erro médio de ${axis.stats[0]?.value ?? '0'} gols por jogo.`,
     },
     right: {
-      adjective: 'Craveiro',
+      adjective: 'Certeiro',
       sentence: (axis) =>
         `Tem faro para o placar certo — cravou ${axis.stats[1]?.value ?? '0%'} dos jogos finalizados.`,
     },
   },
   style_reader: {
     left: {
-      adjective: 'Instintivo',
+      adjective: 'Torcedor',
       sentence: () => `Palpita mais pelo coração do que pelo retrospecto dos times.`,
     },
     right: {
-      adjective: 'Leitor de Estilo',
+      adjective: 'Analista',
       sentence: (axis) =>
         `Lê bem o estilo dos times ao distribuir os gols nos palpites (concordância de ${axis.stats[0]?.value ?? '0%'}).`,
     },
@@ -588,9 +588,9 @@ function selectArchetype(axes: Axis[]): Archetype {
   })
 
   // Nome: "<adjetivo do 1º eixo dominante> <adjetivo do 2º eixo dominante>",
-  // no padrão dos exemplos da spec (ex: "Zebreiro Otimista").
+  // no padrão dos exemplos da spec (ex: "Zebreiro Artilheiro").
   // Convenção: o adjetivo mais "extremo" (maior distância de 0.5) vem por último
-  // para casar com os exemplos ("volume→Otimista + underdog→Zebreiro ⇒ Zebreiro Otimista").
+  // para casar com os exemplos ("volume→Artilheiro + underdog→Zebreiro ⇒ Zebreiro Artilheiro").
   const [primary, secondary] = descriptors
   const name = secondary
     ? `${secondary.pole.adjective} ${primary.pole.adjective}`
