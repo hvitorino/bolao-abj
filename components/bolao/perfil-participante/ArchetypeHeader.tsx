@@ -23,47 +23,63 @@ export function ArchetypeHeader({ targetName, archetype }: ArchetypeHeaderProps)
         borderRadius: 0,
         boxShadow: 'none',
         marginBottom: '1px',
-        padding: '1.25rem 1rem',
       }}
     >
       <div
         style={{
           ...MONO,
-          fontSize: '11px',
-          textTransform: 'uppercase',
-          letterSpacing: '0.1em',
-          color: 'var(--color-muted)',
-          marginBottom: '0.3rem',
-        }}
-      >
-        {targetName}
-      </div>
-
-      <div
-        style={{
-          ...MONO,
-          fontSize: '22px',
+          fontSize: '10px',
           fontWeight: 'bold',
           textTransform: 'uppercase',
-          letterSpacing: '0.06em',
-          color: 'var(--color-accent)',
-          marginBottom: '0.6rem',
+          letterSpacing: '0.1em',
+          color: 'var(--color-text)',
+          backgroundColor: 'var(--color-secondary)',
+          padding: '0.35rem 1rem',
         }}
       >
-        {archetype.name}
+        PERFIL PÚBLICO · GRUPO
       </div>
 
-      <p
-        style={{
-          ...MONO,
-          fontSize: '13px',
-          lineHeight: 1.5,
-          color: 'var(--color-text)',
-          margin: 0,
-        }}
-      >
-        {archetype.paragraph}
-      </p>
+      <div style={{ padding: '1.25rem 1rem 1.5rem' }}>
+        <div
+          style={{
+            ...MONO,
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+            color: 'var(--color-muted)',
+            marginBottom: '0.3rem',
+          }}
+        >
+          {targetName}
+        </div>
+
+        <div
+          style={{
+            ...MONO,
+            fontSize: '22px',
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            color: 'var(--color-accent)',
+            marginBottom: '0.6rem',
+          }}
+        >
+          {archetype.name}
+        </div>
+
+        <p
+          style={{
+            ...MONO,
+            fontSize: '13px',
+            lineHeight: 1.5,
+            color: 'var(--color-text)',
+            margin: 0,
+          }}
+        >
+          {archetype.paragraph}
+        </p>
+      </div>
     </div>
   )
 }

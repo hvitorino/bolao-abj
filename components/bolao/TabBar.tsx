@@ -21,6 +21,15 @@ const MAIS_ITEMS = [
 ]
 
 function isPathActive(pathname: string, href: string): boolean {
+  if (href === '/perfil') {
+    // '/perfil' é o próprio perfil (aba "EU"). '/perfil/[userId]' é o perfil
+    // público de outro participante — só se chega lá pelo Ranking, então não
+    // deve acender "EU".
+    return pathname === '/perfil'
+  }
+  if (href === '/ranking') {
+    return pathname === '/ranking' || pathname.startsWith('/ranking/') || /^\/perfil\/[^/]+$/.test(pathname)
+  }
   return pathname === href || pathname.startsWith(href + '/')
 }
 
